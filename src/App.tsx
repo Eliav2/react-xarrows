@@ -28,7 +28,7 @@ const boxStyle = {
 const App: React.FC = () => {
   const [boxes, setBoxes] = useState<box[]>([
     { id: "box1", x: 50, y: 30, ref: useRef(null) },
-    { id: "box2", x: 230, y: 70, ref: useRef(null) },
+    { id: "box2", x: 330, y: 70, ref: useRef(null) },
     { id: "box3", x: 230, y: 115, ref: useRef(null) }
   ]);
   useRef(null);
@@ -73,7 +73,13 @@ const App: React.FC = () => {
             {box.id}
           </div>
         ))}
-        <Xarrows start={boxes[0]} end={boxes[1]} />
+        {lines.map((line, i) => (
+          <Xarrows
+            key={i}
+            start={boxes.find(box => box.id === line.from).ref}
+            end={boxes.find(box => box.id === line.to).ref}
+          />
+        ))}
       </div>
     </div>
   );

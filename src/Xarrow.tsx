@@ -32,8 +32,8 @@ function Xarrow(props: props) {
   const [canvasStartPos, setCanvasStartPos] = useState<point>({ x: 0, y: 0 });
 
   const getPos = () => {
-    let s = props.start.ref.current.getBoundingClientRect();
-    let e = props.end.ref.current.getBoundingClientRect();
+    let s = props.start.current.getBoundingClientRect();
+    let e = props.end.current.getBoundingClientRect();
     return {
       start: { x: s.x, y: s.y, right: s.right, bottom: s.bottom },
       end: { x: e.x, y: e.y, right: e.right, bottom: e.bottom }
@@ -46,6 +46,7 @@ function Xarrow(props: props) {
     let startingPos = getPos();
     setPrevPosState(startingPos);
     setHasMounted(true);
+    console.log(props.start.current.id);
   }, []);
 
   useEffect(() => {
@@ -110,11 +111,9 @@ function Xarrow(props: props) {
 
     let closeset =
       props.startAnchor === "auto" || props.endAnchor === "auto" ? closestPairOfPoints() : null;
-    console.log(closeset);
 
     let startAnchorType = props.startAnchor === "auto" ? closeset[0] : props.startAnchor;
     let endAnchorType = props.endAnchor === "auto" ? closeset[1] : props.endAnchor;
-    console.log(endAnchorType);
     switch (startAnchorType) {
       case "middle":
         cx0 += sw / 2;
