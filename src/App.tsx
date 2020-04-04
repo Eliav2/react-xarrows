@@ -41,12 +41,6 @@ const App: React.FC = () => {
 
   const [lastPoint, setLastPoint] = useState<point>({ x: 0, y: 0 });
 
-  const func = () => {
-    console.log("handleNodeDragged");
-  };
-
-  const [handleNodeDragged, setHandleNodeDragged] = useState(() => () => {});
-
   const handlDragStart = (e: React.DragEvent) => {
     setLastPoint({ x: e.clientX, y: e.clientY });
   };
@@ -57,15 +51,7 @@ const App: React.FC = () => {
     newBoxes[i].x += e.clientX - lastPoint.x;
     newBoxes[i].y += e.clientY - lastPoint.y;
     setBoxes(newBoxes);
-
-    // console.log("endDrag");
-    // setHandleNodeDragged(() => {
-    //   console.log("handleNodeDragged");
-    // });
-    // handleNodeDragged(boxId);
   };
-
-  // const nodeDragged = (node: box) => {};
 
   return (
     <div className="App">
@@ -89,8 +75,6 @@ const App: React.FC = () => {
         ))}
         <Xarrows start={boxes[0]} end={boxes[1]} />
       </div>
-
-      {/* <Arrows lines={lines} boxes={boxes} /> */}
     </div>
   );
 };
