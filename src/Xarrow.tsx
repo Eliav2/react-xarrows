@@ -8,18 +8,17 @@ type props = {
   startAnchor?: anchorType | anchorType[];
   endAnchor?: anchorType | anchorType[];
   curveness?: number;
+  strokeWidth?: number;
 };
 
 type point = { x: number; y: number };
 
 function Xarrow(props: props) {
   const selfRef = useRef(null);
-  // const [prevProps, setPrevProps] = useState(null);
-  // const [prevPosState, setPrevPosState] = useState({ start: { x: 0, y: 0 }, end: { x: 0, y: 0 } });
   const [prevPosState, setPrevPosState] = useState(null);
-  // const [hasMounted, setHasMounted] = useState(false);
+
   //initial state
-  const [s, setS] = useState({
+  const [st, setSt] = useState({
     cx0: 0, //x start position of the canvas
     cy0: 0, //y start position of the canvas
     cw: 0, // the canvas width
@@ -34,6 +33,8 @@ function Xarrow(props: props) {
     cpx2: 0,
     cpy2: 0
   });
+  const extra = { excx: props.strokeWidth * 6, excy: props.strokeWidth * 6 };
+  const { excx, excy } = extra;
 
   const [canvasStartPos, setCanvasStartPos] = useState<point>({ x: 0, y: 0 });
 
@@ -69,7 +70,6 @@ function Xarrow(props: props) {
     // Do NOT call thie function directly.
     // you should set position by 'setPrevPosState(posState)' and that will trigger
     // this function in the useEffect hook.
-
     let { start: s } = positions;
     let { end: e } = positions;
     let sw = s.right - s.x; //start element width
@@ -79,8 +79,8 @@ function Xarrow(props: props) {
     let edx = e.x - s.x; // the x diffrence between the two elements
     let edy = e.y - s.y; // the y diffrence between the two elements
 
-    let cx0 = Math.min(s.x, e.x) - canvasStartPos.x;
-    let cy0 = Math.min(s.y, e.y) - canvasStartPos.y;
+    let cx0 = Math.min(s.x, e.x) - canvasStartPos.x - excx / 2;
+    let cy0 = Math.min(s.y, e.y) - canvasStartPos.y - excy / 2;
     let dx = edx;
     let dy = edy;
 
@@ -217,20 +217,33 @@ function Xarrow(props: props) {
         cpx2 = cw * (1 - cu);
         cpy2 = ch;
         cpx1 = cw * cu;
+        if (dx * dy < 0) {
+          cpx1 = cw * (1 - cu);
+          cpy1 = ch;
+          cpx2 = cw * cu;
+          cpy2 = 0;
+          // [cpx1, cpy1] = [cpx2, cpy2];
+        }
       },
       vCurv: () => {
         //vertical - from top to bottom or opposite
         cpx2 = cw;
         cpy2 = ch * (1 - cu);
         cpy1 = ch * cu;
+        if (dx * dy < 0) {
+          cpy1 = ch * (1 - cu);
+          cpx1 = cw;
+          cpy2 = ch * cu;
+          cpx2 = 0;
+        }
       },
       hvCurv: () => {
         // start horizintaly then verticaly
         // from v side to h side
         if (dx * dy < 0) {
-          cpy2 = ch;
-          cpx2 = cw * (1 - cu);
-          cpy1 = ch * cu;
+          cpy1 = ch;
+          cpx1 = cw * (1 - cu);
+          cpy2 = ch * cu;
         } else {
           cpx1 = cw * cu;
           cpx2 = cw;
@@ -241,12 +254,11 @@ function Xarrow(props: props) {
         // start verticaly then horizintaly
         // from h side to v side
         if (dx * dy < 0) {
-          cpy1 = 0;
-          cpx1 = cw * cu; //blue?
-          cpy2 = ch * (1 - cu);
-          cpx2 = cw;
+          cpy2 = 0;
+          cpx2 = cw * cu; //blue?
+          cpy1 = ch * (1 - cu);
+          cpx1 = cw;
         } else {
-          console.log("heyyy", cpy1);
           cpy1 = ch * cu;
           cpx2 = cw * (1 - cu);
           cpy2 = ch;
@@ -262,15 +274,15 @@ function Xarrow(props: props) {
       return isTrue;
     };
 
-    let st = startAnchorType,
-      et = endAnchorType;
-    if (["left", "right"].includes(st) && ["right", "left"].includes(et)) {
+    let sat = startAnchorType,
+      eat = endAnchorType;
+    if (["left", "right"].includes(sat) && ["right", "left"].includes(eat)) {
       curvesPossabilties.hCurv();
-    } else if (["top", "bottom"].includes(st) && ["bottom", "top"].includes(et)) {
+    } else if (["top", "bottom"].includes(sat) && ["bottom", "top"].includes(eat)) {
       curvesPossabilties.vCurv();
-    } else if (["top", "bottom"].includes(st) && ["left", "right"].includes(et)) {
+    } else if (["top", "bottom"].includes(sat) && ["left", "right"].includes(eat)) {
       curvesPossabilties.vhCurv();
-    } else if (["left", "right"].includes(st) && ["top", "bottom"].includes(et)) {
+    } else if (["left", "right"].includes(sat) && ["top", "bottom"].includes(eat)) {
       curvesPossabilties.hvCurv();
     }
 
@@ -290,43 +302,64 @@ function Xarrow(props: props) {
       cpx2 = cw - cpx2;
     } else {
       if (dx < 0) {
-        y1 = dy;
-        y2 = 0;
-        x2 = -dx;
         cpy1 = ch - cpy1;
         cpy2 = ch - cpy2;
+        x1 = -dx;
+        x2 = 0;
+        y2 = dy;
       }
       if (dy < 0) {
-        x1 = dx;
-        x2 = 0;
-        y2 = -dy;
         cpx1 = cw - cpx1;
         cpx2 = cw - cpx2;
+        x1 = 0;
+        y1 = -dy;
+        y2 = 0;
+        x2 = dx;
       }
     }
-    setS({ cx0, cy0, x1, x2, y1, y2, cw, ch, cpx1, cpy1, cpx2, cpy2 });
+    cw += excx;
+    ch += excy;
+    console.log({ x1, y1 }, { x2, y2 });
+    setSt({ cx0, cy0, x1, x2, y1, y2, cw, ch, cpx1, cpy1, cpx2, cpy2 });
   };
 
   return (
     <svg
       ref={selfRef}
-      width={s.cw}
-      height={s.ch}
+      width={st.cw}
+      height={st.ch}
+      viewBox={`${-excx / 2} ${-excy / 2} ${st.cw} ${st.ch}`}
       style={{
-        border: "1px yellow dashed",
+        // border: "1px yellow dashed",
         position: "absolute",
-        left: s.cx0,
-        top: s.cy0,
+        left: st.cx0,
+        top: st.cy0,
         pointerEvents: "none"
       }}
     >
-      <circle r="5" cx={s.cpx1} cy={s.cpy1} fill="green" />
-      <circle r="5" cx={s.cpx2} cy={s.cpy2} fill="blue" />
+      <defs>
+        <marker
+          id="arrowHead"
+          viewBox="0 0 12 12"
+          refX={"10"}
+          refY="6"
+          markerUnits="strokeWidth"
+          markerWidth="6"
+          markerHeight="6"
+          orient="auto"
+        >
+          <path d="M 0 0 L 12 6 L 0 12 L 3 6  z" fill={props.stroke} />
+        </marker>
+      </defs>
+      {/* <circle r="5" cx={st.cpx1} cy={st.cpy1} fill="green" />
+      <circle r="5" cx={st.cpx2} cy={st.cpy2} fill="blue" /> */}
       <path
-        d={`M ${s.x1} ${s.y1} C  ${s.cpx1} ${s.cpy1}, ${s.cpx2} ${s.cpy2}, ${s.x2} ${s.y2}`}
-        stroke="red"
-        strokeWidth="3"
+        d={`M ${st.x1} ${st.y1} C  ${st.cpx1} ${st.cpy1}, ${st.cpx2} ${st.cpy2}, ${st.x2} ${st.y2}`}
+        stroke={props.stroke}
+        strokeWidth={props.strokeWidth}
         fill="transparent"
+        markerEnd="url(#arrowHead)"
+        color="blue"
       />
     </svg>
   );
@@ -335,7 +368,10 @@ function Xarrow(props: props) {
 Xarrow.defaultProps = {
   startAnchor: "auto",
   endAnchor: "auto",
-  curveness: 0.7
+  curveness: 0.8,
+  strokeWidth: 3,
+  stroke: "coral"
+  // arrowStyle: { color }
 };
 
 export default Xarrow;
