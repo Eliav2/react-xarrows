@@ -1,17 +1,38 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState, Children } from "react";
 var lodash = require("lodash");
 
 type anchorType = "auto" | "middle" | "left" | "right" | "top" | "bottom";
 type props = {
   start: HTMLElement;
   end: HTMLElement;
-  startAnchor?: anchorType | anchorType[];
-  endAnchor?: anchorType | anchorType[];
-  curveness?: number;
-  strokeWidth?: number;
+  startAnchor: anchorType | anchorType[];
+  endAnchor: anchorType | anchorType[];
+  curveness: number;
+  strokeWidth: number;
+  strokeColor: string;
 };
 
 type point = { x: number; y: number };
+
+const findCommonAncestor = (elem, elem2) => {
+  let parent1 = elem.parentElement,
+    parent2 = elem2.parentElement;
+  let childrensOfParent1 = [],
+    childrensOfParent2 = [];
+  while (parent1 !== null && parent2 !== null) {
+    if (parent1 !== !null) {
+      childrensOfParent2.push(parent2);
+      if (childrensOfParent2.includes(parent1)) return parent1;
+    }
+    if (parent2 !== !null) {
+      childrensOfParent1.push(parent1);
+      if (childrensOfParent1.includes(parent2)) return parent2;
+    }
+    parent1 = parent1.parentElement;
+    parent2 = parent1.parentElement;
+  }
+  return null;
+};
 
 function Xarrow(props: props) {
   const selfRef = useRef(null);
@@ -39,11 +60,29 @@ function Xarrow(props: props) {
   const [canvasStartPos, setCanvasStartPos] = useState<point>({ x: 0, y: 0 });
 
   const getPos = () => {
+    // console.log("xArrow", selfRef.current);
+
     let s = props.start.current.getBoundingClientRect();
     let e = props.end.current.getBoundingClientRect();
+    let yOffset = window.pageYOffset;
+    let xOffset = window.pageXOffset;
+
+    let ancestor = findCommonAncestor(props.start.current, selfRef.current); // for now assumsing both on same parent! #TODO
+    yOffset += ancestor.scrollTop;
+    xOffset += ancestor.scrollLeft;
     return {
-      start: { x: s.x, y: s.y, right: s.right, bottom: s.bottom },
-      end: { x: e.x, y: e.y, right: e.right, bottom: e.bottom }
+      start: {
+        x: s.x + xOffset,
+        y: s.y + yOffset,
+        right: s.right + xOffset,
+        bottom: s.bottom + yOffset
+      },
+      end: {
+        x: e.x + xOffset,
+        y: e.y + yOffset,
+        right: e.right + xOffset,
+        bottom: e.bottom + yOffset
+      }
     };
   };
 
@@ -60,6 +99,7 @@ function Xarrow(props: props) {
   }, [prevPosState]);
 
   useEffect(() => {
+    // console.log("useEffect");
     let posState = getPos();
     if (!lodash.isEqual(prevPosState, posState)) {
       setPrevPosState(posState);
@@ -266,14 +306,6 @@ function Xarrow(props: props) {
       }
     };
 
-    const includeAll = (l: string[], findAll: string[]): boolean => {
-      let isTrue = true;
-      findAll.forEach(findMe => {
-        if (!l.includes(findMe)) isTrue = false;
-      });
-      return isTrue;
-    };
-
     let sat = startAnchorType,
       eat = endAnchorType;
     if (["left", "right"].includes(sat) && ["right", "left"].includes(eat)) {
@@ -319,7 +351,6 @@ function Xarrow(props: props) {
     }
     cw += excx;
     ch += excy;
-    console.log({ x1, y1 }, { x2, y2 });
     setSt({ cx0, cy0, x1, x2, y1, y2, cw, ch, cpx1, cpy1, cpx2, cpy2 });
   };
 
@@ -348,18 +379,17 @@ function Xarrow(props: props) {
           markerHeight="6"
           orient="auto"
         >
-          <path d="M 0 0 L 12 6 L 0 12 L 3 6  z" fill={props.stroke} />
+          <path d="M 0 0 L 12 6 L 0 12 L 3 6  z" fill={props.strokeColor} />
         </marker>
       </defs>
       {/* <circle r="5" cx={st.cpx1} cy={st.cpy1} fill="green" />
       <circle r="5" cx={st.cpx2} cy={st.cpy2} fill="blue" /> */}
       <path
         d={`M ${st.x1} ${st.y1} C  ${st.cpx1} ${st.cpy1}, ${st.cpx2} ${st.cpy2}, ${st.x2} ${st.y2}`}
-        stroke={props.stroke}
+        stroke={props.strokeColor}
         strokeWidth={props.strokeWidth}
         fill="transparent"
         markerEnd="url(#arrowHead)"
-        color="blue"
       />
     </svg>
   );
@@ -370,7 +400,7 @@ Xarrow.defaultProps = {
   endAnchor: "auto",
   curveness: 0.8,
   strokeWidth: 3,
-  stroke: "coral"
+  strokeColor: "CornflowerBlue"
   // arrowStyle: { color }
 };
 
