@@ -75,8 +75,8 @@ const Example1: React.FC = () => {
       </h3>
       <p>automatic anchoring to the minimal length. works also when inside scrollable window</p>
       <div style={canvasStyle} id="canvas">
-        <div style={boxContainerStyle} id="boxContainerStyle">
-          <div style={boxContainerStyle} id="boxContainer2Style">
+        <div style={boxContainerStyle} id="boxContainerConatinerStyle">
+          <div style={boxContainerStyle} id="boxContainerStyle">
             {boxes.map((box, i) => (
               <div
                 ref={box.ref}

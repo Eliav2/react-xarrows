@@ -25,7 +25,7 @@ const boxContainerStyle = {
 const boxContainerContainerStyle = {
   overflow: "scroll",
   width: "150%",
-  height: "100%",
+  height: "120%",
   border: "black solid 1px"
 };
 
@@ -59,6 +59,7 @@ const Box: React.FC = props => {
   return (
     <div
       ref={props.box.ref}
+      id={props.box.id}
       style={{ ...boxStyle, left: props.box.x, top: props.box.y }}
       onDragStart={e => handlDragStart(e)}
       onDragEnd={e => handleDragEnd(e, props.box.id)}
@@ -109,28 +110,32 @@ const Example2: React.FC = () => {
         <u>Example3:</u>
       </h3>
       <p> in debug stage</p>
-      <div style={canvasStyle}>
-        <div style={boxContainerContainerStyle}>
-          <div ref={boxContainerRef} style={boxContainerStyle}>
+      <div style={canvasStyle} id="canvas">
+        <div style={boxContainerContainerStyle} id="boxContainerContainer">
+          <div ref={boxContainerRef} style={boxContainerStyle} id="boxContainer">
             {boxes.map((box, i) => (
               <Box key={i} box={box} boxes={boxes} setBoxes={setBoxes} />
             ))}
           </div>
         </div>
-        <div ref={boxContainer2Ref} style={boxContainerStyle}>
-          {boxes2.map((box, i) => (
-            <Box key={i} box={box} boxes={boxes2} setBoxes={setBoxes2} />
-          ))}
+        <div style={boxContainerContainerStyle} id="boxContainerContainer2">
+          <div style={boxContainerContainerStyle} id="boxContainerContainer2Container">
+            <div ref={boxContainer2Ref} style={boxContainerStyle} id="boxContainer2">
+              {boxes2.map((box, i) => (
+                <Box key={i} box={box} boxes={boxes2} setBoxes={setBoxes2} />
+              ))}
+            </div>
+          </div>
         </div>
+        {lines.map((line, i) => (
+          <Xarrows
+            key={i}
+            start={getRefById(line.from)}
+            end={getRefById(line.to)}
+            monitorDOMchanges={true}
+          />
+        ))}
       </div>
-      {lines.map((line, i) => (
-        <Xarrows
-          key={i}
-          start={getRefById(line.from)}
-          end={getRefById(line.to)}
-          monitorDOMchanges={true}
-        />
-      ))}
     </React.Fragment>
   );
 };

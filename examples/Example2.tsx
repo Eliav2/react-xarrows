@@ -64,6 +64,7 @@ const Box: React.FC = props => {
       style={{ ...boxStyle, left: props.box.x, top: props.box.y }}
       onDragStart={e => handlDragStart(e)}
       onDragEnd={e => handleDragEnd(e, props.box.id)}
+      id={props.box.id}
       draggable
     >
       {props.box.id}
@@ -115,31 +116,36 @@ const Example2: React.FC = () => {
         {" "}
         works perfectly no matter the parent-child relationship between the Xarrow and the source
         and target.
-        <br />
-        set <code>monitorDOMchanges </code>
-        property to <code>true</code> to enable this behavior - this will add eventListeners to the
-        DOM and will trigger update when needed(expereintial){" "}
       </p>
-      <div style={canvasStyle}>
-        <div ref={boxContainerRef} style={boxContainerStyle}>
+      <div style={canvasStyle} id="canvas">
+        <div ref={boxContainerRef} style={boxContainerStyle} id="boxContainer1">
           {boxes.map((box, i) => (
             <Box key={i} box={box} boxes={boxes} setBoxes={setBoxes} />
           ))}
         </div>
-        <div ref={boxContainer2Ref} style={boxContainerStyle}>
+        <div ref={boxContainer2Ref} style={boxContainerStyle} id="boxContainer2">
           {boxes2.map((box, i) => (
             <Box key={i} box={box} boxes={boxes2} setBoxes={setBoxes2} />
           ))}
         </div>
+        {lines.map((line, i) => (
+          <Xarrows
+            key={i}
+            start={getRefById(line.from)}
+            end={getRefById(line.to)}
+            monitorDOMchanges={true}
+          />
+        ))}
       </div>
-      {lines.map((line, i) => (
-        <Xarrows
-          key={i}
-          start={getRefById(line.from)}
-          end={getRefById(line.to)}
-          monitorDOMchanges={true}
-        />
-      ))}
+      <p>
+        {" "}
+        set <code>monitorDOMchanges </code>
+        property to <code>true</code> to enable this behavior - this will add eventListeners to the
+        DOM and will trigger update when needed(expereintial).
+        <br /> however - this is not "the React way" so its not defaulty enabled - make sure to
+        place the Xarrow component as brother of the common ancestor of 'start' component and 'end'
+        component so React will rerender Xarrow whenever needed.{" "}
+      </p>
     </React.Fragment>
   );
 };
