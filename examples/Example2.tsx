@@ -2,17 +2,11 @@ import React, { useState, useRef, useEffect } from "react";
 import { line, box, point } from "./types";
 import Xarrows from "../src/Xarrow";
 
-const canvasContainerStyle = {
-  width: "100%",
-  height: "40vh",
-  display: "flex"
-};
-
 const canvasStyle = {
   width: "100%",
   height: "40vh",
   background: "white",
-  // overflow: "auto",
+  overflow: "auto",
   display: "flex"
   // overflowY: "scroll",
   // overflowX: "hidden"
@@ -27,6 +21,15 @@ const boxContainerStyle = {
   color: "black",
   border: "black solid 1px"
 };
+
+// const innerBoxContainerStyle = {
+//   position: "relative",
+//   width: "50%",
+//   height: "100%",
+//   background: "white",
+//   color: "black",
+//   border: "black solid 1px"
+// };
 
 const boxStyle = {
   position: "absolute",
@@ -79,7 +82,10 @@ const Example2: React.FC = () => {
     { id: "box4", x: 20, y: 200, ref: useRef(null) }
   ]);
 
-  const [lines, setLines] = useState<line[]>([{ from: "box1", to: "box2" }]);
+  const [lines, setLines] = useState<line[]>([
+    { from: "box1", to: "box4" }
+    // { from: "box3", to: "box2" }
+  ]);
 
   const getRefById = Id => {
     var ref;
@@ -96,7 +102,6 @@ const Example2: React.FC = () => {
         works perfectly no matter the parent-child relationship between the Xarrow and the source
         and target.{" "}
       </p>
-      {/* <div style={canvasContainerStyle}> */}
       <div style={canvasStyle}>
         <div style={boxContainerStyle}>
           {boxes.map((box, i) => (
@@ -110,10 +115,13 @@ const Example2: React.FC = () => {
         </div>
       </div>
       {lines.map((line, i) => (
-        <Xarrows key={i} start={getRefById(line.from)} end={getRefById(line.to)} />
+        <Xarrows
+          key={i}
+          start={getRefById(line.from)}
+          end={getRefById(line.to)}
+          monitorDOMchanges={true}
+        />
       ))}
-      {/* <div style={canvasStyle} /> */}
-      {/* </div> */}
     </React.Fragment>
   );
 };

@@ -1,7 +1,22 @@
-import React, { useRef, useEffect, useState, Children } from "react";
+import React, { useRef, useEffect, useState, useLayoutEffect } from "react";
 var lodash = require("lodash");
 
 type anchorType = "auto" | "middle" | "left" | "right" | "top" | "bottom";
+type prevPos = {
+  start: {
+    x: number;
+    y: number;
+    right: number;
+    bottom: number;
+  };
+  end: {
+    x: number;
+    y: number;
+    right: number;
+    bottom: number;
+  };
+};
+
 type props = {
   start: HTMLElement;
   end: HTMLElement;
@@ -10,6 +25,14 @@ type props = {
   curveness: number;
   strokeWidth: number;
   strokeColor: string;
+  monitorDOMchanges: boolean;
+  registerEvents: registerEvents[];
+};
+
+type registerEvents = {
+  ref: React.MutableRefObject<any>;
+  eventName: keyof GlobalEventHandlersEventMap;
+  callback?: CallableFunction;
 };
 
 type point = { x: number; y: number };
@@ -34,9 +57,101 @@ const findCommonAncestor = (elem, elem2) => {
   return null;
 };
 
+const findAllParents = (elem: HTMLElement) => {
+  let parents: HTMLElement[] = [];
+  let parent = elem;
+  while (parent.id !== "root") {
+    parents.push(parent);
+    parent = parent.parentElement;
+  }
+  return parents;
+};
+
+const findAllChildrens = (child: HTMLElement, parent: HTMLElement) => {
+  if (child === parent) return [];
+  let childrens: HTMLElement[] = [];
+  let childParent = child.parentElement;
+  while (childParent !== parent) {
+    childrens.push(childParent);
+    childParent = childParent.parentElement;
+  }
+  return childrens;
+};
+
 function Xarrow(props: props) {
   const selfRef = useRef(null);
-  const [prevPosState, setPrevPosState] = useState(null);
+
+  const [prevPosState, setPrevPosState] = useState<prevPos>(null);
+  const [parents, setParents] = useState<{ end: HTMLElement[]; start: HTMLElement[] }>(null); //list parents of the common ascestor of the arrow with start and end(until "root elemnt")
+  const [childrens, setChildrens] = useState<{ end: HTMLElement[]; start: HTMLElement[] }>(null); //list childrens of the common ascestor of the arrow with start and end until start or end
+  const [canvasStartPos, setCanvasStartPos] = useState<point>({ x: 0, y: 0 });
+
+  // if (parents) {
+  //   let scrolltopSum = parents.start.map(p => p.scrollTop).reduce((a, b) => a + b);
+  //   console.log(parents);
+  //   console.log(scrolltopSum, scrolltopSum);
+  // }
+
+  const handleScroll = e => {
+    let posState = getPos();
+    if (!lodash.isEqual(prevPosState, posState)) setPrevPosState(posState);
+  };
+
+  const handleWindowResize = e => {
+    let posState = getPos();
+    if (!lodash.isEqual(prevPosState, posState)) setPrevPosState(posState);
+  };
+
+  const initParents = (startCommonAncestor, endCommonAncestor) => {
+    let startParents = findAllParents(startCommonAncestor);
+    let endParents = findAllParents(endCommonAncestor);
+    setParents({ start: startParents, end: endParents });
+  };
+
+  const initChildrens = (startCommonAncestor, endCommonAncestor) => {
+    let startChildrens = findAllChildrens(props.start.current, startCommonAncestor);
+    let endChildrens = findAllChildrens(props.end.current, endCommonAncestor);
+    setChildrens({ start: startChildrens, end: endChildrens });
+  };
+
+  useEffect(() => {
+    // equilavent to componentDidMount
+    let startCommonAncestor = findCommonAncestor(props.start.current, selfRef.current);
+    let endCommonAncestor = findCommonAncestor(props.end.current, selfRef.current);
+    setCanvasStartPos(selfRef.current.getBoundingClientRect());
+    initParents(startCommonAncestor, endCommonAncestor);
+    if (props.monitorDOMchanges) {
+      initChildrens(startCommonAncestor, endCommonAncestor);
+    }
+  }, []);
+
+  useLayoutEffect(() => {
+    let startingPos = getPos();
+    setPrevPosState(startingPos);
+    if (props.monitorDOMchanges) {
+      // console.log(childrens);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (childrens && props.monitorDOMchanges) {
+      childrens.start.forEach(elem => elem.addEventListener("scroll", handleScroll));
+      childrens.end.forEach(elem => elem.addEventListener("scroll", handleScroll));
+      window.addEventListener("resize", handleWindowResize);
+    }
+  }, [childrens]);
+
+  useEffect(() => {
+    // triggers position update when prevPosState changed
+    if (prevPosState) updatePosition(prevPosState);
+  }, [prevPosState]);
+
+  useEffect(() => {
+    let posState = getPos();
+    if (!lodash.isEqual(prevPosState, posState)) {
+      setPrevPosState(posState);
+    }
+  });
 
   //initial state
   const [st, setSt] = useState({
@@ -57,54 +172,44 @@ function Xarrow(props: props) {
   const extra = { excx: props.strokeWidth * 6, excy: props.strokeWidth * 6 };
   const { excx, excy } = extra;
 
-  const [canvasStartPos, setCanvasStartPos] = useState<point>({ x: 0, y: 0 });
-
   const getPos = () => {
-    // console.log("xArrow", selfRef.current);
-
     let s = props.start.current.getBoundingClientRect();
     let e = props.end.current.getBoundingClientRect();
-    let yOffset = window.pageYOffset;
-    let xOffset = window.pageXOffset;
+    let yOffsetStart = window.pageYOffset;
+    let xOffsetStart = window.pageXOffset;
+    let yOffsetEnd = window.pageYOffset;
+    let xOffsetEnd = window.pageXOffset;
 
-    let ancestor = findCommonAncestor(props.start.current, selfRef.current); // for now assumsing both on same parent! #TODO
-    yOffset += ancestor.scrollTop;
-    xOffset += ancestor.scrollLeft;
+    if (parents) {
+      parents.start.forEach(parent => {
+        yOffsetStart += parent.scrollTop;
+        xOffsetStart += parent.scrollLeft;
+      });
+      if (lodash.isEqual(parents.start, parents.end)) {
+        yOffsetEnd = yOffsetStart;
+        xOffsetEnd = xOffsetStart;
+      } else {
+        parents.end.forEach(parent => {
+          yOffsetEnd += parent.scrollTop;
+          xOffsetEnd += parent.scrollLeft;
+        });
+      }
+    }
     return {
       start: {
-        x: s.x + xOffset,
-        y: s.y + yOffset,
-        right: s.right + xOffset,
-        bottom: s.bottom + yOffset
+        x: s.x + xOffsetStart,
+        y: s.y + yOffsetStart,
+        right: s.right + xOffsetStart,
+        bottom: s.bottom + yOffsetStart
       },
       end: {
-        x: e.x + xOffset,
-        y: e.y + yOffset,
-        right: e.right + xOffset,
-        bottom: e.bottom + yOffset
+        x: e.x + xOffsetEnd,
+        y: e.y + yOffsetEnd,
+        right: e.right + xOffsetEnd,
+        bottom: e.bottom + yOffsetEnd
       }
     };
   };
-
-  useEffect(() => {
-    // equilavent to componentDidMount
-    setCanvasStartPos(selfRef.current.getBoundingClientRect());
-    let startingPos = getPos();
-    setPrevPosState(startingPos);
-  }, []);
-
-  useEffect(() => {
-    // triggers position update when prevPosState here handed
-    if (prevPosState) updatePosition(prevPosState);
-  }, [prevPosState]);
-
-  useEffect(() => {
-    // console.log("useEffect");
-    let posState = getPos();
-    if (!lodash.isEqual(prevPosState, posState)) {
-      setPrevPosState(posState);
-    }
-  });
 
   const updatePosition = positions => {
     // Do NOT call thie function directly.
@@ -118,7 +223,6 @@ function Xarrow(props: props) {
     let eh = e.bottom - e.y; //end element hight
     let edx = e.x - s.x; // the x diffrence between the two elements
     let edy = e.y - s.y; // the y diffrence between the two elements
-
     let cx0 = Math.min(s.x, e.x) - canvasStartPos.x - excx / 2;
     let cy0 = Math.min(s.y, e.y) - canvasStartPos.y - excy / 2;
     let dx = edx;
@@ -400,8 +504,9 @@ Xarrow.defaultProps = {
   endAnchor: "auto",
   curveness: 0.8,
   strokeWidth: 3,
-  strokeColor: "CornflowerBlue"
-  // arrowStyle: { color }
+  strokeColor: "CornflowerBlue",
+  monitorDOMchanges: false,
+  registerEvents: []
 };
 
 export default Xarrow;

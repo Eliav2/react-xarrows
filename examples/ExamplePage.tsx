@@ -22,10 +22,10 @@ const ExamplePage: React.FC = () => {
         <br />
         works great - and positions updated.
       </p>
-      <h3>
+      {/* <h3>
         <u>Example1:</u>
       </h3>
-      <Example1 />
+      <Example1 /> */}
       <h3>
         <u>Example2:</u>
       </h3>

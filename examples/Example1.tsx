@@ -2,13 +2,31 @@ import React, { useState, useRef } from "react";
 import { line, box, point } from "./types";
 import Xarrows from "../src/Xarrow";
 
+// const canvasStyle = {
+//   position: "relative",
+//   background: "white",
+//   color: "black",
+//   width: "100%",
+//   height: "40vh",
+//   overflow: "auto"
+// };
+
 const canvasStyle = {
-  position: "relative",
-  background: "white",
-  color: "black",
   width: "100%",
   height: "40vh",
-  overflow: "auto"
+  background: "white",
+  overflow: "auto",
+  display: "flex"
+};
+
+const boxContainerStyle = {
+  position: "relative",
+  overflow: "auto",
+  width: "120%",
+  height: "120%",
+  background: "white",
+  color: "black",
+  border: "black solid 1px"
 };
 
 const boxStyle = {
@@ -53,26 +71,30 @@ const Example1: React.FC = () => {
   return (
     <React.Fragment>
       <p>automatic anchoring to the minimal length. works also when inside scrollable window</p>
-      <div style={canvasStyle}>
-        {boxes.map((box, i) => (
-          <div
-            ref={box.ref}
-            key={i}
-            style={{ ...boxStyle, left: box.x, top: box.y }}
-            onDragStart={e => handlDragStart(e)}
-            onDragEnd={e => handleDragEnd(e, box.id)}
-            draggable
-          >
-            {box.id}
+      <div style={canvasStyle} id="canvas">
+        <div style={boxContainerStyle} id="boxContainerStyle">
+          <div style={boxContainerStyle} id="boxContainer2Style">
+            {boxes.map((box, i) => (
+              <div
+                ref={box.ref}
+                key={i}
+                style={{ ...boxStyle, left: box.x, top: box.y }}
+                onDragStart={e => handlDragStart(e)}
+                onDragEnd={e => handleDragEnd(e, box.id)}
+                draggable
+              >
+                {box.id}
+              </div>
+            ))}
+            {lines.map((line, i) => (
+              <Xarrows
+                key={i}
+                start={boxes.find(box => box.id === line.from).ref}
+                end={boxes.find(box => box.id === line.to).ref}
+              />
+            ))}
           </div>
-        ))}
-        {lines.map((line, i) => (
-          <Xarrows
-            key={i}
-            start={boxes.find(box => box.id === line.from).ref}
-            end={boxes.find(box => box.id === line.to).ref}
-          />
-        ))}
+        </div>
       </div>
       <br />
     </React.Fragment>
