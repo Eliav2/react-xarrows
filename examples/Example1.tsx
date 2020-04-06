@@ -70,6 +70,9 @@ const Example1: React.FC = () => {
 
   return (
     <React.Fragment>
+      <h3>
+        <u>Example1:</u>
+      </h3>
       <p>automatic anchoring to the minimal length. works also when inside scrollable window</p>
       <div style={canvasStyle} id="canvas">
         <div style={boxContainerStyle} id="boxContainerStyle">

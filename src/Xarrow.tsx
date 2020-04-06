@@ -86,11 +86,11 @@ function Xarrow(props: props) {
   const [childrens, setChildrens] = useState<{ end: HTMLElement[]; start: HTMLElement[] }>(null); //list childrens of the common ascestor of the arrow with start and end until start or end
   const [canvasStartPos, setCanvasStartPos] = useState<point>({ x: 0, y: 0 });
 
-  // if (parents) {
-  //   let scrolltopSum = parents.start.map(p => p.scrollTop).reduce((a, b) => a + b);
-  //   console.log(parents);
-  //   console.log(scrolltopSum, scrolltopSum);
-  // }
+  if (parents) {
+    // let scrolltopSum = parents.start.map(p => p.scrollTop).reduce((a, b) => a + b);
+    console.log(parents);
+    // console.log(scrolltopSum, scrolltopSum);
+  }
 
   const handleScroll = e => {
     let posState = getPos();
@@ -173,8 +173,10 @@ function Xarrow(props: props) {
   const { excx, excy } = extra;
 
   const getPos = () => {
-    let s = props.start.current.getBoundingClientRect();
-    let e = props.end.current.getBoundingClientRect();
+    let tmpS = props.start.current ? props.start.current.getBoundingClientRect() : 0;
+    let tmpE = props.end.current ? props.end.current.getBoundingClientRect() : 0;
+    let s = tmpS;
+    let e = tmpE;
     let yOffsetStart = window.pageYOffset;
     let xOffsetStart = window.pageXOffset;
     let yOffsetEnd = window.pageYOffset;

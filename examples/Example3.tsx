@@ -14,7 +14,7 @@ const canvasStyle = {
 
 const boxContainerStyle = {
   position: "relative",
-  overflow: "scroll",
+  // overflow: "scroll",
   width: "120%",
   height: "140%",
   background: "white",
@@ -22,14 +22,12 @@ const boxContainerStyle = {
   border: "black solid 1px"
 };
 
-// const innerBoxContainerStyle = {
-//   position: "relative",
-//   width: "50%",
-//   height: "100%",
-//   background: "white",
-//   color: "black",
-//   border: "black solid 1px"
-// };
+const boxContainerContainerStyle = {
+  overflow: "scroll",
+  width: "150%",
+  height: "100%",
+  border: "black solid 1px"
+};
 
 const boxStyle = {
   position: "absolute",
@@ -108,23 +106,16 @@ const Example2: React.FC = () => {
   return (
     <React.Fragment>
       <h3>
-        <u>Example2:</u>
+        <u>Example3:</u>
       </h3>
-
-      <p>
-        {" "}
-        works perfectly no matter the parent-child relationship between the Xarrow and the source
-        and target.
-        <br />
-        set <code>monitorDOMchanges </code>
-        property to <code>true</code> to enable this behavior - this will add eventListeners to the
-        DOM and will trigger update when needed(expereintial){" "}
-      </p>
+      <p> in debug stage</p>
       <div style={canvasStyle}>
-        <div ref={boxContainerRef} style={boxContainerStyle}>
-          {boxes.map((box, i) => (
-            <Box key={i} box={box} boxes={boxes} setBoxes={setBoxes} />
-          ))}
+        <div style={boxContainerContainerStyle}>
+          <div ref={boxContainerRef} style={boxContainerStyle}>
+            {boxes.map((box, i) => (
+              <Box key={i} box={box} boxes={boxes} setBoxes={setBoxes} />
+            ))}
+          </div>
         </div>
         <div ref={boxContainer2Ref} style={boxContainerStyle}>
           {boxes2.map((box, i) => (
