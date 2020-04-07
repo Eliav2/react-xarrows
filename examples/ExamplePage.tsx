@@ -4,6 +4,7 @@ import Xarrows from "../src/Xarrow";
 import Example1 from "./Example1";
 import Example2 from "./Example2";
 import Example3 from "./Example3";
+import Example4 from "./Example4";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 
 const titleStyle = {
@@ -22,7 +23,6 @@ const ExamplePage: React.FC = () => {
         <br />
         no magical css traformations - just great react.
         <br />
-        works great - and positions updated.
       </p>
       <Router>
         <table align="center">
@@ -43,6 +43,11 @@ const ExamplePage: React.FC = () => {
                   <button>Example3</button>
                 </Link>
               </td>
+              <td>
+                <Link to="/Example4">
+                  <button>Example4</button>
+                </Link>
+              </td>
             </tr>
           </tbody>
         </table>
@@ -52,7 +57,7 @@ const ExamplePage: React.FC = () => {
 
         <Switch>
           <Route exact path="/">
-            <h2>choose any example</h2>
+            <h2 style={{ textAlign: "center" }}>choose any example</h2>
           </Route>
           <Route path="/Example1">
             <Example1 />
@@ -62,6 +67,9 @@ const ExamplePage: React.FC = () => {
           </Route>
           <Route path="/Example3">
             <Example3 />
+          </Route>
+          <Route path="/Example4">
+            <Example4 />
           </Route>
         </Switch>
       </Router>

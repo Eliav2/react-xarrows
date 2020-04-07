@@ -2,12 +2,13 @@ import React, { useState, useRef, useEffect, useLayoutEffect } from "react";
 import { line, box, point } from "./types";
 import Xarrows from "../src/Xarrow";
 
-const canvasStyle = {
+const canvasStyle: React.CSSProperties = {
   width: "100%",
   height: "40vh",
   background: "white",
   overflow: "auto",
-  display: "flex"
+  display: "flex",
+  position: "relative"
   // overflowY: "scroll",
   // overflowX: "hidden"
 };
@@ -35,7 +36,8 @@ const boxStyle = {
   borderRadius: "10px",
   textAlign: "center",
   width: "100px",
-  height: "30px"
+  height: "30px",
+  color: "black"
 };
 
 const Box: React.FC = props => {
@@ -71,10 +73,9 @@ const Box: React.FC = props => {
 };
 
 const Example2: React.FC = () => {
-  const [boxes, setBoxes] = useState<box[]>([
+  const [boxes, setBoxes] = useState<box>([
     //this initiazid values are precentage - next it will be pixels
-    { id: "box1", x: 20, y: 20, ref: useRef(null) },
-    { id: "box2", x: 20, y: 80, ref: useRef(null) }
+    { id: "box1", x: 20, y: 20, ref: useRef(null) }
   ]);
 
   const [boxes2, setBoxes2] = useState<box[]>([
@@ -98,42 +99,36 @@ const Example2: React.FC = () => {
   };
 
   useEffect(() => {
-    let { scrollHeight: h1, scrollWidth: w1 } = boxContainerRef.current;
+    // let { scrollHeight: h1, scrollWidth: w1 } = boxContainerRef.current;
     let { scrollHeight: h2, scrollWidth: w2 } = boxContainer2Ref.current;
-    setBoxes(boxes => boxes.map(box => ({ ...box, x: 0.01 * box.x * w1, y: 0.01 * box.y * h1 })));
+    // setBoxes(boxes => boxes.map(box => ({ ...box, x: 0.01 * box.x * w1, y: 0.01 * box.y * h1 })));
     setBoxes2(boxes => boxes.map(box => ({ ...box, x: 0.01 * box.x * w2, y: 0.01 * box.y * h2 })));
   }, []);
 
   return (
     <React.Fragment>
       <h3>
-        <u>Example3:</u>
+        <u>Example4:</u>
       </h3>
       <p> in debug stage</p>
       <div style={canvasStyle} id="canvas">
-        <div ref={boxContainerRef} style={boxContainerStyle} id="boxContainer">
-          {boxes.map((box, i) => (
-            <Box key={i} box={box} boxes={boxes} setBoxes={setBoxes} />
+        <div ref={boxContainer2Ref} style={boxContainerStyle} id="boxContainer2">
+          {boxes2.map((box, i) => (
+            <Box key={i} box={box} boxes={boxes2} setBoxes={setBoxes2} />
           ))}
         </div>
-        <div style={boxContainerContainerStyle} id="boxContainerContainer2">
-          <div style={boxContainerContainerStyle} id="boxContainerContainer2Container">
-            <div ref={boxContainer2Ref} style={boxContainerStyle} id="boxContainer2">
-              {boxes2.map((box, i) => (
-                <Box key={i} box={box} boxes={boxes2} setBoxes={setBoxes2} />
-              ))}
-            </div>
-          </div>
-        </div>
-        {lines.map((line, i) => (
-          <Xarrows
-            key={i}
-            start={getRefById(line.from)}
-            end={getRefById(line.to)}
-            monitorDOMchanges={true}
-          />
+        {boxes.map((box, i) => (
+          <Box key={i} box={box} boxes={boxes} setBoxes={setBoxes} />
         ))}
       </div>
+      {lines.map((line, i) => (
+        <Xarrows
+          key={i}
+          start={getRefById(line.from)}
+          end={getRefById(line.to)}
+          monitorDOMchanges={true}
+        />
+      ))}
     </React.Fragment>
   );
 };

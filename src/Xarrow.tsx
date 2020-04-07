@@ -27,8 +27,6 @@ type arrowStyle = {
 };
 
 type props = {
-  // start: HTMLElement;
-  // end: HTMLElement;
   start: React.MutableRefObject<any>;
   end: React.MutableRefObject<any>;
 
@@ -99,8 +97,11 @@ function Xarrow(props: props) {
   const [canvasStartPos, setCanvasStartPos] = useState<point>({ x: 0, y: 0 });
 
   const updateIfNeeded = () => {
+    testUserGivenProperties();
     let posState = getPos();
-    if (!lodash.isEqual(prevPosState, posState)) setPrevPosState(posState);
+    if (!lodash.isEqual(prevPosState, posState)) {
+      setPrevPosState(posState);
+    }
   };
 
   const monitorDOMchanges = () => {
@@ -110,7 +111,8 @@ function Xarrow(props: props) {
     window.addEventListener("resize", updateIfNeeded);
   };
 
-  const initParentsChildrens = (commonAncestor: HTMLElement) => {
+  const initParentsChildrens = () => {
+    let commonAncestor = findCommonAncestor(props.start.current, props.end.current);
     let parents = findAllParents(commonAncestor).slice(1);
     // console.log("parents", parents);
     setParents(parents);
@@ -119,11 +121,30 @@ function Xarrow(props: props) {
     setChildrens({ start: childrensStart, end: childrensEnd });
   };
 
+  const initCanvasStartPos = () => {
+    let { x: canvPosX, y: canvPosY } = selfRef.current.getBoundingClientRect();
+    canvPosX += window.pageXOffset; // #TOWatch - maybe need to add offsets of parents
+    canvPosY += window.pageYOffset;
+    setCanvasStartPos({ x: canvPosX, y: canvPosY });
+  };
+
+  const testUserGivenProperties = () => {
+    if (props.start == null)
+      throw new Error(
+        "Please make sure the reference to start anchor (property 'start') are provided correctly."
+      );
+    if (props.end == null)
+      throw new Error(
+        "Please make sure the reference to end anchor (property 'end') are provided correctly."
+      );
+  };
+
   useLayoutEffect(() => {
     // equilavent to componentDidMount
-    let commonAncestor = findCommonAncestor(props.start.current, props.end.current);
-    setCanvasStartPos(selfRef.current.getBoundingClientRect());
-    initParentsChildrens(commonAncestor);
+    console.log("xarrow mounted");
+    testUserGivenProperties();
+    initCanvasStartPos();
+    initParentsChildrens();
     // }
   }, []);
 
@@ -139,10 +160,8 @@ function Xarrow(props: props) {
   }, [prevPosState]);
 
   useEffect(() => {
-    let posState = getPos();
-    if (!lodash.isEqual(prevPosState, posState)) {
-      setPrevPosState(posState);
-    }
+    console.log("xarrow renderd!");
+    updateIfNeeded();
   });
 
   //initial state
@@ -220,8 +239,6 @@ function Xarrow(props: props) {
     };
   };
 
-  // console.log("xarrow renderd!");
-
   const updatePosition = (positions: prevPos): void => {
     // Do NOT call thie function directly.
     // you should set position by 'setPrevPosState(posState)' and that will trigger
@@ -234,6 +251,8 @@ function Xarrow(props: props) {
     let eh = e.bottom - e.y; //end element hight
     let edx = e.x - s.x; // the x diffrence between the two elements
     let edy = e.y - s.y; // the y diffrence between the two elements
+    // let cx0 = Math.min(s.x, e.x) - canvasStartPos.x - window.pageXOffset - excx / 2;
+    // let cy0 = Math.min(s.y, e.y) - canvasStartPos.y - window.pageYOffset - excy / 2;
     let cx0 = Math.min(s.x, e.x) - canvasStartPos.x - excx / 2;
     let cy0 = Math.min(s.y, e.y) - canvasStartPos.y - excy / 2;
     let dx = edx;
@@ -498,8 +517,8 @@ function Xarrow(props: props) {
           <path d="M 0 0 L 12 6 L 0 12 L 3 6  z" fill={headColor} />
         </marker>
       </defs>
-      {/* <circle r="5" cx={st.cpx1} cy={st.cpy1} fill="green" />
-      <circle r="5" cx={st.cpx2} cy={st.cpy2} fill="blue" /> */}
+      {/* {/* <circle r="5" cx={st.cpx1} cy={st.cpy1} fill="green" /> */}
+      {/* <circle r="5" cx={canvasStartPos.x} cy={canvasStartPos.y} fill="red" /> */} */}
       <path
         d={`M ${st.x1} ${st.y1} C  ${st.cpx1} ${st.cpy1}, ${st.cpx2} ${st.cpy2}, ${st.x2} ${st.y2}`}
         stroke={strokeColor}
@@ -514,28 +533,18 @@ function Xarrow(props: props) {
 Xarrow.defaultProps = {
   startAnchor: "auto",
   endAnchor: "auto",
-  // curveness: 0.8,
   arrowStyle: {
     curveness: 0.8,
+    // color: "CornflowerBlue",
     color: "CornflowerBlue",
     strokeColor: null,
     headColor: null,
     strokeWidth: 4,
     headSize: 6
   },
-  strokeWidth: 4,
   strokeColor: "CornflowerBlue",
   monitorDOMchanges: true,
   registerEvents: []
 };
-
-// arrowStyle: {
-//   color: "CornflowerBlue",
-//   strokeColor: null,
-//   headColor: null,
-//   curveness: 0.8,
-//   strokeWidth: 4,
-//   headSize: 6
-// },
 
 export default Xarrow;
