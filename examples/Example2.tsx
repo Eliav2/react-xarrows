@@ -22,22 +22,16 @@ const boxContainerStyle = {
   border: "black solid 1px"
 };
 
-// const innerBoxContainerStyle = {
-//   position: "relative",
-//   width: "50%",
-//   height: "100%",
-//   background: "white",
-//   color: "black",
-//   border: "black solid 1px"
-// };
-
 const boxStyle = {
   position: "absolute",
   border: "1px #999 solid",
   borderRadius: "10px",
   textAlign: "center",
-  width: "100px",
-  height: "30px"
+  width: "40px",
+  height: "100px",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center"
 };
 
 const Box: React.FC = props => {

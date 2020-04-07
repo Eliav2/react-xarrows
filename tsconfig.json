@@ -6,8 +6,9 @@
         "strict": true,
         "lib": [
             "dom",
-            "es2015"
+            "es2017"
         ],
-        "jsx": "react"
+        "jsx": "react",
+        "noImplicitAny": false
     }
 }

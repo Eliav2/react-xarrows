@@ -2,15 +2,6 @@ import React, { useState, useRef } from "react";
 import { line, box, point } from "./types";
 import Xarrows from "../src/Xarrow";
 
-// const canvasStyle = {
-//   position: "relative",
-//   background: "white",
-//   color: "black",
-//   width: "100%",
-//   height: "40vh",
-//   overflow: "auto"
-// };
-
 const canvasStyle = {
   width: "100%",
   height: "40vh",

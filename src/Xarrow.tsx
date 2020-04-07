@@ -1,4 +1,5 @@
 import React, { useRef, useEffect, useState, useLayoutEffect } from "react";
+import { Color } from "csstype";
 var lodash = require("lodash");
 
 type anchorType = "auto" | "middle" | "left" | "right" | "top" | "bottom";
@@ -17,16 +18,25 @@ type prevPos = {
   };
 };
 
+type arrowStyle = {
+  color: Color;
+  strokeColor: Color;
+  headColor: Color;
+  strokeWidth: number;
+  curveness: number;
+};
+
 type props = {
-  start: HTMLElement;
-  end: HTMLElement;
+  // start: HTMLElement;
+  // end: HTMLElement;
+  start: React.MutableRefObject<any>;
+  end: React.MutableRefObject<any>;
+
   startAnchor: anchorType | anchorType[];
   endAnchor: anchorType | anchorType[];
-  curveness: number;
-  strokeWidth: number;
-  strokeColor: string;
   monitorDOMchanges: boolean;
   registerEvents: registerEvents[];
+  arrowStyle: arrowStyle;
 };
 
 type registerEvents = {
@@ -37,22 +47,22 @@ type registerEvents = {
 
 type point = { x: number; y: number };
 
-const findCommonAncestor = (elem, elem2) => {
-  function parents(node) {
+const findCommonAncestor = (elem: HTMLElement, elem2: HTMLElement) => {
+  function parents(node: any) {
     var nodes = [node];
     for (; node; node = node.parentNode) {
       nodes.unshift(node);
     }
     return nodes;
   }
-  function commonAncestor(node1, node2) {
+  function commonAncestor(node1: any, node2: any) {
     var parents1 = parents(node1);
     var parents2 = parents(node2);
 
-    if (parents1[0] != parents2[0]) throw "No common ancestor!";
+    if (parents1[0] !== parents2[0]) throw new Error("No common ancestor!");
 
     for (var i = 0; i < parents1.length; i++) {
-      if (parents1[i] != parents2[i]) return parents1[i - 1];
+      if (parents1[i] !== parents2[i]) return parents1[i - 1];
     }
   }
   return commonAncestor(elem, elem2);
@@ -63,7 +73,8 @@ const findAllParents = (elem: HTMLElement) => {
   let parent = elem;
   while (parent.id !== "root") {
     parents.push(parent);
-    parent = parent.parentElement;
+    if (parent.parentElement) parent = parent.parentElement;
+    else return parents;
   }
   return parents;
 };
@@ -83,7 +94,7 @@ function Xarrow(props: props) {
   const selfRef = useRef(null);
 
   const [prevPosState, setPrevPosState] = useState<prevPos>(null);
-  const [parents, setParents] = useState<{ end: HTMLElement[]; start: HTMLElement[] }>(null); //list parents of the common ascestor of the arrow with start and end(until "root elemnt")
+  const [parents, setParents] = useState<HTMLElement[]>(null); //list parents of the common ascestor of the arrow with start and end(until "root elemnt")
   const [childrens, setChildrens] = useState<{ end: HTMLElement[]; start: HTMLElement[] }>(null); //list childrens of the common ascestor of the arrow with start and end until start or end
   const [canvasStartPos, setCanvasStartPos] = useState<point>({ x: 0, y: 0 });
 
@@ -99,7 +110,7 @@ function Xarrow(props: props) {
     window.addEventListener("resize", updateIfNeeded);
   };
 
-  const initParentsChildrens = commonAncestor => {
+  const initParentsChildrens = (commonAncestor: HTMLElement) => {
     let parents = findAllParents(commonAncestor).slice(1);
     // console.log("parents", parents);
     setParents(parents);
@@ -108,7 +119,7 @@ function Xarrow(props: props) {
     setChildrens({ start: childrensStart, end: childrensEnd });
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     // equilavent to componentDidMount
     let commonAncestor = findCommonAncestor(props.start.current, props.end.current);
     setCanvasStartPos(selfRef.current.getBoundingClientRect());
@@ -150,10 +161,15 @@ function Xarrow(props: props) {
     cpx2: 0,
     cpy2: 0
   });
-  const extra = { excx: props.strokeWidth * 6, excy: props.strokeWidth * 6 };
+
+  let { color, strokeColor, headColor, strokeWidth } = props.arrowStyle;
+  headColor = headColor ? headColor : color;
+  strokeColor = strokeColor ? strokeColor : color;
+
+  const extra = { excx: strokeWidth * 6, excy: strokeWidth * 6 };
   const { excx, excy } = extra;
 
-  const getPos = () => {
+  const getPos = (): prevPos => {
     let s = props.start.current.getBoundingClientRect();
     let e = props.end.current.getBoundingClientRect();
     let yOffsetStart = window.pageYOffset;
@@ -166,16 +182,13 @@ function Xarrow(props: props) {
     // let xOffsetEnd = 0;
 
     if (parents) {
-      // let parents = findAllParents(a);
       parents.forEach(p => {
-        // console.log("yOffset", p.scrollTop);
         yOffsetStart += p.scrollTop;
         xOffsetStart += p.scrollLeft;
       });
-      // yOffsetStart += parents.scrollTop;
-      // xOffsetStart += parents.scrollLeft;
       yOffsetEnd = yOffsetStart;
       xOffsetEnd = xOffsetStart;
+      //
       ////workingone
       // parents.start.forEach(parent => {
       //   yOffsetStart += parent.scrollTop;
@@ -207,9 +220,9 @@ function Xarrow(props: props) {
     };
   };
 
-  console.log("xarrow renderd!");
+  // console.log("xarrow renderd!");
 
-  const updatePosition = positions => {
+  const updatePosition = (positions: prevPos): void => {
     // Do NOT call thie function directly.
     // you should set position by 'setPrevPosState(posState)' and that will trigger
     // this function in the useEffect hook.
@@ -226,21 +239,22 @@ function Xarrow(props: props) {
     let dx = edx;
     let dy = edy;
 
-    var startAnchorOffsets = [
+    type anchorOffset = [anchorType, number, number];
+    var startAnchorOffsets: anchorOffset[] = [
       ["middle", s.x + sw / 2, s.y + sh / 2],
       ["left", s.x, s.y + sh / 2],
       ["right", s.x + sw, s.y + sh / 2],
       ["top", s.x + sw / 2, s.y],
       ["bottom", s.x + sw / 2, s.y + sh]
     ];
-    var endAnchorOffsets = [
+    var endAnchorOffsets: anchorOffset[] = [
       ["middle", e.x + ew / 2, e.y + eh / 2],
       ["left", e.x, e.y + eh / 2],
       ["right", e.x + ew, e.y + eh / 2],
       ["top", e.x + ew / 2, e.y],
       ["bottom", e.x + ew / 2, e.y + eh]
     ];
-    const dist = (p1, p2) => {
+    const dist = (p1: anchorOffset, p2: anchorOffset) => {
       //length of line
       return Math.sqrt((p1[1] - p2[1]) ** 2 + (p1[2] - p2[2]) ** 2);
     };
@@ -251,10 +265,10 @@ function Xarrow(props: props) {
     let endAnchorPossabilties = Array.isArray(props.endAnchor)
       ? props.endAnchor
       : [props.endAnchor];
-    const closestPairOfPoints = () => {
+    const closestPairOfPoints = (): [anchorType, anchorType] => {
       // closes tPair Of Points which feet to the specifed anchors
       let minDist = Infinity;
-      let closestPair;
+      let closestPairType: [anchorType, anchorType] = ["middle", "middle"];
       for (let i = 0; i < 5; i++) {
         if (
           !startAnchorPossabilties.includes("auto") &&
@@ -272,11 +286,11 @@ function Xarrow(props: props) {
           let d = dist(startAnchorOffsets[i], endAnchorOffsets[j]);
           if (d < minDist) {
             minDist = d;
-            closestPair = [startAnchorOffsets[i][0], endAnchorOffsets[j][0]];
+            closestPairType = [startAnchorOffsets[i][0], endAnchorOffsets[j][0]];
           }
         }
       }
-      return closestPair;
+      return closestPairType;
     };
 
     let closeset = closestPairOfPoints();
@@ -346,7 +360,7 @@ function Xarrow(props: props) {
     let cw = Math.abs(dx),
       ch = Math.abs(dy);
 
-    let cu = props.curveness;
+    let cu = props.arrowStyle.curveness;
 
     let cpx1 = 0,
       cpy1 = 0,
@@ -463,7 +477,7 @@ function Xarrow(props: props) {
       height={st.ch}
       viewBox={`${-excx / 2} ${-excy / 2} ${st.cw} ${st.ch}`}
       style={{
-        // border: "1px yellow dashed",
+        /// border: "1px yellow dashed",
         position: "absolute",
         left: st.cx0,
         top: st.cy0,
@@ -481,15 +495,15 @@ function Xarrow(props: props) {
           markerHeight="6"
           orient="auto"
         >
-          <path d="M 0 0 L 12 6 L 0 12 L 3 6  z" fill={props.strokeColor} />
+          <path d="M 0 0 L 12 6 L 0 12 L 3 6  z" fill={headColor} />
         </marker>
       </defs>
       {/* <circle r="5" cx={st.cpx1} cy={st.cpy1} fill="green" />
       <circle r="5" cx={st.cpx2} cy={st.cpy2} fill="blue" /> */}
       <path
         d={`M ${st.x1} ${st.y1} C  ${st.cpx1} ${st.cpy1}, ${st.cpx2} ${st.cpy2}, ${st.x2} ${st.y2}`}
-        stroke={props.strokeColor}
-        strokeWidth={props.strokeWidth}
+        stroke={strokeColor}
+        strokeWidth={strokeWidth}
         fill="transparent"
         markerEnd="url(#arrowHead)"
       />
@@ -500,11 +514,28 @@ function Xarrow(props: props) {
 Xarrow.defaultProps = {
   startAnchor: "auto",
   endAnchor: "auto",
-  curveness: 0.8,
+  // curveness: 0.8,
+  arrowStyle: {
+    curveness: 0.8,
+    color: "CornflowerBlue",
+    strokeColor: null,
+    headColor: null,
+    strokeWidth: 4,
+    headSize: 6
+  },
   strokeWidth: 4,
   strokeColor: "CornflowerBlue",
   monitorDOMchanges: true,
   registerEvents: []
 };
+
+// arrowStyle: {
+//   color: "CornflowerBlue",
+//   strokeColor: null,
+//   headColor: null,
+//   curveness: 0.8,
+//   strokeWidth: 4,
+//   headSize: 6
+// },
 
 export default Xarrow;
