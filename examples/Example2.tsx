@@ -7,7 +7,8 @@ const canvasStyle = {
   height: "40vh",
   background: "white",
   overflow: "auto",
-  display: "flex"
+  display: "flex",
+  position: "relative"
   // overflowY: "scroll",
   // overflowX: "hidden"
 };
@@ -136,9 +137,9 @@ const Example2: React.FC = () => {
         set <code>monitorDOMchanges </code>
         property to <code>true</code> to enable this behavior - this will add eventListeners to the
         DOM and will trigger update when needed(expereintial).
-        <br /> however - this is not "the React way" so its not defaulty enabled - make sure to
-        place the Xarrow component as brother of the common ancestor of 'start' component and 'end'
-        component so React will rerender Xarrow whenever needed.{" "}
+        <br /> however - make sure you put the Xarrow component as brother of the common ancestor of
+        'start' component and 'end' component <b>so the Xarrow will not rerender when not needed</b>
+        .{" "}
       </p>
     </React.Fragment>
   );

@@ -58,8 +58,6 @@ const Box: React.FC = props => {
     props.setBox(newBox);
   };
 
-  console.log(module);
-
   return (
     <div
       ref={props.box.ref}
@@ -74,23 +72,30 @@ const Box: React.FC = props => {
   );
 };
 
-const Example4: React.FC = () => {
+const Example6: React.FC = () => {
   const [box, setBox] = useState<box>({ id: "box1", x: 20, y: 20, ref: useRef(null) });
   const [box2, setBox2] = useState<box>({ id: "box2", x: 50, y: 30, ref: useRef(null) });
+  const [lines, setLines] = useState<line[]>([
+    { from: "box1", to: "box2" }
+    // { from: "box3", to: "box2" }
+  ]);
+  // console.log(Xarrows.)
 
   return (
     <React.Fragment>
       <h3>
-        <u>Example4:</u>
+        <u>Example6:</u>
       </h3>
       <p> in debug stage</p>
       <div style={canvasStyle} id="canvas">
         <Box box={box} boxes={box} setBox={setBox} />
         <Box box={box2} boxes={box2} setBox={setBox2} />
-        <Xarrows start={box.ref} end={box2.ref} />
+        {lines.map((line, i) => (
+          <Xarrows key={i} start={box.ref} end={box2.ref} />
+        ))}
       </div>
     </React.Fragment>
   );
 };
 
-export default Example4;
+export default Example6;

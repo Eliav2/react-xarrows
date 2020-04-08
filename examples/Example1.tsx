@@ -37,9 +37,9 @@ const Example1: React.FC = () => {
   ]);
 
   const [lines, setLines] = useState<line[]>([
-    { from: "box1", to: "box2" }
-    // { from: "box2", to: "box3" },
-    // { from: "box3", to: "box1" }
+    { from: "box1", to: "box2" },
+    { from: "box2", to: "box3" },
+    { from: "box3", to: "box1" }
   ]);
 
   const [lastPoint, setLastPoint] = useState<point>({ x: 0, y: 0 });
@@ -85,6 +85,8 @@ const Example1: React.FC = () => {
                 key={i}
                 start={boxes.find(box => box.id === line.from).ref}
                 end={boxes.find(box => box.id === line.to).ref}
+                monitorDOMchanges={true}
+                // consoleWarning={false}
               />
             ))}
           </div>

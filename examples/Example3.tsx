@@ -7,7 +7,8 @@ const canvasStyle = {
   height: "40vh",
   background: "white",
   overflow: "auto",
-  display: "flex"
+  display: "flex",
+  position: "relative"
   // overflowY: "scroll",
   // overflowX: "hidden"
 };
@@ -83,7 +84,7 @@ const Example2: React.FC = () => {
   ]);
 
   const [lines, setLines] = useState<line[]>([
-    { from: "box1", to: "box4" }
+    { from: "box4", to: "box1" }
     // { from: "box3", to: "box2" }
   ]);
   const boxContainerRef = useRef(null); //boxContainerRef
@@ -109,31 +110,38 @@ const Example2: React.FC = () => {
       <h3>
         <u>Example3:</u>
       </h3>
-      <p> in debug stage</p>
+      <p> at will work any way! but look it the console...</p>
       <div style={canvasStyle} id="canvas">
         <div ref={boxContainerRef} style={boxContainerStyle} id="boxContainer">
           {boxes.map((box, i) => (
             <Box key={i} box={box} boxes={boxes} setBoxes={setBoxes} />
           ))}
         </div>
-        <div style={boxContainerContainerStyle} id="boxContainerContainer2">
-          <div style={boxContainerContainerStyle} id="boxContainerContainer2Container">
-            <div ref={boxContainer2Ref} style={boxContainerStyle} id="boxContainer2">
-              {boxes2.map((box, i) => (
-                <Box key={i} box={box} boxes={boxes2} setBoxes={setBoxes2} />
-              ))}
+        <div style={boxContainerContainerStyle} id="boxContainerContainer2Container">
+          <div style={boxContainerContainerStyle} id="boxContainerContainer2">
+            <div style={boxContainerContainerStyle} id="boxContainerContainer2">
+              <div ref={boxContainer2Ref} style={boxContainerStyle} id="boxContainer2">
+                {boxes2.map((box, i) => (
+                  <Box key={i} box={box} boxes={boxes2} setBoxes={setBoxes2} />
+                ))}
+              </div>
             </div>
+            {lines.map((line, i) => (
+              <Xarrows
+                key={i}
+                start={getRefById(line.from)}
+                end={getRefById(line.to)}
+                monitorDOMchanges={true}
+              />
+            ))}
           </div>
         </div>
-        {lines.map((line, i) => (
-          <Xarrows
-            key={i}
-            start={getRefById(line.from)}
-            end={getRefById(line.to)}
-            monitorDOMchanges={true}
-          />
-        ))}
       </div>
+      <p>
+        {" "}
+        Xarrow will watch a noobies mistakes and will recommand you what to do whenever he found a
+        mistake. here we can see Xarrow recommands to move Xarrow under "canvas" element.
+      </p>
     </React.Fragment>
   );
 };

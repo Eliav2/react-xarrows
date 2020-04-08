@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useState, useLayoutEffect } from "react";
 import { Color } from "csstype";
+import { instanceOf } from "prop-types";
 var lodash = require("lodash");
 
 type anchorType = "auto" | "middle" | "left" | "right" | "top" | "bottom";
@@ -27,14 +28,15 @@ type arrowStyle = {
 };
 
 type props = {
-  start: React.MutableRefObject<any>;
-  end: React.MutableRefObject<any>;
+  start: React.RefObject<HTMLElement>;
+  end: React.RefObject<HTMLElement>;
 
   startAnchor: anchorType | anchorType[];
   endAnchor: anchorType | anchorType[];
   monitorDOMchanges: boolean;
   registerEvents: registerEvents[];
   arrowStyle: arrowStyle;
+  consoleWarning: boolean;
 };
 
 type registerEvents = {
@@ -45,7 +47,13 @@ type registerEvents = {
 
 type point = { x: number; y: number };
 
-const findCommonAncestor = (elem: HTMLElement, elem2: HTMLElement) => {
+type anchorsParents = {
+  start: HTMLElement[];
+  end: HTMLElement[];
+  extra: HTMLElement[];
+};
+
+const findCommonAncestor = (elem: HTMLElement, elem2: HTMLElement): HTMLElement => {
   function parents(node: any) {
     var nodes = [node];
     for (; node; node = node.parentNode) {
@@ -69,18 +77,18 @@ const findCommonAncestor = (elem: HTMLElement, elem2: HTMLElement) => {
 const findAllParents = (elem: HTMLElement) => {
   let parents: HTMLElement[] = [];
   let parent = elem;
-  while (parent.id !== "root") {
+  while (true) {
+    if (parent.parentElement === null) return parents;
+    else parent = parent.parentElement;
     parents.push(parent);
-    if (parent.parentElement) parent = parent.parentElement;
-    else return parents;
   }
-  return parents;
 };
 
 const findAllChildrens = (child: HTMLElement, parent: HTMLElement) => {
   if (child === parent) return [];
   let childrens: HTMLElement[] = [];
   let childParent = child.parentElement;
+  // if childParent ===
   while (childParent !== parent) {
     childrens.push(childParent);
     childParent = childParent.parentElement;
@@ -89,11 +97,11 @@ const findAllChildrens = (child: HTMLElement, parent: HTMLElement) => {
 };
 
 function Xarrow(props: props) {
-  const selfRef = useRef(null);
+  const selfRef = useRef<HTMLElement>(null);
 
   const [prevPosState, setPrevPosState] = useState<prevPos>(null);
-  const [parents, setParents] = useState<HTMLElement[]>(null); //list parents of the common ascestor of the arrow with start and end(until "root elemnt")
-  const [childrens, setChildrens] = useState<{ end: HTMLElement[]; start: HTMLElement[] }>(null); //list childrens of the common ascestor of the arrow with start and end until start or end
+  const [selfParents, setSelfParents] = useState<HTMLElement[]>(null); //list parents of the common ascestor of the arrow with start and end(until "root elemnt")
+  const [anchorsParents, setAnchorsParents] = useState<anchorsParents>(null); //list childrens of the common ascestor of the arrow with start and end until start or end
   const [canvasStartPos, setCanvasStartPos] = useState<point>({ x: 0, y: 0 });
 
   const updateIfNeeded = () => {
@@ -105,20 +113,60 @@ function Xarrow(props: props) {
   };
 
   const monitorDOMchanges = () => {
-    selfRef.current.parentElement.addEventListener("scroll", updateIfNeeded);
-    childrens.start.forEach(elem => elem.addEventListener("scroll", updateIfNeeded));
-    childrens.end.forEach(elem => elem.addEventListener("scroll", updateIfNeeded));
+    anchorsParents.start.forEach(elem => elem.addEventListener("scroll", updateIfNeeded));
+    anchorsParents.end.forEach(elem => elem.addEventListener("scroll", updateIfNeeded));
     window.addEventListener("resize", updateIfNeeded);
   };
 
   const initParentsChildrens = () => {
-    let commonAncestor = findCommonAncestor(props.start.current, props.end.current);
-    let parents = findAllParents(commonAncestor).slice(1);
-    // console.log("parents", parents);
-    setParents(parents);
-    let childrensStart = findAllChildrens(props.start.current, commonAncestor);
-    let childrensEnd = findAllChildrens(props.end.current, commonAncestor);
-    setChildrens({ start: childrensStart, end: childrensEnd });
+    let anchorsCommonAncestor = findCommonAncestor(props.start.current, props.end.current);
+    let allAncestor = findCommonAncestor(anchorsCommonAncestor, selfRef.current);
+    let parents = findAllParents(selfRef.current);
+    let allAncestorChildrensStart = findAllChildrens(props.start.current, allAncestor);
+    let allAncestorChildrensEnd = findAllChildrens(props.end.current, allAncestor);
+    let startExtra = allAncestorChildrensEnd.filter(p => parents.includes(p));
+    let endExtra = allAncestorChildrensStart.filter(p => parents.includes(p));
+    setSelfParents(parents);
+    setAnchorsParents({
+      start: allAncestorChildrensStart,
+      end: allAncestorChildrensEnd,
+      extra: [...startExtra, ...endExtra]
+    });
+    // console.log("AnchorsParents", {
+    //   start: allAncestorChildrensStart,
+    //   end: allAncestorChildrensEnd,
+    //   extra: [...startExtra, ...endExtra]
+    // });
+    // console.log("SelfParents", parents);
+
+    if (props.consoleWarning) {
+      if (allAncestor.style.position !== "relative")
+        console.warn(
+          `%c Xarrow critical warning: common ancestor should always be in 'relative' positioning! 
+        change position style to 'relative' of element `,
+          "color: red",
+          allAncestor
+        );
+      if (selfRef.current.parentElement !== anchorsCommonAncestor)
+        console.warn(
+          `Xarrow warning: you placed Xarrow not as brother of the common ancestor of 'start' component and 'end' component.
+        make sure this was necessary,and set monitorDOMchanges to true so Xarrow will render whenever needed.
+        the suggested element to put Xarrow inside of to prevent redundant rerenders is `,
+          anchorsCommonAncestor,
+          `\nto disable this warnings set consoleWarning property to false`
+        );
+      if (
+        (allAncestorChildrensStart.length > 0 || allAncestorChildrensEnd.length > 0) &&
+        props.monitorDOMchanges === false
+      )
+        console.warn(
+          `Xarrow warning: set monitorDOMchanges to true - its possible that the positioning will get out of sync on DOM events(like scroll),
+        on these elements`,
+          allAncestorChildrensStart,
+          allAncestorChildrensEnd,
+          `\nto disable this warnings set consoleWarning property to false`
+        );
+    }
   };
 
   const initCanvasStartPos = () => {
@@ -129,19 +177,37 @@ function Xarrow(props: props) {
   };
 
   const testUserGivenProperties = () => {
-    if (props.start == null)
-      throw new Error(
-        "Please make sure the reference to start anchor (property 'start') are provided correctly."
+    // console.log(props.start instanceof React.MutableRefObject)
+    // console.log("module.parent", testUserGivenProperties.caller);
+    if (!("current" in props.start)) {
+      let err = Error(
+        `'start' property is not of type reference.
+        maybe you set 'start' to other object and not to React reference?.\n`
       );
-    if (props.end == null)
-      throw new Error(
-        "Please make sure the reference to end anchor (property 'end') are provided correctly."
+      throw err;
+    }
+    if (!("current" in props.end))
+      throw Error(
+        `'end' property is not of type reference.
+        maybe you set 'end' to other object and not to React reference?.\n`
+      );
+
+    if (props.start.current === null)
+      throw Error(
+        `Please make sure the reference to start anchor (property 'start') are provided correctly.
+        maybe you tried to render Xarrow before start anchor?.\n`
+      );
+    if (props.end.current === null)
+      throw Error(
+        `Please make sure the reference to end anchor (property 'end') are provided correctly.
+        maybe you tried to render Xarrow before end anchor?.\n`
       );
   };
 
   useLayoutEffect(() => {
     // equilavent to componentDidMount
-    console.log("xarrow mounted");
+    // console.log("xarrow mounted");
+    // console.log(props);
     testUserGivenProperties();
     initCanvasStartPos();
     initParentsChildrens();
@@ -149,10 +215,10 @@ function Xarrow(props: props) {
   }, []);
 
   useEffect(() => {
-    if (childrens && props.monitorDOMchanges) {
+    if (anchorsParents && props.monitorDOMchanges) {
       monitorDOMchanges();
     }
-  }, [childrens]);
+  }, [anchorsParents]);
 
   useEffect(() => {
     // triggers position update when prevPosState changed
@@ -160,7 +226,7 @@ function Xarrow(props: props) {
   }, [prevPosState]);
 
   useEffect(() => {
-    console.log("xarrow renderd!");
+    // console.log("xarrow renderd!");
     updateIfNeeded();
   });
 
@@ -191,51 +257,60 @@ function Xarrow(props: props) {
   const getPos = (): prevPos => {
     let s = props.start.current.getBoundingClientRect();
     let e = props.end.current.getBoundingClientRect();
-    let yOffsetStart = window.pageYOffset;
-    let xOffsetStart = window.pageXOffset;
-    let yOffsetEnd = window.pageYOffset;
-    let xOffsetEnd = window.pageXOffset;
     // let yOffsetStart = 0;
     // let xOffsetStart = 0;
     // let yOffsetEnd = 0;
     // let xOffsetEnd = 0;
+    let yOffset = 0;
+    let xOffset = 0;
 
-    if (parents) {
-      parents.forEach(p => {
-        yOffsetStart += p.scrollTop;
-        xOffsetStart += p.scrollLeft;
+    if (selfParents) {
+      selfParents.forEach(p => {
+        yOffset += p.scrollTop;
+        xOffset += p.scrollLeft;
       });
-      yOffsetEnd = yOffsetStart;
-      xOffsetEnd = xOffsetStart;
-      //
-      ////workingone
-      // parents.start.forEach(parent => {
-      //   yOffsetStart += parent.scrollTop;
-      //   xOffsetStart += parent.scrollLeft;
+
+      anchorsParents.extra.forEach(p => {
+        yOffset -= p.scrollTop;
+        xOffset -= p.scrollLeft;
+      });
+      // [yOffsetStart, xOffsetStart, yOffsetEnd, xOffsetEnd] = [yOffset, xOffset, yOffset, xOffset];
+      // anchorsParents.startExtra.forEach(p => {
+      //   yOffsetStart -= p.scrollTop;
+      //   xOffsetStart -= p.scrollLeft;
       // });
-      // if (lodash.isEqual(parents.start, parents.end)) {
-      //   yOffsetEnd = yOffsetStart;
-      //   xOffsetEnd = xOffsetStart;
-      // } else {
-      //   parents.end.forEach(parent => {
-      //     yOffsetEnd += parent.scrollTop;
-      //     xOffsetEnd += parent.scrollLeft;
-      //   });
-      // }
+      // anchorsParents.endExtra.forEach(p => {
+      //   yOffsetStart -= p.scrollTop;
+      //   xOffsetStart -= p.scrollLeft;
+      // });
     }
+
     return {
       start: {
-        x: s.x + xOffsetStart,
-        y: s.y + yOffsetStart,
-        right: s.right + xOffsetStart,
-        bottom: s.bottom + yOffsetStart
+        x: s.x + xOffset,
+        y: s.y + yOffset,
+        right: s.right + xOffset,
+        bottom: s.bottom + yOffset
       },
       end: {
-        x: e.x + xOffsetEnd,
-        y: e.y + yOffsetEnd,
-        right: e.right + xOffsetEnd,
-        bottom: e.bottom + yOffsetEnd
+        x: e.x + xOffset,
+        y: e.y + yOffset,
+        right: e.right + xOffset,
+        bottom: e.bottom + yOffset
       }
+
+      // start: {
+      //   x: s.x + xOffsetStart,
+      //   y: s.y + yOffsetStart,
+      //   right: s.right + xOffsetStart,
+      //   bottom: s.bottom + yOffsetStart
+      // },
+      // end: {
+      //   x: e.x + xOffsetEnd,
+      //   y: e.y + yOffsetEnd,
+      //   right: e.right + xOffsetEnd,
+      //   bottom: e.bottom + yOffsetEnd
+      // }
     };
   };
 
@@ -535,7 +610,6 @@ Xarrow.defaultProps = {
   endAnchor: "auto",
   arrowStyle: {
     curveness: 0.8,
-    // color: "CornflowerBlue",
     color: "CornflowerBlue",
     strokeColor: null,
     headColor: null,
@@ -543,8 +617,10 @@ Xarrow.defaultProps = {
     headSize: 6
   },
   strokeColor: "CornflowerBlue",
-  monitorDOMchanges: true,
-  registerEvents: []
+  monitorDOMchanges: false,
+  registerEvents: [],
+  consoleWarning: "true"
+  // module: module
 };
 
 export default Xarrow;

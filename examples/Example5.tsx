@@ -10,25 +10,6 @@ const canvasStyle: React.CSSProperties = {
   overflow: "auto",
   display: "flex",
   position: "relative"
-  // overflowY: "scroll",
-  // overflowX: "hidden"
-};
-
-const boxContainerStyle = {
-  position: "relative",
-  // overflow: "scroll",
-  width: "120%",
-  height: "140%",
-  background: "white",
-  color: "black",
-  border: "black solid 1px"
-};
-
-const boxContainerContainerStyle = {
-  overflow: "scroll",
-  width: "150%",
-  height: "120%",
-  border: "black solid 1px"
 };
 
 const boxStyle = {
@@ -49,16 +30,15 @@ const Box: React.FC = props => {
   };
 
   const handleDragEnd = (e: React.DragEvent, boxId: string) => {
-    let newBox = { ...props.box };
-    let newX = newBox.x + e.clientX - lastPoint.x,
-      newY = newBox.y + e.clientY - lastPoint.y;
+    let i = props.boxes.findIndex(box => box.id === boxId);
+    let newBoxes = [...props.boxes];
+    let newX = newBoxes[i].x + e.clientX - lastPoint.x,
+      newY = newBoxes[i].y + e.clientY - lastPoint.y;
     if (newX < 0 || newY < 0) return;
-    newBox.x = newX;
-    newBox.y = newY;
-    props.setBox(newBox);
+    newBoxes[i].x = newX;
+    newBoxes[i].y = newY;
+    props.setBoxes(newBoxes);
   };
-
-  console.log(module);
 
   return (
     <div
@@ -74,9 +54,13 @@ const Box: React.FC = props => {
   );
 };
 
-const Example4: React.FC = () => {
+const Example5: React.FC = () => {
   const [box, setBox] = useState<box>({ id: "box1", x: 20, y: 20, ref: useRef(null) });
   const [box2, setBox2] = useState<box>({ id: "box2", x: 50, y: 30, ref: useRef(null) });
+  const [lines, setLines] = useState<line[]>([
+    { from: "box1", to: "box2" }
+    // { from: "box3", to: "box2" }
+  ]);
 
   return (
     <React.Fragment>
@@ -84,13 +68,16 @@ const Example4: React.FC = () => {
         <u>Example4:</u>
       </h3>
       <p> in debug stage</p>
-      <div style={canvasStyle} id="canvas">
-        <Box box={box} boxes={box} setBox={setBox} />
-        <Box box={box2} boxes={box2} setBox={setBox2} />
-        <Xarrows start={box.ref} end={box2.ref} />
+      <div style={canvasStyle} id="canvas" />
+      <div>
+        <Box box={box} boxes={box} setBoxes={setBox} />
+        <Box box={box2} boxes={box2} setBoxes={setBox2} />
       </div>
+      {lines.map((line, i) => (
+        <Xarrows key={i} start={box} end={box2.ref} />
+      ))}
     </React.Fragment>
   );
 };
 
-export default Example4;
+export default Example5;

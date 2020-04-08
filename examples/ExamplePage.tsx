@@ -5,6 +5,8 @@ import Example1 from "./Example1";
 import Example2 from "./Example2";
 import Example3 from "./Example3";
 import Example4 from "./Example4";
+import Example5 from "./Example5";
+import Example6 from "./Example6";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 
 const titleStyle = {
@@ -48,6 +50,16 @@ const ExamplePage: React.FC = () => {
                   <button>Example4</button>
                 </Link>
               </td>
+              <td>
+                <Link to="/Example5">
+                  <button>Example5</button>
+                </Link>
+              </td>
+              {/* <td>
+                <Link to="/Example6">
+                  <button>Example6</button>
+                </Link>
+              </td> */}
             </tr>
           </tbody>
         </table>
@@ -70,6 +82,12 @@ const ExamplePage: React.FC = () => {
           </Route>
           <Route path="/Example4">
             <Example4 />
+          </Route>
+          <Route path="/Example5">
+            <Example5 />
+          </Route>
+          <Route path="/Example6">
+            <Example6 />
           </Route>
         </Switch>
       </Router>
