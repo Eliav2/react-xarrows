@@ -3,7 +3,7 @@ import { Color } from "csstype";
 import { instanceOf } from "prop-types";
 var lodash = require("lodash");
 
-type anchorType = "auto" | "middle" | "left" | "right" | "top" | "bottom";
+export type anchorType = "auto" | "middle" | "left" | "right" | "top" | "bottom";
 type prevPos = {
   start: {
     x: number;
@@ -19,28 +19,31 @@ type prevPos = {
   };
 };
 
-type arrowStyle = {
+export type arrowStyleType = {
   color: Color;
   strokeColor: Color;
   headColor: Color;
   strokeWidth: number;
   curveness: number;
+  headSize: number;
 };
 
-type props = {
-  start: React.RefObject<HTMLElement>;
-  end: React.RefObject<HTMLElement>;
+type reactRef = { current: null | HTMLElement };
+type refType = reactRef | string;
 
+export type xarrowPropsType = {
+  start: refType;
+  end: refType;
   startAnchor: anchorType | anchorType[];
   endAnchor: anchorType | anchorType[];
   monitorDOMchanges: boolean;
-  registerEvents: registerEvents[];
-  arrowStyle: arrowStyle;
+  registerEvents: registerEventsType[];
+  arrowStyle: arrowStyleType;
   consoleWarning: boolean;
 };
 
-type registerEvents = {
-  ref: React.MutableRefObject<any>;
+export type registerEventsType = {
+  ref: refType;
   eventName: keyof GlobalEventHandlersEventMap;
   callback?: CallableFunction;
 };
@@ -96,19 +99,47 @@ const findAllChildrens = (child: HTMLElement, parent: HTMLElement) => {
   return childrens;
 };
 
-function Xarrow(props: props) {
-  const selfRef = useRef<HTMLElement>(null);
+const getElementByPropGiven = (ref: React.RefObject<HTMLElement> | "string"): HTMLElement => {
+  var myRef;
+  if (typeof ref === "string") {
+    myRef = document.getElementById(ref);
+    if (myRef === null)
+      throw Error(
+        `'${ref}' is not an id of element in the dom. make sure you provided currect id or provide a React reference to element instead.`
+      );
+  } else myRef = ref.current;
+  if (myRef === null)
+    throw Error(
+      `'${ref}' is not a valid react reference to html element OR you tried to render Xarrow before one of the anchors .
+     please provide correct react refernce or provide id instead.`
+    );
+
+  return myRef;
+};
+
+function Xarrow(props: xarrowPropsType) {
+  const selfRef = useRef<reactRef>(null);
+  const [anchorsRefs, setAnchorsRefs] = useState({ start: null, end: null });
 
   const [prevPosState, setPrevPosState] = useState<prevPos>(null);
+  const [prevProps, setPrevProps] = useState<prevPos>(null);
   const [selfParents, setSelfParents] = useState<HTMLElement[]>(null); //list parents of the common ascestor of the arrow with start and end(until "root elemnt")
   const [anchorsParents, setAnchorsParents] = useState<anchorsParents>(null); //list childrens of the common ascestor of the arrow with start and end until start or end
   const [canvasStartPos, setCanvasStartPos] = useState<point>({ x: 0, y: 0 });
 
   const updateIfNeeded = () => {
-    testUserGivenProperties();
-    let posState = getPos();
-    if (!lodash.isEqual(prevPosState, posState)) {
-      setPrevPosState(posState);
+    if (!lodash.isEqual(props, prevProps)) {
+      //first check if any properties changed
+      if (prevProps) {
+        initProps();
+        setPrevPosState(getPos());
+      }
+    } else {
+      //if the properties did not changed - update position if needed
+      let posState = getPos();
+      if (!lodash.isEqual(prevPosState, posState)) {
+        setPrevPosState(posState);
+      }
     }
   };
 
@@ -119,11 +150,11 @@ function Xarrow(props: props) {
   };
 
   const initParentsChildrens = () => {
-    let anchorsCommonAncestor = findCommonAncestor(props.start.current, props.end.current);
+    let anchorsCommonAncestor = findCommonAncestor(anchorsRefs.start, anchorsRefs.end);
     let allAncestor = findCommonAncestor(anchorsCommonAncestor, selfRef.current);
     let parents = findAllParents(selfRef.current);
-    let allAncestorChildrensStart = findAllChildrens(props.start.current, allAncestor);
-    let allAncestorChildrensEnd = findAllChildrens(props.end.current, allAncestor);
+    let allAncestorChildrensStart = findAllChildrens(anchorsRefs.start, allAncestor);
+    let allAncestorChildrensEnd = findAllChildrens(anchorsRefs.end, allAncestor);
     let startExtra = allAncestorChildrensEnd.filter(p => parents.includes(p));
     let endExtra = allAncestorChildrensStart.filter(p => parents.includes(p));
     setSelfParents(parents);
@@ -179,49 +210,83 @@ function Xarrow(props: props) {
   const testUserGivenProperties = () => {
     // console.log(props.start instanceof React.MutableRefObject)
     // console.log("module.parent", testUserGivenProperties.caller);
-    if (!("current" in props.start)) {
-      let err = Error(
-        `'start' property is not of type reference.
-        maybe you set 'start' to other object and not to React reference?.\n`
-      );
-      throw err;
+    if (typeof props.start === "object") {
+      if (!("current" in props.start)) {
+        let err = Error(
+          `'start' property is not of type reference.
+          maybe you set 'start' to other object and not to React reference?.\n`
+        );
+        throw err;
+      }
+      if (props.start.current === null)
+        throw Error(
+          `Please make sure the reference to start anchor (property 'start') are provided correctly.
+          maybe you tried to render Xarrow before start anchor?.\n`
+        );
     }
-    if (!("current" in props.end))
-      throw Error(
-        `'end' property is not of type reference.
-        maybe you set 'end' to other object and not to React reference?.\n`
-      );
+    if (typeof props.end === "object") {
+      if (!("current" in props.end))
+        throw Error(
+          `'end' property is not of type reference.
+          maybe you set 'end' to other object and not to React reference?.\n`
+        );
 
-    if (props.start.current === null)
-      throw Error(
-        `Please make sure the reference to start anchor (property 'start') are provided correctly.
-        maybe you tried to render Xarrow before start anchor?.\n`
-      );
-    if (props.end.current === null)
-      throw Error(
-        `Please make sure the reference to end anchor (property 'end') are provided correctly.
-        maybe you tried to render Xarrow before end anchor?.\n`
-      );
+      if (props.end.current === null)
+        throw Error(
+          `Please make sure the reference to end anchor (property 'end') are provided correctly.
+          maybe you tried to render Xarrow before end anchor?.\n`
+        );
+    }
+  };
+
+  const initRegisterEvents = () => {
+    const triggerUpdate = callback => {
+      updateIfNeeded();
+      if (callback) callback();
+    };
+    props.registerEvents.forEach(re => {
+      var ref = getElementByPropGiven(re.ref);
+      ref.addEventListener(re.eventName, triggerUpdate(re.callback));
+    });
+  };
+
+  const initAnchorsRefs = () => {
+    var start = getElementByPropGiven(props.start);
+    var end = getElementByPropGiven(props.end);
+    setAnchorsRefs({ start, end });
+  };
+
+  const initProps = () => {
+    testUserGivenProperties();
+    setPrevProps(props);
   };
 
   useLayoutEffect(() => {
     // equilavent to componentDidMount
     // console.log("xarrow mounted");
-    // console.log(props);
-    testUserGivenProperties();
+    initAnchorsRefs();
+    initRegisterEvents();
     initCanvasStartPos();
-    initParentsChildrens();
+    initProps();
     // }
   }, []);
 
   useEffect(() => {
+    // heppens only at mounting (or props changed) after anchorsRefs initialized
+    if (anchorsRefs.start) {
+      initParentsChildrens();
+    }
+  }, [anchorsRefs]);
+
+  useEffect(() => {
+    // heppens only at mounting after anchorsParents initialized
     if (anchorsParents && props.monitorDOMchanges) {
       monitorDOMchanges();
     }
   }, [anchorsParents]);
 
   useEffect(() => {
-    // triggers position update when prevPosState changed
+    // triggers position update when prevPosState changed(can heppen in any render)
     if (prevPosState) updatePosition(prevPosState);
   }, [prevPosState]);
 
@@ -247,16 +312,21 @@ function Xarrow(props: props) {
     cpy2: 0
   });
 
-  let { color, strokeColor, headColor, strokeWidth } = props.arrowStyle;
+  let { color, strokeColor, headColor, headSize, strokeWidth } = props.arrowStyle;
   headColor = headColor ? headColor : color;
   strokeColor = strokeColor ? strokeColor : color;
 
-  const extra = { excx: strokeWidth * 6, excy: strokeWidth * 6 };
-  const { excx, excy } = extra;
+  const extraCanvasSize = {
+    excx: strokeWidth * headSize,
+    excy: strokeWidth * headSize
+  };
+  var { excx, excy } = extraCanvasSize;
 
   const getPos = (): prevPos => {
-    let s = props.start.current.getBoundingClientRect();
-    let e = props.end.current.getBoundingClientRect();
+    if (!anchorsRefs.start) return;
+    let s = anchorsRefs.start.getBoundingClientRect();
+    let e = anchorsRefs.end.getBoundingClientRect();
+
     // let yOffsetStart = 0;
     // let xOffsetStart = 0;
     // let yOffsetEnd = 0;
@@ -318,6 +388,11 @@ function Xarrow(props: props) {
     // Do NOT call thie function directly.
     // you should set position by 'setPrevPosState(posState)' and that will trigger
     // this function in the useEffect hook.
+
+    // if(props.arrowStyle.curveness>1){
+    //   excx+=
+    // }
+
     let { start: s } = positions;
     let { end: e } = positions;
     let sw = s.right - s.x; //start element width
@@ -326,10 +401,8 @@ function Xarrow(props: props) {
     let eh = e.bottom - e.y; //end element hight
     let edx = e.x - s.x; // the x diffrence between the two elements
     let edy = e.y - s.y; // the y diffrence between the two elements
-    // let cx0 = Math.min(s.x, e.x) - canvasStartPos.x - window.pageXOffset - excx / 2;
-    // let cy0 = Math.min(s.y, e.y) - canvasStartPos.y - window.pageYOffset - excy / 2;
-    let cx0 = Math.min(s.x, e.x) - canvasStartPos.x - excx / 2;
-    let cy0 = Math.min(s.y, e.y) - canvasStartPos.y - excy / 2;
+    let cx0 = Math.min(s.x, e.x) - canvasStartPos.x;
+    let cy0 = Math.min(s.y, e.y) - canvasStartPos.y;
     let dx = edx;
     let dy = edy;
 
@@ -456,6 +529,9 @@ function Xarrow(props: props) {
 
     let cu = props.arrowStyle.curveness;
 
+    cx0 -= excx / 2;
+    cy0 -= excy / 2;
+
     let cpx1 = 0,
       cpy1 = 0,
       cpx2 = 0,
@@ -571,7 +647,7 @@ function Xarrow(props: props) {
       height={st.ch}
       viewBox={`${-excx / 2} ${-excy / 2} ${st.cw} ${st.ch}`}
       style={{
-        /// border: "1px yellow dashed",
+        // border: "2px yellow dashed",
         position: "absolute",
         left: st.cx0,
         top: st.cy0,
@@ -582,18 +658,18 @@ function Xarrow(props: props) {
         <marker
           id="arrowHead"
           viewBox="0 0 12 12"
-          refX={"10"}
+          refX="10"
           refY="6"
           markerUnits="strokeWidth"
-          markerWidth="6"
-          markerHeight="6"
+          markerWidth={headSize}
+          markerHeight={headSize}
           orient="auto"
         >
           <path d="M 0 0 L 12 6 L 0 12 L 3 6  z" fill={headColor} />
         </marker>
       </defs>
-      {/* {/* <circle r="5" cx={st.cpx1} cy={st.cpy1} fill="green" /> */}
-      {/* <circle r="5" cx={canvasStartPos.x} cy={canvasStartPos.y} fill="red" /> */} */}
+      {/* <circle r="5" cx={st.cpx1} cy={st.cpy1} fill="green" />
+      <circle r="5" cx={st.cpx2} cy={st.cpy2} fill="blue" /> */}
       <path
         d={`M ${st.x1} ${st.y1} C  ${st.cpx1} ${st.cpy1}, ${st.cpx2} ${st.cpy2}, ${st.x2} ${st.y2}`}
         stroke={strokeColor}
@@ -616,7 +692,6 @@ Xarrow.defaultProps = {
     strokeWidth: 4,
     headSize: 6
   },
-  strokeColor: "CornflowerBlue",
   monitorDOMchanges: false,
   registerEvents: [],
   consoleWarning: "true"

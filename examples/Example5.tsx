@@ -10,6 +10,25 @@ const canvasStyle: React.CSSProperties = {
   overflow: "auto",
   display: "flex",
   position: "relative"
+  // overflowY: "scroll",
+  // overflowX: "hidden"
+};
+
+const boxContainerStyle = {
+  position: "relative",
+  // overflow: "scroll",
+  width: "120%",
+  height: "140%",
+  background: "white",
+  color: "black",
+  border: "black solid 1px"
+};
+
+const boxContainerContainerStyle = {
+  overflow: "scroll",
+  width: "150%",
+  height: "120%",
+  border: "black solid 1px"
 };
 
 const boxStyle = {
@@ -30,14 +49,13 @@ const Box: React.FC = props => {
   };
 
   const handleDragEnd = (e: React.DragEvent, boxId: string) => {
-    let i = props.boxes.findIndex(box => box.id === boxId);
-    let newBoxes = [...props.boxes];
-    let newX = newBoxes[i].x + e.clientX - lastPoint.x,
-      newY = newBoxes[i].y + e.clientY - lastPoint.y;
+    let newBox = { ...props.box };
+    let newX = newBox.x + e.clientX - lastPoint.x,
+      newY = newBox.y + e.clientY - lastPoint.y;
     if (newX < 0 || newY < 0) return;
-    newBoxes[i].x = newX;
-    newBoxes[i].y = newY;
-    props.setBoxes(newBoxes);
+    newBox.x = newX;
+    newBox.y = newY;
+    props.setBox(newBox);
   };
 
   return (
@@ -61,21 +79,21 @@ const Example5: React.FC = () => {
     { from: "box1", to: "box2" }
     // { from: "box3", to: "box2" }
   ]);
+  // console.log(Xarrows.)
 
   return (
     <React.Fragment>
       <h3>
-        <u>Example4:</u>
+        <u>Example5:</u>
       </h3>
       <p> in debug stage</p>
-      <div style={canvasStyle} id="canvas" />
-      <div>
-        <Box box={box} boxes={box} setBoxes={setBox} />
-        <Box box={box2} boxes={box2} setBoxes={setBox2} />
+      <div style={canvasStyle} id="canvas">
+        <Box box={box} boxes={box} setBox={setBox} />
+        <Box box={box2} boxes={box2} setBox={setBox2} />
+        {lines.map((line, i) => (
+          <Xarrows key={i} start={box.ref} end={box2.ref} />
+        ))}
       </div>
-      {lines.map((line, i) => (
-        <Xarrows key={i} start={box} end={box2.ref} />
-      ))}
     </React.Fragment>
   );
 };
