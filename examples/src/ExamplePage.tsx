@@ -22,6 +22,13 @@ const ExamplePage: React.FC = () => {
         Draw arrows between components in React!
         <br />
         <br />
+        I've noticed react was missing a good and relaible arrows component in npm - so i've decided
+        to create on of my own and share it.
+        <br />
+        this component will rerender and will update the anchors position whenever needed(not like
+        other similar npm libraries).
+        <br />
+        <br />
         no magical css traformations - just great react.
         <br />
       </p>

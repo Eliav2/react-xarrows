@@ -137,7 +137,7 @@ const Example2: React.FC = () => {
         set <code>monitorDOMchanges </code>
         property to <code>true</code> to enable this behavior - this will add eventListeners to the
         DOM and will trigger update when needed(expereintial).
-        <br /> however - make sure you put the Xarrow component as brother of the common ancestor of
+        <br /> however - make sure you put the Xarrow component as son of the common ancestor of
         'start' component and 'end' component <b>so the Xarrow will not rerender when not needed</b>
         .{" "}
       </p>
