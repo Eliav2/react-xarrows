@@ -140,8 +140,9 @@ const Example2: React.FC = () => {
       </div>
       <p>
         {" "}
-        Xarrow will watch a noobies mistakes and will recommand you what to do whenever he found a
-        mistake. here we can see Xarrow recommands to move Xarrow under "canvas" element.
+        whenever Xarrow will detect not recommanded element to be placed in(relative to the anchors)
+        it will console a warning. here we can see Xarrow recommands to move Xarrow under "canvas"
+        element.
       </p>
     </React.Fragment>
   );
