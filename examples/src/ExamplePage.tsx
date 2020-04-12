@@ -5,7 +5,7 @@ import Example1 from "./Example1";
 import Example2 from "./Example2";
 import Example3 from "./Example3";
 import Example4 from "./Example4";
-import Example5 from "./Example5";
+import SimpleExample from "./SimpleExample";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 
 const titleStyle = {
@@ -84,8 +84,8 @@ const ExamplePage: React.FC = () => {
           <Route path="/Example4">
             <Example4 />
           </Route>
-          <Route path="/Example5">
-            <Example5 />
+          <Route path="/SimpleExample">
+            <SimpleExample />
           </Route>
         </Switch>
       </Router>
