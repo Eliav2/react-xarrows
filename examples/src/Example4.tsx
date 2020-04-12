@@ -1,19 +1,6 @@
 import React, { useState, useRef, useEffect, useLayoutEffect } from "react";
 import { line, box, point } from "./types";
-// import Xarrows, { xarrowPropsType, anchorType } from "../src/Xarrow";
-import Xarrow, { xarrowPropsType, anchorType } from "react-xarrows";
-import { Color } from "csstype";
-
-const boxStyle = {
-  position: "absolute",
-  background: "white",
-  border: "1px #999 solid",
-  borderRadius: "10px",
-  textAlign: "center",
-  width: "100px",
-  height: "30px",
-  color: "black"
-};
+import Xarrow from "react-xarrows";
 
 const canvasStyle = {
   width: "100%",
@@ -22,6 +9,30 @@ const canvasStyle = {
   overflow: "auto",
   display: "flex",
   position: "relative"
+  // overflowY: "scroll",
+  // overflowX: "hidden"
+};
+
+const boxContainerStyle = {
+  position: "relative",
+  overflow: "scroll",
+  width: "120%",
+  height: "140%",
+  background: "white",
+  color: "black",
+  border: "black solid 1px"
+};
+
+const boxStyle = {
+  position: "absolute",
+  border: "1px #999 solid",
+  borderRadius: "10px",
+  textAlign: "center",
+  width: "40px",
+  height: "100px",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center"
 };
 
 const Box: React.FC = props => {
@@ -32,22 +43,23 @@ const Box: React.FC = props => {
   };
 
   const handleDragEnd = (e: React.DragEvent, boxId: string) => {
-    let newBox = { ...props.box };
-    let newX = newBox.x + e.clientX - lastPoint.x,
-      newY = newBox.y + e.clientY - lastPoint.y;
+    let i = props.boxes.findIndex(box => box.id === boxId);
+    let newBoxes = [...props.boxes];
+    let newX = newBoxes[i].x + e.clientX - lastPoint.x,
+      newY = newBoxes[i].y + e.clientY - lastPoint.y;
     if (newX < 0 || newY < 0) return;
-    newBox.x = newX;
-    newBox.y = newY;
-    props.setBox(newBox);
+    newBoxes[i].x = newX;
+    newBoxes[i].y = newY;
+    props.setBoxes(newBoxes);
   };
 
   return (
     <div
       ref={props.box.ref}
-      id={props.box.id}
       style={{ ...boxStyle, left: props.box.x, top: props.box.y }}
       onDragStart={e => handlDragStart(e)}
       onDragEnd={e => handleDragEnd(e, props.box.id)}
+      id={props.box.id}
       draggable
     >
       {props.box.id}
@@ -56,187 +68,79 @@ const Box: React.FC = props => {
 };
 
 const Example4: React.FC = () => {
-  const [box, setBox] = useState<box>({ id: "box1", x: 20, y: 20, ref: useRef(null) });
-  const [box2, setBox2] = useState<box>({ id: "box2", x: 120, y: 120, ref: useRef(null) });
+  const [boxes, setBoxes] = useState<box[]>([
+    //this initiazid values are precentage - next it will be pixels
+    { id: "box1", x: 20, y: 20, ref: useRef(null) },
+    { id: "box2", x: 20, y: 80, ref: useRef(null) }
+  ]);
 
-  const [color, setColor] = useState("red");
-  const [strokeColor, setStrokeColor] = useState(null);
-  const [headColor, setHeadColor] = useState(null);
-  const [curveness, setCurveness] = useState(0.8);
-  const [strokeWidth, setStrokeWidth] = useState(4);
-  const [headSize, setHeadSize] = useState(6);
-  const [startAnchor, setStartAnchor] = useState<anchorType[]>(["middle"]);
-  const [endAnchor, setEndAnchor] = useState<anchorType>(["middle"]);
+  const [boxes2, setBoxes2] = useState<box[]>([
+    { id: "box3", x: 20, y: 20, ref: useRef(null) },
+    { id: "box4", x: 20, y: 80, ref: useRef(null) }
+  ]);
 
-  const colorOptions = ["red", "BurlyWood", "CadetBlue", "Coral"];
-  const bodyColorOptions = [null, ...colorOptions];
-  const anchorsTypes = ["left", "right", "top", "bottom", "middle", "auto"];
+  const [lines, setLines] = useState<line[]>([
+    { from: "box1", to: "box4" }
+    // { from: "box3", to: "box2" }
+  ]);
+  const boxContainerRef = useRef(null); //boxContainerRef
+  const boxContainer2Ref = useRef(null); //boxContainerRef
 
-  var props: xarrowPropsType = {
-    start: "box1", //  can be string
-    end: box2.ref, //  or reference
-    startAnchor: startAnchor,
-    endAnchor: endAnchor,
-    arrowStyle: {
-      curveness: curveness,
-      color: color,
-      strokeColor: strokeColor,
-      headColor: headColor,
-      strokeWidth: strokeWidth,
-      headSize: headSize
-    },
-    monitorDOMchanges: false,
-    registerEvents: [],
-    consoleWarning: false
+  const getRefById = Id => {
+    var ref;
+    [...boxes, ...boxes2].forEach(box => {
+      if (box.id === Id) ref = box.ref;
+    });
+    return ref;
   };
 
   useEffect(() => {
-    // console.log(document.getElementById("strokeWidthInput"));
-    // document.getElementById("strokeWidthInput").addEventListener("change", () => {
-    //   console.log("changed!");
-    // });
+    let { scrollHeight: h1, scrollWidth: w1 } = boxContainerRef.current;
+    let { scrollHeight: h2, scrollWidth: w2 } = boxContainer2Ref.current;
+    setBoxes(boxes => boxes.map(box => ({ ...box, x: 0.01 * box.x * w1, y: 0.01 * box.y * h1 })));
+    setBoxes2(boxes => boxes.map(box => ({ ...box, x: 0.01 * box.x * w2, y: 0.01 * box.y * h2 })));
   }, []);
 
   return (
     <React.Fragment>
-      <div>
-        <h3>
-          <u>Example4:</u>
-        </h3>
+      <h3>
+        <u>Example4:</u>
+      </h3>
 
-        <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
-          <div style={{ display: "flex", alignItems: "center", marginRight: 20 }}>
-            <p>startAnchor: </p>
-            <div>
-              {anchorsTypes.map((anchor, i) => (
-                <div key={i} style={{ display: "flex", alignItems: "center", height: 25 }}>
-                  <p>{anchor}</p>
-                  <input
-                    style={{ height: "15px", width: "15px" }}
-                    type="checkBox"
-                    checked={startAnchor.includes(anchor) ? true : false}
-                    // value={}
-                    onChange={e => {
-                      if (e.target.checked) {
-                        setStartAnchor([...startAnchor, anchor]);
-                      } else {
-                        let a = [...startAnchor];
-                        a.splice(startAnchor.indexOf(anchor), 1);
-                        setStartAnchor(a);
-                      }
-                    }}
-                  />
-                </div>
-              ))}
-            </div>
-          </div>{" "}
-          <div style={{ display: "flex", alignItems: "center", marginLeft: 20 }}>
-            <p>endAnchor: </p>
-            <div>
-              {anchorsTypes.map((anchor, i) => (
-                <div key={i} style={{ display: "flex", alignItems: "center", height: 25 }}>
-                  <p>{anchor}</p>
-                  <input
-                    style={{ height: "15px", width: "15px" }}
-                    type="checkBox"
-                    checked={endAnchor.includes(anchor) ? true : false}
-                    // value={}
-                    onChange={e => {
-                      if (e.target.checked) {
-                        setEndAnchor([...endAnchor, anchor]);
-                      } else {
-                        let a = [...endAnchor];
-                        a.splice(endAnchor.indexOf(anchor), 1);
-                        setEndAnchor(a);
-                      }
-                    }}
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
+      <p>
+        {" "}
+        works perfectly no matter the parent-child relationship between the Xarrow and the source
+        and target.
+      </p>
+      <div style={canvasStyle} id="canvas">
+        <div ref={boxContainerRef} style={boxContainerStyle} id="boxContainer1">
+          {boxes.map((box, i) => (
+            <Box key={i} box={box} boxes={boxes} setBoxes={setBoxes} />
+          ))}
         </div>
-
-        <table align="center" style={{ marginRight: "auto", marginLeft: "auto" }}>
-          <tbody>
-            <tr>
-              <td>
-                <div style={{ display: "flex", alignItems: "center" }}>
-                  <p>arrow color(all): </p>
-                  <select onChange={e => setColor(e.target.value)}>
-                    {colorOptions.map((o, i) => (
-                      <option key={i}>{o}</option>
-                    ))}
-                  </select>
-                </div>
-              </td>
-              <td>
-                <div style={{ display: "flex", alignItems: "center" }}>
-                  <p>stroke color: </p>
-                  <select onChange={e => setStrokeColor(e.target.value)}>
-                    {bodyColorOptions.map((o, i) => (
-                      <option key={i}>{o}</option>
-                    ))}
-                  </select>
-                </div>
-              </td>
-              <td>
-                <div style={{ display: "flex", alignItems: "center" }}>
-                  <p>head color: </p>
-                  <select onChange={e => setHeadColor(e.target.value)}>
-                    {bodyColorOptions.map((o, i) => (
-                      <option key={i}>{o}</option>
-                    ))}
-                  </select>
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <div style={{ display: "flex", alignItems: "center" }}>
-                  <p>curveness: </p>
-                  <input
-                    style={{ width: "30px" }}
-                    type="text"
-                    value={curveness}
-                    onChange={e => setCurveness(e.target.value)}
-                  />
-                </div>
-              </td>
-              <td>
-                <div style={{ display: "flex", alignItems: "center" }}>
-                  <p>strokeWidth: </p>
-                  <input
-                    style={{ width: "30px" }}
-                    type="text"
-                    value={strokeWidth}
-                    onChange={e => setStrokeWidth(e.target.value)}
-                  />
-                </div>
-              </td>
-              <td>
-                <div style={{ display: "flex", alignItems: "center" }}>
-                  <p>headSize: </p>
-                  <input
-                    style={{ width: "30px" }}
-                    type="text"
-                    value={headSize}
-                    onChange={e => setHeadSize(e.target.value)}
-                  />
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-
-        <br />
-
-        <div style={canvasStyle}>
-          <Box box={box} setBox={setBox} />
-          <Box box={box2} setBox={setBox2} />
+        <div ref={boxContainer2Ref} style={boxContainerStyle} id="boxContainer2">
+          {boxes2.map((box, i) => (
+            <Box key={i} box={box} boxes={boxes2} setBoxes={setBoxes2} />
+          ))}
         </div>
-        <Xarrow {...props} />
+        {lines.map((line, i) => (
+          <Xarrow
+            key={i}
+            start={getRefById(line.from)}
+            end={getRefById(line.to)}
+            monitorDOMchanges={true}
+          />
+        ))}
       </div>
+      <p>
+        {" "}
+        set <code>monitorDOMchanges </code>
+        property to <code>true</code> to enable this behavior - this will add eventListeners to the
+        DOM and will trigger update when needed(expereintial).
+        <br /> however - make sure you put the Xarrow component as son of the common ancestor of
+        'start' component and 'end' component <b>so the Xarrow will not rerender when not needed</b>
+        .{" "}
+      </p>
     </React.Fragment>
   );
 };
