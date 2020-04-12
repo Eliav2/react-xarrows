@@ -5,6 +5,9 @@ this component will rerender and will update the anchors position whenever neede
 
 this project developed [using codesandbox](https://codesandbox.io/s/github/Eliav2/react-xarrows).
 
+## installation
+with npm `npm install react-xarrows`.
+
 ## Examples
 see [here](https://codesandbox.io/s/github/Eliav2/react-xarrows/tree/master/examples?file=/src/index.tsx) codebox of few examples(it this repo /examples).
 
