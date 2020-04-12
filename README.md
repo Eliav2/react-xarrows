@@ -46,7 +46,7 @@ const Box = props => {
   );
 };
 
-const SimpleExample: React.FC = () => {
+const SimpleExample = () => {
   const box1 = { id: "box1", ref: useRef(null) };
   const box2 = { id: "box2", ref: useRef(null) };
 
