@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect, useLayoutEffect } from "react";
 import { line, box, point } from "./types";
-import Xarrows, { xarrowPropsType, anchorType } from "../src/Xarrow";
+// import Xarrows, { xarrowPropsType, anchorType } from "../src/Xarrow";
+import Xarrow, { xarrowPropsType, anchorType } from "react-xarrows";
 import { Color } from "csstype";
 
 const boxStyle = {
@@ -234,7 +235,7 @@ const Example4: React.FC = () => {
           <Box box={box} setBox={setBox} />
           <Box box={box2} setBox={setBox2} />
         </div>
-        <Xarrows {...props} />
+        <Xarrow {...props} />
       </div>
     </React.Fragment>
   );

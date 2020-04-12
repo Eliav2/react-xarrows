@@ -1,6 +1,7 @@
 import React, { useState, useRef } from "react";
 import { line, box, point } from "./types";
-import Xarrows from "../src/Xarrow";
+// import Xarrows from "../src/Xarrow";
+import Xarrow from "react-xarrows";
 
 const canvasStyle = {
   width: "100%",
@@ -81,7 +82,7 @@ const Example1: React.FC = () => {
               </div>
             ))}
             {lines.map((line, i) => (
-              <Xarrows
+              <Xarrow
                 key={i}
                 start={boxes.find(box => box.id === line.from).ref}
                 end={boxes.find(box => box.id === line.to).ref}
