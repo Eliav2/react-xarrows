@@ -1,9 +1,7 @@
 import React, { useRef, useEffect, useState, useLayoutEffect } from "react";
-import { Color } from "csstype";
-import { instanceOf } from "prop-types";
-var lodash = require("lodash");
+import { anchorType, xarrowPropsType } from "./Xarrow.d";
+const lodash = require("lodash");
 
-export type anchorType = "auto" | "middle" | "left" | "right" | "top" | "bottom";
 type prevPos = {
   start: {
     x: number;
@@ -19,34 +17,7 @@ type prevPos = {
   };
 };
 
-export type arrowStyleType = {
-  color: Color;
-  strokeColor: Color;
-  headColor: Color;
-  strokeWidth: number;
-  curveness: number;
-  headSize: number;
-};
-
 type reactRef = { current: null | HTMLElement };
-type refType = reactRef | string;
-
-export type xarrowPropsType = {
-  start: refType;
-  end: refType;
-  startAnchor: anchorType | anchorType[];
-  endAnchor: anchorType | anchorType[];
-  monitorDOMchanges: boolean;
-  registerEvents: registerEventsType[];
-  arrowStyle: arrowStyleType;
-  consoleWarning: boolean;
-};
-
-export type registerEventsType = {
-  ref: refType;
-  eventName: keyof GlobalEventHandlersEventMap;
-  callback?: CallableFunction;
-};
 
 type point = { x: number; y: number };
 

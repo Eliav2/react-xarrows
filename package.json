@@ -1,12 +1,20 @@
 {
-  "name": "react-xarrows-mc3z8",
+  "name": "react-xarrows",
   "version": "1.0.0",
-  "description": "",
-  "keywords": [],
-  "main": "examples/index.tsx",
+  "author": "Eliav Louski",
+  "description": "Draw arrows between elements in React",
+  "keywords": ["react", "reactjs", "arrows", "xarrows", "lines", "connect", "draw", "between"],
+  "main": "src/Xarrow.tsx",
+  "module": "src/Xarrow.tsx",
+  "types": "src/Xarrow.d.ts",
+  "homepage": "https://github.com/Eliav2/react-xarrows",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Eliav2/react-xarrows"
+  },
+  "bugs": "https://github.com/Eliav2/react-xarrows/issues",
   "dependencies": {
-    "@types/react": "16.9.32",
-    "lodash": "4.17.15",
+    "lodash": "^4.17.15",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
     "react-router-dom": "5.1.2",
@@ -23,10 +31,6 @@
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },
-  "browserslist": [
-    ">0.2%",
-    "not dead",
-    "not ie <= 11",
-    "not op_mini all"
-  ]
+  "browserslist": [">0.2%", "not dead", "not ie <= 11", "not op_mini all"],
+  "license": "MIT"
 }

@@ -1,0 +1,29 @@
+{
+  "name": "react-xarrows-examples",
+  "version": "1.0.0",
+  "author": "Eliav Louski",
+  "description": "react-xarrows examples",
+  "keywords": [],
+  "main": "ExamplePage.tsx",
+  "homepage": "https://github.com/Eliav2/react-xarrows/examples",
+  "dependencies": {
+    "lodash": "^4.17.15",
+    "react": "^16.12.0",
+    "react-router-dom": "5.1.2",
+    "react-dom": "^16.12.0",
+    "react-scripts": "3.3.0"
+  },
+  "devDependencies": {
+    "@types/react": "16.9.19",
+    "@types/react-dom": "16.9.5",
+    "typescript": "3.7.5"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  },
+  "browserslist": [">0.2%", "not dead", "not ie <= 11", "not op_mini all"],
+  "license": "MIT"
+}
