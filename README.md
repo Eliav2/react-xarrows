@@ -7,6 +7,7 @@ this project developed [using codesandbox](https://codesandbox.io/s/github/Eliav
 
 ## installation
 with npm `npm install react-xarrows`.
+(or `yarn add react-xarrows`)
 
 ## Examples
 see [here](https://codesandbox.io/s/github/Eliav2/react-xarrows/tree/master/examples?file=/src/index.tsx) codebox of few examples(it this repo /examples).
