@@ -6,15 +6,18 @@ this component will rerender and will update the anchors position whenever neede
 this project developed [using codesandbox](https://codesandbox.io/s/github/Eliav2/react-xarrows).
 
 ## installation
+
 with npm `npm install react-xarrows`.
 (or `yarn add react-xarrows`)
 
 ## Examples
+
 see [here](https://codesandbox.io/s/github/Eliav2/react-xarrows/tree/master/examples?file=/src/index.tsx) codebox of few examples(it this repo /examples).
 
 ![Image of xarrows](https://github.com/Eliav2/react-xarrows/blob/master/examples/images/react-xarrow-picture.png)
 
 ### simple example:
+
 ```
 import React, { useRef } from "react";
 import Xarrow from "react-xarrows";
@@ -68,9 +71,11 @@ export default SimpleExample;
 ```
 
 ## The API
+
 see [this example](https://lwwwp.csb.app/Example2) to play around.
 
 the properties the xarrow component recieves is as follow(as listed in /src/xarrow.d.ts):
+
 ```
 export type anchorType = "auto" | "middle" | "left" | "right" | "top" | "bottom";
 
@@ -106,20 +111,48 @@ export type xarrowPropsType = {
 ```
 
 #### 'start' and 'end'
+
 can be a reference to a react ref to html element or string - an id of a DOM element.
 
 #### 'startAnchor' and 'endAnchor'
+
 each anchor can be: `"auto" | "middle" | "left" | "right" | "top" | "bottom"`.
 `auto` will choose automatically the path with the smallest length.
 
 #### arrowStyle
+
 see `arrowStyleType` object above for more details.
 
 #### monitorDOMchanges
+
 A boolean. set this property to true to add relevant eventListeners to the DOM so the xarrow component will update anchors position whenever needed(scroll and resize and so on)(experamential).
 
 #### registerEvents
+
 you can register the xarrow to DOM event as you please. each time a event that his registed will fire the xarrow component will update his position and will call `callback` (if provided).
 
 #### consoleWarning
+
 we provide some nice warnings (and errors) whenever we detect issues. see ['Example3'](https://lwwwp.csb.app/Example3) in the examples.
+
+### default props
+
+default props is as folows:
+
+```
+Xarrow.defaultProps = {
+  startAnchor: "auto",
+  endAnchor: "auto",
+  arrowStyle: {
+    curveness: 0.8,
+    color: "CornflowerBlue",
+    strokeColor: null,
+    headColor: null,
+    strokeWidth: 4,
+    headSize: 6
+  },
+  monitorDOMchanges: false,
+  registerEvents: [],
+  consoleWarning: "true"
+};
+```

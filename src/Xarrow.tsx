@@ -666,7 +666,6 @@ Xarrow.defaultProps = {
   monitorDOMchanges: false,
   registerEvents: [],
   consoleWarning: "true"
-  // module: module
 };
 
 export default Xarrow;
