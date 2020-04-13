@@ -5,6 +5,7 @@
   "description": "",
   "keywords": [],
   "main": "src/Xarrow.tsx",
+  "main": "src/index.tsx",
   "module": "src/Xarrow.tsx",
   "types": "src/Xarrow.d.ts",
   "homepage": "https://github.com/Eliav2/react-xarrows",

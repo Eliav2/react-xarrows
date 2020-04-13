@@ -95,6 +95,9 @@ const getElementByPropGiven = (ref: React.RefObject<HTMLElement> | "string"): HT
   return myRef;
 };
 
+// var eventListeners = [];
+// console.log("???");
+
 function Xarrow(props: xarrowPropsType) {
   const selfRef = useRef<reactRef>(null);
   const [anchorsRefs, setAnchorsRefs] = useState({ start: null, end: null });
@@ -104,7 +107,6 @@ function Xarrow(props: xarrowPropsType) {
   const [selfParents, setSelfParents] = useState<HTMLElement[]>(null); //list parents of the common ascestor of the arrow with start and end(until "root elemnt")
   const [anchorsParents, setAnchorsParents] = useState<anchorsParents>(null); //list childrens of the common ascestor of the arrow with start and end until start or end
   const [canvasStartPos, setCanvasStartPos] = useState<point>({ x: 0, y: 0 });
-  const [eventListeners, setEventListeners] = useState<eventListener[]>([]);
 
   const updateIfNeeded = () => {
     if (!lodash.isEqual(props, prevProps)) {
@@ -122,18 +124,18 @@ function Xarrow(props: xarrowPropsType) {
     }
   };
 
-  const safeAddEventListener = (elem: HTMLElement, eventName: domEvents, func) => {
-    setEventListeners([...eventListeners, { elem, eventName, func }]);
-    elem.addEventListener(eventName, func);
+  const monitorDOMchanges = () => {
+    [...anchorsParents.start, ...anchorsParents.end].forEach(elem => {
+      elem.addEventListener("scroll", updateIfNeeded);
+    });
+    window.addEventListener("resize", updateIfNeeded);
   };
 
-  const monitorDOMchanges = () => {
-    // anchorsParents.start.forEach(elem => elem.addEventListener("scroll", updateIfNeeded));
-    // anchorsParents.end.forEach(elem => elem.addEventListener("scroll", updateIfNeeded));
-    // window.addEventListener("resize", updateIfNeeded);
-    anchorsParents.start.forEach(elem => safeAddEventListener(elem, "scroll", updateIfNeeded));
-    anchorsParents.end.forEach(elem => safeAddEventListener(elem, "scroll", updateIfNeeded));
-    safeAddEventListener(window, "resize", updateIfNeeded);
+  const cleanMonitorDOMchanges = () => {
+    [...anchorsParents.start, ...anchorsParents.end].forEach(elem => {
+      elem.removeEventListener("scroll", updateIfNeeded);
+    });
+    window.removeEventListener("resize", updateIfNeeded);
   };
 
   const initParentsChildrens = () => {
@@ -226,20 +228,22 @@ function Xarrow(props: xarrowPropsType) {
     }
   };
 
-  const cleanUp = () => {
-    //called before unmounting of Xarrow
-    // console.log("xarrow unmount");
-    eventListeners.forEach(ev => ev.elem.removeEventListener(ev.eventName, ev.func));
+  const triggerUpdate = callback => {
+    updateIfNeeded();
+    if (callback) callback();
   };
 
   const initRegisterEvents = () => {
-    const triggerUpdate = callback => {
-      updateIfNeeded();
-      if (callback) callback();
-    };
     props.registerEvents.forEach(re => {
       var ref = getElementByPropGiven(re.ref);
-      safeAddEventListener(ref, re.eventName, triggerUpdate(re.callback));
+      ref.addEventListener(re.eventName, () => triggerUpdate(re.callback));
+    });
+  };
+
+  const cleanRegisterEvents = () => {
+    props.registerEvents.forEach(re => {
+      var ref = getElementByPropGiven(re.ref);
+      ref.removeEventListener(re.eventName, () => triggerUpdate(re.callback));
     });
   };
 
@@ -254,20 +258,21 @@ function Xarrow(props: xarrowPropsType) {
     setPrevProps(props);
   };
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     // equilavent to componentDidMount
     // console.log("xarrow mounted");
-    initAnchorsRefs();
     initRegisterEvents();
+    initAnchorsRefs();
     initCanvasStartPos();
     initProps();
-    return cleanUp;
-
-    // }
+    return () => {
+      // console.log("xarrow unmounted");
+      cleanRegisterEvents();
+    };
   }, []);
 
   useEffect(() => {
-    // heppens only at mounting (or props changed) after anchorsRefs initialized
+    // Heppens only at mounting (or props changed) after anchorsRefs initialized
     if (anchorsRefs.start) {
       initParentsChildrens();
     }
@@ -277,6 +282,9 @@ function Xarrow(props: xarrowPropsType) {
     // heppens only at mounting after anchorsParents initialized
     if (anchorsParents && props.monitorDOMchanges) {
       monitorDOMchanges();
+      return () => {
+        cleanMonitorDOMchanges();
+      };
     }
   }, [anchorsParents]);
 
@@ -287,6 +295,7 @@ function Xarrow(props: xarrowPropsType) {
 
   useEffect(() => {
     // console.log("xarrow renderd!");
+    // console.log(eventListeners);
     updateIfNeeded();
   });
 
