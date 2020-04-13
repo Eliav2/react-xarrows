@@ -1,5 +1,6 @@
 import React, { useRef } from "react";
-import Xarrow from "react-xarrows";
+// import Xarrow from "react-xarrows";
+import Xarrow from "./../../src/Xarrow";
 
 const canvasStyle = {
   position: "relative",
