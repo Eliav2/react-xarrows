@@ -84,9 +84,9 @@ const Example: React.FC = () => {
       strokeWidth: strokeWidth,
       headSize: headSize
     },
-    monitorDOMchanges: false,
+    monitorDOMchanges: true,
     registerEvents: [],
-    consoleWarning: true
+    consoleWarning: false
   };
 
   useEffect(() => {}, []);
@@ -220,11 +220,12 @@ const Example: React.FC = () => {
             </tbody>
           </table>
           <br />
-          <div style={canvasStyle}>
+          <div style={canvasStyle} id="canvas">
             <Box box={box} setBox={setBox} />
             <Box box={box2} setBox={setBox2} />
-            <Xarrow {...props} />
           </div>
+          <Xarrow {...props} />
+          {/* <Xarrow {...props} /> */}
         </div>
       ) : null}
     </div>
