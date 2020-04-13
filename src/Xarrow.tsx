@@ -267,7 +267,7 @@ function Xarrow(props: xarrowPropsType) {
   }, []);
 
   useEffect(() => {
-    // heppens only at mounting (or props changed) after anchorsRefs initialized
+    // Heppens only at mounting (or props changed) after anchorsRefs initialized
     if (anchorsRefs.start) {
       initParentsChildrens();
     }
