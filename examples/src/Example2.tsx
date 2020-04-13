@@ -87,7 +87,7 @@ const Example2: React.FC = () => {
     },
     monitorDOMchanges: false,
     registerEvents: [],
-    consoleWarning: false
+    consoleWarning: true
   };
 
   useEffect(() => {
@@ -239,8 +239,8 @@ const Example2: React.FC = () => {
         <div style={canvasStyle}>
           <Box box={box} setBox={setBox} />
           <Box box={box2} setBox={setBox2} />
+          <Xarrow {...props} />
         </div>
-        <Xarrow {...props} />
       </div>
     </React.Fragment>
   );

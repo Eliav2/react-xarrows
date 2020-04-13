@@ -2,6 +2,7 @@ import * as React from "react";
 import { render } from "react-dom";
 import "./index.css";
 
-import SimpleExample from "./../examples/src/SimpleExample";
+import Example from "./Example";
 const rootElement = document.getElementById("root");
-render(<SimpleExample />, rootElement);
+render(<Example />, rootElement);
+

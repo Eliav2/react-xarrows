@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState, useLayoutEffect } from "react";
-import { anchorType, xarrowPropsType } from "./Xarrow.d";
+import { anchorType, xarrowPropsType, registerEventsType } from "./Xarrow.d";
 const lodash = require("lodash");
 
 type prevPos = {
@@ -21,10 +21,18 @@ type reactRef = { current: null | HTMLElement };
 
 type point = { x: number; y: number };
 
+type domEvents = keyof GlobalEventHandlersEventMap;
+
 type anchorsParents = {
   start: HTMLElement[];
   end: HTMLElement[];
   extra: HTMLElement[];
+};
+
+type eventListener = {
+  elem: HTMLElement;
+  eventName: domEvents;
+  func: CallableFunction;
 };
 
 const findCommonAncestor = (elem: HTMLElement, elem2: HTMLElement): HTMLElement => {
@@ -62,7 +70,6 @@ const findAllChildrens = (child: HTMLElement, parent: HTMLElement) => {
   if (child === parent) return [];
   let childrens: HTMLElement[] = [];
   let childParent = child.parentElement;
-  // if childParent ===
   while (childParent !== parent) {
     childrens.push(childParent);
     childParent = childParent.parentElement;
@@ -97,6 +104,7 @@ function Xarrow(props: xarrowPropsType) {
   const [selfParents, setSelfParents] = useState<HTMLElement[]>(null); //list parents of the common ascestor of the arrow with start and end(until "root elemnt")
   const [anchorsParents, setAnchorsParents] = useState<anchorsParents>(null); //list childrens of the common ascestor of the arrow with start and end until start or end
   const [canvasStartPos, setCanvasStartPos] = useState<point>({ x: 0, y: 0 });
+  const [eventListeners, setEventListeners] = useState<eventListener[]>([]);
 
   const updateIfNeeded = () => {
     if (!lodash.isEqual(props, prevProps)) {
@@ -114,10 +122,18 @@ function Xarrow(props: xarrowPropsType) {
     }
   };
 
+  const safeAddEventListener = (elem: HTMLElement, eventName: domEvents, func) => {
+    setEventListeners([...eventListeners, { elem, eventName, func }]);
+    elem.addEventListener(eventName, func);
+  };
+
   const monitorDOMchanges = () => {
-    anchorsParents.start.forEach(elem => elem.addEventListener("scroll", updateIfNeeded));
-    anchorsParents.end.forEach(elem => elem.addEventListener("scroll", updateIfNeeded));
-    window.addEventListener("resize", updateIfNeeded);
+    // anchorsParents.start.forEach(elem => elem.addEventListener("scroll", updateIfNeeded));
+    // anchorsParents.end.forEach(elem => elem.addEventListener("scroll", updateIfNeeded));
+    // window.addEventListener("resize", updateIfNeeded);
+    anchorsParents.start.forEach(elem => safeAddEventListener(elem, "scroll", updateIfNeeded));
+    anchorsParents.end.forEach(elem => safeAddEventListener(elem, "scroll", updateIfNeeded));
+    safeAddEventListener(window, "resize", updateIfNeeded);
   };
 
   const initParentsChildrens = () => {
@@ -210,6 +226,12 @@ function Xarrow(props: xarrowPropsType) {
     }
   };
 
+  const cleanUp = () => {
+    //called before unmounting of Xarrow
+    // console.log("xarrow unmount");
+    eventListeners.forEach(ev => ev.elem.removeEventListener(ev.eventName, ev.func));
+  };
+
   const initRegisterEvents = () => {
     const triggerUpdate = callback => {
       updateIfNeeded();
@@ -217,7 +239,7 @@ function Xarrow(props: xarrowPropsType) {
     };
     props.registerEvents.forEach(re => {
       var ref = getElementByPropGiven(re.ref);
-      ref.addEventListener(re.eventName, triggerUpdate(re.callback));
+      safeAddEventListener(ref, re.eventName, triggerUpdate(re.callback));
     });
   };
 
@@ -239,11 +261,13 @@ function Xarrow(props: xarrowPropsType) {
     initRegisterEvents();
     initCanvasStartPos();
     initProps();
+    return cleanUp;
+
     // }
   }, []);
 
   useEffect(() => {
-    // heppens only at mounting (or props changed) after anchorsRefs initialized
+    // Heppens only at mounting (or props changed) after anchorsRefs initialized
     if (anchorsRefs.start) {
       initParentsChildrens();
     }
