@@ -1,8 +1,6 @@
-import React, { useState, useRef, useEffect, useLayoutEffect } from "react";
-import { line, box, point } from "./types";
-// import Xarrows, { xarrowPropsType, anchorType } from "../src/Xarrow";
+import React, { useState, useRef, useEffect } from "react";
+import { point } from "./types";
 import Xarrow, { xarrowPropsType, anchorType } from "react-xarrows";
-import { Color } from "csstype";
 
 const boxStyle = {
   position: "absolute",
@@ -56,8 +54,10 @@ const Box: React.FC = props => {
 };
 
 const Example2: React.FC = () => {
-  const [box, setBox] = useState<box>({ id: "box1", x: 20, y: 20, ref: useRef(null) });
-  const [box2, setBox2] = useState<box>({ id: "box2", x: 120, y: 120, ref: useRef(null) });
+  const [showMe, setShowMe] = useState(true);
+
+  const [box, setBox] = useState({ id: "box1", x: 20, y: 20, ref: useRef(null) });
+  const [box2, setBox2] = useState({ id: "box2", x: 320, y: 120, ref: useRef(null) });
 
   const [color, setColor] = useState("red");
   const [strokeColor, setStrokeColor] = useState(null);
@@ -65,13 +65,16 @@ const Example2: React.FC = () => {
   const [curveness, setCurveness] = useState(0.8);
   const [strokeWidth, setStrokeWidth] = useState(4);
   const [headSize, setHeadSize] = useState(6);
-  const [startAnchor, setStartAnchor] = useState<anchorType[]>(["middle"]);
-  const [endAnchor, setEndAnchor] = useState<anchorType>(["middle"]);
+  const [startAnchor, setStartAnchor] = useState<anchorType[]>(["auto"]);
+  const [endAnchor, setEndAnchor] = useState<anchorType>(["auto"]);
+  const [dashed, setDashed] = useState(true);
+  const [animation, setAnimation] = useState(1);
 
   const colorOptions = ["red", "BurlyWood", "CadetBlue", "Coral"];
   const bodyColorOptions = [null, ...colorOptions];
   const anchorsTypes = ["left", "right", "top", "bottom", "middle", "auto"];
 
+  // this is the importent part of the example! play with the props to undestand better the API options
   var props: xarrowPropsType = {
     start: "box1", //  can be string
     end: box2.ref, //  or reference
@@ -83,166 +86,195 @@ const Example2: React.FC = () => {
       strokeColor: strokeColor,
       headColor: headColor,
       strokeWidth: strokeWidth,
-      headSize: headSize
+      headSize: headSize,
+      // dashness: true   // can be simply boolean or object:
+      dashness: dashed ? { animation } : false
+    },
+    // label: "middle"  //can be simply string of middle label or object:
+    label: {
+      start: "startLabel",
+      end: { text: "endLabel", extra: { fill: "blue", dy: -10 } }
     },
     monitorDOMchanges: false,
     registerEvents: [],
-    consoleWarning: true
+    consoleWarning: true,
+    advance: { extendSVGcanvas: 20 }
   };
 
-  useEffect(() => {
-    // console.log(document.getElementById("strokeWidthInput"));
-    // document.getElementById("strokeWidthInput").addEventListener("change", () => {
-    //   console.log("changed!");
-    // });
-  }, []);
+  useEffect(() => {}, []);
 
   return (
-    <React.Fragment>
-      <div>
-        <h3>
-          <u>Example2:</u>
-        </h3>
-        <p>
-          {" "}
-          This example shows some of the API options. give the arrow diffrent properties to
-          customize his look.
-        </p>
+    <div>
+      <h3>
+        <u>Example2:</u>
+      </h3>
+      <p>
+        {" "}
+        This example shows some of the main API options. give the arrow diffrent properties to
+        customize his look. note that some options are cannot be changed though this GUI(like custom
+        lables or advande dashness and more) play with them directly at this codesandbox!.
+      </p>
 
-        <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
-          <div style={{ display: "flex", alignItems: "center", marginRight: 20 }}>
-            <p>startAnchor: </p>
-            <div>
-              {anchorsTypes.map((anchor, i) => (
-                <div key={i} style={{ display: "flex", alignItems: "center", height: 25 }}>
-                  <p>{anchor}</p>
-                  <input
-                    style={{ height: "15px", width: "15px" }}
-                    type="checkBox"
-                    checked={startAnchor.includes(anchor) ? true : false}
-                    // value={}
-                    onChange={e => {
-                      if (e.target.checked) {
-                        setStartAnchor([...startAnchor, anchor]);
-                      } else {
-                        let a = [...startAnchor];
-                        a.splice(startAnchor.indexOf(anchor), 1);
-                        setStartAnchor(a);
-                      }
-                    }}
-                  />
-                </div>
-              ))}
-            </div>
-          </div>{" "}
-          <div style={{ display: "flex", alignItems: "center", marginLeft: 20 }}>
-            <p>endAnchor: </p>
-            <div>
-              {anchorsTypes.map((anchor, i) => (
-                <div key={i} style={{ display: "flex", alignItems: "center", height: 25 }}>
-                  <p>{anchor}</p>
-                  <input
-                    style={{ height: "15px", width: "15px" }}
-                    type="checkBox"
-                    checked={endAnchor.includes(anchor) ? true : false}
-                    // value={}
-                    onChange={e => {
-                      if (e.target.checked) {
-                        setEndAnchor([...endAnchor, anchor]);
-                      } else {
-                        let a = [...endAnchor];
-                        a.splice(endAnchor.indexOf(anchor), 1);
-                        setEndAnchor(a);
-                      }
-                    }}
-                  />
-                </div>
-              ))}
+      <button onClick={() => setShowMe(!showMe)}>toggle</button>
+      {showMe ? (
+        <div>
+          <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
+            <div style={{ display: "flex", alignItems: "center", marginRight: 20 }}>
+              <p>startAnchor: </p>
+              <div>
+                {anchorsTypes.map((anchor, i) => (
+                  <div key={i} style={{ display: "flex", alignItems: "center", height: 25 }}>
+                    <p>{anchor}</p>
+                    <input
+                      style={{ height: "15px", width: "15px" }}
+                      type="checkBox"
+                      checked={startAnchor.includes(anchor) ? true : false}
+                      // value={}
+                      onChange={e => {
+                        if (e.target.checked) {
+                          setStartAnchor([...startAnchor, anchor]);
+                        } else {
+                          let a = [...startAnchor];
+                          a.splice(startAnchor.indexOf(anchor), 1);
+                          setStartAnchor(a);
+                        }
+                      }}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>{" "}
+            <div style={{ display: "flex", alignItems: "center", marginLeft: 20 }}>
+              <p>endAnchor: </p>
+              <div>
+                {anchorsTypes.map((anchor, i) => (
+                  <div key={i} style={{ display: "flex", alignItems: "center", height: 25 }}>
+                    <p>{anchor}</p>
+                    <input
+                      style={{ height: "15px", width: "15px" }}
+                      type="checkBox"
+                      checked={endAnchor.includes(anchor) ? true : false}
+                      // value={}
+                      onChange={e => {
+                        if (e.target.checked) {
+                          setEndAnchor([...endAnchor, anchor]);
+                        } else {
+                          let a = [...endAnchor];
+                          a.splice(endAnchor.indexOf(anchor), 1);
+                          setEndAnchor(a);
+                        }
+                      }}
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
+          <table style={{ marginRight: "auto", marginLeft: "auto" }}>
+            <tbody>
+              <tr>
+                <td>
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <p>arrow color(all): </p>
+                    <select onChange={e => setColor(e.target.value)}>
+                      {colorOptions.map((o, i) => (
+                        <option key={i}>{o}</option>
+                      ))}
+                    </select>
+                  </div>
+                </td>
+                <td>
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <p>stroke color: </p>
+                    <select onChange={e => setStrokeColor(e.target.value)}>
+                      {bodyColorOptions.map((o, i) => (
+                        <option key={i}>{o}</option>
+                      ))}
+                    </select>
+                  </div>
+                </td>
+                <td>
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <p>head color: </p>
+                    <select onChange={e => setHeadColor(e.target.value)}>
+                      {bodyColorOptions.map((o, i) => (
+                        <option key={i}>{o}</option>
+                      ))}
+                    </select>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <p>curveness: </p>
+                    <input
+                      style={{ width: "30px" }}
+                      type="text"
+                      value={curveness}
+                      onChange={e => setCurveness(e.target.value)}
+                    />
+                  </div>
+                </td>
+                <td>
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <p>strokeWidth: </p>
+                    <input
+                      style={{ width: "30px" }}
+                      type="text"
+                      value={strokeWidth}
+                      onChange={e => setStrokeWidth(e.target.value)}
+                    />
+                  </div>
+                </td>
+                <td>
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <p>headSize: </p>
+                    <input
+                      style={{ width: "30px" }}
+                      type="text"
+                      value={headSize}
+                      onChange={e => setHeadSize(e.target.value)}
+                    />
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <p>dashed: </p>
+                    <input
+                      style={{ height: "15px", width: "15px" }}
+                      type="checkBox"
+                      checked={dashed}
+                      onChange={e => setDashed(e.target.checked ? true : false)}
+                    />
+                  </div>
+                </td>
+                <td>
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <p>animation: </p>
+                    <input
+                      style={{ width: "30px" }}
+                      type="text"
+                      value={animation}
+                      onChange={e => setAnimation(e.target.value)}
+                    />
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <br />
+          <div style={canvasStyle} id="canvas">
+            <Box box={box} setBox={setBox} />
+            <Box box={box2} setBox={setBox2} />
+            <Xarrow {...props} />
+          </div>
+          {/*what will heppen if you will move Xarrow here? try!*/}
         </div>
-
-        <table align="center" style={{ marginRight: "auto", marginLeft: "auto" }}>
-          <tbody>
-            <tr>
-              <td>
-                <div style={{ display: "flex", alignItems: "center" }}>
-                  <p>arrow color(all): </p>
-                  <select onChange={e => setColor(e.target.value)}>
-                    {colorOptions.map((o, i) => (
-                      <option key={i}>{o}</option>
-                    ))}
-                  </select>
-                </div>
-              </td>
-              <td>
-                <div style={{ display: "flex", alignItems: "center" }}>
-                  <p>stroke color: </p>
-                  <select onChange={e => setStrokeColor(e.target.value)}>
-                    {bodyColorOptions.map((o, i) => (
-                      <option key={i}>{o}</option>
-                    ))}
-                  </select>
-                </div>
-              </td>
-              <td>
-                <div style={{ display: "flex", alignItems: "center" }}>
-                  <p>head color: </p>
-                  <select onChange={e => setHeadColor(e.target.value)}>
-                    {bodyColorOptions.map((o, i) => (
-                      <option key={i}>{o}</option>
-                    ))}
-                  </select>
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <div style={{ display: "flex", alignItems: "center" }}>
-                  <p>curveness: </p>
-                  <input
-                    style={{ width: "30px" }}
-                    type="text"
-                    value={curveness}
-                    onChange={e => setCurveness(e.target.value)}
-                  />
-                </div>
-              </td>
-              <td>
-                <div style={{ display: "flex", alignItems: "center" }}>
-                  <p>strokeWidth: </p>
-                  <input
-                    style={{ width: "30px" }}
-                    type="text"
-                    value={strokeWidth}
-                    onChange={e => setStrokeWidth(e.target.value)}
-                  />
-                </div>
-              </td>
-              <td>
-                <div style={{ display: "flex", alignItems: "center" }}>
-                  <p>headSize: </p>
-                  <input
-                    style={{ width: "30px" }}
-                    type="text"
-                    value={headSize}
-                    onChange={e => setHeadSize(e.target.value)}
-                  />
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-
-        <br />
-
-        <div style={canvasStyle}>
-          <Box box={box} setBox={setBox} />
-          <Box box={box2} setBox={setBox2} />
-          <Xarrow {...props} />
-        </div>
-      </div>
-    </React.Fragment>
+      ) : null}
+    </div>
   );
 };
 
