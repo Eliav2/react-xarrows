@@ -64,8 +64,10 @@ const Example: React.FC = () => {
   const [curveness, setCurveness] = useState(0.8);
   const [strokeWidth, setStrokeWidth] = useState(4);
   const [headSize, setHeadSize] = useState(6);
-  const [startAnchor, setStartAnchor] = useState<anchorType[]>(["middle"]);
-  const [endAnchor, setEndAnchor] = useState<anchorType>(["middle"]);
+  const [startAnchor, setStartAnchor] = useState<anchorType[]>(["auto"]);
+  const [endAnchor, setEndAnchor] = useState<anchorType>(["auto"]);
+  const [dashed, setDashed] = useState(false);
+  const [animation, setAnimation] = useState(0);
 
   const colorOptions = ["red", "BurlyWood", "CadetBlue", "Coral"];
   const bodyColorOptions = [null, ...colorOptions];
@@ -82,11 +84,19 @@ const Example: React.FC = () => {
       strokeColor: strokeColor,
       headColor: headColor,
       strokeWidth: strokeWidth,
-      headSize: headSize
+      headSize: headSize,
+      // dashness: true   // cab be simply boolean
+      dashness: dashed ? { animation } : false
     },
-    monitorDOMchanges: true,
+    // label: "middle"  //can be simply string of middle label
+    label: {
+      start: "start",
+      end: { text: "end", extra: { fill: "purple", dy: -10 } }
+    },
+    monitorDOMchanges: false,
     registerEvents: [],
-    consoleWarning: false
+    consoleWarning: true,
+    advance: { extendSVGcanvas: 20 }
   };
 
   useEffect(() => {}, []);
@@ -217,15 +227,38 @@ const Example: React.FC = () => {
                   </div>
                 </td>
               </tr>
+              <tr>
+                <td>
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <p>dashed: </p>
+                    <input
+                      style={{ height: "15px", width: "15px" }}
+                      type="checkBox"
+                      checked={dashed}
+                      onChange={e => setDashed(e.target.checked ? true : false)}
+                    />
+                  </div>
+                </td>
+                <td>
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <p>animation: </p>
+                    <input
+                      style={{ width: "30px" }}
+                      type="text"
+                      value={animation}
+                      onChange={e => setAnimation(e.target.value)}
+                    />
+                  </div>
+                </td>
+              </tr>
             </tbody>
           </table>
           <br />
           <div style={canvasStyle} id="canvas">
             <Box box={box} setBox={setBox} />
             <Box box={box2} setBox={setBox2} />
+            <Xarrow {...props} />
           </div>
-          <Xarrow {...props} />
-          {/* <Xarrow {...props} /> */}
         </div>
       ) : null}
     </div>

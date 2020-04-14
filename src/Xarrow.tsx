@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState, useLayoutEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { anchorType, xarrowPropsType, registerEventsType } from "./Xarrow.d";
 const lodash = require("lodash");
 
@@ -27,12 +27,6 @@ type anchorsParents = {
   start: HTMLElement[];
   end: HTMLElement[];
   extra: HTMLElement[];
-};
-
-type eventListener = {
-  elem: HTMLElement;
-  eventName: domEvents;
-  func: CallableFunction;
 };
 
 const findCommonAncestor = (elem: HTMLElement, elem2: HTMLElement): HTMLElement => {
@@ -94,9 +88,6 @@ const getElementByPropGiven = (ref: React.RefObject<HTMLElement> | "string"): HT
 
   return myRef;
 };
-
-// var eventListeners = [];
-// console.log("???");
 
 function Xarrow(props: xarrowPropsType) {
   const selfRef = useRef<reactRef>(null);
@@ -169,11 +160,11 @@ function Xarrow(props: xarrowPropsType) {
         );
       if (selfRef.current.parentElement !== anchorsCommonAncestor)
         console.warn(
-          `Xarrow warning: you placed Xarrow not as brother of the common ancestor of 'start' component and 'end' component.
-        make sure this was necessary,and set monitorDOMchanges to true so Xarrow will render whenever needed.
-        the suggested element to put Xarrow inside of to prevent redundant rerenders is `,
+          `Xarrow warning: you placed Xarrow not as son of the common ancestor of 'start' component and 'end' component.
+          the suggested element to put Xarrow inside of to prevent redundant rerenders is `,
           anchorsCommonAncestor,
-          `\nto disable this warnings set consoleWarning property to false`
+          `if this was your intention set monitorDOMchanges to true so Xarrow will render whenever relevant DOM events are triggerd.
+          to disable this warnings set consoleWarning property to false`
         );
       if (
         (allAncestorChildrensStart.length > 0 || allAncestorChildrensEnd.length > 0) &&
@@ -182,8 +173,10 @@ function Xarrow(props: xarrowPropsType) {
         console.warn(
           `Xarrow warning: set monitorDOMchanges to true - its possible that the positioning will get out of sync on DOM events(like scroll),
         on these elements`,
-          allAncestorChildrensStart,
-          allAncestorChildrensEnd,
+          lodash.uniqWith(
+            [...allAncestorChildrensStart, ...allAncestorChildrensEnd],
+            lodash.isEqual
+          ),
           `\nto disable this warnings set consoleWarning property to false`
         );
     }
@@ -197,8 +190,6 @@ function Xarrow(props: xarrowPropsType) {
   };
 
   const testUserGivenProperties = () => {
-    // console.log(props.start instanceof React.MutableRefObject)
-    // console.log("module.parent", testUserGivenProperties.caller);
     if (typeof props.start === "object") {
       if (!("current" in props.start)) {
         let err = Error(
@@ -283,6 +274,7 @@ function Xarrow(props: xarrowPropsType) {
     if (anchorsParents && props.monitorDOMchanges) {
       monitorDOMchanges();
       return () => {
+        //cleanUp it unmounting!
         cleanMonitorDOMchanges();
       };
     }
@@ -309,20 +301,61 @@ function Xarrow(props: xarrowPropsType) {
     y1: 0, //the y starting point of the line inside the canvas
     x2: 0, //the x ending point of the line inside the canvas
     y2: 0, //the y ending point of the line inside the canvas
-
+    dx: 0, // the x diffrence between 'start' anchor to 'end' anchor
+    dy: 0, // the y diffrence between 'start' anchor to 'end' anchor
     cpx1: 0, // control points - control the curveness of the line
     cpy1: 0,
     cpx2: 0,
     cpy2: 0
   });
 
-  let { color, strokeColor, headColor, headSize, strokeWidth } = props.arrowStyle;
+  let { color, strokeColor, headColor, headSize, strokeWidth, dashness } = props.arrowStyle;
   headColor = headColor ? headColor : color;
   strokeColor = strokeColor ? strokeColor : color;
+  let dashStroke = 0,
+    dashNone = 0,
+    animationSpeed,
+    animationDirection = 1;
+  if (dashness) {
+    dashStroke = dashness.strokeLen ? Number(dashness.strokeLen) : Number(strokeWidth) * 2;
+    dashNone = dashness.nonStrokeLen ? Number(dashness.nonStrokeLen) : Number(strokeWidth);
+    animationSpeed = dashness.animation ? Number(dashness.animation) : null;
+  }
+  let dashoffset = dashStroke + dashNone;
+  if (animationSpeed < 0) {
+    animationSpeed *= -1;
+    animationDirection = -1;
+  }
 
+  let labelStart, labelMiddle, labelEnd;
+  let labelStartExtra = {},
+    labelMiddleExtra = {},
+    labelEndExtra = {};
+  if (props.label) {
+    if (typeof props.label === "string") labelMiddle = props.label;
+    else {
+      labelStart = props.label.start;
+      labelMiddle = props.label.middle;
+      labelEnd = props.label.end;
+      if (typeof labelStart === "object") {
+        labelStartExtra = labelStart.extra;
+        labelStart = labelStart.text;
+      }
+      if (typeof labelMiddle === "object") {
+        labelMiddleExtra = labelMiddle.extra;
+        labelMiddle = labelMiddle.text;
+      }
+      if (typeof labelEnd === "object") {
+        labelEndExtra = labelEnd.extra;
+        labelEnd = labelEnd.text;
+      }
+    }
+  }
+
+  let userCanvExtra = props.advance.extendSVGcanvas;
   const extraCanvasSize = {
-    excx: strokeWidth * headSize,
-    excy: strokeWidth * headSize
+    excx: strokeWidth * headSize + 20 + userCanvExtra,
+    excy: strokeWidth * headSize + 20 + userCanvExtra
   };
   var { excx, excy } = extraCanvasSize;
 
@@ -641,7 +674,7 @@ function Xarrow(props: xarrowPropsType) {
     }
     cw += excx;
     ch += excy;
-    setSt({ cx0, cy0, x1, x2, y1, y2, cw, ch, cpx1, cpy1, cpx2, cpy2 });
+    setSt({ cx0, cy0, x1, x2, y1, y2, cw, ch, cpx1, cpy1, cpx2, cpy2, dx, dy });
   };
 
   return (
@@ -651,7 +684,7 @@ function Xarrow(props: xarrowPropsType) {
       height={st.ch}
       viewBox={`${-excx / 2} ${-excy / 2} ${st.cw} ${st.ch}`}
       style={{
-        // border: "2px yellow dashed",
+        border: "2px yellow dashed",
         position: "absolute",
         left: st.cx0,
         top: st.cy0,
@@ -671,16 +704,63 @@ function Xarrow(props: xarrowPropsType) {
         >
           <path d="M 0 0 L 12 6 L 0 12 L 3 6  z" fill={headColor} />
         </marker>
+        <path
+          id="MyPath"
+          side="right"
+          d={`M ${st.x1} ${st.y1} C  ${st.cpx1} ${st.cpy1}, ${st.cpx2} ${st.cpy2}, ${st.x2} ${
+            st.y2
+          }`}
+        />
       </defs>
       {/* <circle r="5" cx={st.cpx1} cy={st.cpy1} fill="green" />
       <circle r="5" cx={st.cpx2} cy={st.cpy2} fill="blue" /> */}
       <path
         d={`M ${st.x1} ${st.y1} C  ${st.cpx1} ${st.cpy1}, ${st.cpx2} ${st.cpy2}, ${st.x2} ${st.y2}`}
         stroke={strokeColor}
+        strokeDasharray={`${dashStroke} ${dashNone}`}
         strokeWidth={strokeWidth}
         fill="transparent"
         markerEnd="url(#arrowHead)"
-      />
+      >
+        {animationSpeed ? (
+          <animate
+            attributeName="stroke-dashoffset"
+            values={`${dashoffset * animationDirection};0`}
+            dur={`${1 / animationSpeed}s`}
+            repeatCount="indefinite"
+          />
+        ) : null}
+      </path>
+      <div>heasdasdasdy</div>
+
+      {labelStart ? (
+        <text {...labelStartExtra} textAnchor={st.dx > 0 ? "start" : "end"} x={st.x1} y={st.y1}>
+          {labelStart}
+        </text>
+      ) : null}
+
+      {labelMiddle ? (
+        <text
+          {...labelMiddleExtra}
+          textAnchor="middle"
+          x={Math.abs(st.dx) / 2}
+          y={Math.abs(st.dy) / 2}
+        >
+          {labelMiddle}
+        </text>
+      ) : null}
+
+      {labelEnd ? (
+        <text {...labelEndExtra} textAnchor={st.dx > 0 ? "end" : "start"} x={st.x2} y={st.y2}>
+          {labelEnd}
+        </text>
+      ) : null}
+
+      {/* for later use, maybe add pathLabels  <text>
+        <textPath href="#MyPath" startOffset={0}>
+          hey asd ss
+        </textPath>
+      </text> */}
     </svg>
   );
 }
@@ -694,11 +774,14 @@ Xarrow.defaultProps = {
     strokeColor: null,
     headColor: null,
     strokeWidth: 4,
-    headSize: 6
+    headSize: 6,
+    dashness: false
   },
+  label: null,
   monitorDOMchanges: false,
   registerEvents: [],
-  consoleWarning: "true"
+  consoleWarning: "true",
+  advance: { extendSVGcanvas: 0 }
 };
 
 export default Xarrow;
