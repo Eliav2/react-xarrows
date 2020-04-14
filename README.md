@@ -12,7 +12,7 @@ with npm `npm install react-xarrows`.
 
 ## Examples
 
-see [here](https://codesandbox.io/s/github/Eliav2/react-xarrows/tree/master/examples?file=/src/index.tsx) codebox of few examples(it this repo /examples).
+see [here](https://codesandbox.io/embed/github/Eliav2/react-xarrows/tree/master/examples?fontsize=14&hidenavigation=1&theme=dark) codebox of few examples(it this repo /examples).
 
 ![Image of xarrows](https://github.com/Eliav2/react-xarrows/blob/master/examples/images/react-xarrow-picture.png)
 
@@ -72,7 +72,7 @@ export default SimpleExample;
 
 ## The API
 
-see [this example](https://lwwwp.csb.app/Example2) to play around.
+see 'Example2' at the examples codesandbox to play around.
 
 the properties the xarrow component recieves is as follow(as listed in /src/xarrow.d.ts):
 
@@ -133,7 +133,7 @@ you can register the xarrow to DOM event as you please. each time a event that h
 
 #### consoleWarning
 
-we provide some nice warnings (and errors) whenever we detect issues. see ['Example3'](https://lwwwp.csb.app/Example3) in the examples.
+we provide some nice warnings (and errors) whenever we detect issues. see 'Example3' at the examples codesandbox.
 
 ### default props
 
