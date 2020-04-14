@@ -16,7 +16,9 @@ with npm `npm install react-xarrows`.
 
 ## Examples
 
+
 [see here!](https://codesandbox.io/embed/github/Eliav2/react-xarrows/tree/master/examples?fontsize=14&hidenavigation=1&theme=dark) codebox of few examples(it this repo /examples).
+
 
 ![Image of xarrows](https://github.com/Eliav2/react-xarrows/blob/master/examples/images/react-xarrow-picture.png)
 
@@ -156,7 +158,8 @@ we provide some nice warnings (and errors) whenever we detect issues. see 'Examp
 
 #### advance
 
-here i will provide some flexibility to the API for some cases that i may not thought of. extendSVGcanvas will extend the svg canvas at all sides. can be usefull if you add very long labels or setting the cureveness to be very high.
+here i will provide some flexibility to the API for some cases that i may not thought of.
+extendSVGcanvas will extend the svg canvas at all sides. can be usefull if you add very long labels or setting the cureveness to be very high.
 
 ### default props
 
