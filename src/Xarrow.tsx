@@ -684,7 +684,7 @@ function Xarrow(props: xarrowPropsType) {
       height={st.ch}
       viewBox={`${-excx / 2} ${-excy / 2} ${st.cw} ${st.ch}`}
       style={{
-        border: "2px yellow dashed",
+        // border: "2px yellow dashed",
         position: "absolute",
         left: st.cx0,
         top: st.cy0,
@@ -734,7 +734,7 @@ function Xarrow(props: xarrowPropsType) {
       <div>heasdasdasdy</div>
 
       {labelStart ? (
-        <text {...labelStartExtra} textAnchor={st.dx > 0 ? "start" : "end"} x={st.x1} y={st.y1}>
+        <text {...labelStartExtra} textAnchor={st.dx > 0 ? "start" : "end"} x={st.x1} y={st.y1 - 5}>
           {labelStart}
         </text>
       ) : null}
@@ -751,7 +751,7 @@ function Xarrow(props: xarrowPropsType) {
       ) : null}
 
       {labelEnd ? (
-        <text {...labelEndExtra} textAnchor={st.dx > 0 ? "end" : "start"} x={st.x2} y={st.y2}>
+        <text {...labelEndExtra} textAnchor={st.dx > 0 ? "end" : "start"} x={st.x2} y={st.y2 - 5}>
           {labelEnd}
         </text>
       ) : null}

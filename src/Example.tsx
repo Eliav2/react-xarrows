@@ -91,7 +91,7 @@ const Example: React.FC = () => {
     // label: "middle"  //can be simply string of middle label
     label: {
       start: "start",
-      end: { text: "end", extra: { fill: "purple", dy: -10 } }
+      end: { text: "end", extra: { fill: "blue", dy: -10 } }
     },
     monitorDOMchanges: false,
     registerEvents: [],
