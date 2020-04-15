@@ -94,7 +94,7 @@ const Example: React.FC = () => {
     monitorDOMchanges: false,
     registerEvents: [],
     consoleWarning: true,
-    advanced: { extendSVGcanvas: 20 }
+    advanced: { extendSVGcanvas: 0 }
   };
 
   useEffect(() => {}, []);

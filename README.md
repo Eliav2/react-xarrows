@@ -204,4 +204,4 @@ Xarrow.defaultProps = {
 - 1.0.0 - initial release.
 - 1.0.3 - props added: `label`, `dashness` and `advance`.
 - 1.1.0 - API changed! `arrowStyle` removed and all his contained properties flattened to be props of xarrow directly. `strokeColor` renamed to `lineColor`. `advance` renamed to `advanced`.
-- 1.1.1 - bug fix now labels not exceed the svg canvas.
+- 1.1.1 - bug fix now labels not exceed the svg canvas. the headArrow is calcualted now . this means the line ends at the start at the arrow - and this is more natural looking(especially at large headarrows).
