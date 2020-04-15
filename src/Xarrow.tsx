@@ -685,6 +685,7 @@ function Xarrow(props: xarrowPropsType) {
     st.y2
   }`;
   let arrowHeadId = "arrowHeadMarker" + arrowPath.replace(/ /g, "");
+
   return (
     <svg
       ref={selfRef}
@@ -702,6 +703,7 @@ function Xarrow(props: xarrowPropsType) {
       {/* <defs> */}
       <marker
         id={arrowHeadId}
+
         viewBox="0 0 12 12"
         refX="3"
         refY="6"
