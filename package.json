@@ -1,6 +1,6 @@
 {
   "name": "react-xarrows",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "author": "Eliav Louski",
   "description": "Connect arrows(or lines) between components in React!",
   "keywords": ["react", "reactjs", "lines", "arrows", "xarrows", "draw", "connect", "between"],
