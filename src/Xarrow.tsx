@@ -352,6 +352,11 @@ function Xarrow(props: xarrowPropsType) {
       }
     }
   }
+  let labalCanvExtra = Math.max(
+    labelStart ? labelStart.length : 0,
+    labelMiddle ? labelMiddle.length : 0,
+    labelEnd ? labelEnd.length : 0
+  );
 
   let userCanvExtra = props.advanced.extendSVGcanvas;
   const extraCanvasSize = {
@@ -359,6 +364,7 @@ function Xarrow(props: xarrowPropsType) {
     excy: strokeWidth * headSize + 20 + userCanvExtra
   };
   var { excx, excy } = extraCanvasSize;
+  excx = excx > labalCanvExtra * 14 ? excx : labalCanvExtra * 14;
 
   const getPos = (): prevPos => {
     if (!anchorsRefs.start) return;
