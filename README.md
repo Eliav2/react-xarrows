@@ -18,7 +18,7 @@ with npm `npm install react-xarrows`.
 
 [see here!](https://codesandbox.io/embed/github/Eliav2/react-xarrows/tree/master/examples?fontsize=14&hidenavigation=1&theme=dark) codebox of few examples(in this repo at /examples).
 
-![Image of xarrows](https://github.com/Eliav2/react-xarrows/blob/master/examples/images/react-xarrow-picture.png)
+![Image of xarrows](https://github.com/Eliav2/react-xarrows/blob/master/examples/images/react-xarrow-picture-1.1.2.png)
 
 ### simple example:
 
@@ -198,3 +198,10 @@ Xarrow.defaultProps = {
   advanced: { extendSVGcanvas: 0 }
 };
 ```
+
+## Versions
+
+- 1.0.0 - initial release.
+- 1.0.3 - props added: `label`, `dashness` and `advance`.
+- 1.1.0 - API changed! `arrowStyle` removed and all his contained properties flattened to be props of xarrow directly. `strokeColor` renamed to `lineColor`. `advance` renamed to `advanced`.
+- 1.1.1 - bug fix now labels not exceed the svg canvas. the headArrow is calcualted now . this means the line ends at the start at the arrow - and this is more natural looking(especially at large headarrows).

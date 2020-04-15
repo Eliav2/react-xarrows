@@ -1,27 +1,18 @@
 import React, { useState, useRef, useEffect } from "react";
 import Xarrow, { xarrowPropsType, anchorType } from "./Xarrow";
 
-const boxStyle = {
-  position: "absolute",
-  background: "white",
-  border: "1px #999 solid",
-  borderRadius: "10px",
-  textAlign: "center",
-  width: "100px",
-  height: "30px",
-  color: "black"
-};
-
-const canvasStyle = {
-  width: "100%",
-  height: "40vh",
-  background: "white",
-  overflow: "auto",
-  display: "flex",
-  position: "relative"
-};
-
 const Box: React.FC = props => {
+  const boxStyle = {
+    position: "absolute",
+    background: "white",
+    border: "1px #999 solid",
+    borderRadius: "10px",
+    textAlign: "center",
+    width: "100px",
+    height: "30px",
+    color: "black"
+  };
+
   const [lastPoint, setLastPoint] = useState({ x: 0, y: 0 });
 
   const handlDragStart = (e: React.DragEvent) => {
@@ -52,8 +43,15 @@ const Box: React.FC = props => {
   );
 };
 
-const Example: React.FC = () => {
-  const [showMe, setShowMe] = useState(true);
+const Example1: React.FC = () => {
+  const canvasStyle = {
+    width: "100%",
+    height: "40vh",
+    background: "white",
+    overflow: "auto",
+    display: "flex",
+    position: "relative"
+  };
 
   const [box, setBox] = useState({ id: "box1", x: 20, y: 20, ref: useRef(null) });
   const [box2, setBox2] = useState({ id: "box2", x: 120, y: 120, ref: useRef(null) });
@@ -94,168 +92,289 @@ const Example: React.FC = () => {
     monitorDOMchanges: false,
     registerEvents: [],
     consoleWarning: true,
-    advanced: { extendSVGcanvas: 20 }
+    advanced: { extendSVGcanvas: 0 }
   };
 
   useEffect(() => {}, []);
 
   return (
     <div>
-      <button onClick={() => setShowMe(!showMe)}>toggle</button>
+      <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
+        <div style={{ display: "flex", alignItems: "center", marginRight: 20 }}>
+          <p>startAnchor: </p>
+          <div>
+            {anchorsTypes.map((anchor, i) => (
+              <div key={i} style={{ display: "flex", alignItems: "center", height: 25 }}>
+                <p>{anchor}</p>
+                <input
+                  style={{ height: "15px", width: "15px" }}
+                  type="checkBox"
+                  checked={startAnchor.includes(anchor) ? true : false}
+                  // value={}
+                  onChange={e => {
+                    if (e.target.checked) {
+                      setStartAnchor([...startAnchor, anchor]);
+                    } else {
+                      let a = [...startAnchor];
+                      a.splice(startAnchor.indexOf(anchor), 1);
+                      setStartAnchor(a);
+                    }
+                  }}
+                />
+              </div>
+            ))}
+          </div>
+        </div>{" "}
+        <div style={{ display: "flex", alignItems: "center", marginLeft: 20 }}>
+          <p>endAnchor: </p>
+          <div>
+            {anchorsTypes.map((anchor, i) => (
+              <div key={i} style={{ display: "flex", alignItems: "center", height: 25 }}>
+                <p>{anchor}</p>
+                <input
+                  style={{ height: "15px", width: "15px" }}
+                  type="checkBox"
+                  checked={endAnchor.includes(anchor) ? true : false}
+                  // value={}
+                  onChange={e => {
+                    if (e.target.checked) {
+                      setEndAnchor([...endAnchor, anchor]);
+                    } else {
+                      let a = [...endAnchor];
+                      a.splice(endAnchor.indexOf(anchor), 1);
+                      setEndAnchor(a);
+                    }
+                  }}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+      <table style={{ marginRight: "auto", marginLeft: "auto" }}>
+        <tbody>
+          <tr>
+            <td>
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <p>arrow color(all): </p>
+                <select onChange={e => setColor(e.target.value)}>
+                  {colorOptions.map((o, i) => (
+                    <option key={i}>{o}</option>
+                  ))}
+                </select>
+              </div>
+            </td>
+            <td>
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <p>stroke color: </p>
+                <select onChange={e => setLineColor(e.target.value)}>
+                  {bodyColorOptions.map((o, i) => (
+                    <option key={i}>{o}</option>
+                  ))}
+                </select>
+              </div>
+            </td>
+            <td>
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <p>head color: </p>
+                <select onChange={e => setHeadColor(e.target.value)}>
+                  {bodyColorOptions.map((o, i) => (
+                    <option key={i}>{o}</option>
+                  ))}
+                </select>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <p>curveness: </p>
+                <input
+                  style={{ width: "30px" }}
+                  type="text"
+                  value={curveness}
+                  onChange={e => setCurveness(e.target.value)}
+                />
+              </div>
+            </td>
+            <td>
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <p>strokeWidth: </p>
+                <input
+                  style={{ width: "30px" }}
+                  type="text"
+                  value={strokeWidth}
+                  onChange={e => setStrokeWidth(e.target.value)}
+                />
+              </div>
+            </td>
+            <td>
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <p>headSize: </p>
+                <input
+                  style={{ width: "30px" }}
+                  type="text"
+                  value={headSize}
+                  onChange={e => setHeadSize(e.target.value)}
+                />
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <p>dashed: </p>
+                <input
+                  style={{ height: "15px", width: "15px" }}
+                  type="checkBox"
+                  checked={dashed}
+                  onChange={e => setDashed(e.target.checked ? true : false)}
+                />
+              </div>
+            </td>
+            <td>
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <p>animation: </p>
+                <input
+                  style={{ width: "30px" }}
+                  type="text"
+                  value={animation}
+                  onChange={e => setAnimation(e.target.value)}
+                />
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <br />
+      <div style={canvasStyle} id="canvas">
+        <Box box={box} setBox={setBox} />
+        <Box box={box2} setBox={setBox2} />
+        <Xarrow {...props} />
+      </div>
+    </div>
+  );
+};
+
+const Example2: React.FC = () => {
+  const canvasStyle = {
+    width: "100%",
+    height: "80vh",
+    background: "white",
+    overflow: "auto",
+    display: "flex"
+  };
+
+  const boxContainerStyle = {
+    position: "relative",
+    overflow: "auto",
+    width: "120%",
+    height: "120%",
+    background: "white",
+    color: "black",
+    border: "black solid 1px"
+  };
+
+  const boxStyle = {
+    position: "absolute",
+    border: "1px #999 solid",
+    borderRadius: "10px",
+    textAlign: "center",
+    width: "100px",
+    height: "30px"
+  };
+
+  const [boxes, setBoxes] = useState<box[]>([
+    { id: "box1", x: 50, y: 20, ref: useRef(null) },
+    { id: "box2", x: 20, y: 150, ref: useRef(null) },
+    { id: "box3", x: 250, y: 80, ref: useRef(null) }
+  ]);
+
+  const [lines, setLines] = useState<line[]>([
+    {
+      from: "box1",
+      to: "box2",
+      props: { headSize: 14, label: { end: { text: "endLable!", extra: { fill: "orange" } } } }
+    },
+    { from: "box2", to: "box3", props: { color: "red", label: "middle label!" } },
+    {
+      from: "box3",
+      to: "box1",
+      props: { color: "green", dashness: { animation: 1 }, startAnchor: "top" }
+    }
+  ]);
+
+  const [lastPoint, setLastPoint] = useState<point>({ x: 0, y: 0 });
+
+  const handlDragStart = (e: React.DragEvent) => {
+    setLastPoint({ x: e.clientX, y: e.clientY });
+  };
+
+  const handleDragEnd = (e: React.DragEvent, boxId: string) => {
+    let i = boxes.findIndex(box => box.id === boxId);
+    let newBoxes = [...boxes];
+    let newX = newBoxes[i].x + e.clientX - lastPoint.x,
+      newY = newBoxes[i].y + e.clientY - lastPoint.y;
+    if (newX < 0 || newY < 0) return;
+    newBoxes[i].x = newX;
+    newBoxes[i].y = newY;
+    setBoxes(newBoxes);
+  };
+
+  return (
+    <React.Fragment>
+      <div style={canvasStyle} id="canvas">
+        <div style={boxContainerStyle} id="boxContainerConatinerStyle">
+          <div style={boxContainerStyle} id="boxContainerStyle">
+            {boxes.map((box, i) => (
+              <div
+                ref={box.ref}
+                key={i}
+                style={{ ...boxStyle, left: box.x, top: box.y }}
+                onDragStart={e => handlDragStart(e)}
+                onDragEnd={e => handleDragEnd(e, box.id)}
+                draggable
+              >
+                {box.id}
+              </div>
+            ))}
+            {lines.map((line, i) => (
+              <Xarrow
+                key={i}
+                start={boxes.find(box => box.id === line.from).ref}
+                end={boxes.find(box => box.id === line.to).ref}
+                monitorDOMchanges={true}
+                {...line.props}
+                // consoleWarning={false}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+      <br />
+    </React.Fragment>
+  );
+};
+
+const Example: React.FC = () => {
+  const [showMe, setShowMe] = useState(true);
+
+  const [showExample1, setShowExample1] = useState(false);
+  const [showExample2, setShowExample2] = useState(false);
+
+  return (
+    <div>
+      <button style={{ margin: "auto", display: "block" }} onClick={() => setShowMe(!showMe)}>
+        toggle
+      </button>
       {showMe ? (
         <div>
-          <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
-            <div style={{ display: "flex", alignItems: "center", marginRight: 20 }}>
-              <p>startAnchor: </p>
-              <div>
-                {anchorsTypes.map((anchor, i) => (
-                  <div key={i} style={{ display: "flex", alignItems: "center", height: 25 }}>
-                    <p>{anchor}</p>
-                    <input
-                      style={{ height: "15px", width: "15px" }}
-                      type="checkBox"
-                      checked={startAnchor.includes(anchor) ? true : false}
-                      // value={}
-                      onChange={e => {
-                        if (e.target.checked) {
-                          setStartAnchor([...startAnchor, anchor]);
-                        } else {
-                          let a = [...startAnchor];
-                          a.splice(startAnchor.indexOf(anchor), 1);
-                          setStartAnchor(a);
-                        }
-                      }}
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>{" "}
-            <div style={{ display: "flex", alignItems: "center", marginLeft: 20 }}>
-              <p>endAnchor: </p>
-              <div>
-                {anchorsTypes.map((anchor, i) => (
-                  <div key={i} style={{ display: "flex", alignItems: "center", height: 25 }}>
-                    <p>{anchor}</p>
-                    <input
-                      style={{ height: "15px", width: "15px" }}
-                      type="checkBox"
-                      checked={endAnchor.includes(anchor) ? true : false}
-                      // value={}
-                      onChange={e => {
-                        if (e.target.checked) {
-                          setEndAnchor([...endAnchor, anchor]);
-                        } else {
-                          let a = [...endAnchor];
-                          a.splice(endAnchor.indexOf(anchor), 1);
-                          setEndAnchor(a);
-                        }
-                      }}
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-          <table style={{ marginRight: "auto", marginLeft: "auto" }}>
-            <tbody>
-              <tr>
-                <td>
-                  <div style={{ display: "flex", alignItems: "center" }}>
-                    <p>arrow color(all): </p>
-                    <select onChange={e => setColor(e.target.value)}>
-                      {colorOptions.map((o, i) => (
-                        <option key={i}>{o}</option>
-                      ))}
-                    </select>
-                  </div>
-                </td>
-                <td>
-                  <div style={{ display: "flex", alignItems: "center" }}>
-                    <p>stroke color: </p>
-                    <select onChange={e => setLineColor(e.target.value)}>
-                      {bodyColorOptions.map((o, i) => (
-                        <option key={i}>{o}</option>
-                      ))}
-                    </select>
-                  </div>
-                </td>
-                <td>
-                  <div style={{ display: "flex", alignItems: "center" }}>
-                    <p>head color: </p>
-                    <select onChange={e => setHeadColor(e.target.value)}>
-                      {bodyColorOptions.map((o, i) => (
-                        <option key={i}>{o}</option>
-                      ))}
-                    </select>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <div style={{ display: "flex", alignItems: "center" }}>
-                    <p>curveness: </p>
-                    <input
-                      style={{ width: "30px" }}
-                      type="text"
-                      value={curveness}
-                      onChange={e => setCurveness(e.target.value)}
-                    />
-                  </div>
-                </td>
-                <td>
-                  <div style={{ display: "flex", alignItems: "center" }}>
-                    <p>strokeWidth: </p>
-                    <input
-                      style={{ width: "30px" }}
-                      type="text"
-                      value={strokeWidth}
-                      onChange={e => setStrokeWidth(e.target.value)}
-                    />
-                  </div>
-                </td>
-                <td>
-                  <div style={{ display: "flex", alignItems: "center" }}>
-                    <p>headSize: </p>
-                    <input
-                      style={{ width: "30px" }}
-                      type="text"
-                      value={headSize}
-                      onChange={e => setHeadSize(e.target.value)}
-                    />
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <div style={{ display: "flex", alignItems: "center" }}>
-                    <p>dashed: </p>
-                    <input
-                      style={{ height: "15px", width: "15px" }}
-                      type="checkBox"
-                      checked={dashed}
-                      onChange={e => setDashed(e.target.checked ? true : false)}
-                    />
-                  </div>
-                </td>
-                <td>
-                  <div style={{ display: "flex", alignItems: "center" }}>
-                    <p>animation: </p>
-                    <input
-                      style={{ width: "30px" }}
-                      type="text"
-                      value={animation}
-                      onChange={e => setAnimation(e.target.value)}
-                    />
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <br />
-          <div style={canvasStyle} id="canvas">
-            <Box box={box} setBox={setBox} />
-            <Box box={box2} setBox={setBox2} />
-            <Xarrow {...props} />
+          <button onClick={() => setShowExample1(!showExample1)}>Example1</button>
+          <button onClick={() => setShowExample2(!showExample2)}>Example2</button>
+
+          <div>
+            {showExample1 ? <Example1 /> : null}
+            {showExample2 ? <Example2 /> : null}
           </div>
         </div>
       ) : null}

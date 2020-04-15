@@ -144,12 +144,6 @@ function Xarrow(props: xarrowPropsType) {
       end: allAncestorChildrensEnd,
       extra: [...startExtra, ...endExtra]
     });
-    // console.log("AnchorsParents", {
-    //   start: allAncestorChildrensStart,
-    //   end: allAncestorChildrensEnd,
-    //   extra: [...startExtra, ...endExtra]
-    // });
-    // console.log("SelfParents", parents);
 
     if (props.consoleWarning) {
       if (allAncestor.style.position !== "relative")
@@ -307,10 +301,13 @@ function Xarrow(props: xarrowPropsType) {
     cpx1: 0, // control points - control the curveness of the line
     cpy1: 0,
     cpx2: 0,
-    cpy2: 0
+    cpy2: 0,
+    headOrient: "auto"
   });
 
   let { color, lineColor, headColor, headSize, strokeWidth, dashness } = props;
+  headSize = Number(headSize);
+  strokeWidth = Number(strokeWidth);
   headColor = headColor ? headColor : color;
   lineColor = lineColor ? lineColor : color;
   let dashStroke = 0,
@@ -332,7 +329,9 @@ function Xarrow(props: xarrowPropsType) {
   let labelStartExtra = {},
     labelMiddleExtra = {},
     labelEndExtra = {};
+  let labalCanvExtraY = 0;
   if (props.label) {
+    labalCanvExtraY = 14;
     if (typeof props.label === "string") labelMiddle = props.label;
     else {
       labelStart = props.label.start;
@@ -352,23 +351,26 @@ function Xarrow(props: xarrowPropsType) {
       }
     }
   }
+  let labalCanvExtraX = Math.max(
+    labelStart ? labelStart.length : 0,
+    labelMiddle ? labelMiddle.length : 0,
+    labelEnd ? labelEnd.length : 0
+  );
 
   let userCanvExtra = props.advanced.extendSVGcanvas;
   const extraCanvasSize = {
-    excx: strokeWidth * headSize + 20 + userCanvExtra,
-    excy: strokeWidth * headSize + 20 + userCanvExtra
+    excx: strokeWidth * ((headSize * 5) / 3) + userCanvExtra,
+    excy: strokeWidth * ((headSize * 5) / 3) + userCanvExtra
   };
   var { excx, excy } = extraCanvasSize;
+  excx = excx > labalCanvExtraX * 14 ? excx : labalCanvExtraX * 14;
+  excy += labalCanvExtraY;
 
   const getPos = (): prevPos => {
     if (!anchorsRefs.start) return;
     let s = anchorsRefs.start.getBoundingClientRect();
     let e = anchorsRefs.end.getBoundingClientRect();
 
-    // let yOffsetStart = 0;
-    // let xOffsetStart = 0;
-    // let yOffsetEnd = 0;
-    // let xOffsetEnd = 0;
     let yOffset = 0;
     let xOffset = 0;
 
@@ -382,15 +384,6 @@ function Xarrow(props: xarrowPropsType) {
         yOffset -= p.scrollTop;
         xOffset -= p.scrollLeft;
       });
-      // [yOffsetStart, xOffsetStart, yOffsetEnd, xOffsetEnd] = [yOffset, xOffset, yOffset, xOffset];
-      // anchorsParents.startExtra.forEach(p => {
-      //   yOffsetStart -= p.scrollTop;
-      //   xOffsetStart -= p.scrollLeft;
-      // });
-      // anchorsParents.endExtra.forEach(p => {
-      //   yOffsetStart -= p.scrollTop;
-      //   xOffsetStart -= p.scrollLeft;
-      // });
     }
 
     return {
@@ -406,19 +399,6 @@ function Xarrow(props: xarrowPropsType) {
         right: e.right + xOffset,
         bottom: e.bottom + yOffset
       }
-
-      // start: {
-      //   x: s.x + xOffsetStart,
-      //   y: s.y + yOffsetStart,
-      //   right: s.right + xOffsetStart,
-      //   bottom: s.bottom + yOffsetStart
-      // },
-      // end: {
-      //   x: e.x + xOffsetEnd,
-      //   y: e.y + yOffsetEnd,
-      //   right: e.right + xOffsetEnd,
-      //   bottom: e.bottom + yOffsetEnd
-      // }
     };
   };
 
@@ -426,10 +406,6 @@ function Xarrow(props: xarrowPropsType) {
     // Do NOT call thie function directly.
     // you should set position by 'setPrevPosState(posState)' and that will trigger
     // this function in the useEffect hook.
-
-    // if(props.arrowStyle.curveness>1){
-    //   excx+=
-    // }
 
     let { start: s } = positions;
     let { end: e } = positions;
@@ -443,6 +419,7 @@ function Xarrow(props: xarrowPropsType) {
     let cy0 = Math.min(s.y, e.y) - canvasStartPos.y;
     let dx = edx;
     let dy = edy;
+    let headOrient = "auto";
 
     type anchorOffset = [anchorType, number, number];
     var startAnchorOffsets: anchorOffset[] = [
@@ -470,7 +447,7 @@ function Xarrow(props: xarrowPropsType) {
     let endAnchorPossabilties = Array.isArray(props.endAnchor)
       ? props.endAnchor
       : [props.endAnchor];
-    const closestPairOfPoints = (): [anchorType, anchorType] => {
+    const nearestPairOfPoints = (): [anchorType, anchorType] => {
       // closes tPair Of Points which feet to the specifed anchors
       let minDist = Infinity;
       let closestPairType: [anchorType, anchorType] = ["middle", "middle"];
@@ -498,9 +475,9 @@ function Xarrow(props: xarrowPropsType) {
       return closestPairType;
     };
 
-    let closeset = closestPairOfPoints();
-    let startAnchorType: anchorType = closeset[0];
-    let endAnchorType: anchorType = closeset[1];
+    let nearest = nearestPairOfPoints();
+    let startAnchorType: anchorType = nearest[0];
+    let endAnchorType: anchorType = nearest[1];
     switch (startAnchorType) {
       case "middle":
         cx0 += sw / 2;
@@ -535,29 +512,54 @@ function Xarrow(props: xarrowPropsType) {
 
         break;
     }
+    let headOffset = ((headSize * 3) / 4) * strokeWidth;
     switch (endAnchorType) {
       case "middle":
         dx += ew / 2;
         dy += eh / 2;
+        let angel = Math.atan(dy / dx);
+        if (dx < 0) {
+          angel += Math.PI;
+          cx0 -= Math.min(headOffset / (1 / Math.cos(angel)), -dx / 2);
+        }
+        if (dy < 0) {
+          cy0 -= Math.min(headOffset / (1 / Math.sin(angel)), -dy);
+        }
+        dx -= headOffset / (1 / Math.cos(angel));
+        dy -= headOffset / (1 / Math.sin(angel));
         break;
       case "left":
         dy += eh / 2;
         cx0 -= dx < 0 ? Math.min(ew / 2, -dx) : 0;
+        headOrient = "0";
+        dx -= headOffset;
+        if (dx < 0) cx0 -= Math.min(-dx, headOffset);
         break;
       case "right":
         dy += eh / 2;
         dx += ew;
         cx0 += dx - ew / 2 < 0 ? Math.min(ew / 2, -(dx - ew / 2)) : 0;
+        headOrient = "180";
+        dx += headOffset;
+        cx0 += headOffset;
+        if (dx > 0) cx0 -= Math.min(dx, headOffset);
         break;
       case "top":
         dx += ew / 2;
         cy0 -= dy < 0 ? Math.min(eh / 2, -dy) : 0;
+        headOrient = "90";
+        dy -= headOffset;
+        if (dy < 0) cy0 -= Math.min(-dy, headOffset);
         break;
 
       case "bottom":
         dx += ew / 2;
         dy += eh;
         cy0 += dy - eh / 2 < 0 ? Math.min(eh / 2, -(dy - eh / 2)) : 0;
+        headOrient = "270";
+        dy += headOffset;
+        cy0 += headOffset;
+        if (dy > 0) cy0 -= Math.min(dy, headOffset);
 
         break;
     }
@@ -675,8 +677,14 @@ function Xarrow(props: xarrowPropsType) {
     }
     cw += excx;
     ch += excy;
-    setSt({ cx0, cy0, x1, x2, y1, y2, cw, ch, cpx1, cpy1, cpx2, cpy2, dx, dy });
+    setSt({ cx0, cy0, x1, x2, y1, y2, cw, ch, cpx1, cpy1, cpx2, cpy2, dx, dy, headOrient });
   };
+
+  // console.log(st.headOrient);
+  let arrowPath = `M ${st.x1} ${st.y1} C ${st.cpx1} ${st.cpy1}, ${st.cpx2} ${st.cpy2}, ${st.x2} ${
+    st.y2
+  }`;
+  let arrowHeadId = "arrowHeadMarker" + arrowPath.replace(/ /g, "");
 
   return (
     <svg
@@ -685,42 +693,37 @@ function Xarrow(props: xarrowPropsType) {
       height={st.ch}
       viewBox={`${-excx / 2} ${-excy / 2} ${st.cw} ${st.ch}`}
       style={{
-        // border: "2px yellow dashed",
+        // border: "1px yellow dashed",
         position: "absolute",
         left: st.cx0,
         top: st.cy0,
         pointerEvents: "none"
       }}
     >
-      <defs>
-        <marker
-          id="arrowHead"
-          viewBox="0 0 12 12"
-          refX="10"
-          refY="6"
-          markerUnits="strokeWidth"
-          markerWidth={headSize}
-          markerHeight={headSize}
-          orient="auto"
-        >
-          <path d="M 0 0 L 12 6 L 0 12 L 3 6  z" fill={headColor} />
-        </marker>
-        <path
-          id="MyPath"
-          d={`M ${st.x1} ${st.y1} C  ${st.cpx1} ${st.cpy1}, ${st.cpx2} ${st.cpy2}, ${st.x2} ${
-            st.y2
-          }`}
-        />
-      </defs>
+      {/* <defs> */}
+      <marker
+        id={arrowHeadId}
+
+        viewBox="0 0 12 12"
+        refX="3"
+        refY="6"
+        markerUnits="strokeWidth"
+        markerWidth={headSize}
+        markerHeight={headSize}
+        orient={st.headOrient}
+      >
+        <path d="M 0 0 L 12 6 L 0 12 L 3 6 z" fill={headColor} />
+      </marker>
+      {/* </defs> */}
       {/* <circle r="5" cx={st.cpx1} cy={st.cpy1} fill="green" />
       <circle r="5" cx={st.cpx2} cy={st.cpy2} fill="blue" /> */}
       <path
-        d={`M ${st.x1} ${st.y1} C  ${st.cpx1} ${st.cpy1}, ${st.cpx2} ${st.cpy2}, ${st.x2} ${st.y2}`}
+        d={arrowPath}
         stroke={lineColor}
         strokeDasharray={`${dashStroke} ${dashNone}`}
         strokeWidth={strokeWidth}
         fill="transparent"
-        markerEnd="url(#arrowHead)"
+        markerEnd={`url(#${arrowHeadId})`}
       >
         {animationSpeed ? (
           <animate
@@ -731,7 +734,6 @@ function Xarrow(props: xarrowPropsType) {
           />
         ) : null}
       </path>
-      <div>heasdasdasdy</div>
 
       {labelStart ? (
         <text {...labelStartExtra} textAnchor={st.dx > 0 ? "start" : "end"} x={st.x1} y={st.y1 - 5}>
@@ -755,12 +757,6 @@ function Xarrow(props: xarrowPropsType) {
           {labelEnd}
         </text>
       ) : null}
-
-      {/* for later use, maybe add pathLabels  <text>
-        <textPath href="#MyPath" startOffset={0}>
-          hey asd ss
-        </textPath>
-      </text> */}
     </svg>
   );
 }
