@@ -41,7 +41,7 @@ const Example1: React.FC = () => {
       to: "box2",
       props: { headSize: 14, label: { end: { text: "endLable!", extra: { fill: "orange" } } } }
     },
-    { from: "box2", to: "box3", props: { color: "red", label: "middle label!" } },
+    { from: "box2", to: "box3", props: { color: "red", label: "I am a line!", headSize: 0 } },
     {
       from: "box3",
       to: "box1",
