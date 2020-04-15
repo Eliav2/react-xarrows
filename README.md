@@ -157,7 +157,7 @@ defines how much the lines curve.
 #### dashness
 
 can make the arrow dashed and can even animate.
-if true default values are choosed. if object is passed then default values are choosed expect what passed.
+if true default values are choosed. if object is passed then default values are choosed exept what passed.
 
 #### monitorDOMchanges
 
