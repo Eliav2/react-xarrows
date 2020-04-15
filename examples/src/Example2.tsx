@@ -99,8 +99,6 @@ const Example2: React.FC = () => {
     advanced: { extendSVGcanvas: 20 }
   };
 
-  useEffect(() => {}, []);
-
   return (
     <div>
       <h3>
