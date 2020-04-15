@@ -1,6 +1,9 @@
 import React, { useRef, useEffect, useState } from "react";
-import { anchorType, xarrowPropsType, registerEventsType } from "./Xarrow.d";
+import { anchorType, xarrowPropsType } from "./Xarrow.d";
 const lodash = require("lodash");
+
+export type xarrowPropsType = xarrowPropsType;
+export type anchorType = anchorType;
 
 type prevPos = {
   start: {
@@ -20,8 +23,6 @@ type prevPos = {
 type reactRef = { current: null | HTMLElement };
 
 type point = { x: number; y: number };
-
-type domEvents = keyof GlobalEventHandlersEventMap;
 
 type anchorsParents = {
   start: HTMLElement[];
@@ -309,9 +310,9 @@ function Xarrow(props: xarrowPropsType) {
     cpy2: 0
   });
 
-  let { color, strokeColor, headColor, headSize, strokeWidth, dashness } = props.arrowStyle;
+  let { color, lineColor, headColor, headSize, strokeWidth, dashness } = props;
   headColor = headColor ? headColor : color;
-  strokeColor = strokeColor ? strokeColor : color;
+  lineColor = lineColor ? lineColor : color;
   let dashStroke = 0,
     dashNone = 0,
     animationSpeed,
@@ -352,7 +353,7 @@ function Xarrow(props: xarrowPropsType) {
     }
   }
 
-  let userCanvExtra = props.advance.extendSVGcanvas;
+  let userCanvExtra = props.advanced.extendSVGcanvas;
   const extraCanvasSize = {
     excx: strokeWidth * headSize + 20 + userCanvExtra,
     excy: strokeWidth * headSize + 20 + userCanvExtra
@@ -564,7 +565,7 @@ function Xarrow(props: xarrowPropsType) {
     let cw = Math.abs(dx),
       ch = Math.abs(dy);
 
-    let cu = props.arrowStyle.curveness;
+    let cu = props.curveness;
 
     cx0 -= excx / 2;
     cy0 -= excy / 2;
@@ -706,7 +707,6 @@ function Xarrow(props: xarrowPropsType) {
         </marker>
         <path
           id="MyPath"
-          side="right"
           d={`M ${st.x1} ${st.y1} C  ${st.cpx1} ${st.cpy1}, ${st.cpx2} ${st.cpy2}, ${st.x2} ${
             st.y2
           }`}
@@ -716,7 +716,7 @@ function Xarrow(props: xarrowPropsType) {
       <circle r="5" cx={st.cpx2} cy={st.cpy2} fill="blue" /> */}
       <path
         d={`M ${st.x1} ${st.y1} C  ${st.cpx1} ${st.cpy1}, ${st.cpx2} ${st.cpy2}, ${st.x2} ${st.y2}`}
-        stroke={strokeColor}
+        stroke={lineColor}
         strokeDasharray={`${dashStroke} ${dashNone}`}
         strokeWidth={strokeWidth}
         fill="transparent"
@@ -768,20 +768,18 @@ function Xarrow(props: xarrowPropsType) {
 Xarrow.defaultProps = {
   startAnchor: "auto",
   endAnchor: "auto",
-  arrowStyle: {
-    curveness: 0.8,
-    color: "CornflowerBlue",
-    strokeColor: null,
-    headColor: null,
-    strokeWidth: 4,
-    headSize: 6,
-    dashness: false
-  },
   label: null,
+  color: "CornflowerBlue",
+  lineColor: null,
+  headColor: null,
+  strokeWidth: 4,
+  headSize: 6,
+  curveness: 0.8,
+  dashness: false,
   monitorDOMchanges: false,
   registerEvents: [],
   consoleWarning: "true",
-  advance: { extendSVGcanvas: 0 }
+  advanced: { extendSVGcanvas: 0 }
 };
 
 export default Xarrow;

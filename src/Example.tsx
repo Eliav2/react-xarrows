@@ -59,7 +59,7 @@ const Example: React.FC = () => {
   const [box2, setBox2] = useState({ id: "box2", x: 120, y: 120, ref: useRef(null) });
 
   const [color, setColor] = useState("red");
-  const [strokeColor, setStrokeColor] = useState(null);
+  const [lineColor, setLineColor] = useState(null);
   const [headColor, setHeadColor] = useState(null);
   const [curveness, setCurveness] = useState(0.8);
   const [strokeWidth, setStrokeWidth] = useState(4);
@@ -78,16 +78,14 @@ const Example: React.FC = () => {
     end: box2.ref, //  or reference
     startAnchor: startAnchor,
     endAnchor: endAnchor,
-    arrowStyle: {
-      curveness: curveness,
-      color: color,
-      strokeColor: strokeColor,
-      headColor: headColor,
-      strokeWidth: strokeWidth,
-      headSize: headSize,
-      // dashness: true   // cab be simply boolean
-      dashness: dashed ? { animation } : false
-    },
+    curveness: curveness,
+    color: color,
+    lineColor: lineColor,
+    headColor: headColor,
+    strokeWidth: strokeWidth,
+    headSize: headSize,
+    // dashness: true   // cab be simply boolean or object
+    dashness: dashed ? { animation } : false,
     // label: "middle"  //can be simply string of middle label
     label: {
       start: "start",
@@ -96,7 +94,7 @@ const Example: React.FC = () => {
     monitorDOMchanges: false,
     registerEvents: [],
     consoleWarning: true,
-    advance: { extendSVGcanvas: 20 }
+    advanced: { extendSVGcanvas: 20 }
   };
 
   useEffect(() => {}, []);
@@ -174,7 +172,7 @@ const Example: React.FC = () => {
                 <td>
                   <div style={{ display: "flex", alignItems: "center" }}>
                     <p>stroke color: </p>
-                    <select onChange={e => setStrokeColor(e.target.value)}>
+                    <select onChange={e => setLineColor(e.target.value)}>
                       {bodyColorOptions.map((o, i) => (
                         <option key={i}>{o}</option>
                       ))}

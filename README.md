@@ -1,7 +1,7 @@
 Draw arrows between components in React!
 
 I've noticed react was missing a good and relaible arrows component in npm - so i've decided to create one of my own and share it.
-this component will rerender and will update the anchors position whenever needed(not like other similar npm libraries) - the Xarrow also works inside scrollable windows and working no matter where placed in the DOM relative his anchors.
+this component will rerender and will update the anchors position whenever needed(not like other similar npm libraries) - the Xarrow also works inside scrollable windows and working no matter where placed in the DOM relative to his anchors.
 
 found a problem? not a problem! post a new issue([here](https://github.com/Eliav2/react-xarrows/issues)) and i will do my best to fix it.
 
@@ -16,9 +16,7 @@ with npm `npm install react-xarrows`.
 
 ## Examples
 
-
-[see here!](https://codesandbox.io/embed/github/Eliav2/react-xarrows/tree/master/examples?fontsize=14&hidenavigation=1&theme=dark) codebox of few examples(it this repo /examples).
-
+[see here!](https://codesandbox.io/embed/github/Eliav2/react-xarrows/tree/master/examples?fontsize=14&hidenavigation=1&theme=dark) codebox of few examples(in this repo at /examples).
 
 ![Image of xarrows](https://github.com/Eliav2/react-xarrows/blob/master/examples/images/react-xarrow-picture.png)
 
@@ -67,7 +65,10 @@ const SimpleExample = () => {
       <div style={canvasStyle} id="canvas">
         <Box box={box1} />
         <Box box={box2} />
-        <Xarrow start="box1" end={box2.ref} />
+        <Xarrow
+          start="box1" //can be id
+          end={box2.ref} //or React ref
+        />
       </div>
     </React.Fragment>
   );
@@ -83,45 +84,46 @@ see 'Example2' at the examples codesandbox to play around.
 the properties the xarrow component recieves is as follow(as listed in `xarrowPropsType` in /src/xarrow.d.ts):
 
 ```jsx
-import { Color } from "csstype";
-import { SVGProps } from "react";
-
 export type anchorType = "auto" | "middle" | "left" | "right" | "top" | "bottom";
-
-export type arrowStyleType = {
-  color: Color;
-  strokeColor: Color;
-  headColor: Color;
-  strokeWidth: number;
-  curveness: number;
-  headSize: number;
-  dashness: boolean | { strokeLen?: number; nonStrokeLen?: number; animation?: boolean | number };
-};
-
+export type reactRefType = { current: null | HTMLElement };
+export type refType = reactRefType | string;
+export type labelType = string | { text: string; extra: SVGProps<SVGElement> };
+export type domEventType = keyof GlobalEventHandlersEventMap;
 export type registerEventsType = {
   ref: refType;
-  eventName: keyof GlobalEventHandlersEventMap;
+  eventName: domEventType;
   callback?: CallableFunction;
 };
-
-type reactRef = { current: null | HTMLElement };
-type refType = reactRef | string;
-type labelType = string | { text: string; extra: SVGProps<SVGElement> };
 
 export type xarrowPropsType = {
   start: refType;
   end: refType;
   startAnchor: anchorType | anchorType[];
   endAnchor: anchorType | anchorType[];
-  label: labelType | { start: labelType; middle: labelType; end: labelType };
+  label: labelType | {
+    start?: labelType;
+    middle?: labelType;
+    end?: labelType
+  };
+  color: string;
+  lineColor: string | null;
+  headColor: string | null;
+  strokeWidth: number;
+  headSize: number;
+  curveness: number;
+  dashness: boolean | {
+    strokeLen?: number;
+    nonStrokeLen?: number;
+    animation?: boolean | number
+  };
   monitorDOMchanges: boolean;
   registerEvents: registerEventsType[];
-  arrowStyle: arrowStyleType;
   consoleWarning: boolean;
-  advance: {
+  advanced: {
     extendSVGcanvas: number;
   };
 };
+
 ```
 
 #### 'start' and 'end'
@@ -138,11 +140,24 @@ can also be a list of possible anchors. if list is provided - the minimal length
 
 can be a string that will default to be at the middle or an object that decribes where to place label and how to customize it. see `label` at `xarrowPropsType` above.
 
-#### arrowStyle
+#### color,lineColor and headColor
 
-most of it prrety obvious.
-dashness - can make the arrow dashed and can even animate.
-see `arrowStyleType` object it `xarrowPropsType` above for more details.
+color defines color for all the arrow include head. if lineColor or headColor is given so it overides color specificaly for line or head.
+
+#### strokeWidth and headSize
+
+strokeWidth defines the thickness of the arrow(line and head).
+headSize defines how big will be the head relative to the line(set headSize to 0 to make the arrow like a line).
+
+#### curvness
+
+defines how much the lines curve.
+0 mean stright line and 1 'perfect' curve. larger then 1 will be over curved.
+
+#### dashness
+
+can make the arrow dashed and can even animate.
+if true default values are choosed. if object is passed then default values are choosed expect what passed.
 
 #### monitorDOMchanges
 
@@ -156,7 +171,7 @@ you can register the xarrow to DOM event as you please. each time a event that h
 
 we provide some nice warnings (and errors) whenever we detect issues. see 'Example3' at the examples codesandbox.
 
-#### advance
+#### advanced
 
 here i will provide some flexibility to the API for some cases that i may not thought of.
 extendSVGcanvas will extend the svg canvas at all sides. can be usefull if you add very long labels or setting the cureveness to be very high.
@@ -169,19 +184,17 @@ default props is as folows:
 Xarrow.defaultProps = {
   startAnchor: "auto",
   endAnchor: "auto",
-  arrowStyle: {
-    curveness: 0.8,
-    color: "CornflowerBlue",
-    strokeColor: null,
-    headColor: null,
-    strokeWidth: 4,
-    headSize: 6,
-    dashness: false
-  },
   label: null,
+  color: "CornflowerBlue",
+  lineColor: null,
+  headColor: null,
+  strokeWidth: 4,
+  headSize: 6,
+  curveness: 0.8,
+  dashness: false,
   monitorDOMchanges: false,
   registerEvents: [],
   consoleWarning: "true",
-  advance: { extendSVGcanvas: 0 }
+  advanced: { extendSVGcanvas: 0 }
 };
 ```
