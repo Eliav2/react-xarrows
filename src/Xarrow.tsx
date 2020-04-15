@@ -680,7 +680,11 @@ function Xarrow(props: xarrowPropsType) {
     setSt({ cx0, cy0, x1, x2, y1, y2, cw, ch, cpx1, cpy1, cpx2, cpy2, dx, dy, headOrient });
   };
 
-  console.log(st.headOrient);
+  // console.log(st.headOrient);
+  let arrowPath = `M ${st.x1} ${st.y1} C ${st.cpx1} ${st.cpy1}, ${st.cpx2} ${st.cpy2}, ${st.x2} ${
+    st.y2
+  }`;
+  let arrowHeadId = "arrowHeadMarker" + arrowPath.replace(/ /g, "");
 
   return (
     <svg
@@ -698,14 +702,15 @@ function Xarrow(props: xarrowPropsType) {
     >
       {/* <defs> */}
       <marker
-        id="arrowHead"
+        id={arrowHeadId}
+
         viewBox="0 0 12 12"
         refX="3"
         refY="6"
         markerUnits="strokeWidth"
         markerWidth={headSize}
         markerHeight={headSize}
-        orient={`auto`}
+        orient={st.headOrient}
       >
         <path d="M 0 0 L 12 6 L 0 12 L 3 6 z" fill={headColor} />
       </marker>
@@ -713,12 +718,12 @@ function Xarrow(props: xarrowPropsType) {
       {/* <circle r="5" cx={st.cpx1} cy={st.cpy1} fill="green" />
       <circle r="5" cx={st.cpx2} cy={st.cpy2} fill="blue" /> */}
       <path
-        d={`M ${st.x1} ${st.y1} C  ${st.cpx1} ${st.cpy1}, ${st.cpx2} ${st.cpy2}, ${st.x2} ${st.y2}`}
+        d={arrowPath}
         stroke={lineColor}
         strokeDasharray={`${dashStroke} ${dashNone}`}
         strokeWidth={strokeWidth}
         fill="transparent"
-        markerEnd="url(#arrowHead)"
+        markerEnd={`url(#${arrowHeadId})`}
       >
         {animationSpeed ? (
           <animate
