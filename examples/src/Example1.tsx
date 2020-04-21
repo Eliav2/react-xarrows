@@ -1,6 +1,4 @@
 import React, { useState, useRef } from "react";
-import { line, box, point } from "./types";
-// import Xarrows from "../src/Xarrow";
 import Xarrow from "react-xarrows";
 
 const canvasStyle = {
@@ -31,16 +29,24 @@ const boxStyle = {
 };
 
 const Example1: React.FC = () => {
-  const [boxes, setBoxes] = useState<box[]>([
-    { id: "box1", x: 50, y: 20, options: {}, ref: useRef(null) },
+  const [boxes, setBoxes] = useState([
+    { id: "box1", x: 50, y: 20, ref: useRef(null) },
     { id: "box2", x: 20, y: 150, ref: useRef(null) },
     { id: "box3", x: 250, y: 80, ref: useRef(null) }
   ]);
 
-  const [lines, setLines] = useState<line[]>([
-    { from: "box1", to: "box2" },
-    { from: "box2", to: "box3" },
-    { from: "box3", to: "box1" }
+  const [lines, setLines] = useState([
+    {
+      from: "box1",
+      to: "box2",
+      props: { headSize: 14, label: { end: { text: "endLable!", extra: { fill: "orange" } } } }
+    },
+    { from: "box2", to: "box3", props: { color: "red", label: "I am a line!", headSize: 0 } },
+    {
+      from: "box3",
+      to: "box1",
+      props: { color: "green", dashness: { animation: 1 }, startAnchor: "top" }
+    }
   ]);
 
   const [lastPoint, setLastPoint] = useState<point>({ x: 0, y: 0 });
@@ -86,8 +92,7 @@ const Example1: React.FC = () => {
                 key={i}
                 start={boxes.find(box => box.id === line.from).ref}
                 end={boxes.find(box => box.id === line.to).ref}
-                monitorDOMchanges={true}
-                // consoleWarning={false}
+                {...line.props}
               />
             ))}
           </div>
