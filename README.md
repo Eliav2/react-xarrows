@@ -1,7 +1,12 @@
 Draw arrows between components in React!
 
-I've noticed react was missing a good and relaible arrows component in npm - so i've decided to create one of my own and share it.
+This library is all about customizable and relaible arrows(or lines) between DOM elements in React.
+
+I've needed such a components in one of my projects - and found out(surprisingly enough) that there is no such(good) lib, so I've decided to create one from scrate, and share it.
+
 this component will rerender and will update the anchors position whenever needed(not like other similar npm libraries) - the Xarrow also works inside scrollable windows and working no matter where placed in the DOM relative to his anchors.
+
+now (since v1.1.4) i can say, after a lot of tests and improvements- the arrows should work and act naturally under any normal circumstances(but don't try put some negative curveness ha?).
 
 found a problem? not a problem! post a new issue([here](https://github.com/Eliav2/react-xarrows/issues)) and i will do my best to fix it.
 
@@ -119,6 +124,10 @@ export type registerEventsType = {
 };
 ```
 
+you can keep things simple or provide more detailed props - the API except both.
+for example - you can provide `label:"middleLable"` and the string will apear as middle label or customize the labels as you please: `label:{end:{text:"end",extra:{fill:"red",dx:-10}}}`.
+see typescript types above for detailed descriptions of what type excepts every prop.
+
 #### 'start' and 'end'
 
 can be a reference to a react ref to html element or string - an id of a DOM element.
@@ -150,7 +159,7 @@ defines how much the lines curve.
 #### dashness
 
 can make the arrow dashed and can even animate.
-if true default values are choosed. if object is passed then default values are choosed exept what passed.
+if true default values(for dashness) are choosed. if object is passed then default values are choosed execpt what passed.
 
 #### monitorDOMchanges
 
@@ -167,7 +176,7 @@ we provide some nice warnings (and errors) whenever we detect issues. see 'Examp
 #### advanced
 
 here i will provide some flexibility to the API for some cases that i may not thought of.
-extendSVGcanvas will extend the svg canvas at all sides. can be usefull if you add very long labels or setting the cureveness to be very high.
+extendSVGcanvas will extend the svg canvas at all sides. can be usefull if for some reason the arrow(or labels) is cutted though to small svg canvas(should not happen since 1.1.4, if happens please subscribe an issue).
 
 ### default props
 

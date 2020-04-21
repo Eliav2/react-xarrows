@@ -5,6 +5,7 @@ const lodash = require("lodash");
 export type xarrowPropsType = xarrowPropsType;
 export type anchorType = anchorType;
 
+
 type prevPos = {
   start: {
     x: number;
@@ -565,25 +566,51 @@ function Xarrow(props: xarrowPropsType) {
     ////////////////////////////////////
     // expand canvas properly
 
-    // let bzx = (1−t)3P1 + 3(1−t)2tP2 +3(1−t)t2P3 + t3P4
-    let bzxMax = 0;
-    let bzyMax = 0;
-    let bzxMin = 0;
-    let bzyMin = 0;
-    for (let t = 0; t < 1; t += 0.1) {
-      let ctx =
-        (1 - t) ** 3 * x1 + 3 * (1 - t) ** 2 * t * cpx1 + 3 * (1 - t) * t ** 2 * cpx2 + t ** 3 * x2;
-      if (ctx > bzxMax) bzxMax = ctx;
-      if (ctx < bzxMin) bzxMin = ctx;
-      let cty =
-        (1 - t) ** 3 * y1 + 3 * (1 - t) ** 2 * t * cpy1 + 3 * (1 - t) * t ** 2 * cpy2 + t ** 3 * y2;
-      if (cty > bzyMax) bzyMax = cty;
-      if (cty < bzyMin) bzyMin = cty;
-    }
-    if (bzxMax > absDx) excx += bzxMax - absDx;
-    if (bzyMin < 0) excy += -bzyMin;
-    if (bzxMin < 0) excx += -bzxMin;
-    if (bzyMax > absDy) excy += bzyMax - absDy;
+    // bzCurve function:  bz = (1−t)^3*p1 + 3(1−t)^2*t*p2 +3(1−t)*t^2*p3 + t^3*p4
+    // dt(bz) = -3 p1 (1 - t)^2 + 3 p2 (1 - t)^2 - 6 p2 (1 - t) t + 6 p3 (1 - t) t - 3 p3 t^2 + 3 p4 t^2
+    // when p1=(x1,y1),p2=(cpx1,cpy1),p3=(cpx2,cpy2),p4=(x2,y2)
+    // then extrema points is when dt(bz) = 0 
+    // solutions =>  t = ((-6 p1 + 12 p2 - 6 p3) ± sqrt((6 p1 - 12 p2 + 6 p3)^2 - 4 (3 p2 - 3 p1) (-3 p1 + 9 p2 - 9 p3 + 3 p4)))/(2 (-3 p1 + 9 p2 - 9 p3 + 3 p4))  when (p1 + 3 p3!=3 p2 + p4)
+    // xSol1,2 = ((-6 x1 + 12 cpx1 - 6 cpx2) ± sqrt((6 x1 - 12 cpx1 + 6 cxp2)^2 - 4 (3 cpx1 - 3 x1) (-3 x1 + 9 cpx1 - 9 cpx2 + 3 x2)))/(2 (-3 x1 + 9 cpx1 - 9 cpx2 + 3 x2)) 
+    // ySol1,2 = ((-6 y1 + 12 cpy1 - 6 cpy2) ± sqrt((6 y1 - 12 cpy1 + 6 cyp2)^2 - 4 (3 cpy1 - 3 y1) (-3 y1 + 9 cpy1 - 9 cpy2 + 3 y2)))/(2 (-3 y1 + 9 cpy1 - 9 cpy2 + 3 y2)) 
+    // now in javascript:
+    let txSol1 = ((-6*x1 + 12*cpx1 - 6*cpx2) + Math.sqrt((6*x1 - 12*cpx1 + 6*cpx2)**2 - 4*(3*cpx1 - 3*x1)*(-3*x1 + 9*cpx1 - 9*cpx2 + 3*x2)))/(2*(-3*x1 + 9*cpx1 - 9*cpx2 + 3*x2)) 
+    let txSol2 = ((-6*x1 + 12*cpx1 - 6*cpx2) - Math.sqrt((6*x1 - 12*cpx1 + 6*cpx2)**2 - 4*(3*cpx1 - 3*x1)*(-3*x1 + 9*cpx1 - 9*cpx2 + 3*x2)))/(2*(-3*x1 + 9*cpx1 - 9*cpx2 + 3*x2)) 
+    let tySol1 = ((-6*y1 + 12*cpy1 - 6*cpy2) + Math.sqrt((6*y1 - 12*cpy1 + 6*cpy2)**2 - 4*(3*cpy1 - 3*y1)*(-3*y1 + 9*cpy1 - 9*cpy2 + 3*y2)))/(2*(-3*y1 + 9*cpy1 - 9*cpy2 + 3*y2)) 
+    let tySol2 = ((-6*y1 + 12*cpy1 - 6*cpy2) - Math.sqrt((6*y1 - 12*cpy1 + 6*cpy2)**2 - 4*(3*cpy1 - 3*y1)*(-3*y1 + 9*cpy1 - 9*cpy2 + 3*y2)))/(2*(-3*y1 + 9*cpy1 - 9*cpy2 + 3*y2)) 
+    const bzx=(t) =>(1 - t) ** 3 * x1 + 3 * (1 - t) ** 2 * t * cpx1 + 3 * (1 - t) * t ** 2 * cpx2 + t ** 3 * x2;
+    const bzy=(t) =>(1 - t) ** 3 * y1 + 3 * (1 - t) ** 2 * t * cpy1 + 3 * (1 - t) * t ** 2 * cpy2 + t ** 3 * y2;
+    // console.log("calculated",bzx(txSol1),bzx(txSol2),bzy(tySol1),bzy(tySol2))
+    let xSol1 = bzx(txSol1);
+    let xSol2 = bzx(txSol2);
+    let ySol1 = bzy(tySol1);
+    let ySol2 = bzy(tySol2);
+    if (xSol1 < 0) excx += -xSol1;
+    if (xSol2 > absDx) excx += xSol2 - absDx;
+    if (ySol1 < 0) excy += -ySol1;
+    if (ySol2 > absDy) excy += ySol2 - absDy;
+
+
+    // let bzxMax = 0;
+    // let bzyMax = 0;
+    // let bzxMin = 0;
+    // let bzyMin = 0;
+    // for (let t = 0; t < 1; t += 0.1) {
+    //   let ctx =
+    //   (1 - t) ** 3 * x1 + 3 * (1 - t) ** 2 * t * cpx1 + 3 * (1 - t) * t ** 2 * cpx2 + t ** 3 * x2;
+    //   if (ctx > bzxMax) bzxMax = ctx;
+    //   if (ctx < bzxMin) bzxMin = ctx;
+    //   let cty =
+    //     (1 - t) ** 3 * y1 + 3 * (1 - t) ** 2 * t * cpy1 + 3 * (1 - t) * t ** 2 * cpy2 + t ** 3 * y2;
+    //   if (cty > bzyMax) bzyMax = cty;
+    //   if (cty < bzyMin) bzyMin = cty;
+    // }
+    // console.log("estimated",bzxMin,bzxMax,bzyMin,bzyMax)
+
+    // if (bzxMax > absDx) excx += bzxMax - absDx;
+    // if (bzxMin < 0) excx += -bzxMin;
+    // if (bzyMax > absDy) excy += bzyMax - absDy;
+    // if (bzyMin < 0) excy += -bzyMin;
 
     // if (cu > 1) {
     //   let absCpx1 = Math.abs(cpx1);
@@ -685,7 +712,7 @@ function Xarrow(props: xarrowPropsType) {
       {/* <circle r="5" cx={st.cpx1} cy={st.cpy1} fill="green" /> */}
       {/* <circle r="5" cx={st.cpx2} cy={st.cpy2} fill="blue" /> */}
       {/* <circle r="7" cx={xarrowElemPos.x} cy={xarrowElemPos.y} fill="black" /> */}
-      {/* <rect x={st.excx} y={st.excy} width={st.absDx} height={st.absDy} fill="none" stroke="pink" /> */}
+      {/* <rect x={st.excx} y={st.excy} width={st.absDx} height={st.absDy} fill="none" stroke="pink" strokeWidth="2px"/> */}
       <path
         d={arrowPath}
         stroke={lineColor}
@@ -746,5 +773,8 @@ Xarrow.defaultProps = {
   consoleWarning: true,
   advanced: { extendSVGcanvas: 0 }
 };
+
+// to do:
+// 1. fix absolute relative issue
 
 export default Xarrow;
