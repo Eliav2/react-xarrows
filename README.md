@@ -18,7 +18,7 @@ with npm `npm install react-xarrows`.
 
 [see here!](https://codesandbox.io/embed/github/Eliav2/react-xarrows/tree/master/examples?fontsize=14&hidenavigation=1&theme=dark) codebox of few examples(in this repo at /examples).
 
-![Image of xarrows](https://github.com/Eliav2/react-xarrows/blob/master/examples/images/react-xarrow-picture-1.1.2.png)
+![Image of xarrows](https://github.com/Eliav2/react-xarrows/blob/master/examples/images/react-xarrow-picture-1.2.0.png)
 
 ### simple example:
 
@@ -84,7 +84,30 @@ see 'Example2' at the examples codesandbox to play around.
 the properties the xarrow component recieves is as follow(as listed in `xarrowPropsType` in /src/xarrow.d.ts):
 
 ```jsx
-export type anchorType = "auto" | "middle" | "left" | "right" | "top" | "bottom";
+export type xarrowPropsType = {
+  start: refType;
+  end: refType;
+  startAnchor?: anchorType | anchorType[];
+  endAnchor?: anchorType | anchorType[];
+  label?: labelType | { start?: labelType; middle?: labelType; end?: labelType };
+  color?: string;
+  lineColor?: string | null;
+  headColor?: string | null;
+  strokeWidth?: number;
+  headSize?: number;
+  curveness?: number;
+  dashness?: boolean | { strokeLen?: number; nonStrokeLen?: number; animation?: boolean | number };
+  monitorDOMchanges?: boolean;
+  registerEvents?: registerEventsType[];
+  consoleWarning?: boolean;
+  advanced?: {
+    extendSVGcanvas?: number;
+  };
+};
+
+export type anchorType = anchorMethodType | anchorPositionType;
+export type anchorMethodType = "auto";
+export type anchorPositionType = "middle" | "left" | "right" | "top" | "bottom";
 export type reactRefType = { current: null | HTMLElement };
 export type refType = reactRefType | string;
 export type labelType = string | { text: string; extra: SVGProps<SVGElement> };
@@ -94,36 +117,6 @@ export type registerEventsType = {
   eventName: domEventType;
   callback?: CallableFunction;
 };
-
-export type xarrowPropsType = {
-  start: refType;
-  end: refType;
-  startAnchor: anchorType | anchorType[];
-  endAnchor: anchorType | anchorType[];
-  label: labelType | {
-    start?: labelType;
-    middle?: labelType;
-    end?: labelType
-  };
-  color: string;
-  lineColor: string | null;
-  headColor: string | null;
-  strokeWidth: number;
-  headSize: number;
-  curveness: number;
-  dashness: boolean | {
-    strokeLen?: number;
-    nonStrokeLen?: number;
-    animation?: boolean | number
-  };
-  monitorDOMchanges: boolean;
-  registerEvents: registerEventsType[];
-  consoleWarning: boolean;
-  advanced: {
-    extendSVGcanvas: number;
-  };
-};
-
 ```
 
 #### 'start' and 'end'
@@ -205,3 +198,5 @@ Xarrow.defaultProps = {
 - 1.0.3 - props added: `label`, `dashness` and `advance`.
 - 1.1.0 - API changed! `arrowStyle` removed and all his contained properties flattened to be props of xarrow directly. `strokeColor` renamed to `lineColor`. `advance` renamed to `advanced`.
 - 1.1.1 - bug fix now labels not exceed the svg canvas. the headArrow is calcualted now . this means the line ends at the start at the arrow - and this is more natural looking(especially at large headarrows).
+- 1.1.2 bug fix. (the first arrow fixed the headarrow style for all next comming arrows)
+- 1.1.3 - An entirely new algorithm to calcualte arrow path and curveness. now the arrow acting "smarter". this include bug fixes,improvements and some adjustments.
