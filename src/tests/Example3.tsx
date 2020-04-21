@@ -1,7 +1,5 @@
-import React, { useState, useRef, useEffect, useLayoutEffect } from "react";
-import { line, box, point } from "./types";
-// import Xarrows from "../src/Xarrow";
-import Xarrow from "react-xarrows";
+import React, { useState, useRef, useEffect } from "react";
+import Xarrow from "./../Xarrow";
 
 const canvasStyle = {
   width: "100%",
@@ -126,15 +124,15 @@ const Example3: React.FC = () => {
                   <Box key={i} box={box} boxes={boxes2} setBoxes={setBoxes2} />
                 ))}
               </div>
+              {lines.map((line, i) => (
+                <Xarrow
+                  key={i}
+                  start={getRefById(line.from)}
+                  end={getRefById(line.to)}
+                  monitorDOMchanges={true}
+                />
+              ))}
             </div>
-            {lines.map((line, i) => (
-              <Xarrow
-                key={i}
-                start={getRefById(line.from)}
-                end={getRefById(line.to)}
-                monitorDOMchanges={true}
-              />
-            ))}
           </div>
         </div>
       </div>

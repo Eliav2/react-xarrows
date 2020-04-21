@@ -27,7 +27,7 @@ type point = { x: number; y: number };
 type anchorsParents = {
   start: HTMLElement[];
   end: HTMLElement[];
-  extra: HTMLElement[];
+  // extra: HTMLElement[];
 };
 
 const findCommonAncestor = (elem: HTMLElement, elem2: HTMLElement): HTMLElement => {
@@ -51,15 +51,15 @@ const findCommonAncestor = (elem: HTMLElement, elem2: HTMLElement): HTMLElement 
   return commonAncestor(elem, elem2);
 };
 
-const findAllParents = (elem: HTMLElement) => {
-  let parents: HTMLElement[] = [];
-  let parent = elem;
-  while (true) {
-    if (parent.parentElement === null) return parents;
-    else parent = parent.parentElement;
-    parents.push(parent);
-  }
-};
+// const findAllParents = (elem: HTMLElement) => {
+//   let parents: HTMLElement[] = [];
+//   let parent = elem;
+//   while (true) {
+//     if (parent.parentElement === null) return parents;
+//     else parent = parent.parentElement;
+//     parents.push(parent);
+//   }
+// };
 
 const findAllChildrens = (child: HTMLElement, parent: HTMLElement) => {
   if (child === parent) return [];
@@ -98,20 +98,21 @@ function Xarrow(props: xarrowPropsType) {
 
   const [prevPosState, setPrevPosState] = useState<prevPos>(null);
   const [prevProps, setPrevProps] = useState<prevPos>(null);
-  const [selfParents, setSelfParents] = useState<HTMLElement[]>(null); //list parents of the common ascestor of the arrow with start and end(until "root elemnt")
+  // const [selfParents, setSelfParents] = useState<HTMLElement[]>(null); //list parents of the common ascestor of the arrow with start and end(until "root elemnt")
   const [anchorsParents, setAnchorsParents] = useState<anchorsParents>(null); //list childrens of the common ascestor of the arrow with start and end until start or end
-  const [xarrowElemPos, setXarrowElemPos] = useState<point>({ x: 0, y: 0 });
+  // const [xarrowElemPos, setXarrowElemPos] = useState<point>({ x: 0, y: 0 });
+  // const [prevXarrowElemPos, setPrevXarrowElemPos] = useState<point>({ x: 0, y: 0 });
 
   const updateIfNeeded = () => {
     if (!lodash.isEqual(props, prevProps)) {
       //first check if any properties changed
       if (prevProps) {
         initProps();
-        setPrevPosState(getPos());
+        setPrevPosState(getAnchorsPos());
       }
     } else {
       //if the properties did not changed - update position if needed
-      let posState = getPos();
+      let posState = getAnchorsPos();
       if (!lodash.isEqual(prevPosState, posState)) {
         setPrevPosState(posState);
       }
@@ -122,7 +123,7 @@ function Xarrow(props: xarrowPropsType) {
     [...anchorsParents.start, ...anchorsParents.end].forEach(elem => {
       elem.addEventListener("scroll", updateIfNeeded);
     });
-    window.addEventListener("resize", () => updateIfNeeded());
+    window.addEventListener("resize", updateIfNeeded);
   };
 
   const cleanMonitorDOMchanges = () => {
@@ -135,16 +136,11 @@ function Xarrow(props: xarrowPropsType) {
   const initParentsChildrens = () => {
     let anchorsCommonAncestor = findCommonAncestor(anchorsRefs.start, anchorsRefs.end);
     let allAncestor = findCommonAncestor(anchorsCommonAncestor, selfRef.current);
-    let parents = findAllParents(selfRef.current);
     let allAncestorChildrensStart = findAllChildrens(anchorsRefs.start, allAncestor);
     let allAncestorChildrensEnd = findAllChildrens(anchorsRefs.end, allAncestor);
-    let startExtra = allAncestorChildrensEnd.filter(p => parents.includes(p));
-    let endExtra = allAncestorChildrensStart.filter(p => parents.includes(p));
-    setSelfParents(parents);
     setAnchorsParents({
       start: allAncestorChildrensStart,
-      end: allAncestorChildrensEnd,
-      extra: [...startExtra, ...endExtra]
+      end: allAncestorChildrensEnd
     });
 
     if (props.consoleWarning) {
@@ -178,13 +174,6 @@ function Xarrow(props: xarrowPropsType) {
           `\nto disable this warnings set consoleWarning property to false`
         );
     }
-  };
-
-  const initCanvasStartPos = () => {
-    let { x: canvPosX, y: canvPosY } = selfRef.current.getBoundingClientRect();
-    canvPosX += window.pageXOffset; // #TOWatch - maybe need to add offsets of parents
-    canvPosY += window.pageYOffset;
-    setXarrowElemPos({ x: canvPosX, y: canvPosY });
   };
 
   const testUserGivenProperties = () => {
@@ -244,6 +233,7 @@ function Xarrow(props: xarrowPropsType) {
 
   const initProps = () => {
     testUserGivenProperties();
+    // initXarrowElemPos();
     setPrevProps(props);
   };
 
@@ -252,7 +242,6 @@ function Xarrow(props: xarrowPropsType) {
     // console.log("xarrow mounted");
     initRegisterEvents();
     initAnchorsRefs();
-    initCanvasStartPos();
     initProps();
     return () => {
       // console.log("xarrow unmounted");
@@ -284,8 +273,7 @@ function Xarrow(props: xarrowPropsType) {
   }, [prevPosState]);
 
   useEffect(() => {
-    // console.log("xarrow renderd!");
-    // console.log(eventListeners);
+    // console.log("xarrow rendered!");
     updateIfNeeded();
   });
 
@@ -367,33 +355,29 @@ function Xarrow(props: xarrowPropsType) {
 
   let userCanvExtra = props.advanced.extendSVGcanvas;
   const extraCanvasSize = {
-    excx: strokeWidth * headSize,
-    excy: strokeWidth * headSize
+    excx: (strokeWidth * headSize) / 2,
+    excy: (strokeWidth * headSize) / 2
   };
   var { excx, excy } = extraCanvasSize;
   excy += labalCanvExtraY;
   excx += userCanvExtra;
   excy += userCanvExtra;
 
-  const getPos = (): prevPos => {
+  const getSelfPos = () => {
+    let { x: xarrowElemX, y: xarrowElemY } = selfRef.current.getBoundingClientRect();
+    let xarrowStyle = getComputedStyle(selfRef.current);
+    let xarrowStyleLeft = Number(xarrowStyle.left.slice(0, -2));
+    let xarrowStyleTop = Number(xarrowStyle.top.slice(0, -2));
+    return { x: xarrowElemX - xarrowStyleLeft, y: xarrowElemY - xarrowStyleTop };
+  };
+
+  const getAnchorsPos = (): prevPos => {
     if (!anchorsRefs.start) return;
     let s = anchorsRefs.start.getBoundingClientRect();
     let e = anchorsRefs.end.getBoundingClientRect();
 
     let yOffset = 0;
     let xOffset = 0;
-
-    if (selfParents) {
-      selfParents.forEach(p => {
-        yOffset += p.scrollTop;
-        xOffset += p.scrollLeft;
-      });
-
-      anchorsParents.extra.forEach(p => {
-        yOffset -= p.scrollTop;
-        xOffset -= p.scrollLeft;
-      });
-    }
 
     return {
       start: {
@@ -501,6 +485,8 @@ function Xarrow(props: xarrowPropsType) {
       endPoint = Object.values(endPointObj)[0];
     let startAnchor = Object.keys(startPointObj)[0],
       endAnchor = Object.keys(endPointObj)[0];
+
+    let xarrowElemPos = getSelfPos();
     let cx0 = Math.min(startPoint.x, endPoint.x) - xarrowElemPos.x;
     let cy0 = Math.min(startPoint.y, endPoint.y) - xarrowElemPos.y;
     let dx = endPoint.x - startPoint.x;
@@ -576,25 +562,42 @@ function Xarrow(props: xarrowPropsType) {
     else if (["bottom", "top"].includes(endAnchor) && ["left", "right"].includes(startAnchor))
       curvesPossabilties.hvCurv();
 
-    if (cu > 1) {
-      let absCpx1 = Math.abs(cpx1);
-      let absCpy2 = Math.abs(cpy2);
-      if (oneCurveControlPoint) {
-        excx += Math.abs(absCpx1 - x2) / 1.5;
-        excy += Math.abs(absCpy2 - y1) / 1.5;
-      }
-    }
-
     ////////////////////////////////////
     // expand canvas properly
+
+    // let bzx = (1−t)3P1 + 3(1−t)2tP2 +3(1−t)t2P3 + t3P4
+    let bzxMax = 0;
+    let bzyMax = 0;
+    let bzxMin = 0;
+    let bzyMin = 0;
+    for (let t = 0; t < 1; t += 0.1) {
+      let ctx =
+        (1 - t) ** 3 * x1 + 3 * (1 - t) ** 2 * t * cpx1 + 3 * (1 - t) * t ** 2 * cpx2 + t ** 3 * x2;
+      if (ctx > bzxMax) bzxMax = ctx;
+      if (ctx < bzxMin) bzxMin = ctx;
+      let cty =
+        (1 - t) ** 3 * y1 + 3 * (1 - t) ** 2 * t * cpy1 + 3 * (1 - t) * t ** 2 * cpy2 + t ** 3 * y2;
+      if (cty > bzyMax) bzyMax = cty;
+      if (cty < bzyMin) bzyMin = cty;
+    }
+    if (bzxMax > absDx) excx += bzxMax - absDx;
+    if (bzyMin < 0) excy += -bzyMin;
+    if (bzxMin < 0) excx += -bzxMin;
+    if (bzyMax > absDy) excy += bzyMax - absDy;
+
     // if (cu > 1) {
     //   let absCpx1 = Math.abs(cpx1);
     //   let absCpy2 = Math.abs(cpy2);
-    //   if (absCpx1 > x2) excx += (absCpx1 - x2) / 3;
-    //   if (absCpy2 > y2) excy += (absCpy2 - y1) / 3;
+    //   if (oneCurveControlPoint) {
+    //     excx += (Math.abs(absCpx1 - x2) / 4) * cu ** 1.5 + headOffset;
+    //     excy += (Math.abs(absCpy2 - y1) / 4) * cu ** 1.5;
+    //   } else {
+    //     excx += (Math.abs(absCpx1 - x2) / 30) * cu;
+    //     excy += (Math.abs(absCpy2 - y1) / 30) * cu;
+    //   }
     // }
-    // if (excx < labalCanvExtraX * 9) excx += labalCanvExtraX * 9 - excx;
-    // excx += labalCanvExtraX * 9;
+    if (excx < labalCanvExtraX * 4) excx += labalCanvExtraX * 4 - excx;
+
     x1 += excx;
     x2 += excx;
     y1 += excy;
@@ -603,7 +606,6 @@ function Xarrow(props: xarrowPropsType) {
     cpx2 += excx;
     cpy1 += excy;
     cpy2 += excy;
-    // absDx += excx;
 
     let cw = absDx + excx * 2,
       ch = absDy + excy * 2;
@@ -672,6 +674,7 @@ function Xarrow(props: xarrowPropsType) {
         viewBox="0 0 12 12"
         refX="3"
         refY="6"
+        // re
         markerUnits="strokeWidth"
         markerWidth={headSize}
         markerHeight={headSize}
@@ -681,7 +684,7 @@ function Xarrow(props: xarrowPropsType) {
       </marker>
       {/* <circle r="5" cx={st.cpx1} cy={st.cpy1} fill="green" /> */}
       {/* <circle r="5" cx={st.cpx2} cy={st.cpy2} fill="blue" /> */}
-      {/* <circle r="7" cx={st.labelMiddlePos.x} cy={st.labelMiddlePos.y} fill="black" /> */}
+      {/* <circle r="7" cx={xarrowElemPos.x} cy={xarrowElemPos.y} fill="black" /> */}
       {/* <rect x={st.excx} y={st.excy} width={st.absDx} height={st.absDy} fill="none" stroke="pink" /> */}
       <path
         d={arrowPath}

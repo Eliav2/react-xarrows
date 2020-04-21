@@ -201,3 +201,4 @@ Xarrow.defaultProps = {
 - 1.1.2 bug fix. (the first arrow fixed the headarrow style for all next comming arrows)
 - 1.1.3 - An entirely new algorithm to calcualte arrow path and curveness. now the arrow acting "smarter". this include bug fixes,improvements and some adjustments.
   `monitorDOMchanges` prop default changed to `true`.
+- 1.1.4 - bug fixes, calculation optimizations, and smart svg canvas size adjusment.

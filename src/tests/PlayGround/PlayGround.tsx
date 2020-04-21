@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import "./PlayGround.css";
-import Xarrow, { xarrowPropsType } from "./../Xarrow";
+import Xarrow, { xarrowPropsType } from "./../../Xarrow";
 import Box from "./components/Box";
 import TopBar from "./components/TopBar";
 
