@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import Xarrow, { xarrowPropsType, anchorType } from "./Xarrow";
+import PlayGround from "./PlayGround/PlayGround";
 
 const Box: React.FC = props => {
   const boxStyle = {
@@ -99,6 +100,7 @@ const Example1: React.FC = () => {
 
   return (
     <div>
+      <p>example1:</p>
       <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
         <div style={{ display: "flex", alignItems: "center", marginRight: 20 }}>
           <p>startAnchor: </p>
@@ -275,7 +277,7 @@ const Example2: React.FC = () => {
     border: "black solid 1px"
   };
 
-  const boxStyle = {
+  const wideBox = {
     position: "absolute",
     border: "1px #999 solid",
     borderRadius: "10px",
@@ -284,23 +286,51 @@ const Example2: React.FC = () => {
     height: "30px"
   };
 
+  const tallBox = {
+    position: "absolute",
+    border: "1px #999 solid",
+    borderRadius: "10px",
+    textAlign: "center",
+    width: "30px",
+    height: "100px",
+    writingMode: "vertical-rl",
+    textOrientation: "mixed"
+  };
+
   const [boxes, setBoxes] = useState<box[]>([
-    { id: "box1", x: 50, y: 20, ref: useRef(null) },
-    { id: "box2", x: 20, y: 150, ref: useRef(null) },
-    { id: "box3", x: 250, y: 80, ref: useRef(null) }
+    { id: "box1", x: 100, y: 80, ref: useRef(null), shape: wideBox },
+    { id: "box2", x: 300, y: 300, ref: useRef(null), shape: tallBox },
+    { id: "box3", x: 500, y: 180, ref: useRef(null), shape: wideBox }
   ]);
+
+  const getBoxById = boxId => boxes.find(b => b.id === boxId).ref;
 
   const [lines, setLines] = useState<line[]>([
     {
-      from: "box1",
-      to: "box2",
-      props: { headSize: 14, label: { end: { text: "endLable!", extra: { fill: "orange" } } } }
+      start: getBoxById("box1"),
+      end: getBoxById("box2"),
+      headSize: 20,
+      label: { end: { text: "endLable!", extra: { fill: "purple", dx: -30 } } },
+      endAnchor: "left",
+      curveness: 1.5
     },
-    { from: "box2", to: "box3", props: { color: "red", label: "middle label!" } },
     {
-      from: "box3",
-      to: "box1",
-      props: { color: "green", dashness: { animation: 1 }, startAnchor: "top" }
+      start: getBoxById("box2"),
+      end: getBoxById("box3"),
+      startAnchor: "right",
+      endAnchor: "bottom",
+      curveness: 3,
+      color: "red",
+      label: { start: "startLabel", middle: "middleLable", end: "endLable" },
+      dashness: { animation: 1 }
+    },
+    {
+      start: getBoxById("box1"),
+      end: getBoxById("box3"),
+      color: "green",
+      label: { middle: { text: "I'm just a line", extra: { dy: -8 } } },
+      endAnchor: "top",
+      headSize: 1
     }
   ]);
 
@@ -323,14 +353,15 @@ const Example2: React.FC = () => {
 
   return (
     <React.Fragment>
+      <p>example2:</p>
       <div style={canvasStyle} id="canvas">
         <div style={boxContainerStyle} id="boxContainerConatinerStyle">
           <div style={boxContainerStyle} id="boxContainerStyle">
             {boxes.map((box, i) => (
               <div
                 ref={box.ref}
-                key={i}
-                style={{ ...boxStyle, left: box.x, top: box.y }}
+                key={box.id}
+                style={{ ...box.shape, left: box.x, top: box.y }}
                 onDragStart={e => handlDragStart(e)}
                 onDragEnd={e => handleDragEnd(e, box.id)}
                 draggable
@@ -339,14 +370,7 @@ const Example2: React.FC = () => {
               </div>
             ))}
             {lines.map((line, i) => (
-              <Xarrow
-                key={i}
-                start={boxes.find(box => box.id === line.from).ref}
-                end={boxes.find(box => box.id === line.to).ref}
-                monitorDOMchanges={true}
-                {...line.props}
-                // consoleWarning={false}
-              />
+              <Xarrow key={i} {...line} />
             ))}
           </div>
         </div>
@@ -361,6 +385,7 @@ const Example: React.FC = () => {
 
   const [showExample1, setShowExample1] = useState(false);
   const [showExample2, setShowExample2] = useState(false);
+  const [showPlayGround, setShowPlayGround] = useState(false);
 
   return (
     <div>
@@ -371,10 +396,12 @@ const Example: React.FC = () => {
         <div>
           <button onClick={() => setShowExample1(!showExample1)}>Example1</button>
           <button onClick={() => setShowExample2(!showExample2)}>Example2</button>
+          <button onClick={() => setShowPlayGround(!showPlayGround)}>PlayGround</button>
 
           <div>
             {showExample1 ? <Example1 /> : null}
             {showExample2 ? <Example2 /> : null}
+            {showPlayGround ? <PlayGround /> : null}
           </div>
         </div>
       ) : null}
