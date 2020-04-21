@@ -185,9 +185,9 @@ Xarrow.defaultProps = {
   headSize: 6,
   curveness: 0.8,
   dashness: false,
-  monitorDOMchanges: false,
+  monitorDOMchanges: true,
   registerEvents: [],
-  consoleWarning: "true",
+  consoleWarning: true,
   advanced: { extendSVGcanvas: 0 }
 };
 ```
