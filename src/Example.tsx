@@ -298,9 +298,9 @@ const Example2: React.FC = () => {
   };
 
   const [boxes, setBoxes] = useState<box[]>([
-    { id: "box1", x: 100, y: 80, ref: useRef(null), shape: wideBox },
-    { id: "box2", x: 300, y: 300, ref: useRef(null), shape: tallBox },
-    { id: "box3", x: 500, y: 180, ref: useRef(null), shape: wideBox }
+    { id: "box1", x: 100, y: 350, ref: useRef(null), shape: wideBox },
+    { id: "box2", x: 400, y: 200, ref: useRef(null), shape: tallBox },
+    { id: "box3", x: 500, y: 80, ref: useRef(null), shape: wideBox }
   ]);
 
   const getBoxById = boxId => boxes.find(b => b.id === boxId).ref;
@@ -311,14 +311,14 @@ const Example2: React.FC = () => {
       end: getBoxById("box2"),
       headSize: 20,
       label: { end: { text: "endLable!", extra: { fill: "purple", dx: -30 } } },
-      endAnchor: "left",
+      // endAnchor: "left",
       curveness: 1.5
     },
     {
       start: getBoxById("box2"),
       end: getBoxById("box3"),
-      startAnchor: "right",
-      endAnchor: "bottom",
+      // startAnchor: "right",
+      // endAnchor: "bottom",
       curveness: 3,
       color: "red",
       label: { start: "startLabel", middle: "middleLable", end: "endLable" },
@@ -329,7 +329,7 @@ const Example2: React.FC = () => {
       end: getBoxById("box3"),
       color: "green",
       label: { middle: { text: "I'm just a line", extra: { dy: -8 } } },
-      endAnchor: "top",
+      // endAnchor: "top",
       headSize: 1
     }
   ]);

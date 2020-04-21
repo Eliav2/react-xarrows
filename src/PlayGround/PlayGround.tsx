@@ -47,7 +47,7 @@ const PlayGround: React.FC = () => {
       end: "box2",
       headSize: 10,
       startAnchor: "auto",
-      endAnchor: "auto",
+      endAnchor: "top",
       curveness: 3,
       label: {
         start: "start",

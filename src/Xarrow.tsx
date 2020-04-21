@@ -122,7 +122,7 @@ function Xarrow(props: xarrowPropsType) {
     [...anchorsParents.start, ...anchorsParents.end].forEach(elem => {
       elem.addEventListener("scroll", updateIfNeeded);
     });
-    window.addEventListener("resize", updateIfNeeded);
+    window.addEventListener("resize", () => updateIfNeeded());
   };
 
   const cleanMonitorDOMchanges = () => {
@@ -148,10 +148,11 @@ function Xarrow(props: xarrowPropsType) {
     });
 
     if (props.consoleWarning) {
-      if (allAncestor.style.position !== "relative")
+      let allAncestorPosStyle = window.getComputedStyle(allAncestor).position;
+      if (allAncestorPosStyle !== "relative")
         console.warn(
           `%c Xarrow critical warning: common ancestor should always be in 'relative' positioning! 
-        change position style to 'relative' of element `,
+        change position style from '${allAncestorPosStyle}' to 'relative' of element `,
           "color: red",
           allAncestor
         );
@@ -579,8 +580,8 @@ function Xarrow(props: xarrowPropsType) {
       let absCpx1 = Math.abs(cpx1);
       let absCpy2 = Math.abs(cpy2);
       if (oneCurveControlPoint) {
-        excx += (absCpx1 - x2 * xSign) / 2;
-        excy += (absCpy2 - y1 * ySign) / 2;
+        excx += Math.abs(absCpx1 - x2) / 1.5;
+        excy += Math.abs(absCpy2 - y1) / 1.5;
       }
     }
 
@@ -593,7 +594,7 @@ function Xarrow(props: xarrowPropsType) {
     //   if (absCpy2 > y2) excy += (absCpy2 - y1) / 3;
     // }
     // if (excx < labalCanvExtraX * 9) excx += labalCanvExtraX * 9 - excx;
-    excx += labalCanvExtraX * 9;
+    // excx += labalCanvExtraX * 9;
     x1 += excx;
     x2 += excx;
     y1 += excy;
@@ -737,9 +738,9 @@ Xarrow.defaultProps = {
   headSize: 6,
   curveness: 0.8,
   dashness: false,
-  monitorDOMchanges: false,
+  monitorDOMchanges: true,
   registerEvents: [],
-  consoleWarning: false,
+  consoleWarning: true,
   advanced: { extendSVGcanvas: 0 }
 };
 

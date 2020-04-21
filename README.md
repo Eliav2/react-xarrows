@@ -200,3 +200,4 @@ Xarrow.defaultProps = {
 - 1.1.1 - bug fix now labels not exceed the svg canvas. the headArrow is calcualted now . this means the line ends at the start at the arrow - and this is more natural looking(especially at large headarrows).
 - 1.1.2 bug fix. (the first arrow fixed the headarrow style for all next comming arrows)
 - 1.1.3 - An entirely new algorithm to calcualte arrow path and curveness. now the arrow acting "smarter". this include bug fixes,improvements and some adjustments.
+  `monitorDOMchanges` prop default changed to `true`.
