@@ -27,7 +27,7 @@ type point = { x: number; y: number };
 type anchorsParents = {
   start: HTMLElement[];
   end: HTMLElement[];
-  extra: HTMLElement[];
+  // extra: HTMLElement[];
 };
 
 const findCommonAncestor = (elem: HTMLElement, elem2: HTMLElement): HTMLElement => {
@@ -51,15 +51,15 @@ const findCommonAncestor = (elem: HTMLElement, elem2: HTMLElement): HTMLElement 
   return commonAncestor(elem, elem2);
 };
 
-const findAllParents = (elem: HTMLElement) => {
-  let parents: HTMLElement[] = [];
-  let parent = elem;
-  while (true) {
-    if (parent.parentElement === null) return parents;
-    else parent = parent.parentElement;
-    parents.push(parent);
-  }
-};
+// const findAllParents = (elem: HTMLElement) => {
+//   let parents: HTMLElement[] = [];
+//   let parent = elem;
+//   while (true) {
+//     if (parent.parentElement === null) return parents;
+//     else parent = parent.parentElement;
+//     parents.push(parent);
+//   }
+// };
 
 const findAllChildrens = (child: HTMLElement, parent: HTMLElement) => {
   if (child === parent) return [];
@@ -83,8 +83,10 @@ const getElementByPropGiven = (ref: React.RefObject<HTMLElement> | "string"): HT
   } else myRef = ref.current;
   if (myRef === null)
     throw Error(
-      `'${ref}' is not a valid react reference to html element OR you tried to render Xarrow before one of the anchors .
-     please provide correct react refernce or provide id instead.`
+      `'${ref}' is not a valid react reference to html element
+OR
+you tried to render Xarrow before one of the anchors.
+please provide correct react refernce or provide id instead.`
     );
 
   return myRef;
@@ -96,20 +98,21 @@ function Xarrow(props: xarrowPropsType) {
 
   const [prevPosState, setPrevPosState] = useState<prevPos>(null);
   const [prevProps, setPrevProps] = useState<prevPos>(null);
-  const [selfParents, setSelfParents] = useState<HTMLElement[]>(null); //list parents of the common ascestor of the arrow with start and end(until "root elemnt")
+  // const [selfParents, setSelfParents] = useState<HTMLElement[]>(null); //list parents of the common ascestor of the arrow with start and end(until "root elemnt")
   const [anchorsParents, setAnchorsParents] = useState<anchorsParents>(null); //list childrens of the common ascestor of the arrow with start and end until start or end
-  const [canvasStartPos, setCanvasStartPos] = useState<point>({ x: 0, y: 0 });
+  // const [xarrowElemPos, setXarrowElemPos] = useState<point>({ x: 0, y: 0 });
+  // const [prevXarrowElemPos, setPrevXarrowElemPos] = useState<point>({ x: 0, y: 0 });
 
   const updateIfNeeded = () => {
     if (!lodash.isEqual(props, prevProps)) {
       //first check if any properties changed
       if (prevProps) {
         initProps();
-        setPrevPosState(getPos());
+        setPrevPosState(getAnchorsPos());
       }
     } else {
       //if the properties did not changed - update position if needed
-      let posState = getPos();
+      let posState = getAnchorsPos();
       if (!lodash.isEqual(prevPosState, posState)) {
         setPrevPosState(posState);
       }
@@ -133,23 +136,19 @@ function Xarrow(props: xarrowPropsType) {
   const initParentsChildrens = () => {
     let anchorsCommonAncestor = findCommonAncestor(anchorsRefs.start, anchorsRefs.end);
     let allAncestor = findCommonAncestor(anchorsCommonAncestor, selfRef.current);
-    let parents = findAllParents(selfRef.current);
     let allAncestorChildrensStart = findAllChildrens(anchorsRefs.start, allAncestor);
     let allAncestorChildrensEnd = findAllChildrens(anchorsRefs.end, allAncestor);
-    let startExtra = allAncestorChildrensEnd.filter(p => parents.includes(p));
-    let endExtra = allAncestorChildrensStart.filter(p => parents.includes(p));
-    setSelfParents(parents);
     setAnchorsParents({
       start: allAncestorChildrensStart,
-      end: allAncestorChildrensEnd,
-      extra: [...startExtra, ...endExtra]
+      end: allAncestorChildrensEnd
     });
 
     if (props.consoleWarning) {
-      if (allAncestor.style.position !== "relative")
+      let allAncestorPosStyle = window.getComputedStyle(allAncestor).position;
+      if (allAncestorPosStyle !== "relative")
         console.warn(
           `%c Xarrow critical warning: common ancestor should always be in 'relative' positioning! 
-        change position style to 'relative' of element `,
+        change position style from '${allAncestorPosStyle}' to 'relative' of element `,
           "color: red",
           allAncestor
         );
@@ -177,38 +176,31 @@ function Xarrow(props: xarrowPropsType) {
     }
   };
 
-  const initCanvasStartPos = () => {
-    let { x: canvPosX, y: canvPosY } = selfRef.current.getBoundingClientRect();
-    canvPosX += window.pageXOffset; // #TOWatch - maybe need to add offsets of parents
-    canvPosY += window.pageYOffset;
-    setCanvasStartPos({ x: canvPosX, y: canvPosY });
-  };
-
   const testUserGivenProperties = () => {
     if (typeof props.start === "object") {
       if (!("current" in props.start)) {
         let err = Error(
-          `'start' property is not of type reference.
+          `Xarrows: 'start' property is not of type reference.
           maybe you set 'start' to other object and not to React reference?.\n`
         );
         throw err;
       }
       if (props.start.current === null)
         throw Error(
-          `Please make sure the reference to start anchor (property 'start') are provided correctly.
+          `Xarrows: Please make sure the reference to start anchor (property 'start') are provided correctly.
           maybe you tried to render Xarrow before start anchor?.\n`
         );
     }
     if (typeof props.end === "object") {
       if (!("current" in props.end))
         throw Error(
-          `'end' property is not of type reference.
+          `Xarrows: 'end' property is not of type reference.
           maybe you set 'end' to other object and not to React reference?.\n`
         );
 
       if (props.end.current === null)
         throw Error(
-          `Please make sure the reference to end anchor (property 'end') are provided correctly.
+          `Xarrows: Please make sure the reference to end anchor (property 'end') are provided correctly.
           maybe you tried to render Xarrow before end anchor?.\n`
         );
     }
@@ -241,6 +233,7 @@ function Xarrow(props: xarrowPropsType) {
 
   const initProps = () => {
     testUserGivenProperties();
+    // initXarrowElemPos();
     setPrevProps(props);
   };
 
@@ -249,7 +242,6 @@ function Xarrow(props: xarrowPropsType) {
     // console.log("xarrow mounted");
     initRegisterEvents();
     initAnchorsRefs();
-    initCanvasStartPos();
     initProps();
     return () => {
       // console.log("xarrow unmounted");
@@ -281,8 +273,7 @@ function Xarrow(props: xarrowPropsType) {
   }, [prevPosState]);
 
   useEffect(() => {
-    // console.log("xarrow renderd!");
-    // console.log(eventListeners);
+    // console.log("xarrow rendered!");
     updateIfNeeded();
   });
 
@@ -298,11 +289,16 @@ function Xarrow(props: xarrowPropsType) {
     y2: 0, //the y ending point of the line inside the canvas
     dx: 0, // the x diffrence between 'start' anchor to 'end' anchor
     dy: 0, // the y diffrence between 'start' anchor to 'end' anchor
+    absDx: 0,
+    absDy: 0,
     cpx1: 0, // control points - control the curveness of the line
     cpy1: 0,
     cpx2: 0,
     cpy2: 0,
-    headOrient: "auto"
+    headOrient: "auto",
+    labelMiddlePos: { x: 0, y: 0 },
+    excx: 0,
+    excy: 0
   });
 
   let { color, lineColor, headColor, headSize, strokeWidth, dashness } = props;
@@ -359,32 +355,29 @@ function Xarrow(props: xarrowPropsType) {
 
   let userCanvExtra = props.advanced.extendSVGcanvas;
   const extraCanvasSize = {
-    excx: strokeWidth * ((headSize * 5) / 3) + userCanvExtra,
-    excy: strokeWidth * ((headSize * 5) / 3) + userCanvExtra
+    excx: (strokeWidth * headSize) / 2,
+    excy: (strokeWidth * headSize) / 2
   };
   var { excx, excy } = extraCanvasSize;
-  excx = excx > labalCanvExtraX * 14 ? excx : labalCanvExtraX * 14;
   excy += labalCanvExtraY;
+  excx += userCanvExtra;
+  excy += userCanvExtra;
 
-  const getPos = (): prevPos => {
+  const getSelfPos = () => {
+    let { x: xarrowElemX, y: xarrowElemY } = selfRef.current.getBoundingClientRect();
+    let xarrowStyle = getComputedStyle(selfRef.current);
+    let xarrowStyleLeft = Number(xarrowStyle.left.slice(0, -2));
+    let xarrowStyleTop = Number(xarrowStyle.top.slice(0, -2));
+    return { x: xarrowElemX - xarrowStyleLeft, y: xarrowElemY - xarrowStyleTop };
+  };
+
+  const getAnchorsPos = (): prevPos => {
     if (!anchorsRefs.start) return;
     let s = anchorsRefs.start.getBoundingClientRect();
     let e = anchorsRefs.end.getBoundingClientRect();
 
     let yOffset = 0;
     let xOffset = 0;
-
-    if (selfParents) {
-      selfParents.forEach(p => {
-        yOffset += p.scrollTop;
-        xOffset += p.scrollLeft;
-      });
-
-      anchorsParents.extra.forEach(p => {
-        yOffset -= p.scrollTop;
-        xOffset -= p.scrollLeft;
-      });
-    }
 
     return {
       start: {
@@ -409,291 +402,266 @@ function Xarrow(props: xarrowPropsType) {
 
     let { start: s } = positions;
     let { end: e } = positions;
-    let sw = s.right - s.x; //start element width
-    let sh = s.bottom - s.y; //start element hight
-    let ew = e.right - e.x; //end element width
-    let eh = e.bottom - e.y; //end element hight
-    let edx = e.x - s.x; // the x diffrence between the two elements
-    let edy = e.y - s.y; // the y diffrence between the two elements
-    let cx0 = Math.min(s.x, e.x) - canvasStartPos.x;
-    let cy0 = Math.min(s.y, e.y) - canvasStartPos.y;
-    let dx = edx;
-    let dy = edy;
     let headOrient = "auto";
 
-    type anchorOffset = [anchorType, number, number];
-    var startAnchorOffsets: anchorOffset[] = [
-      ["middle", s.x + sw / 2, s.y + sh / 2],
-      ["left", s.x, s.y + sh / 2],
-      ["right", s.x + sw, s.y + sh / 2],
-      ["top", s.x + sw / 2, s.y],
-      ["bottom", s.x + sw / 2, s.y + sh]
-    ];
-    var endAnchorOffsets: anchorOffset[] = [
-      ["middle", e.x + ew / 2, e.y + eh / 2],
-      ["left", e.x, e.y + eh / 2],
-      ["right", e.x + ew, e.y + eh / 2],
-      ["top", e.x + ew / 2, e.y],
-      ["bottom", e.x + ew / 2, e.y + eh]
-    ];
-    const dist = (p1: anchorOffset, p2: anchorOffset) => {
-      //length of line
-      return Math.sqrt((p1[1] - p2[1]) ** 2 + (p1[2] - p2[2]) ** 2);
+    const getAnchorOffset = (width: number, height: number) => {
+      return {
+        middle: { rightness: width * 0.5, bottomness: height * 0.5 },
+        left: { rightness: 0, bottomness: height * 0.5 },
+        right: { rightness: width, bottomness: height * 0.5 },
+        top: { rightness: width * 0.5, bottomness: 0 },
+        bottom: { rightness: width * 0.5, bottomness: height }
+      };
     };
+    let startAnchorOffsets = getAnchorOffset(s.right - s.x, s.bottom - s.y);
+    let endAnchorOffsets = getAnchorOffset(e.right - e.x, e.bottom - e.y);
 
-    let startAnchorPossabilties = Array.isArray(props.startAnchor)
+    let startAnchorChoice = Array.isArray(props.startAnchor)
       ? props.startAnchor
       : [props.startAnchor];
-    let endAnchorPossabilties = Array.isArray(props.endAnchor)
-      ? props.endAnchor
-      : [props.endAnchor];
-    const nearestPairOfPoints = (): [anchorType, anchorType] => {
+    let endAnchorChoice = Array.isArray(props.endAnchor) ? props.endAnchor : [props.endAnchor];
+
+    let startAnchorPossabilities = {};
+    let endAnchorPossabilities = {};
+
+    if (startAnchorChoice.includes("auto"))
+      ["left", "right", "top", "bottom"].forEach(
+        anchor => (startAnchorPossabilities[anchor] = startAnchorOffsets[anchor])
+      );
+    else {
+      startAnchorChoice.forEach(
+        anchor => (startAnchorPossabilities[anchor] = startAnchorOffsets[anchor])
+      );
+    }
+    if (endAnchorChoice.includes("auto"))
+      ["left", "right", "top", "bottom"].forEach(
+        anchor => (endAnchorPossabilities[anchor] = endAnchorOffsets[anchor])
+      );
+    else {
+      endAnchorChoice.forEach(
+        anchor => (endAnchorPossabilities[anchor] = endAnchorOffsets[anchor])
+      );
+    }
+
+    const dist = (p1, p2) => {
+      //length of line
+      return Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2);
+    };
+
+    const getShortestLine = (sPoints: object, ePoints: object): [object, object] => {
       // closes tPair Of Points which feet to the specifed anchors
       let minDist = Infinity;
-      let closestPairType: [anchorType, anchorType] = ["middle", "middle"];
-      for (let i = 0; i < 5; i++) {
-        if (
-          !startAnchorPossabilties.includes("auto") &&
-          !startAnchorPossabilties.includes(startAnchorOffsets[i][0])
-        ) {
-          continue;
-        }
-        for (let j = 0; j < 5; j++) {
-          if (
-            !endAnchorPossabilties.includes("auto") &&
-            !endAnchorPossabilties.includes(endAnchorOffsets[j][0])
-          ) {
-            continue;
-          }
-          let d = dist(startAnchorOffsets[i], endAnchorOffsets[j]);
+      let closestPair;
+      for (let startAnchor in sPoints) {
+        for (let endAnchor in ePoints) {
+          let d = dist(sPoints[startAnchor], ePoints[endAnchor]);
           if (d < minDist) {
             minDist = d;
-            closestPairType = [startAnchorOffsets[i][0], endAnchorOffsets[j][0]];
+            closestPair = [
+              { [startAnchor]: sPoints[startAnchor] },
+              { [endAnchor]: ePoints[endAnchor] }
+            ];
           }
         }
       }
-      return closestPairType;
+
+      return closestPair;
     };
 
-    let nearest = nearestPairOfPoints();
-    let startAnchorType: anchorType = nearest[0];
-    let endAnchorType: anchorType = nearest[1];
-    switch (startAnchorType) {
-      case "middle":
-        cx0 += sw / 2;
-        cy0 += sh / 2;
-        dx -= sw / 2;
-        dy -= sh / 2;
-        break;
-      case "left":
-        cy0 += sh / 2;
-        dy -= sh / 2;
-        cx0 += dx < 0 ? Math.min(sw / 2, -dx) : 0;
-        break;
-      case "right":
-        dy -= sh / 2;
-        dx -= sw;
-        cx0 += sw;
-        cx0 -= dx + sw / 2 < 0 ? Math.min(sw / 2, -(dx + sw / 2)) : 0;
-        cy0 += sh / 2;
-        break;
-      case "top":
-        cx0 += sw / 2;
-        dx -= sw / 2;
-        cy0 += dy < 0 ? Math.min(sh / 2, -dy) : 0;
-
-        break;
-      case "bottom":
-        cx0 += sw / 2;
-        cy0 += sh;
-        dx -= sw / 2;
-        dy -= sh;
-        cy0 -= dy + sh / 2 < 0 ? Math.min(sh / 2, -(dy - sh / 2)) : 0;
-
-        break;
+    let startPoints = {};
+    for (let key in startAnchorPossabilities) {
+      startPoints[key] = {};
+      startPoints[key]["x"] = startAnchorPossabilities[key].rightness + s.x;
+      startPoints[key]["y"] = startAnchorPossabilities[key].bottomness + s.y;
     }
+    let endPoints = {};
+    for (let key in endAnchorPossabilities) {
+      endPoints[key] = {};
+      endPoints[key]["x"] = endAnchorPossabilities[key].rightness + e.x;
+      endPoints[key]["y"] = endAnchorPossabilities[key].bottomness + e.y;
+    }
+    let [startPointObj, endPointObj] = getShortestLine(startPoints, endPoints);
+    let startPoint = Object.values(startPointObj)[0],
+      endPoint = Object.values(endPointObj)[0];
+    let startAnchor = Object.keys(startPointObj)[0],
+      endAnchor = Object.keys(endPointObj)[0];
+
+    let xarrowElemPos = getSelfPos();
+    let cx0 = Math.min(startPoint.x, endPoint.x) - xarrowElemPos.x;
+    let cy0 = Math.min(startPoint.y, endPoint.y) - xarrowElemPos.y;
+    let dx = endPoint.x - startPoint.x;
+    let dy = endPoint.y - startPoint.y;
+    let absDx = Math.abs(endPoint.x - startPoint.x);
+    let absDy = Math.abs(endPoint.y - startPoint.y);
+    let xSign = dx > 0 ? 1 : -1;
+    let ySign = dy > 0 ? 1 : -1;
     let headOffset = ((headSize * 3) / 4) * strokeWidth;
-    switch (endAnchorType) {
-      case "middle":
-        dx += ew / 2;
-        dy += eh / 2;
-        let angel = Math.atan(dy / dx);
-        if (dx < 0) {
-          angel += Math.PI;
-          cx0 -= Math.min(headOffset / (1 / Math.cos(angel)), -dx / 2);
-        }
-        if (dy < 0) {
-          cy0 -= Math.min(headOffset / (1 / Math.sin(angel)), -dy);
-        }
-        dx -= headOffset / (1 / Math.cos(angel));
-        dy -= headOffset / (1 / Math.sin(angel));
-        break;
-      case "left":
-        dy += eh / 2;
-        cx0 -= dx < 0 ? Math.min(ew / 2, -dx) : 0;
-        headOrient = "0";
-        dx -= headOffset;
-        if (dx < 0) cx0 -= Math.min(-dx, headOffset);
-        break;
-      case "right":
-        dy += eh / 2;
-        dx += ew;
-        cx0 += dx - ew / 2 < 0 ? Math.min(ew / 2, -(dx - ew / 2)) : 0;
-        headOrient = "180";
-        dx += headOffset;
-        cx0 += headOffset;
-        if (dx > 0) cx0 -= Math.min(dx, headOffset);
-        break;
-      case "top":
-        dx += ew / 2;
-        cy0 -= dy < 0 ? Math.min(eh / 2, -dy) : 0;
-        headOrient = "90";
-        dy -= headOffset;
-        if (dy < 0) cy0 -= Math.min(-dy, headOffset);
-        break;
-
-      case "bottom":
-        dx += ew / 2;
-        dy += eh;
-        cy0 += dy - eh / 2 < 0 ? Math.min(eh / 2, -(dy - eh / 2)) : 0;
-        headOrient = "270";
-        dy += headOffset;
-        cy0 += headOffset;
-        if (dy > 0) cy0 -= Math.min(dy, headOffset);
-
-        break;
-    }
-
-    let cw = Math.abs(dx),
-      ch = Math.abs(dy);
-
+    let oneCurveControlPoint = false;
     let cu = props.curveness;
 
-    cx0 -= excx / 2;
-    cy0 -= excy / 2;
+    ////////////////////////////////////
+    // adjustments before arrow point to point calculations
 
-    let cpx1 = 0,
-      cpy1 = 0,
-      cpx2 = 0,
-      cpy2 = 0;
+    ////////////////////////////////////
+    // arrow point to point calculations
+    let x1 = 0,
+      x2 = absDx + 0,
+      y1 = 0,
+      y2 = absDy + 0;
+    if (dx < 0) [x1, x2] = [x2, x1];
+    if (dy < 0) [y1, y2] = [y2, y1];
+
+    ////////////////////////////////////
+    // arrow curveness calculations
+    if (cu === 0) {
+      let angel = Math.atan(absDy / absDx);
+      x2 -= headOffset * xSign * Math.cos(angel);
+      y2 -= headOffset * ySign * Math.sin(angel);
+    } else {
+      if (["left", "right"].includes(endAnchor)) x2 -= headOffset * xSign;
+      else if (["top", "bottom"].includes(endAnchor)) y2 -= headOffset * ySign;
+    }
+    let cpx1 = x1,
+      cpy1 = y1,
+      cpx2 = x2,
+      cpy2 = y2;
 
     const curvesPossabilties = {
       hCurv: () => {
         //horizinatl - from right to left or the opposite
-        cpx2 = cw * (1 - cu);
-        cpy2 = ch;
-        cpx1 = cw * cu;
-        if (dx * dy < 0) {
-          cpx1 = cw * (1 - cu);
-          cpy1 = ch;
-          cpx2 = cw * cu;
-          cpy2 = 0;
-          // [cpx1, cpy1] = [cpx2, cpy2];
-        }
+        cpx1 += absDx * cu * xSign;
+        cpx2 -= absDx * cu * xSign;
       },
       vCurv: () => {
         //vertical - from top to bottom or opposite
-        cpx2 = cw;
-        cpy2 = ch * (1 - cu);
-        cpy1 = ch * cu;
-        if (dx * dy < 0) {
-          cpy1 = ch * (1 - cu);
-          cpx1 = cw;
-          cpy2 = ch * cu;
-          cpx2 = 0;
-        }
+        cpy1 += absDy * cu * ySign;
+        cpy2 -= absDy * cu * ySign;
       },
       hvCurv: () => {
         // start horizintaly then verticaly
         // from v side to h side
-        if (dx * dy < 0) {
-          cpy1 = ch;
-          cpx1 = cw * (1 - cu);
-          cpy2 = ch * cu;
-        } else {
-          cpx1 = cw * cu;
-          cpx2 = cw;
-          cpy2 = ch * cu;
-        }
+        cpx1 += absDx * cu * xSign;
+        cpy2 -= absDy * cu * ySign;
+        oneCurveControlPoint = true;
       },
       vhCurv: () => {
         // start verticaly then horizintaly
         // from h side to v side
-        if (dx * dy < 0) {
-          cpy2 = 0;
-          cpx2 = cw * cu; //blue?
-          cpy1 = ch * (1 - cu);
-          cpx1 = cw;
-        } else {
-          cpy1 = ch * cu;
-          cpx2 = cw * (1 - cu);
-          cpy2 = ch;
-        }
+        cpy1 += absDy * cu * ySign;
+        cpx2 -= absDx * cu * xSign;
+        oneCurveControlPoint = true;
       }
     };
 
-    let sat = startAnchorType,
-      eat = endAnchorType;
-    if (["left", "right"].includes(sat) && ["right", "left"].includes(eat)) {
-      curvesPossabilties.hCurv();
-    } else if (["top", "bottom"].includes(sat) && ["bottom", "top"].includes(eat)) {
-      curvesPossabilties.vCurv();
-    } else if (["top", "bottom"].includes(sat) && ["left", "right"].includes(eat)) {
+    if (["left", "right"].includes(endAnchor) && ["bottom", "top"].includes(startAnchor))
       curvesPossabilties.vhCurv();
-    } else if (["left", "right"].includes(sat) && ["top", "bottom"].includes(eat)) {
+    else if (["left", "right"].includes(endAnchor) && ["left", "right"].includes(startAnchor))
+      curvesPossabilties.hCurv();
+    else if (["bottom", "top"].includes(endAnchor) && ["bottom", "top"].includes(startAnchor))
+      curvesPossabilties.vCurv();
+    else if (["bottom", "top"].includes(endAnchor) && ["left", "right"].includes(startAnchor))
       curvesPossabilties.hvCurv();
-    }
 
-    let x1 = 0,
-      x2 = dx,
-      y1 = 0,
-      y2 = dy;
+    ////////////////////////////////////
+    // expand canvas properly
 
-    if (dx < 0 && dy < 0) {
-      x1 = -dx;
-      y1 = -dy;
-      x2 = 0;
-      y2 = 0;
-      cpy1 = ch - cpy1;
-      cpy2 = ch - cpy2;
-      cpx1 = cw - cpx1;
-      cpx2 = cw - cpx2;
-    } else {
-      if (dx < 0) {
-        cpy1 = ch - cpy1;
-        cpy2 = ch - cpy2;
-        x1 = -dx;
-        x2 = 0;
-        y2 = dy;
-      }
-      if (dy < 0) {
-        cpx1 = cw - cpx1;
-        cpx2 = cw - cpx2;
-        x1 = 0;
-        y1 = -dy;
-        y2 = 0;
-        x2 = dx;
-      }
+    // let bzx = (1−t)3P1 + 3(1−t)2tP2 +3(1−t)t2P3 + t3P4
+    let bzxMax = 0;
+    let bzyMax = 0;
+    let bzxMin = 0;
+    let bzyMin = 0;
+    for (let t = 0; t < 1; t += 0.1) {
+      let ctx =
+        (1 - t) ** 3 * x1 + 3 * (1 - t) ** 2 * t * cpx1 + 3 * (1 - t) * t ** 2 * cpx2 + t ** 3 * x2;
+      if (ctx > bzxMax) bzxMax = ctx;
+      if (ctx < bzxMin) bzxMin = ctx;
+      let cty =
+        (1 - t) ** 3 * y1 + 3 * (1 - t) ** 2 * t * cpy1 + 3 * (1 - t) * t ** 2 * cpy2 + t ** 3 * y2;
+      if (cty > bzyMax) bzyMax = cty;
+      if (cty < bzyMin) bzyMin = cty;
     }
-    cw += excx;
-    ch += excy;
-    setSt({ cx0, cy0, x1, x2, y1, y2, cw, ch, cpx1, cpy1, cpx2, cpy2, dx, dy, headOrient });
+    if (bzxMax > absDx) excx += bzxMax - absDx;
+    if (bzyMin < 0) excy += -bzyMin;
+    if (bzxMin < 0) excx += -bzxMin;
+    if (bzyMax > absDy) excy += bzyMax - absDy;
+
+    // if (cu > 1) {
+    //   let absCpx1 = Math.abs(cpx1);
+    //   let absCpy2 = Math.abs(cpy2);
+    //   if (oneCurveControlPoint) {
+    //     excx += (Math.abs(absCpx1 - x2) / 4) * cu ** 1.5 + headOffset;
+    //     excy += (Math.abs(absCpy2 - y1) / 4) * cu ** 1.5;
+    //   } else {
+    //     excx += (Math.abs(absCpx1 - x2) / 30) * cu;
+    //     excy += (Math.abs(absCpy2 - y1) / 30) * cu;
+    //   }
+    // }
+    if (excx < labalCanvExtraX * 4) excx += labalCanvExtraX * 4 - excx;
+
+    x1 += excx;
+    x2 += excx;
+    y1 += excy;
+    y2 += excy;
+    cpx1 += excx;
+    cpx2 += excx;
+    cpy1 += excy;
+    cpy2 += excy;
+
+    let cw = absDx + excx * 2,
+      ch = absDy + excy * 2;
+    cx0 -= excx;
+    cy0 -= excy;
+
+    //labels
+    let labelMiddlePos = { x: (cpx1 + cpx2) / 2, y: (cpy1 + cpy2) / 2 };
+    if (oneCurveControlPoint) {
+      // let xyRatio = absDx / absDy;
+      if (absDx > absDy) labelMiddlePos.x -= dx / 3;
+      if (absDy > absDx) labelMiddlePos.y += dy / 3;
+      if (cu > 1) {
+        labelMiddlePos.x = (labelMiddlePos.x + x2) / 2;
+        labelMiddlePos.y = (labelMiddlePos.y + y2) / 2;
+      }
+      // console.log(labelMiddlePos.x, absDx);
+    }
+    setSt({
+      cx0,
+      cy0,
+      x1,
+      x2,
+      y1,
+      y2,
+      cw,
+      ch,
+      cpx1,
+      cpy1,
+      cpx2,
+      cpy2,
+      dx,
+      dy,
+      absDx,
+      absDy,
+      headOrient,
+      labelMiddlePos,
+      excx,
+      excy
+    });
   };
 
-  // console.log(st.headOrient);
   let arrowPath = `M ${st.x1} ${st.y1} C ${st.cpx1} ${st.cpy1}, ${st.cpx2} ${st.cpy2}, ${st.x2} ${
     st.y2
   }`;
-  let arrowHeadId = "arrowHeadMarker" + arrowPath.replace(/ /g, "");
 
+  // arrowPath = `M ${st.x1} ${st.y1}  ${st.x2} ${st.y2}`;
+  let arrowHeadId = "arrowHeadMarker" + arrowPath.replace(/ /g, "");
   return (
     <svg
       ref={selfRef}
       width={st.cw}
       height={st.ch}
-      viewBox={`${-excx / 2} ${-excy / 2} ${st.cw} ${st.ch}`}
+      // viewBox={`${-excx / 2} ${-excy / 2} ${st.cw} ${st.ch}`}
       style={{
-        // border: "1px yellow dashed",
+        // border: "2px yellow dashed",
         position: "absolute",
         left: st.cx0,
         top: st.cy0,
@@ -703,10 +671,10 @@ function Xarrow(props: xarrowPropsType) {
       {/* <defs> */}
       <marker
         id={arrowHeadId}
-
         viewBox="0 0 12 12"
         refX="3"
         refY="6"
+        // re
         markerUnits="strokeWidth"
         markerWidth={headSize}
         markerHeight={headSize}
@@ -714,9 +682,10 @@ function Xarrow(props: xarrowPropsType) {
       >
         <path d="M 0 0 L 12 6 L 0 12 L 3 6 z" fill={headColor} />
       </marker>
-      {/* </defs> */}
-      {/* <circle r="5" cx={st.cpx1} cy={st.cpy1} fill="green" />
-      <circle r="5" cx={st.cpx2} cy={st.cpy2} fill="blue" /> */}
+      {/* <circle r="5" cx={st.cpx1} cy={st.cpy1} fill="green" /> */}
+      {/* <circle r="5" cx={st.cpx2} cy={st.cpy2} fill="blue" /> */}
+      {/* <circle r="7" cx={xarrowElemPos.x} cy={xarrowElemPos.y} fill="black" /> */}
+      {/* <rect x={st.excx} y={st.excy} width={st.absDx} height={st.absDy} fill="none" stroke="pink" /> */}
       <path
         d={arrowPath}
         stroke={lineColor}
@@ -745,8 +714,8 @@ function Xarrow(props: xarrowPropsType) {
         <text
           {...labelMiddleExtra}
           textAnchor="middle"
-          x={Math.abs(st.dx) / 2}
-          y={Math.abs(st.dy) / 2}
+          x={st.labelMiddlePos.x}
+          y={st.labelMiddlePos.y}
         >
           {labelMiddle}
         </text>
@@ -772,9 +741,9 @@ Xarrow.defaultProps = {
   headSize: 6,
   curveness: 0.8,
   dashness: false,
-  monitorDOMchanges: false,
+  monitorDOMchanges: true,
   registerEvents: [],
-  consoleWarning: "true",
+  consoleWarning: true,
   advanced: { extendSVGcanvas: 0 }
 };
 
