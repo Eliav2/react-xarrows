@@ -71,7 +71,10 @@ const Example1: React.FC = () => {
       <h3>
         <u>Example1:</u>
       </h3>
-      <p>automatic anchoring to the minimal length. works also when inside scrollable window</p>
+      <p>
+        automatic anchoring to the minimal length. works also when inside scrollable window. drag
+        the boxes to play around.
+      </p>
       <div style={canvasStyle} id="canvas">
         <div style={boxContainerStyle} id="boxContainerConatinerStyle">
           <div style={boxContainerStyle} id="boxContainerStyle">
