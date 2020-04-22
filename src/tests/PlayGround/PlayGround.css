@@ -53,7 +53,7 @@
 
 .canvasStyle {
   display: flex;
-  position: relative;
+  /* position: relative; */
   width: var(--canvasWidthVw);
   height: var(--canvasHeightVh);
   background: white;
