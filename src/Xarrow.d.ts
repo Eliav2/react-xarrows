@@ -27,7 +27,7 @@ export type anchorPositionType = "middle" | "left" | "right" | "top" | "bottom";
 
 export type reactRefType = { current: null | HTMLElement };
 export type refType = reactRefType | string;
-export type labelType = string | { text: string; extra: SVGProps<SVGElement> };
+export type labelType = string | { text: string; extra?: SVGProps<SVGElement> };
 export type domEventType = keyof GlobalEventHandlersEventMap;
 export type registerEventsType = {
   ref: refType;
