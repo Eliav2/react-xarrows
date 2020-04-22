@@ -3,7 +3,16 @@
   "version": "1.1.5",
   "author": "Eliav Louski",
   "description": "Draw arrows (or lines) between components in React!",
-  "keywords": ["react", "reactjs", "lines", "arrows", "xarrows", "draw", "connect", "between"],
+  "keywords": [
+    "react",
+    "reactjs",
+    "lines",
+    "arrows",
+    "xarrows",
+    "draw",
+    "connect",
+    "between"
+  ],
   "main": "src/Xarrow.tsx",
   "module": "src/Xarrow.tsx",
   "types": "src/Xarrow.d.ts",
