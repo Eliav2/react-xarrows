@@ -100,6 +100,7 @@ function Xarrow(props: xarrowPropsType) {
   const [prevProps, setPrevProps] = useState<prevPos>(null);
   // const [selfParents, setSelfParents] = useState<HTMLElement[]>(null); //list parents of the common ascestor of the arrow with start and end(until "root elemnt")
   const [anchorsParents, setAnchorsParents] = useState<anchorsParents>(null); //list childrens of the common ascestor of the arrow with start and end until start or end
+  const [commonAncestor, setCommonAncestor] = useState<HTMLElement>(null); //list childrens of the common ascestor of the arrow with start and end until start or end
   // const [xarrowElemPos, setXarrowElemPos] = useState<point>({ x: 0, y: 0 });
   // const [prevXarrowElemPos, setPrevXarrowElemPos] = useState<point>({ x: 0, y: 0 });
 
@@ -124,6 +125,8 @@ function Xarrow(props: xarrowPropsType) {
       elem.addEventListener("scroll", updateIfNeeded);
     });
     window.addEventListener("resize", updateIfNeeded);
+    if (window.getComputedStyle(commonAncestor).position !== "relative")
+      commonAncestor.addEventListener("scroll", updateIfNeeded);
   };
 
   const cleanMonitorDOMchanges = () => {
@@ -131,6 +134,8 @@ function Xarrow(props: xarrowPropsType) {
       elem.removeEventListener("scroll", updateIfNeeded);
     });
     window.removeEventListener("resize", updateIfNeeded);
+    if (window.getComputedStyle(commonAncestor).position === "relative")
+      commonAncestor.removeEventListener("scroll", updateIfNeeded);
   };
 
   const initParentsChildrens = () => {
@@ -138,6 +143,7 @@ function Xarrow(props: xarrowPropsType) {
     let allAncestor = findCommonAncestor(anchorsCommonAncestor, selfRef.current);
     let allAncestorChildrensStart = findAllChildrens(anchorsRefs.start, allAncestor);
     let allAncestorChildrensEnd = findAllChildrens(anchorsRefs.end, allAncestor);
+    setCommonAncestor(allAncestor);
     setAnchorsParents({
       start: allAncestorChildrensStart,
       end: allAncestorChildrensEnd
@@ -147,10 +153,6 @@ function Xarrow(props: xarrowPropsType) {
       end: allAncestorChildrensEnd
     });
     let allAncestorPosStyle = window.getComputedStyle(allAncestor).position;
-    // if (allAncestorPosStyle !== "relative" && props.monitorDOMchanges) {
-    //   console.log("?");
-    //   allAncestor.addEventListener("scroll", updateIfNeeded);
-    // }
     if (props.consoleWarning) {
       if (
         allAncestorPosStyle !== "relative" &&
@@ -158,9 +160,8 @@ function Xarrow(props: xarrowPropsType) {
           allAncestor.scrollWidth > allAncestor.clientWidth)
       )
         console.warn(
-          `%c Xarrow critical warning: common ancestor should always be 'relative' positioning,xarrow will not rerender on scroll events else. 
+          `Xarrow warning: it is recomnded to set common ancestor positioning style to 'relative',this will prevent rerender on every scroll event. 
         change position style from '${allAncestorPosStyle}' to 'relative' of element `,
-          "color: red",
           allAncestor
         );
       if (selfRef.current.parentElement !== anchorsCommonAncestor)
@@ -188,33 +189,153 @@ function Xarrow(props: xarrowPropsType) {
   };
 
   const testUserGivenProperties = () => {
-    if (typeof props.start === "object") {
-      if (!("current" in props.start)) {
-        let err = Error(
-          `Xarrows: 'start' property is not of type reference.
-          maybe you set 'start' to other object and not to React reference?.\n`
-        );
-        throw err;
-      }
-      if (props.start.current === null)
-        throw Error(
-          `Xarrows: Please make sure the reference to start anchor (property 'start') are provided correctly.
-          maybe you tried to render Xarrow before start anchor?.\n`
-        );
-    }
-    if (typeof props.end === "object") {
-      if (!("current" in props.end))
-        throw Error(
-          `Xarrows: 'end' property is not of type reference.
-          maybe you set 'end' to other object and not to React reference?.\n`
-        );
+    type extendedJtypes =
+      | "string"
+      | "number"
+      | "bigint"
+      | "boolean"
+      | "symbol"
+      | "undefined"
+      | "object"
+      | "function"
+      | "null"
+      | "array";
 
-      if (props.end.current === null)
-        throw Error(
-          `Xarrows: Please make sure the reference to end anchor (property 'end') are provided correctly.
-          maybe you tried to render Xarrow before end anchor?.\n`
+    const typeOf = (arg: any): extendedJtypes => {
+      let type: extendedJtypes = typeof arg;
+      if (type === "object") {
+        if (arg === null) type = "null";
+        else if (Array.isArray(arg)) type = "array";
+      }
+      return type;
+    };
+
+    const throwError = (errorMsg: string, consoleMsg?: any[]) => {
+      let err = Error("Xarrows: " + errorMsg);
+      if (consoleMsg) console.error("xarrow error: ", ...consoleMsg);
+      throw err;
+    };
+
+    const typeCheck = (arg, allowedTypes, name) => {
+      if (!allowedTypes.includes(typeOf(arg))) {
+        throwError(`'${name}' property error.`, [
+          `'${name}' property should be from type ${allowedTypes.join(" or ")}, not`,
+          typeOf(arg)
+        ]);
+      }
+    };
+
+    const valueCheck = (value, allowedValues, name) => {
+      if (!allowedValues.includes(value)) {
+        throwError(`'${name}' property error.`, [
+          `${name} =`,
+          value,
+          ` but ${name} prop should be '${allowedValues.join("' or '")}', not`,
+          "'" + value + "'"
+        ]);
+      }
+    };
+
+    const checkRef = (ref, name) => {
+      typeCheck(ref, ["object", "string"], name);
+      if (typeOf(ref) === "object") {
+        if (!("current" in ref))
+          throwError(`'${name}' property error.`, [
+            `${name}=`,
+            ref,
+            `but '${name}' is not of type reference. maybe you set '${name}' property to other object and not to React reference?`
+          ]);
+        if (ref.current === null)
+          throwError(`'${name}' property error`, [
+            `Make sure the reference to ${name} anchor are provided correctly.
+                maybe you tried to render Xarrow before ${name} anchor?`
+          ]);
+      }
+    };
+
+    const checkAnchor = (anchor, name) => {
+      typeCheck(anchor, ["string", "array"], name);
+      if (typeOf(anchor) === "string")
+        valueCheck(anchor, ["auto", "left", "right", "top", "bottom", "middle"], name);
+      else if (typeOf(anchor) === "array")
+        anchor.forEach(an =>
+          valueCheck(an, ["auto", "left", "right", "top", "bottom", "middle"], name)
         );
-    }
+    };
+
+    checkRef(props.start, "start");
+    checkRef(props.end, "end");
+    checkAnchor(props.startAnchor, "startAnchor");
+    checkAnchor(props.endAnchor, "endAnchor");
+
+    // const objectTypeCheck = (
+    //   obj: object,
+    //   requiredProps: object,
+    //   optionalProps: object,
+    //   objName: string
+    // ) => {
+    //   for (let optPropKey in optionalProps) {
+    //     if (optPropKey in obj) {
+    //       if (typeOf(obj[optPropKey]) !== optionalProps[optPropKey])
+    //         throwError("error in object " + objName, [
+    //           optPropKey,
+    //           " in object",
+    //           obj,
+    //           "is of type",
+    //           typeOf(obj[optPropKey]),
+    //           "instead ",
+    //           optionalProps[optPropKey]
+    //         ]);
+    //     }
+    //   }
+    //   for (let reqPropKey in requiredProps) {
+    //     if (reqPropKey in obj) {
+    //       if (typeOf(obj[reqPropKey]) !== requiredProps[reqPropKey])
+    //         throwError("", [
+    //           reqPropKey,
+    //           "in object",
+    //           obj,
+    //           "is of type",
+    //           typeOf(obj[reqPropKey]),
+    //           "instead",
+    //           requiredProps[reqPropKey]
+    //         ]);
+    //     } else {
+    //       throwError("", ["key", reqPropKey, "is missing from", obj]);
+    //     }
+    //   }
+    // };
+    // const checkLabelType = label => {
+    //   typeCheck(label, ["string", "object"], "label");
+    //   if (typeOf(label) === "object") {
+    //     objectTypeCheck(label, { text: "string" }, { extra: "object" }, "label");
+    //   }
+    // };
+
+    // const checkLabel = label => {
+    //   console.log("?", label);
+    //   typeCheck(label, ["string", "object"], "label");
+    //   if (typeOf(label) === "object") {
+    //     let keys = Object.keys(label);
+    //     if (keys.some(key => ["start", "middle", "end"].includes(key))) {
+    //       for (let labelPos in ["start", "middle", "end"]) {
+    //         if (labelPos in label) checkLabelType(label[labelPos]);
+    //       }
+    //     } else if (keys.some(key => ["text", "extra"].includes(key))) checkLabelType(label);
+    //   } else
+    //     throwError(`'label' property error`, [props.label, "in not the expected label object."]);
+    // };
+
+    // if (props.label) {
+    //   checkLabel(props.label);
+    // }
+    // const arraySmartIncludes = (arg, array) => {
+    //   let match = false;
+    //   array.forEach(a => {
+    //     if (lodash.isEqual(arg, a)) match = true;
+    //   });
+    //   return match;
+    // };
   };
 
   const triggerUpdate = callback => {
@@ -251,9 +372,9 @@ function Xarrow(props: xarrowPropsType) {
   useEffect(() => {
     // equilavent to componentDidMount
     // console.log("xarrow mounted");
+    initProps();
     initRegisterEvents();
     initAnchorsRefs();
-    initProps();
     return () => {
       // console.log("xarrow unmounted");
       cleanRegisterEvents();
@@ -513,10 +634,10 @@ function Xarrow(props: xarrowPropsType) {
     let headOffset = ((headSize * 3) / 4) * strokeWidth;
     let cu = props.curveness;
 
-    let excRight = 0;
-    let excLeft = 0;
-    let excUp = 0;
-    let excDown = 0;
+    let excRight = props.strokeWidth;
+    let excLeft = props.strokeWidth;
+    let excUp = props.strokeWidth;
+    let excDown = props.strokeWidth;
     excLeft += props.advanced.extendSVGcanvas;
     excRight += props.advanced.extendSVGcanvas;
     excUp += props.advanced.extendSVGcanvas;
@@ -556,23 +677,23 @@ function Xarrow(props: xarrowPropsType) {
       cpy2 = y2;
 
     const curvesPossabilties = {
-      hCurv: () => {
+      hh: () => {
         //horizinatl - from right to left or the opposite
         cpx1 += absDx * cu * xSign;
         cpx2 -= absDx * cu * xSign;
       },
-      vCurv: () => {
+      vv: () => {
         //vertical - from top to bottom or opposite
         cpy1 += absDy * cu * ySign;
         cpy2 -= absDy * cu * ySign;
       },
-      hvCurv: () => {
+      hv: () => {
         // start horizintaly then verticaly
         // from v side to h side
         cpx1 += absDx * cu * xSign;
         cpy2 -= absDy * cu * ySign;
       },
-      vhCurv: () => {
+      vh: () => {
         // start verticaly then horizintaly
         // from h side to v side
         cpy1 += absDy * cu * ySign;
@@ -580,14 +701,16 @@ function Xarrow(props: xarrowPropsType) {
       }
     };
 
-    if (["left", "right"].includes(endAnchor) && ["bottom", "top"].includes(startAnchor))
-      curvesPossabilties.vhCurv();
-    else if (["left", "right"].includes(endAnchor) && ["left", "right"].includes(startAnchor))
-      curvesPossabilties.hCurv();
-    else if (["bottom", "top"].includes(endAnchor) && ["bottom", "top"].includes(startAnchor))
-      curvesPossabilties.vCurv();
-    else if (["bottom", "top"].includes(endAnchor) && ["left", "right"].includes(startAnchor))
-      curvesPossabilties.hvCurv();
+    let choosedCurveness = "";
+    if (["left", "right"].includes(startAnchor)) choosedCurveness += "h";
+    else if (["bottom", "top"].includes(startAnchor)) choosedCurveness += "v";
+    else if (startAnchor === "middle") choosedCurveness += "m";
+    if (["left", "right"].includes(endAnchor)) choosedCurveness += "h";
+    else if (["bottom", "top"].includes(endAnchor)) choosedCurveness += "v";
+    else if (endAnchor === "middle") choosedCurveness += "m";
+    if (absDx > absDy) choosedCurveness = choosedCurveness.replace(/m/g, "h");
+    else choosedCurveness = choosedCurveness.replace(/m/g, "v");
+    curvesPossabilties[choosedCurveness]();
 
     ////////////////////////////////////
     // Buzier curve calcualtions
