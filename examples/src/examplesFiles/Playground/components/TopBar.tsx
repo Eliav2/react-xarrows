@@ -1,6 +1,6 @@
 import React from "react";
 import "./TopBar.css";
-// import MaterialIcon from "material-icons-react";
+import MaterialIcon from "material-icons-react";
 
 const actions = ["Add Connections", "Remove Connections", "Delete"];
 
@@ -82,12 +82,12 @@ const TopBar = props => {
       onClick={e => e.stopPropagation()}
     >
       <div className="topBarLabel" onClick={() => props.handleSelect(null)}>
-        {/* <MaterialIcon
+        <MaterialIcon
           size={30}
           icon="keyboard_arrow_up"
           className="material-icons topBarToggleIcon"
-        /> */}
-        <p>Edit Menu</p>
+        />
+        {/* <p>Edit Menu</p> */}
       </div>
       {returnTopBarApearnce()}
       {/* <div className="actionBubbles">
