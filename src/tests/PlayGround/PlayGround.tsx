@@ -38,22 +38,24 @@ const PlayGround: React.FC = () => {
   const [boxes, setBoxes] = useState<box[]>([
     { id: "box1", x: 0, y: 120, shape: "wideBox" },
     { id: "box2", x: 320, y: 200, shape: "tallBox" }
-    // { id: "box3", x: 220, y: 100, shape: "triangle" }
   ]);
 
   const [lines, setLines] = useState<xarrowPropsType[]>([
     {
       start: "box1",
       end: "box2",
-      headSize: 10,
+      headSize: 5,
+      strokeWidth: 6,
       startAnchor: "auto",
-      endAnchor: "top",
-      curveness: 2,
+      endAnchor: "auto",
+      curveness: 3,
+
       label: {
         start: "start",
-        middle: "middle",
+        middle: "middleeeeeeee!",
         end: "end"
-      }
+      },
+      advanced: { extendSVGcanvas: 0 }
     }
   ]);
 

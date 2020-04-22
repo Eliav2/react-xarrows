@@ -143,12 +143,23 @@ function Xarrow(props: xarrowPropsType) {
       start: allAncestorChildrensStart,
       end: allAncestorChildrensEnd
     });
-
+    console.log({
+      start: allAncestorChildrensStart,
+      end: allAncestorChildrensEnd
+    });
+    let allAncestorPosStyle = window.getComputedStyle(allAncestor).position;
+    // if (allAncestorPosStyle !== "relative" && props.monitorDOMchanges) {
+    //   console.log("?");
+    //   allAncestor.addEventListener("scroll", updateIfNeeded);
+    // }
     if (props.consoleWarning) {
-      let allAncestorPosStyle = window.getComputedStyle(allAncestor).position;
-      if (allAncestorPosStyle !== "relative")
+      if (
+        allAncestorPosStyle !== "relative" &&
+        (allAncestor.scrollHeight > allAncestor.clientHeight ||
+          allAncestor.scrollWidth > allAncestor.clientWidth)
+      )
         console.warn(
-          `%c Xarrow critical warning: common ancestor should always be in 'relative' positioning! 
+          `%c Xarrow critical warning: common ancestor should always be 'relative' positioning,xarrow will not rerender on scroll events else. 
         change position style from '${allAncestorPosStyle}' to 'relative' of element `,
           "color: red",
           allAncestor
@@ -290,16 +301,20 @@ function Xarrow(props: xarrowPropsType) {
     y2: 0, //the y ending point of the line inside the canvas
     dx: 0, // the x diffrence between 'start' anchor to 'end' anchor
     dy: 0, // the y diffrence between 'start' anchor to 'end' anchor
-    absDx: 0,
-    absDy: 0,
+    absDx: 0, // the x length(positive) diffrence
+    absDy: 0, // the y length(positive) diffrence
     cpx1: 0, // control points - control the curveness of the line
     cpy1: 0,
     cpx2: 0,
     cpy2: 0,
-    headOrient: "auto",
+    headOrient: "auto", // determines to what side the arrowhead will point
+    labelStartPos: { x: 0, y: 0 },
     labelMiddlePos: { x: 0, y: 0 },
-    excx: 0,
-    excy: 0
+    labelEndPos: { x: 0, y: 0 },
+    excRight: 0, //expand canvas to the right
+    excLeft: 0, //expand canvas to the left
+    excUp: 0, //expand canvas upwards
+    excDown: 0 // exapnd canvas downward
   });
 
   let { color, lineColor, headColor, headSize, strokeWidth, dashness } = props;
@@ -354,16 +369,6 @@ function Xarrow(props: xarrowPropsType) {
     labelEnd ? labelEnd.length : 0
   );
 
-  let userCanvExtra = props.advanced.extendSVGcanvas;
-  const extraCanvasSize = {
-    excx: (strokeWidth * headSize) / 2,
-    excy: (strokeWidth * headSize) / 2
-  };
-  var { excx, excy } = extraCanvasSize;
-  excy += labalCanvExtraY;
-  excx += userCanvExtra;
-  excy += userCanvExtra;
-
   const getSelfPos = () => {
     let { x: xarrowElemX, y: xarrowElemY } = selfRef.current.getBoundingClientRect();
     let xarrowStyle = getComputedStyle(selfRef.current);
@@ -395,6 +400,16 @@ function Xarrow(props: xarrowPropsType) {
       }
     };
   };
+
+  // let userCanvExtra = props.advanced.extendSVGcanvas;
+  // const extraCanvasSize = {
+  //   excx: (strokeWidth * headSize) / 2,
+  //   excy: (strokeWidth * headSize) / 2
+  // };
+  // var { excx, excy } = extraCanvasSize;
+  // excy += labalCanvExtraY;
+  // excx += userCanvExtra;
+  // excy += userCanvExtra;
 
   const updatePosition = (positions: prevPos): void => {
     // Do NOT call thie function directly.
@@ -497,11 +512,16 @@ function Xarrow(props: xarrowPropsType) {
     let xSign = dx > 0 ? 1 : -1;
     let ySign = dy > 0 ? 1 : -1;
     let headOffset = ((headSize * 3) / 4) * strokeWidth;
-    let oneCurveControlPoint = false;
     let cu = props.curveness;
 
-    ////////////////////////////////////
-    // adjustments before arrow point to point calculations
+    let excRight = 0;
+    let excLeft = 0;
+    let excUp = 0;
+    let excDown = 0;
+    excLeft += props.advanced.extendSVGcanvas;
+    excRight += props.advanced.extendSVGcanvas;
+    excUp += props.advanced.extendSVGcanvas;
+    excDown += props.advanced.extendSVGcanvas;
 
     ////////////////////////////////////
     // arrow point to point calculations
@@ -519,9 +539,18 @@ function Xarrow(props: xarrowPropsType) {
       x2 -= headOffset * xSign * Math.cos(angel);
       y2 -= headOffset * ySign * Math.sin(angel);
     } else {
-      if (["left", "right"].includes(endAnchor)) x2 -= headOffset * xSign;
-      else if (["top", "bottom"].includes(endAnchor)) y2 -= headOffset * ySign;
+      if (["left", "right"].includes(endAnchor)) {
+        x2 -= headOffset * xSign;
+      } else if (["top", "bottom"].includes(endAnchor)) {
+        y2 -= headOffset * ySign;
+      }
     }
+
+    excRight += (strokeWidth * headSize) / 2;
+    excLeft += (strokeWidth * headSize) / 2;
+    excUp += (strokeWidth * headSize) / 2;
+    excDown += (strokeWidth * headSize) / 2;
+
     let cpx1 = x1,
       cpy1 = y1,
       cpx2 = x2,
@@ -543,14 +572,12 @@ function Xarrow(props: xarrowPropsType) {
         // from v side to h side
         cpx1 += absDx * cu * xSign;
         cpy2 -= absDy * cu * ySign;
-        oneCurveControlPoint = true;
       },
       vhCurv: () => {
         // start verticaly then horizintaly
         // from h side to v side
         cpy1 += absDy * cu * ySign;
         cpx2 -= absDx * cu * xSign;
-        oneCurveControlPoint = true;
       }
     };
 
@@ -564,93 +591,94 @@ function Xarrow(props: xarrowPropsType) {
       curvesPossabilties.hvCurv();
 
     ////////////////////////////////////
-    // expand canvas properly
-
+    // Buzier curve calcualtions
     // bzCurve function:  bz = (1−t)^3*p1 + 3(1−t)^2*t*p2 +3(1−t)*t^2*p3 + t^3*p4
     // dt(bz) = -3 p1 (1 - t)^2 + 3 p2 (1 - t)^2 - 6 p2 (1 - t) t + 6 p3 (1 - t) t - 3 p3 t^2 + 3 p4 t^2
     // when p1=(x1,y1),p2=(cpx1,cpy1),p3=(cpx2,cpy2),p4=(x2,y2)
-    // then extrema points is when dt(bz) = 0 
+    // then extrema points is when dt(bz) = 0
     // solutions =>  t = ((-6 p1 + 12 p2 - 6 p3) ± sqrt((6 p1 - 12 p2 + 6 p3)^2 - 4 (3 p2 - 3 p1) (-3 p1 + 9 p2 - 9 p3 + 3 p4)))/(2 (-3 p1 + 9 p2 - 9 p3 + 3 p4))  when (p1 + 3 p3!=3 p2 + p4)
-    // xSol1,2 = ((-6 x1 + 12 cpx1 - 6 cpx2) ± sqrt((6 x1 - 12 cpx1 + 6 cxp2)^2 - 4 (3 cpx1 - 3 x1) (-3 x1 + 9 cpx1 - 9 cpx2 + 3 x2)))/(2 (-3 x1 + 9 cpx1 - 9 cpx2 + 3 x2)) 
-    // ySol1,2 = ((-6 y1 + 12 cpy1 - 6 cpy2) ± sqrt((6 y1 - 12 cpy1 + 6 cyp2)^2 - 4 (3 cpy1 - 3 y1) (-3 y1 + 9 cpy1 - 9 cpy2 + 3 y2)))/(2 (-3 y1 + 9 cpy1 - 9 cpy2 + 3 y2)) 
+    // xSol1,2 = ((-6 x1 + 12 cpx1 - 6 cpx2) ± sqrt((6 x1 - 12 cpx1 + 6 cxp2)^2 - 4 (3 cpx1 - 3 x1) (-3 x1 + 9 cpx1 - 9 cpx2 + 3 x2)))/(2 (-3 x1 + 9 cpx1 - 9 cpx2 + 3 x2))
+    // ySol1,2 = ((-6 y1 + 12 cpy1 - 6 cpy2) ± sqrt((6 y1 - 12 cpy1 + 6 cyp2)^2 - 4 (3 cpy1 - 3 y1) (-3 y1 + 9 cpy1 - 9 cpy2 + 3 y2)))/(2 (-3 y1 + 9 cpy1 - 9 cpy2 + 3 y2))
     // now in javascript:
-    let txSol1 = ((-6*x1 + 12*cpx1 - 6*cpx2) + Math.sqrt((6*x1 - 12*cpx1 + 6*cpx2)**2 - 4*(3*cpx1 - 3*x1)*(-3*x1 + 9*cpx1 - 9*cpx2 + 3*x2)))/(2*(-3*x1 + 9*cpx1 - 9*cpx2 + 3*x2)) 
-    let txSol2 = ((-6*x1 + 12*cpx1 - 6*cpx2) - Math.sqrt((6*x1 - 12*cpx1 + 6*cpx2)**2 - 4*(3*cpx1 - 3*x1)*(-3*x1 + 9*cpx1 - 9*cpx2 + 3*x2)))/(2*(-3*x1 + 9*cpx1 - 9*cpx2 + 3*x2)) 
-    let tySol1 = ((-6*y1 + 12*cpy1 - 6*cpy2) + Math.sqrt((6*y1 - 12*cpy1 + 6*cpy2)**2 - 4*(3*cpy1 - 3*y1)*(-3*y1 + 9*cpy1 - 9*cpy2 + 3*y2)))/(2*(-3*y1 + 9*cpy1 - 9*cpy2 + 3*y2)) 
-    let tySol2 = ((-6*y1 + 12*cpy1 - 6*cpy2) - Math.sqrt((6*y1 - 12*cpy1 + 6*cpy2)**2 - 4*(3*cpy1 - 3*y1)*(-3*y1 + 9*cpy1 - 9*cpy2 + 3*y2)))/(2*(-3*y1 + 9*cpy1 - 9*cpy2 + 3*y2)) 
-    const bzx=(t) =>(1 - t) ** 3 * x1 + 3 * (1 - t) ** 2 * t * cpx1 + 3 * (1 - t) * t ** 2 * cpx2 + t ** 3 * x2;
-    const bzy=(t) =>(1 - t) ** 3 * y1 + 3 * (1 - t) ** 2 * t * cpy1 + 3 * (1 - t) * t ** 2 * cpy2 + t ** 3 * y2;
-    // console.log("calculated",bzx(txSol1),bzx(txSol2),bzy(tySol1),bzy(tySol2))
+    let txSol1 =
+      (-6 * x1 +
+        12 * cpx1 -
+        6 * cpx2 +
+        Math.sqrt(
+          (6 * x1 - 12 * cpx1 + 6 * cpx2) ** 2 -
+            4 * (3 * cpx1 - 3 * x1) * (-3 * x1 + 9 * cpx1 - 9 * cpx2 + 3 * x2)
+        )) /
+      (2 * (-3 * x1 + 9 * cpx1 - 9 * cpx2 + 3 * x2));
+    let txSol2 =
+      (-6 * x1 +
+        12 * cpx1 -
+        6 * cpx2 -
+        Math.sqrt(
+          (6 * x1 - 12 * cpx1 + 6 * cpx2) ** 2 -
+            4 * (3 * cpx1 - 3 * x1) * (-3 * x1 + 9 * cpx1 - 9 * cpx2 + 3 * x2)
+        )) /
+      (2 * (-3 * x1 + 9 * cpx1 - 9 * cpx2 + 3 * x2));
+    let tySol1 =
+      (-6 * y1 +
+        12 * cpy1 -
+        6 * cpy2 +
+        Math.sqrt(
+          (6 * y1 - 12 * cpy1 + 6 * cpy2) ** 2 -
+            4 * (3 * cpy1 - 3 * y1) * (-3 * y1 + 9 * cpy1 - 9 * cpy2 + 3 * y2)
+        )) /
+      (2 * (-3 * y1 + 9 * cpy1 - 9 * cpy2 + 3 * y2));
+    let tySol2 =
+      (-6 * y1 +
+        12 * cpy1 -
+        6 * cpy2 -
+        Math.sqrt(
+          (6 * y1 - 12 * cpy1 + 6 * cpy2) ** 2 -
+            4 * (3 * cpy1 - 3 * y1) * (-3 * y1 + 9 * cpy1 - 9 * cpy2 + 3 * y2)
+        )) /
+      (2 * (-3 * y1 + 9 * cpy1 - 9 * cpy2 + 3 * y2));
+    const bzx = t =>
+      (1 - t) ** 3 * x1 + 3 * (1 - t) ** 2 * t * cpx1 + 3 * (1 - t) * t ** 2 * cpx2 + t ** 3 * x2;
+    const bzy = t =>
+      (1 - t) ** 3 * y1 + 3 * (1 - t) ** 2 * t * cpy1 + 3 * (1 - t) * t ** 2 * cpy2 + t ** 3 * y2;
+
+    ////////////////////////////////////
+    // canvas smart size adjustments
+
     let xSol1 = bzx(txSol1);
     let xSol2 = bzx(txSol2);
     let ySol1 = bzy(tySol1);
     let ySol2 = bzy(tySol2);
-    if (xSol1 < 0) excx += -xSol1;
-    if (xSol2 > absDx) excx += xSol2 - absDx;
-    if (ySol1 < 0) excy += -ySol1;
-    if (ySol2 > absDy) excy += ySol2 - absDy;
+    if (xSol1 < 0) excLeft += -xSol1;
+    if (xSol2 > absDx) excRight += xSol2 - absDx;
+    if (ySol1 < 0) excUp += -ySol1;
+    if (ySol2 > absDy) excDown += ySol2 - absDy;
 
+    excLeft += labalCanvExtraX * 4;
+    excRight += labalCanvExtraX * 4;
 
-    // let bzxMax = 0;
-    // let bzyMax = 0;
-    // let bzxMin = 0;
-    // let bzyMin = 0;
-    // for (let t = 0; t < 1; t += 0.1) {
-    //   let ctx =
-    //   (1 - t) ** 3 * x1 + 3 * (1 - t) ** 2 * t * cpx1 + 3 * (1 - t) * t ** 2 * cpx2 + t ** 3 * x2;
-    //   if (ctx > bzxMax) bzxMax = ctx;
-    //   if (ctx < bzxMin) bzxMin = ctx;
-    //   let cty =
-    //     (1 - t) ** 3 * y1 + 3 * (1 - t) ** 2 * t * cpy1 + 3 * (1 - t) * t ** 2 * cpy2 + t ** 3 * y2;
-    //   if (cty > bzyMax) bzyMax = cty;
-    //   if (cty < bzyMin) bzyMin = cty;
-    // }
-    // console.log("estimated",bzxMin,bzxMax,bzyMin,bzyMax)
+    x1 += excLeft;
+    x2 += excLeft;
+    y1 += excUp;
+    y2 += excUp;
+    cpx1 += excLeft;
+    cpx2 += excLeft;
+    cpy1 += excUp;
+    cpy2 += excUp;
 
-    // if (bzxMax > absDx) excx += bzxMax - absDx;
-    // if (bzxMin < 0) excx += -bzxMin;
-    // if (bzyMax > absDy) excy += bzyMax - absDy;
-    // if (bzyMin < 0) excy += -bzyMin;
+    let cw = absDx + excLeft + excRight,
+      ch = absDy + excUp + excDown;
+    cx0 -= excLeft;
+    cy0 -= excUp;
 
-    // if (cu > 1) {
-    //   let absCpx1 = Math.abs(cpx1);
-    //   let absCpy2 = Math.abs(cpy2);
-    //   if (oneCurveControlPoint) {
-    //     excx += (Math.abs(absCpx1 - x2) / 4) * cu ** 1.5 + headOffset;
-    //     excy += (Math.abs(absCpy2 - y1) / 4) * cu ** 1.5;
-    //   } else {
-    //     excx += (Math.abs(absCpx1 - x2) / 30) * cu;
-    //     excy += (Math.abs(absCpy2 - y1) / 30) * cu;
-    //   }
-    // }
-    if (excx < labalCanvExtraX * 4) excx += labalCanvExtraX * 4 - excx;
-
-    x1 += excx;
-    x2 += excx;
-    y1 += excy;
-    y2 += excy;
-    cpx1 += excx;
-    cpx2 += excx;
-    cpy1 += excy;
-    cpy2 += excy;
-
-    let cw = absDx + excx * 2,
-      ch = absDy + excy * 2;
-    cx0 -= excx;
-    cy0 -= excy;
 
     //labels
-    let labelMiddlePos = { x: (cpx1 + cpx2) / 2, y: (cpy1 + cpy2) / 2 };
-    if (oneCurveControlPoint) {
-      // let xyRatio = absDx / absDy;
-      if (absDx > absDy) labelMiddlePos.x -= dx / 3;
-      if (absDy > absDx) labelMiddlePos.y += dy / 3;
-      if (cu > 1) {
-        labelMiddlePos.x = (labelMiddlePos.x + x2) / 2;
-        labelMiddlePos.y = (labelMiddlePos.y + y2) / 2;
-      }
-      // console.log(labelMiddlePos.x, absDx);
+    let labelStartPos = { x: bzx(0.01), y: bzy(0.01) };
+    let labelMiddlePos = { x: bzx(0.5), y: bzy(0.5) };
+    let labelEndPos = { x: bzx(0.99), y: bzy(0.99) };
+
+    if (labelMiddlePos.x) {
     }
+
     setSt({
       cx0,
       cy0,
@@ -669,9 +697,13 @@ function Xarrow(props: xarrowPropsType) {
       absDx,
       absDy,
       headOrient,
+      labelStartPos,
       labelMiddlePos,
-      excx,
-      excy
+      labelEndPos,
+      excLeft,
+      excRight,
+      excUp,
+      excDown
     });
   };
 
@@ -712,7 +744,16 @@ function Xarrow(props: xarrowPropsType) {
       {/* <circle r="5" cx={st.cpx1} cy={st.cpy1} fill="green" /> */}
       {/* <circle r="5" cx={st.cpx2} cy={st.cpy2} fill="blue" /> */}
       {/* <circle r="7" cx={xarrowElemPos.x} cy={xarrowElemPos.y} fill="black" /> */}
-      {/* <rect x={st.excx} y={st.excy} width={st.absDx} height={st.absDy} fill="none" stroke="pink" strokeWidth="2px"/> */}
+      {/* <rect
+        x={st.excLeft}
+        y={st.excUp}
+        width={st.absDx}
+        height={st.absDy}
+        fill="none"
+        stroke="pink"
+        strokeWidth="2px"
+      /> */}
+
       <path
         d={arrowPath}
         stroke={lineColor}
@@ -732,7 +773,12 @@ function Xarrow(props: xarrowPropsType) {
       </path>
 
       {labelStart ? (
-        <text {...labelStartExtra} textAnchor={st.dx > 0 ? "start" : "end"} x={st.x1} y={st.y1 - 5}>
+        <text
+          {...labelStartExtra}
+          textAnchor={st.dx > 0 ? "start" : "end"}
+          x={st.labelStartPos.x}
+          y={st.labelStartPos.y}
+        >
           {labelStart}
         </text>
       ) : null}
@@ -749,7 +795,12 @@ function Xarrow(props: xarrowPropsType) {
       ) : null}
 
       {labelEnd ? (
-        <text {...labelEndExtra} textAnchor={st.dx > 0 ? "end" : "start"} x={st.x2} y={st.y2 - 5}>
+        <text
+          {...labelEndExtra}
+          textAnchor={st.dx > 0 ? "end" : "start"}
+          x={st.labelEndPos.x}
+          y={st.labelEndPos.y}
+        >
           {labelEnd}
         </text>
       ) : null}

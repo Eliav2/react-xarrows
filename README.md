@@ -211,3 +211,4 @@ Xarrow.defaultProps = {
 - 1.1.3 - An entirely new algorithm to calcualte arrow path and curveness. now the arrow acting "smarter". this include bug fixes,improvements and some adjustments.
   `monitorDOMchanges` prop default changed to `true`.
 - 1.1.4 - bug fixes, calculation optimizations, and smart svg canvas size adjusment.
+- 1.1.5 - optimazed calculations and label positioning. (Buzier curve extremas are calculated using derivatives and not by interpolation) other improvements as well.
