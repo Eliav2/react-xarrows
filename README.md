@@ -1,3 +1,5 @@
+# react-xarrows
+
 Draw arrows between components in React!
 
 This library is all about customizable and relaible arrows(or lines) between DOM elements in React.
@@ -213,3 +215,4 @@ Xarrow.defaultProps = {
 - 1.1.4 - bug fixes, calculation optimizations, and smart svg canvas size adjusment.
 - 1.1.5 - optimazed calculations and label positioning. (Buzier curve extrema point are calculated now using derivatives and not by interpolation) other improvements as well.
 - 1.1.6 - errors and warnings improved. smart adjustments for diffrent positioning style(of anchors elemntes and common ancestor element) . minor bug fixes.
+- 1.1.7 minor bug fixes.

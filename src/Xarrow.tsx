@@ -149,10 +149,6 @@ function Xarrow(props: xarrowPropsType) {
       start: allAncestorChildrensStart,
       end: allAncestorChildrensEnd
     });
-    console.log({
-      start: allAncestorChildrensStart,
-      end: allAncestorChildrensEnd
-    });
     let allAncestorPosStyle = window.getComputedStyle(allAncestor).position;
     if (props.consoleWarning) {
       if (
@@ -216,7 +212,7 @@ function Xarrow(props: xarrowPropsType) {
       if (consoleMsg) console.error("xarrow error: ", ...consoleMsg);
       throw err;
     };
-
+    
     const typeCheck = (arg, allowedTypes, name) => {
       if (!allowedTypes.includes(typeOf(arg))) {
         throwError(`'${name}' property error.`, [
@@ -633,16 +629,16 @@ function Xarrow(props: xarrowPropsType) {
     let xSign = dx > 0 ? 1 : -1;
     let ySign = dy > 0 ? 1 : -1;
     let headOffset = ((headSize * 3) / 4) * strokeWidth;
-    let cu = props.curveness;
+    let cu = Number(props.curveness);
 
-    let excRight = props.strokeWidth;
-    let excLeft = props.strokeWidth;
-    let excUp = props.strokeWidth;
-    let excDown = props.strokeWidth;
-    excLeft += props.advanced.extendSVGcanvas;
-    excRight += props.advanced.extendSVGcanvas;
-    excUp += props.advanced.extendSVGcanvas;
-    excDown += props.advanced.extendSVGcanvas;
+    let excRight = strokeWidth;
+    let excLeft = strokeWidth;
+    let excUp = strokeWidth + labalCanvExtraY;
+    let excDown = strokeWidth + labalCanvExtraY;
+    excLeft += Number(props.advanced.extendSVGcanvas);
+    excRight += Number(props.advanced.extendSVGcanvas);
+    excUp += Number(props.advanced.extendSVGcanvas);
+    excDown += Number(props.advanced.extendSVGcanvas);
 
     ////////////////////////////////////
     // arrow point to point calculations
@@ -660,10 +656,15 @@ function Xarrow(props: xarrowPropsType) {
       x2 -= headOffset * xSign * Math.cos(angel);
       y2 -= headOffset * ySign * Math.sin(angel);
     } else {
-      if (["left", "right"].includes(endAnchor)) {
-        x2 -= headOffset * xSign;
-      } else if (["top", "bottom"].includes(endAnchor)) {
-        y2 -= headOffset * ySign;
+      if (endAnchor === "middle") {
+        if (absDx > absDy) x2 -= headOffset * xSign;
+        else y2 -= headOffset * ySign;
+      } else {
+        if (["left", "right"].includes(endAnchor)) {
+          x2 -= headOffset * xSign;
+        } else if (["top", "bottom"].includes(endAnchor)) {
+          y2 -= headOffset * ySign;
+        }
       }
     }
 
@@ -798,9 +799,6 @@ function Xarrow(props: xarrowPropsType) {
     let labelStartPos = { x: bzx(0.01), y: bzy(0.01) };
     let labelMiddlePos = { x: bzx(0.5), y: bzy(0.5) };
     let labelEndPos = { x: bzx(0.99), y: bzy(0.99) };
-
-    if (labelMiddlePos.x) {
-    }
 
     setSt({
       cx0,
