@@ -1,7 +1,14 @@
+# react-xarrows
+
 Draw arrows between components in React!
 
-I've noticed react was missing a good and relaible arrows component in npm - so i've decided to create one of my own and share it.
+This library is all about customizable and relaible arrows(or lines) between DOM elements in React.
+
+I've needed such a components in one of my projects - and found out(surprisingly enough) that there is no such(good) lib, so I've decided to create one from scrate, and share it.
+
 this component will rerender and will update the anchors position whenever needed(not like other similar npm libraries) - the Xarrow also works inside scrollable windows and working no matter where placed in the DOM relative to his anchors.
+
+now (since v1.1.4) i can say, after a lot of tests and improvements- the arrows should work and act naturally under any normal circumstances(but don't try put some negative curveness ha?).
 
 found a problem? not a problem! post a new issue([here](https://github.com/Eliav2/react-xarrows/issues)) and i will do my best to fix it.
 
@@ -18,7 +25,7 @@ with npm `npm install react-xarrows`.
 
 [see here!](https://codesandbox.io/embed/github/Eliav2/react-xarrows/tree/master/examples?fontsize=14&hidenavigation=1&theme=dark) codebox of few examples(in this repo at /examples).
 
-![Image of xarrows](https://github.com/Eliav2/react-xarrows/blob/master/examples/images/react-xarrow-picture-1.1.2.png)
+![Image of xarrows](https://github.com/Eliav2/react-xarrows/blob/master/examples/images/react-xarrow-picture-1.2.0.png)
 
 ### simple example:
 
@@ -84,47 +91,44 @@ see 'Example2' at the examples codesandbox to play around.
 the properties the xarrow component recieves is as follow(as listed in `xarrowPropsType` in /src/xarrow.d.ts):
 
 ```jsx
-export type anchorType = "auto" | "middle" | "left" | "right" | "top" | "bottom";
+export type xarrowPropsType = {
+  start: refType;
+  end: refType;
+  startAnchor?: anchorType | anchorType[];
+  endAnchor?: anchorType | anchorType[];
+  label?: labelType | { start?: labelType; middle?: labelType; end?: labelType };
+  color?: string;
+  lineColor?: string | null;
+  headColor?: string | null;
+  strokeWidth?: number;
+  headSize?: number;
+  curveness?: number;
+  dashness?: boolean | { strokeLen?: number; nonStrokeLen?: number; animation?: boolean | number };
+  monitorDOMchanges?: boolean;
+  registerEvents?: registerEventsType[];
+  consoleWarning?: boolean;
+  advanced?: {
+    extendSVGcanvas?: number;
+  };
+};
+
+export type anchorType = anchorMethodType | anchorPositionType;
+export type anchorMethodType = "auto";
+export type anchorPositionType = "middle" | "left" | "right" | "top" | "bottom";
 export type reactRefType = { current: null | HTMLElement };
 export type refType = reactRefType | string;
-export type labelType = string | { text: string; extra: SVGProps<SVGElement> };
+export type labelType = string | { text: string; extra?: SVGProps<SVGElement> };
 export type domEventType = keyof GlobalEventHandlersEventMap;
 export type registerEventsType = {
   ref: refType;
   eventName: domEventType;
   callback?: CallableFunction;
 };
-
-export type xarrowPropsType = {
-  start: refType;
-  end: refType;
-  startAnchor: anchorType | anchorType[];
-  endAnchor: anchorType | anchorType[];
-  label: labelType | {
-    start?: labelType;
-    middle?: labelType;
-    end?: labelType
-  };
-  color: string;
-  lineColor: string | null;
-  headColor: string | null;
-  strokeWidth: number;
-  headSize: number;
-  curveness: number;
-  dashness: boolean | {
-    strokeLen?: number;
-    nonStrokeLen?: number;
-    animation?: boolean | number
-  };
-  monitorDOMchanges: boolean;
-  registerEvents: registerEventsType[];
-  consoleWarning: boolean;
-  advanced: {
-    extendSVGcanvas: number;
-  };
-};
-
 ```
+
+you can keep things simple or provide more detailed props - the API except both.
+for example - you can provide `label:"middleLable"` and the string will apear as middle label or customize the labels as you please: `label:{end:{text:"end",extra:{fill:"red",dx:-10}}}`.
+see typescript types above for detailed descriptions of what type excepts every prop.
 
 #### 'start' and 'end'
 
@@ -157,7 +161,7 @@ defines how much the lines curve.
 #### dashness
 
 can make the arrow dashed and can even animate.
-if true default values are choosed. if object is passed then default values are choosed exept what passed.
+if true default values(for dashness) are choosed. if object is passed then default values are choosed execpt what passed.
 
 #### monitorDOMchanges
 
@@ -174,7 +178,7 @@ we provide some nice warnings (and errors) whenever we detect issues. see 'Examp
 #### advanced
 
 here i will provide some flexibility to the API for some cases that i may not thought of.
-extendSVGcanvas will extend the svg canvas at all sides. can be usefull if you add very long labels or setting the cureveness to be very high.
+extendSVGcanvas will extend the svg canvas at all sides. can be usefull if for some reason the arrow(or labels) is cutted though to small svg canvas(should not happen since 1.1.4, if happens please subscribe an issue).
 
 ### default props
 
@@ -192,9 +196,9 @@ Xarrow.defaultProps = {
   headSize: 6,
   curveness: 0.8,
   dashness: false,
-  monitorDOMchanges: false,
+  monitorDOMchanges: true,
   registerEvents: [],
-  consoleWarning: "true",
+  consoleWarning: true,
   advanced: { extendSVGcanvas: 0 }
 };
 ```
@@ -205,3 +209,10 @@ Xarrow.defaultProps = {
 - 1.0.3 - props added: `label`, `dashness` and `advance`.
 - 1.1.0 - API changed! `arrowStyle` removed and all his contained properties flattened to be props of xarrow directly. `strokeColor` renamed to `lineColor`. `advance` renamed to `advanced`.
 - 1.1.1 - bug fix now labels not exceed the svg canvas. the headArrow is calcualted now . this means the line ends at the start at the arrow - and this is more natural looking(especially at large headarrows).
+- 1.1.2 bug fix. (the first arrow fixed the headarrow style for all next comming arrows)
+- 1.1.3 - An entirely new algorithm to calcualte arrow path and curveness. now the arrow acting "smarter". this include bug fixes,improvements and some adjustments.
+  `monitorDOMchanges` prop default changed to `true`.
+- 1.1.4 - bug fixes, calculation optimizations, and smart svg canvas size adjusment.
+- 1.1.5 - optimazed calculations and label positioning. (Buzier curve extrema point are calculated now using derivatives and not by interpolation) other improvements as well.
+- 1.1.6 - errors and warnings improved. smart adjustments for diffrent positioning style(of anchors elemntes and common ancestor element) . minor bug fixes.
+- 1.1.7 minor bug fixes.
