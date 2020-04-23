@@ -1,11 +1,11 @@
 import React, { useState, useRef } from "react";
 import { line, box, point } from "./types";
-import Xarrows from "../src/Xarrow";
-import Example1 from "./Example1";
-import Example2 from "./Example2";
-import Example3 from "./Example3";
-import Example4 from "./Example4";
-import SimpleExample from "./SimpleExample";
+import Example1 from "./examplesFiles/Example1";
+import Example2 from "./examplesFiles/Example2";
+import Example3 from "./examplesFiles/Example3";
+import Example4 from "./examplesFiles/Example4";
+import SimpleExample from "./examplesFiles/SimpleExample";
+import Playground from "./examplesFiles/Playground/Playground";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 
 const titleStyle = {
@@ -33,44 +33,45 @@ const ExamplePage: React.FC = () => {
         <br />
       </p>
       <Router>
-        <table align="center">
-          <tbody>
-            <tr>
-              <td>
-                <Link to="/Example1">
-                  <button>Example1</button>
-                </Link>
-              </td>
-              <td>
-                <Link to="/Example2">
-                  <button>Example2</button>
-                </Link>
-              </td>
-              <td>
-                <Link to="/Example3">
-                  <button>Example3</button>
-                </Link>
-              </td>
-              <td>
-                <Link to="/Example4">
-                  <button>Example4</button>
-                </Link>
-              </td>
-              {/* <td>
-                <Link to="/Example5">
-                  <button>Example5</button>
-                </Link>
-              </td> */}
-            </tr>
-          </tbody>
-        </table>
-
-        {/* <Example1 />
-        <Example2 /> */}
+        <div>
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            <Link to="/">
+              <button>home</button>
+            </Link>
+            <Link to="/SimpleExample">
+              <button>SimpleExample</button>
+            </Link>
+            <Link to="/Example1">
+              <button>Example1</button>
+            </Link>
+            <Link to="/Example2">
+              <button>Example2</button>
+            </Link>
+            <Link to="/Example3">
+              <button>Example3</button>
+            </Link>
+            <Link to="/Example4">
+              <button>Example4</button>
+            </Link>
+          </div>
+          <div style={{ display: "flex", justifyContent: "center", marginTop: "10px" }}>
+            <Link to="/Playground">
+              <button>Playground</button>
+            </Link>
+          </div>
+        </div>
 
         <Switch>
           <Route exact path="/">
-            <h2 style={{ textAlign: "center" }}>choose any example</h2>
+            <div style={{ textAlign: "center" }}>
+              <h2>choose any example</h2>
+              <h5>
+                see each example file at <code>/src/examplesFiles</code>{" "}
+              </h5>
+            </div>
+          </Route>
+          <Route path="/SimpleExample">
+            <SimpleExample />
           </Route>
           <Route path="/Example1">
             <Example1 />
@@ -84,8 +85,8 @@ const ExamplePage: React.FC = () => {
           <Route path="/Example4">
             <Example4 />
           </Route>
-          <Route path="/SimpleExample">
-            <SimpleExample />
+          <Route path="/Playground">
+            <Playground />
           </Route>
         </Switch>
       </Router>

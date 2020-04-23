@@ -5,6 +5,7 @@ const lodash = require("lodash");
 export type xarrowPropsType = xarrowPropsType;
 export type anchorType = anchorType;
 
+
 type prevPos = {
   start: {
     x: number;
@@ -211,7 +212,7 @@ function Xarrow(props: xarrowPropsType) {
       if (consoleMsg) console.error("xarrow error: ", ...consoleMsg);
       throw err;
     };
-
+    
     const typeCheck = (arg, allowedTypes, name) => {
       if (!allowedTypes.includes(typeOf(arg))) {
         throwError(`'${name}' property error.`, [
@@ -793,6 +794,7 @@ function Xarrow(props: xarrowPropsType) {
     cx0 -= excLeft;
     cy0 -= excUp;
 
+
     //labels
     let labelStartPos = { x: bzx(0.01), y: bzy(0.01) };
     let labelMiddlePos = { x: bzx(0.5), y: bzy(0.5) };
@@ -872,6 +874,7 @@ function Xarrow(props: xarrowPropsType) {
         stroke="pink"
         strokeWidth="2px"
       /> */}
+
       <path
         d={arrowPath}
         stroke={lineColor}

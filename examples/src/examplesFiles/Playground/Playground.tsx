@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
-import "./PlayGround.css";
-import Xarrow, { xarrowPropsType } from "./../../Xarrow";
+import "./Playground.css";
+import Xarrow, { xarrowPropsType } from "react-xarrows";
 import Box from "./components/Box";
 import TopBar from "./components/TopBar";
 
@@ -38,24 +38,22 @@ const PlayGround: React.FC = () => {
   const [boxes, setBoxes] = useState<box[]>([
     { id: "box1", x: 0, y: 120, shape: "wideBox" },
     { id: "box2", x: 320, y: 200, shape: "tallBox" }
+    // { id: "box3", x: 220, y: 100, shape: "triangle" }
   ]);
 
   const [lines, setLines] = useState<xarrowPropsType[]>([
     {
       start: "box1",
       end: "box2",
-      headSize: 5,
-      strokeWidth: 6,
+      headSize: 10,
       startAnchor: "auto",
-      endAnchor: "auto",
+      endAnchor: "top",
       curveness: 3,
-
       label: {
         start: "start",
-        middle: "middleeeeeeee!",
+        middle: "middle",
         end: "end"
-      },
-      advanced: { extendSVGcanvas: 0 }
+      }
     }
   ]);
 
@@ -104,8 +102,8 @@ const PlayGround: React.FC = () => {
 
   return (
     <div className="App">
-      <header className="titleStyle">Ryu SDN GUI</header>
-      <hr />
+      {/* <header className="titleStyle">Ryu SDN GUI</header> */}
+      {/* <hr /> */}
 
       <div className="canvasContainerStyle">
         <div className="canvasStyle" id="canvas" onClick={() => handleSelect(null)}>
@@ -123,13 +121,6 @@ const PlayGround: React.FC = () => {
                   {boxType}
                 </div>
               ))}
-              {/* <div
-                className="toolboxWideBox"
-                draggable
-                onDragStart={e => e.dataTransfer.setData("shape", "box")}
-              >
-                wideBox
-              </div> */}
             </div>
           </div>
           <div className="interfacesBarStyle">
