@@ -80,14 +80,14 @@ const Example2: React.FC = () => {
     end: box2.ref, //  or reference
     startAnchor: startAnchor,
     endAnchor: endAnchor,
-    curveness: curveness,
+    curveness: Number(curveness),
     color: color,
     lineColor: lineColor,
     headColor: headColor,
-    strokeWidth: strokeWidth,
-    headSize: headSize,
+    strokeWidth: Number(strokeWidth),
+    headSize: Number(headSize),
     // dashness: true   // can be simply boolean or object:
-    dashness: dashed ? { animation } : false,
+    dashness: dashed ? { animation: Number(animation) } : false,
     // label: "middle"  //can be simply string of middle label or object:
     label: {
       start: "startLabel",

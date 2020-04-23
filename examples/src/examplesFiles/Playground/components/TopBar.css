@@ -16,7 +16,7 @@
 .topBarLabel {
   display: flex;
   align-items: center;
-  min-width: 120px;
+  /* min-width: 120px; */
   border-radius: 30px;
   background: white;
   margin: 5px;
