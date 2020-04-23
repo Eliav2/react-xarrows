@@ -61,7 +61,7 @@ const Example1: React.FC = () => {
   const [headColor, setHeadColor] = useState(null);
   const [curveness, setCurveness] = useState(0.8);
   const [strokeWidth, setStrokeWidth] = useState(4);
-  const [headSize, setHeadSize] = useState(6);
+  const [headSize, setHeadSize] = useState(15);
   const [startAnchor, setStartAnchor] = useState<anchorType[]>(["auto"]);
   const [endAnchor, setEndAnchor] = useState<anchorType>(["auto"]);
   const [dashed, setDashed] = useState(false);

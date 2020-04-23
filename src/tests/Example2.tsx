@@ -54,7 +54,7 @@ const Example2: React.FC = () => {
       end: getBoxById("box2"),
       headSize: 20,
       label: { end: { text: "endLable!", extra: { fill: "purple", dx: -30 } } },
-      // endAnchor: "left",
+      endAnchor: ["left", "right"],
       curveness: 1.5
     },
     {
@@ -71,10 +71,14 @@ const Example2: React.FC = () => {
     {
       start: getBoxById("box1"),
       end: getBoxById("box3"),
+      // end: null,
       color: "green",
       label: { middle: { text: "I'm just a line", extra: { dy: -8 } } },
       // endAnchor: "top",
-      headSize: 1
+      headSize: 0,
+      strokeWidth: 10
+      // endAnchor: "middle",
+      // startAnchor: "middle"
     }
   ]);
 

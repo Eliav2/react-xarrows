@@ -1,3 +1,5 @@
+# react-xarrows
+
 Draw arrows between components in React!
 
 This library is all about customizable and relaible arrows(or lines) between DOM elements in React.
@@ -115,7 +117,7 @@ export type anchorMethodType = "auto";
 export type anchorPositionType = "middle" | "left" | "right" | "top" | "bottom";
 export type reactRefType = { current: null | HTMLElement };
 export type refType = reactRefType | string;
-export type labelType = string | { text: string; extra: SVGProps<SVGElement> };
+export type labelType = string | { text: string; extra?: SVGProps<SVGElement> };
 export type domEventType = keyof GlobalEventHandlersEventMap;
 export type registerEventsType = {
   ref: refType;
@@ -211,4 +213,6 @@ Xarrow.defaultProps = {
 - 1.1.3 - An entirely new algorithm to calcualte arrow path and curveness. now the arrow acting "smarter". this include bug fixes,improvements and some adjustments.
   `monitorDOMchanges` prop default changed to `true`.
 - 1.1.4 - bug fixes, calculation optimizations, and smart svg canvas size adjusment.
-- 1.1.5 - optimazed calculations and label positioning. (Buzier curve extremas are calculated using derivatives and not by interpolation) other improvements as well.
+- 1.1.5 - optimazed calculations and label positioning. (Buzier curve extrema point are calculated now using derivatives and not by interpolation) other improvements as well.
+- 1.1.6 - errors and warnings improved. smart adjustments for diffrent positioning style(of anchors elemntes and common ancestor element) . minor bug fixes.
+- 1.1.7 minor bug fixes.
