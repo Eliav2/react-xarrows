@@ -36,25 +36,25 @@ const PlayGround: React.FC = () => {
   ]);
 
   const [boxes, setBoxes] = useState<box[]>([
-    { id: "box1", x: 0, y: 120, shape: "wideBox" },
-    { id: "box2", x: 320, y: 200, shape: "tallBox" }
+    // { id: "box1", x: 0, y: 120, shape: "wideBox" },
+    // { id: "box2", x: 320, y: 200, shape: "tallBox" }
     // { id: "box3", x: 220, y: 100, shape: "triangle" }
   ]);
 
   const [lines, setLines] = useState<xarrowPropsType[]>([
-    {
-      start: "box1",
-      end: "box2",
-      headSize: 10,
-      startAnchor: "auto",
-      endAnchor: "top",
-      curveness: 3,
-      label: {
-        start: "start",
-        middle: "middle",
-        end: "end"
-      }
-    }
+    // {
+    //   start: "box1",
+    //   end: "box2",
+    //   headSize: 10,
+    //   startAnchor: "auto",
+    //   endAnchor: "top",
+    //   curveness: 3,
+    //   label: {
+    //     start: "start",
+    //     middle: "middle",
+    //     end: "end"
+    //   }
+    // }
   ]);
 
   const [selected, setSelected] = useState<string | null>(null);
@@ -101,9 +101,14 @@ const PlayGround: React.FC = () => {
   // console.log(lines);
 
   return (
-    <div className="App">
-      {/* <header className="titleStyle">Ryu SDN GUI</header> */}
-      {/* <hr /> */}
+    <div>
+      <h3>
+        <u>Playground</u>
+      </h3>
+      <p>
+        you can drag and drop shpaes from the left toolbox menu. you can select any shape and then
+        topbar will apear with some options.
+      </p>
 
       <div className="canvasContainerStyle">
         <div className="canvasStyle" id="canvas" onClick={() => handleSelect(null)}>
