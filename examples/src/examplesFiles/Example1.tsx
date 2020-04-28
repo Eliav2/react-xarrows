@@ -31,21 +31,32 @@ const boxStyle = {
 const Example1: React.FC = () => {
   const [boxes, setBoxes] = useState([
     { id: "box1", x: 50, y: 20, ref: useRef(null) },
-    { id: "box2", x: 20, y: 150, ref: useRef(null) },
-    { id: "box3", x: 250, y: 80, ref: useRef(null) }
+    { id: "box2", x: 20, y: 250, ref: useRef(null) },
+    { id: "box3", x: 350, y: 80, ref: useRef(null) }
   ]);
 
   const [lines, setLines] = useState([
     {
       from: "box1",
       to: "box2",
-      props: { headSize: 14, label: { end: { text: "endLable!", extra: { fill: "orange" } } } }
+      headSize: 14,
+      label: { end: "endLable" }
     },
-    { from: "box2", to: "box3", props: { color: "red", label: "I am a line!", headSize: 0 } },
+    {
+      from: "box2",
+      to: "box3",
+      color: "red",
+      label: {
+        middle: { text: "I am a thick red line!", extra: { textLength: "200", fill: "blue" } }
+      },
+      headSize: 0,
+      strokeWidth: 15
+    },
     {
       from: "box3",
       to: "box1",
-      props: { color: "green", dashness: { animation: 1 }, startAnchor: "top" }
+      color: "green",
+      dashness: { animation: 1 }
     }
   ]);
 
@@ -95,7 +106,7 @@ const Example1: React.FC = () => {
                 key={i}
                 start={boxes.find(box => box.id === line.from).ref}
                 end={boxes.find(box => box.id === line.to).ref}
-                {...line.props}
+                {...line}
               />
             ))}
           </div>
