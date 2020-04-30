@@ -1,15 +1,26 @@
 {
-    "include": [
-        "./src/*"
-    ],
-    "compilerOptions": {
-        "strict": true,
-        "lib": [
-            "dom",
-            "es2017"
-        ],
-        "jsx": "react",
-        "noImplicitAny": false,
-        "strictNullChecks": false
-    }
+  "include": ["./src/*"],
+  "compilerOptions": {
+    "strict": true,
+    "lib": ["dom", "es2017"],
+    "jsx": "react",
+    "noImplicitAny": false,
+    "strictNullChecks": false,
+    "target": "es2015",
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "outDir": "lib",
+    "noEmit": false
+  },
+  "compileOnSave": true
 }

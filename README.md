@@ -39,7 +39,7 @@ const canvasStyle = {
   background: "white",
   display: "flex",
   justifyContent: "space-evenly",
-  alignItems: "center"
+  alignItems: "center",
 };
 
 const boxStyle = {
@@ -49,10 +49,10 @@ const boxStyle = {
   textAlign: "center",
   width: "100px",
   height: "30px",
-  color: "black"
+  color: "black",
 };
 
-const Box = props => {
+const Box = (props) => {
   return (
     <div ref={props.box.ref} id={props.box.id} style={boxStyle}>
       {props.box.id}
@@ -199,7 +199,7 @@ Xarrow.defaultProps = {
   monitorDOMchanges: true,
   registerEvents: [],
   consoleWarning: true,
-  advanced: { extendSVGcanvas: 0 }
+  advanced: { extendSVGcanvas: 0 },
 };
 ```
 
@@ -216,3 +216,4 @@ Xarrow.defaultProps = {
 - 1.1.5 - optimazed calculations and label positioning. (Buzier curve extrema point are calculated now using derivatives and not by interpolation) other improvements as well.
 - 1.1.6 - errors and warnings improved. smart adjustments for diffrent positioning style(of anchors elemntes and common ancestor element) . minor bug fixes.
 - 1.1.7 minor bug fixes.
+- 1.2.0 added support for javascript projects that imported the lib locally. many changes to the repo folders structure.
