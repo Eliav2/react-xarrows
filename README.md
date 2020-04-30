@@ -1,12 +1,12 @@
 # react-xarrows
 
+## introduction
+
 Draw arrows between components in React!
 
 This library is all about customizable and relaible arrows(or lines) between DOM elements in React.
 
 I've needed such a components in one of my projects - and found out(surprisingly enough) that there is no such(good) lib, so I've decided to create one from scrate, and share it.
-
-this component will rerender and will update the anchors position whenever needed(not like other similar npm libraries) - the Xarrow also works inside scrollable windows and working no matter where placed in the DOM relative to his anchors.
 
 now (since v1.1.4) i can say, after a lot of tests and improvements- the arrows should work and act naturally under any normal circumstances(but don't try put some negative curveness ha?).
 
@@ -15,6 +15,15 @@ found a problem? not a problem! post a new issue([here](https://github.com/Eliav
 liked my work? please star this repo.
 
 this project developed [using codesandbox](https://codesandbox.io/s/github/Eliav2/react-xarrows).
+
+## what to expect
+
+- this arrows will rerender and will update the arrows position whenever needed(not like other similar npm libraries).
+- works no matter where the Xarrow component placed in the DOM relative to his anchors.
+- works no matter what the type of elemnts the anchors are (like div,p, h1, and so on).
+- works inside scrollable windows(no matter how many - or even if any anchor element inside diffrent nested scrolling windows).
+- you can give this component simple props or more detailed ones for more custom behavior and looking.
+- please see the examples below to understand better the using and features.
 
 ## installation
 
@@ -33,53 +42,29 @@ with npm `npm install react-xarrows`.
 import React, { useRef } from "react";
 import Xarrow from "react-xarrows";
 
-const canvasStyle = {
-  position: "relative",
-  height: "20vh",
-  background: "white",
-  display: "flex",
-  justifyContent: "space-evenly",
-  alignItems: "center",
-};
-
 const boxStyle = {
-  position: "relative",
-  border: "1px #999 solid",
+  border: "grey solid 2px",
   borderRadius: "10px",
-  textAlign: "center",
-  width: "100px",
-  height: "30px",
-  color: "black",
+  padding: "5px",
 };
 
-const Box = (props) => {
+function SimpleExample() {
+  const box1Ref = useRef(null);
   return (
-    <div ref={props.box.ref} id={props.box.id} style={boxStyle}>
-      {props.box.id}
+    <div style={{ display: "flex", justifyContent: "space-evenly", width: "100%" }}>
+      <div ref={box1Ref} style={boxStyle}>
+        hey
+      </div>
+      <p id="elem2" style={boxStyle}>
+        hey2
+      </p>
+      <Xarrow
+        start={box1Ref} //can be react ref
+        end="elem2" //or an id
+      />
     </div>
   );
-};
-
-const SimpleExample = () => {
-  const box1 = { id: "box1", ref: useRef(null) };
-  const box2 = { id: "box2", ref: useRef(null) };
-
-  return (
-    <React.Fragment>
-      <h3>
-        <u>Simple Example:</u>
-      </h3>
-      <div style={canvasStyle} id="canvas">
-        <Box box={box1} />
-        <Box box={box2} />
-        <Xarrow
-          start="box1" //can be id
-          end={box2.ref} //or React ref
-        />
-      </div>
-    </React.Fragment>
-  );
-};
+}
 
 export default SimpleExample;
 ```
@@ -88,7 +73,7 @@ export default SimpleExample;
 
 see 'Example2' at the examples codesandbox to play around.
 
-the properties the xarrow component recieves is as follow(as listed in `xarrowPropsType` in /src/xarrow.d.ts):
+the properties the xarrow component recieves is as follow(as listed in `xarrowPropsType` in /lib/xarrow.d.ts):
 
 ```jsx
 export type xarrowPropsType = {
@@ -143,10 +128,18 @@ can also be a list of possible anchors. if list is provided - the minimal length
 #### label
 
 can be a string that will default to be at the middle or an object that decribes where to place label and how to customize it. see `label` at `xarrowPropsType` above.
+examples:
+
+- `label="middleLabel"`
+- `label={{ start:"I'm start label",middle: "middleLable",end:{text:"i'm custom end label",extra:{fill:"red"}} }}`
+  you can pass to `extra` attributes of [svg text element](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/text).
 
 #### color,lineColor and headColor
 
 color defines color for all the arrow include head. if lineColor or headColor is given so it overides color specificaly for line or head.
+examples:
+
+- `headColor="red"` will change the color of the head of the arrow to red.
 
 #### strokeWidth and headSize
 
@@ -162,10 +155,14 @@ defines how much the lines curve.
 
 can make the arrow dashed and can even animate.
 if true default values(for dashness) are choosed. if object is passed then default values are choosed execpt what passed.
+examples:
+
+- `dashness={true}` will make the line of the arrow to be dashed.
+- `dashness={{ strokeLen: 10, nonStrokeLen: 15, animation: -2 }}` will make a custom looking dashness
 
 #### monitorDOMchanges
 
-A boolean. set this property to true to add relevant eventListeners to the DOM so the xarrow component will update anchors position whenever needed(scroll and resize and so on)(experamential).
+A boolean. set this property to true to add relevant eventListeners to the DOM so the xarrow component will update anchors position whenever needed(scroll and resize and so on).
 
 #### registerEvents
 
@@ -178,7 +175,7 @@ we provide some nice warnings (and errors) whenever we detect issues. see 'Examp
 #### advanced
 
 here i will provide some flexibility to the API for some cases that i may not thought of.
-extendSVGcanvas will extend the svg canvas at all sides. can be usefull if for some reason the arrow(or labels) is cutted though to small svg canvas(should not happen since 1.1.4, if happens please subscribe an issue).
+extendSVGcanvas will extend the svg canvas at all sides. can be usefull if for some reason the arrow(or labels) is cutted though to small svg canvas(should be used in advanced custom arrows, for example if you used `dx` to move one of the labels and at exceeded the canvas).
 
 ### default props
 
