@@ -16,11 +16,12 @@ liked my work? please star this repo.
 
 this project developed [using codesandbox](https://codesandbox.io/s/github/Eliav2/react-xarrows).
 
-## what to expect
+#### what to expect
 
 - this arrows will rerender and will update the arrows position whenever needed(not like other similar npm libraries).
 - works no matter where the Xarrow component placed in the DOM relative to his anchors.
 - works no matter what the type of elemnts the anchors are (like div,p, h1, and so on).
+- nice intellij suggestinons will apear when working with Xarrow.
 - works inside scrollable windows(no matter how many - or even if any anchor element inside diffrent nested scrolling windows).
 - you can give this component simple props or more detailed ones for more custom behavior and looking.
 - please see the examples below to understand better the using and features.
