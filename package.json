@@ -3,10 +3,19 @@
   "version": "1.1.7",
   "author": "Eliav Louski",
   "description": "Draw arrows (or lines) between components in React!",
-  "keywords": ["react", "reactjs", "lines", "arrows", "xarrows", "draw", "connect", "between"],
-  "main": "src/Xarrow.tsx",
-  "module": "src/Xarrow.tsx",
-  "types": "src/Xarrow.d.ts",
+  "keywords": [
+    "react",
+    "reactjs",
+    "lines",
+    "arrows",
+    "xarrows",
+    "draw",
+    "connect",
+    "between"
+  ],
+  "main": "lib/Xarrow.js",
+  "module": "lib/Xarrow.js",
+  "types": "lib",
   "homepage": "https://eliav2.github.io/react-xarrows/",
   "repository": {
     "type": "git",
@@ -14,10 +23,10 @@
   },
   "bugs": "https://github.com/Eliav2/react-xarrows/issues",
   "dependencies": {
-    "lodash": "^4.17.15",
-    "react": "^16.12.0",
-    "react-dom": "^16.12.0",
-    "react-scripts": "^3.3.0"
+    "lodash": "^4.17.15"
+  },
+  "peerDependencies": {
+    "react": ">=16.0.0"
   },
   "devDependencies": {
     "@types/react": "^16.9.19",
@@ -25,11 +34,18 @@
     "typescript": "^3.7.5"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "build": "tsc -p ."
   },
-  "browserslist": [">0.2%", "not dead", "not ie <= 11", "not op_mini all"],
-  "license": "MIT"
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ],
+  "license": "MIT",
+  "files": [
+    "lib",
+    "package.json",
+    "README.md"
+  ]
 }
