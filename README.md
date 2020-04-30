@@ -217,3 +217,4 @@ Xarrow.defaultProps = {
 - 1.1.6 - errors and warnings improved. smart adjustments for diffrent positioning style(of anchors elemntes and common ancestor element) . minor bug fixes.
 - 1.1.7 minor bug fixes.
 - 1.2.0 added support for javascript projects that imported the lib locally. many changes to the repo folders structure.
+- 1.2.1 minor bug fix (intellij suggestinons did not apear)

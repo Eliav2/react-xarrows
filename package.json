@@ -13,8 +13,8 @@
     "connect",
     "between"
   ],
-  "main": "lib/Xarrow.js",
-  "module": "lib/Xarrow.js",
+  "main": "lib/index.js",
+  "module": "lib/index.js",
   "types": "lib",
   "homepage": "https://eliav2.github.io/react-xarrows/",
   "repository": {

@@ -1,5 +1,4 @@
 import React from "react";
-import { SVGProps } from "react";
 declare type xarrowPropsType = {
     start: refType;
     end: refType;
@@ -38,7 +37,7 @@ declare type labelsType = {
 };
 declare type labelPropsType = {
     text: string;
-    extra?: SVGProps<SVGElement>;
+    extra?: React.SVGProps<SVGElement>;
 };
 declare type labelType = string | labelPropsType;
 declare type domEventType = keyof GlobalEventHandlersEventMap;
@@ -50,4 +49,4 @@ declare type registerEventsType = {
 declare const Xarrow: React.FC<xarrowPropsType>;
 export type { xarrowPropsType, anchorType, anchorMethodType, anchorPositionType, reactRefType, refType, labelsType, labelPropsType, labelType, domEventType, registerEventsType, };
 export default Xarrow;
-//# sourceMappingURL=Xarrow.d.ts.map
+//# sourceMappingURL=index.d.ts.map

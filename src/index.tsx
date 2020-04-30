@@ -1,5 +1,4 @@
 import React, { useRef, useEffect, useState } from "react";
-import { SVGProps } from "react";
 import lodash from "lodash";
 
 type xarrowPropsType = {
@@ -29,7 +28,7 @@ type anchorPositionType = "middle" | "left" | "right" | "top" | "bottom";
 type reactRefType = { current: null | HTMLElement };
 type refType = reactRefType | string;
 type labelsType = { start?: labelType; middle?: labelType; end?: labelType };
-type labelPropsType = { text: string; extra?: SVGProps<SVGElement> };
+type labelPropsType = { text: string; extra?: React.SVGProps<SVGElement> };
 type labelType = string | labelPropsType;
 type domEventType = keyof GlobalEventHandlersEventMap;
 type registerEventsType = {
