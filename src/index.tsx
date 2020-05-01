@@ -28,7 +28,7 @@ type anchorPositionType = "middle" | "left" | "right" | "top" | "bottom";
 type reactRefType = { current: null | HTMLElement };
 type refType = reactRefType | string;
 type labelsType = { start?: labelType; middle?: labelType; end?: labelType };
-type labelPropsType = { text: string; extra?: React.SVGProps<SVGElement> };
+type labelPropsType = { text: string; extra?: React.SVGAttributes<SVGTextElement> };
 type labelType = string | labelPropsType;
 type domEventType = keyof GlobalEventHandlersEventMap;
 type registerEventsType = {
@@ -425,8 +425,8 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     updateIfNeeded();
   });
 
-  //initial state
   const [st, setSt] = useState({
+    //initial state
     cx0: 0, //x start position of the canvas
     cy0: 0, //y start position of the canvas
     cw: 0, // the canvas width
@@ -493,6 +493,8 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     if (typeof props.label === "string") labelMiddle = props.label;
     else if (typeof props.label === "object") {
       if (isLabelPropsType(props.label)) {
+        console.log(props.label);
+        labelMiddle = props.label;
         labelMiddleExtra = labelMiddle.extra;
         labelMiddle = labelMiddle.text;
       } else {

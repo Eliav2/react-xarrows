@@ -133,7 +133,9 @@ examples:
 
 - `label="middleLabel"`
 - `label={{ start:"I'm start label",middle: "middleLable",end:{text:"i'm custom end label",extra:{fill:"red"}} }}`
-  you can pass to `extra` attributes of [svg text element](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/text).
+
+  you can pass to `extra` most of the [svg presentation attributes](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/Presentation), with them you can custom your text how you realy wants.
+  use the suggestion of visual code(or your IDE) to see all possibilities.
 
 #### color,lineColor and headColor
 

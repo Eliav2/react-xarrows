@@ -37,7 +37,7 @@ declare type labelsType = {
 };
 declare type labelPropsType = {
     text: string;
-    extra?: React.SVGProps<SVGElement>;
+    extra?: React.SVGAttributes<SVGTextElement>;
 };
 declare type labelType = string | labelPropsType;
 declare type domEventType = keyof GlobalEventHandlersEventMap;
