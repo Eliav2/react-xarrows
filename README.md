@@ -218,3 +218,4 @@ Xarrow.defaultProps = {
 - 1.1.7 minor bug fixes.
 - 1.2.0 added support for javascript projects that imported the lib locally. many changes to the repo folders structure.
 - 1.2.1 minor bug fix (intellij suggestinons did not apear)
+- 1.2.2 bug fixes(1#changing anchors refs without remounting broke the arrow. 2#other minors)

@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState, useLayoutEffect } from "react";
 import lodash from "lodash";
 
 type xarrowPropsType = {
@@ -132,7 +132,10 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
   // const [prevXarrowElemPos, setPrevXarrowElemPos] = useState<point>({ x: 0, y: 0 });
 
   const updateIfNeeded = () => {
-    if (!lodash.isEqual(props, prevProps)) {
+    if (checkIfAnchorsRefsChanged()) {
+      initAnchorsRefs();
+      // initProps();
+    } else if (!lodash.isEqual(props, prevProps)) {
       //first check if any properties changed
       if (prevProps) {
         initProps();
@@ -145,6 +148,12 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
         setPrevPosState(posState);
       }
     }
+  };
+
+  const checkIfAnchorsRefsChanged = () => {
+    var start = getElementByPropGiven(props.start);
+    var end = getElementByPropGiven(props.end);
+    return !lodash.isEqual(anchorsRefs, { start, end });
   };
 
   const monitorDOMchanges = () => {
@@ -283,75 +292,6 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     checkRef(props.end, "end");
     checkAnchor(props.startAnchor, "startAnchor");
     checkAnchor(props.endAnchor, "endAnchor");
-
-    // const objectTypeCheck = (
-    //   obj: object,
-    //   requiredProps: object,
-    //   optionalProps: object,
-    //   objName: string
-    // ) => {
-    //   for (let optPropKey in optionalProps) {
-    //     if (optPropKey in obj) {
-    //       if (typeOf(obj[optPropKey]) !== optionalProps[optPropKey])
-    //         throwError("error in object " + objName, [
-    //           optPropKey,
-    //           " in object",
-    //           obj,
-    //           "is of type",
-    //           typeOf(obj[optPropKey]),
-    //           "instead ",
-    //           optionalProps[optPropKey]
-    //         ]);
-    //     }
-    //   }
-    //   for (let reqPropKey in requiredProps) {
-    //     if (reqPropKey in obj) {
-    //       if (typeOf(obj[reqPropKey]) !== requiredProps[reqPropKey])
-    //         throwError("", [
-    //           reqPropKey,
-    //           "in object",
-    //           obj,
-    //           "is of type",
-    //           typeOf(obj[reqPropKey]),
-    //           "instead",
-    //           requiredProps[reqPropKey]
-    //         ]);
-    //     } else {
-    //       throwError("", ["key", reqPropKey, "is missing from", obj]);
-    //     }
-    //   }
-    // };
-    // const checkLabelType = label => {
-    //   typeCheck(label, ["string", "object"], "label");
-    //   if (typeOf(label) === "object") {
-    //     objectTypeCheck(label, { text: "string" }, { extra: "object" }, "label");
-    //   }
-    // };
-
-    // const checkLabel = label => {
-    //   console.log("?", label);
-    //   typeCheck(label, ["string", "object"], "label");
-    //   if (typeOf(label) === "object") {
-    //     let keys = Object.keys(label);
-    //     if (keys.some(key => ["start", "middle", "end"].includes(key))) {
-    //       for (let labelPos in ["start", "middle", "end"]) {
-    //         if (labelPos in label) checkLabelType(label[labelPos]);
-    //       }
-    //     } else if (keys.some(key => ["text", "extra"].includes(key))) checkLabelType(label);
-    //   } else
-    //     throwError(`'label' property error`, [props.label, "in not the expected label object."]);
-    // };
-
-    // if (props.label) {
-    //   checkLabel(props.label);
-    // }
-    // const arraySmartIncludes = (arg, array) => {
-    //   let match = false;
-    //   array.forEach(a => {
-    //     if (lodash.isEqual(arg, a)) match = true;
-    //   });
-    //   return match;
-    // };
   };
 
   const triggerUpdate = (callback) => {
@@ -405,7 +345,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
   }, [anchorsRefs]);
 
   useEffect(() => {
-    // heppens only at mounting after anchorsParents initialized
+    // happens only at mounting after anchorsParents initialized
     if (anchorsParents && props.monitorDOMchanges) {
       monitorDOMchanges();
       return () => {
@@ -493,7 +433,6 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     if (typeof props.label === "string") labelMiddle = props.label;
     else if (typeof props.label === "object") {
       if (isLabelPropsType(props.label)) {
-        console.log(props.label);
         labelMiddle = props.label;
         labelMiddleExtra = labelMiddle.extra;
         labelMiddle = labelMiddle.text;
@@ -553,16 +492,6 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
       },
     };
   };
-
-  // let userCanvExtra = props.advanced.extendSVGcanvas;
-  // const extraCanvasSize = {
-  //   excx: (strokeWidth * headSize) / 2,
-  //   excy: (strokeWidth * headSize) / 2
-  // };
-  // var { excx, excy } = extraCanvasSize;
-  // excy += labalCanvExtraY;
-  // excx += userCanvExtra;
-  // excy += userCanvExtra;
 
   const updatePosition = (positions: prevPos): void => {
     // Do NOT call thie function directly.
