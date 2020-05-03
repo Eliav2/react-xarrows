@@ -22,9 +22,15 @@ this project developed [using codesandbox](https://codesandbox.io/s/github/Eliav
 - works no matter where the Xarrow component placed in the DOM relative to his anchors.
 - works no matter what the type of elemnts the anchors are (like div,p, h1, and so on).
 - nice intellij suggestinons will apear when working with Xarrow.
+- nice errors and warnings.
 - works inside scrollable windows(no matter how many - or even if any anchor element inside diffrent nested scrolling windows).
 - you can give this component simple props or more detailed ones for more custom behavior and looking.
 - please see the examples below to understand better the using and features.
+
+#### what to NOT expect
+
+- keep in mind that this is React component. you should adopt React best practices and place the Xarrow under the relevent ancestor(of 'start' and 'end' element), so when the anchors elements rerenders - so do Xarrow(in simple cases at will work anyway because of DOM listerns i've added,but keep in mind).
+- if your component uses 3rd components that uses animations and transformations that changes the anchors DOM positions - the xarrow will not rerender to the latest animated points, but to the firstest. you need to trigger update after all animations ended.
 
 ## installation
 
