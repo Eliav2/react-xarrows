@@ -870,7 +870,7 @@ const Xarrow: React.FC<xarrowPropsType> = ({ ...props }: xarrowPropsType) => {
   let arrowPath = `M ${st.x1} ${st.y1} C ${st.cpx1} ${st.cpy1}, ${st.cpx2} ${st.cpy2}, ${st.x2} ${st.y2}`;
   // arrowPath = `M ${st.x1} ${st.y1}  ${st.x2} ${st.y2}`;
 
-  let arrowHeadId = "arrowHeadMarker" + arrowPath.replace(/ /g, "");
+  // let arrowHeadId = "arrowHeadMarker" + arrowPath.replace(/ /g, "");
 
   return (
     <svg
@@ -922,7 +922,7 @@ const Xarrow: React.FC<xarrowPropsType> = ({ ...props }: xarrowPropsType) => {
         strokeDasharray={`${dashStroke} ${dashNone}`}
         strokeWidth={strokeWidth}
         fill="transparent"
-        markerEnd={`url(#${arrowHeadId})`}
+        // markerEnd={`url(#${arrowHeadId})`}
         pointerEvents="visibleStroke"
         {...(props.passProps as string)}
         {...(arrowBody as string)}
@@ -985,7 +985,7 @@ Xarrow.defaultProps = {
   headSize: 6,
   curveness: 0.8,
   dashness: false,
-  consoleWarning: true,
+  consoleWarning: false,
   passProps: {},
   advanced: { extendSVGcanvas: 0, passProps: { arrowBody: {}, arrowHead: {}, SVGcanvas: {} } },
   monitorDOMchanges: true,

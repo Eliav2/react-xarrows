@@ -257,7 +257,7 @@ Xarrow.defaultProps = {
   curveness: 0.8,
   dashness: false,
   passProps: {},
-  consoleWarning: true,
+  consoleWarning: false,
   advanced: { extendSVGcanvas: 0, passProps: { arrowBody: {}, arrowHead: {}, SVGcanvas: {} } },
   monitorDOMchanges: true,
   registerEvents: [],
@@ -283,3 +283,5 @@ Xarrow.defaultProps = {
 - 1.3.0: bug fixes and features update.
   1. now `startAnchor` and `endAnchor` can be offset from normal position. see `anchorCustomPositionType` type in types declaration to see how to offset anchors.
   2. a new powerful feature: `passProps` - now its possible to pass methods (such event handlers) or attributes to the inner components of Xarrow.
+  3. `consoleWarning` default prop changed to `false`.
+  4. bug fixes and inner optimizations(arrow head implemnted now purly using path element without marker elements).
