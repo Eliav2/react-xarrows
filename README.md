@@ -31,8 +31,8 @@ this project developed with the help of using codesandbox. [see and fork easily 
 
 - keep in mind that this is React component ,so you should adopt React best practices.
 
-  1.  place the Xarrow under the relevent ancestor(of 'start' and 'end' element), so when the anchors elements rerenders so do Xarrow(in simple cases the component will rerender anyway because of DOM listerns i've added,but keep in mind).
-  2.  it is recommended to provide react refs over Id's. it is more consitent, reliable, and this is the recommended way providing refs to DOM elements in React(over Id's which uses getElementById under the hood).
+  1.  place the Xarrow under the relevent ancestor(of 'start' and 'end' element), so when the anchors elements rerenders so do Xarrow(in simple cases the component will rerender anyway because of DOM listerns i've added,but keep in mind),however, in most cases it will work normally anyway.
+  2.  it is recommended to provide react refs over Id's. it is more consitent, reliable, and this is the recommended way providing refs to DOM elements in React(over Id's which uses getElementById under the hood),by if you choose to stick with id's make sure you rendering xarrow after you render his anchors.
 
 - if your component uses 3rd components that uses animations and transformations that changes the anchors DOM positions - the xarrow will not rerender to the latest animated points, but to the firstest. you need to trigger update after all animations ended(this is not something i can monitor - so its up to you).
 
