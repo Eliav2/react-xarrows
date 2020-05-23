@@ -1,6 +1,5 @@
 {
   "author": "Eliav Louski",
-  "main": "ExamplePage.tsx",
   "dependencies": {
     "material-icons-react": "^1.0.4",
     "react": "^16.12.0",
