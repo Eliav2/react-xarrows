@@ -115,6 +115,13 @@ const PlayGround = () => {
       <p>
         you can drag and drop shpaes from the left toolbox menu. you can select any shape and then topbar will apear
         with some options.
+        <br />
+        <strong>
+          it's strongly recommended to use full screen!{" "}
+          <a href="https://lwwwp.csb.app/Playground" target="_blank" and rel="noopener noreferrer">
+            click here
+          </a>
+        </strong>
       </p>
 
       <div className="canvasContainerStyle">
