@@ -12,9 +12,9 @@ now (since v1.1.4) i can say, after a lot of tests and improvements- the arrows 
 
 found a problem? not a problem! post a new issue([here](https://github.com/Eliav2/react-xarrows/issues)) and i will do my best to fix it.
 
-liked my work? please star this repo.
+liked my work? please star [this repo](https://github.com/Eliav2/react-xarrows).
 
-this project developed [using codesandbox](https://codesandbox.io/s/github/Eliav2/react-xarrows).
+this project developed with the help of using codesandbox. [see and fork easily here](https://codesandbox.io/s/github/Eliav2/react-xarrows).
 
 #### what to expect
 
@@ -31,7 +31,7 @@ this project developed [using codesandbox](https://codesandbox.io/s/github/Eliav
 
 - keep in mind that this is React component ,so you should adopt React best practices.
 
-  1.  place the Xarrow under the relevent ancestor(of 'start' and 'end' element), so when the anchors elements rerenders so do Xarrow(in simple cases at will work anyway because of DOM listerns i've added,but keep in mind).
+  1.  place the Xarrow under the relevent ancestor(of 'start' and 'end' element), so when the anchors elements rerenders so do Xarrow(in simple cases the component will rerender anyway because of DOM listerns i've added,but keep in mind).
   2.  it is recommended to provide react refs over Id's. it is more consitent, reliable, and this is the recommended way providing refs to DOM elements in React(over Id's which uses getElementById under the hood).
 
 - if your component uses 3rd components that uses animations and transformations that changes the anchors DOM positions - the xarrow will not rerender to the latest animated points, but to the firstest. you need to trigger update after all animations ended(this is not something i can monitor - so its up to you).
@@ -82,9 +82,9 @@ export default SimpleExample;
 
 ## The API
 
-see 'Example2' at the examples codesandbox to play around.
+### types defenitions
 
-the properties the xarrow component recieves is as follow(as listed in `xarrowPropsType` in /lib/xarrow.d.ts):
+the properties the xarrow component recieves is as follow:
 
 ```jsx
 export type xarrowPropsType = {
@@ -92,7 +92,7 @@ export type xarrowPropsType = {
   end: refType;
   startAnchor?: anchorType | anchorType[];
   endAnchor?: anchorType | anchorType[];
-  label?: labelType | { start?: labelType; middle?: labelType; end?: labelType };
+  label?: labelType | labelsType;
   color?: string;
   lineColor?: string | null;
   headColor?: string | null;
@@ -100,20 +100,31 @@ export type xarrowPropsType = {
   headSize?: number;
   curveness?: number;
   dashness?: boolean | { strokeLen?: number; nonStrokeLen?: number; animation?: boolean | number };
-  monitorDOMchanges?: boolean;
-  registerEvents?: registerEventsType[];
   consoleWarning?: boolean;
+  passProps?: React.SVGProps<SVGPathElement>;
   advanced?: {
     extendSVGcanvas?: number;
+    passProps?: {
+      SVGcanvas?: React.SVGAttributes<SVGSVGElement>;
+      arrowBody?: React.SVGProps<SVGPathElement>;
+      arrowHead?: React.SVGProps<SVGPathElement>;
+    };
   };
+  monitorDOMchanges?: boolean;
+  registerEvents?: registerEventsType[];
 };
 
-export type anchorType = anchorMethodType | anchorPositionType;
-export type anchorMethodType = "auto";
-export type anchorPositionType = "middle" | "left" | "right" | "top" | "bottom";
+export type anchorType = anchorPositionType | anchorCustomPositionType;
+export type anchorPositionType = "middle" | "left" | "right" | "top" | "bottom" | "auto";
+export type anchorCustomPositionType = {
+  position: anchorPositionType;
+  offset: { rightness: number; bottomness: number };
+};
 export type reactRefType = { current: null | HTMLElement };
 export type refType = reactRefType | string;
-export type labelType = string | { text: string; extra?: SVGProps<SVGElement> };
+export type labelsType = { start?: labelType; middle?: labelType; end?: labelType };
+export type labelPropsType = { text: string; extra?: React.SVGAttributes<SVGTextElement> };
+export type labelType = string | labelPropsType;
 export type domEventType = keyof GlobalEventHandlersEventMap;
 export type registerEventsType = {
   ref: refType;
@@ -122,7 +133,7 @@ export type registerEventsType = {
 };
 ```
 
-you can keep things simple or provide more detailed props - the API except both.
+you can keep things simple or provide more detailed props for more custom behavior - the API except both.
 for example - you can provide `label:"middleLable"` and the string will apear as middle label or customize the labels as you please: `label:{end:{text:"end",extra:{fill:"red",dx:-10}}}`.
 see typescript types above for detailed descriptions of what type excepts every prop.
 
@@ -135,6 +146,11 @@ can be a reference to a react ref to html element or string - an id of a DOM ele
 each anchor can be: `"auto" | "middle" | "left" | "right" | "top" | "bottom"`.
 `auto` will choose automatically the path with the smallest length.
 can also be a list of possible anchors. if list is provided - the minimal length anchors will be choosed from the list.
+you can also offset each anchor passing `offset`.
+examples:
+
+- `endAnchor="middle"` will choose anchor or the end of the line to in the middle of the element
+- `endAnchor= { position: "auto", offset: { rightness: 20 } }` will choose automatic anchoring for end anchor but will offset it 20 pixels to the right after normal positioning.
 
 #### label
 
@@ -152,17 +168,27 @@ examples:
 color defines color for all the arrow include head. if lineColor or headColor is given so it overides color specificaly for line or head.
 examples:
 
+- `color="red"` will change the color of the arrow to red(body and head).
 - `headColor="red"` will change the color of the head of the arrow to red.
+- `lineColor="red"` will change the color of the body of the arrow to red.
 
 #### strokeWidth and headSize
 
 strokeWidth defines the thickness of the arrow(line and head).
 headSize defines how big will be the head relative to the line(set headSize to 0 to make the arrow like a line).
+examples:
+
+- `strokeWidth={15}` will make the arrow more thick(body and head).
+- `headSize={15}` will make the head of the arrow more thick(relative to strokeWidth as well).
 
 #### curvness
 
 defines how much the lines curve.
-0 mean stright line and 1 'perfect' curve. larger then 1 will be over curved.
+examples:
+
+- `curvness={false}` will make the line stright without curves.
+- `curvness={true}` will choose defualt values of curvness
+- `curvness={2}` will make Xarrow extra curved.
 
 #### dashness
 
@@ -171,15 +197,16 @@ if true default values(for dashness) are choosed. if object is passed then defau
 examples:
 
 - `dashness={true}` will make the line of the arrow to be dashed.
-- `dashness={{ strokeLen: 10, nonStrokeLen: 15, animation: -2 }}` will make a custom looking dashness
+- `dashness={{ strokeLen: 10, nonStrokeLen: 15, animation: -2 }}` will make a custom looking dashness.
 
-#### monitorDOMchanges
+#### passProps
 
-A boolean. set this property to true to add relevant eventListeners to the DOM so the xarrow component will update anchors position whenever needed(scroll and resize and so on).
+new and powerful feature!
+you can pass properties to visible parts of the arrow (such event handlers and much more).
+examples:
 
-#### registerEvents
-
-you can register the xarrow to DOM event as you please. each time a event that his registed will fire the xarrow component will update his position and will call `callback` (if provided).
+- `passProps: {onClick: () => console.log("xarrow clicked!")}` - now the arrow will console log a message when clicked.
+- `passProps: {onClick: () => console.log("xarrow clicked!")}` - now the cursor will change to pointer style when hovering over Xarrow.
 
 #### consoleWarning
 
@@ -188,7 +215,30 @@ we provide some nice warnings (and errors) whenever we detect issues. see 'Examp
 #### advanced
 
 here i will provide some flexibility to the API for some cases that i may not thought of.
-extendSVGcanvas will extend the svg canvas at all sides. can be usefull if for some reason the arrow(or labels) is cutted though to small svg canvas(should be used in advanced custom arrows, for example if you used `dx` to move one of the labels and at exceeded the canvas).
+
+##### extendSVGcanvas
+
+will extend the svg canvas at all sides. can be usefull if for some reason the arrow(or labels) is cutted though to small svg canvas(should be used in advanced custom arrows, for example if you used `dx` to move one of the labels and at exceeded the canvas).
+example: `advanced: {extendSVGcanvas: 30 }` - will extended svg canvas in all sides by 30 pixels.
+
+##### passProps
+
+if you wish you can pass props specipically to either the body of the arrow,or his head,or even the svg canvas which contains both of them.
+note that `arrowBody` and `arrowHead` recives props of svg path element and `SVGcanvas` recives props of svg element.
+examples:
+
+- `advanced: {passProps: {arrowHead:{onClick: () => console.log("head clicked!")}}}` - now only the head will console log a message when clicked.
+
+#### monitorDOMchanges
+
+A boolean. set this property to true to add relevant eventListeners to the DOM so the xarrow component will update anchors position whenever needed(scroll and resize and so on). (NOTE - maybe will removed in future updates )
+examples:
+
+- `monitorDOMchanges={false}` will disable any DOM monitoring.
+
+#### registerEvents
+
+you can register the xarrow to DOM event as you please. each time a event that his registed will fire the xarrow component will update his position and will call `callback` (if provided). (NOTE - planned to be removed)
 
 ### default props
 
@@ -206,10 +256,11 @@ Xarrow.defaultProps = {
   headSize: 6,
   curveness: 0.8,
   dashness: false,
+  passProps: {},
+  consoleWarning: true,
+  advanced: { extendSVGcanvas: 0, passProps: { arrowBody: {}, arrowHead: {}, SVGcanvas: {} } },
   monitorDOMchanges: true,
   registerEvents: [],
-  consoleWarning: true,
-  advanced: { extendSVGcanvas: 0 },
 };
 ```
 
@@ -229,3 +280,6 @@ Xarrow.defaultProps = {
 - 1.2.0 added support for javascript projects that imported the lib locally. many changes to the repo folders structure.
 - 1.2.1 minor bug fix (intellij suggestinons did not apear)
 - 1.2.2 bug fixes(1#changing anchors refs without remounting broke the arrow. 2#other minors)
+- 1.3.0: bug fixes and features update.
+  1. now `startAnchor` and `endAnchor` can be offset from normal position. see `anchorCustomPositionType` type in types declaration to see how to offset anchors.
+  2. a new powerful feature: `passProps` - now its possible to pass methods (such event handlers) or attributes to the inner components of Xarrow.

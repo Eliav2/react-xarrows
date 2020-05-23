@@ -83,14 +83,19 @@
   align-items: center;
   height: calc(100% - 68px);
 }
-.wideBox {
+.wideBox,
+.intefaceBox {
   border: 1px #999 solid;
   border-radius: 10px;
   text-align: center;
   width: 100px;
   height: 30px;
   background: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
+
 .tallBox {
   border: 1px #999 solid;
   border-radius: 10px;
@@ -101,6 +106,9 @@
   writing-mode: vertical-rl;
   text-orientation: mixed;
 }
+.intefaceBox {
+  height: 50px;
+}
 
 .triangle {
   width: 0;
@@ -108,4 +116,21 @@
   border-left: 25px solid transparent;
   border-right: 25px solid transparent;
   border-bottom: 50px solid #555;
+}
+
+.switchIcon {
+  top: 0;
+  width: 50px;
+  height: 50px;
+}
+
+.iconContainer {
+  background: white;
+  border-color: #999;
+  border-style: solid;
+  border-width: 1px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  border-radius: 10px;
 }

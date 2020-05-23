@@ -1,7 +1,7 @@
 .topBarStyle {
   display: flex;
-  /* overflow: hidden; */
-  overflow-x: auto;
+  overflow: hidden;
+  /* overflow-x: auto; */
   position: absolute;
   width: 100%;
   background: rgb(220, 240, 250);

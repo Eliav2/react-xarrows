@@ -2,18 +2,15 @@
   "author": "Eliav Louski",
   "main": "ExamplePage.tsx",
   "dependencies": {
-    "material-icons-react": "1.0.4",
+    "material-icons-react": "^1.0.4",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
+    "react-draggable": "^4.4.2",
     "react-router-dom": "^5.1.2",
     "react-scripts": "^3.3.0",
     "react-xarrows": "latest"
   },
-  "devDependencies": {
-    "@types/react": "^16.9.19",
-    "@types/react-dom": "^16.9.5",
-    "typescript": "^3.7.5"
-  },
+  "devDependencies": {},
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",

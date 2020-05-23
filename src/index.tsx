@@ -1,7 +1,10 @@
 import React, { useRef, useEffect, useState, useLayoutEffect } from "react";
-import lodash from "lodash";
+import _ from "lodash";
 
-type xarrowPropsType = {
+///////////////
+// public types
+
+export type xarrowPropsType = {
   start: refType;
   end: refType;
   startAnchor?: anchorType | anchorType[];
@@ -14,28 +17,42 @@ type xarrowPropsType = {
   headSize?: number;
   curveness?: number;
   dashness?: boolean | { strokeLen?: number; nonStrokeLen?: number; animation?: boolean | number };
-  monitorDOMchanges?: boolean;
-  registerEvents?: registerEventsType[];
   consoleWarning?: boolean;
+  passProps?: React.SVGProps<SVGPathElement>;
   advanced?: {
     extendSVGcanvas?: number;
+    passProps?: {
+      SVGcanvas?: React.SVGAttributes<SVGSVGElement>;
+      arrowBody?: React.SVGProps<SVGPathElement>;
+      arrowHead?: React.SVGProps<SVGPathElement>;
+    };
   };
+  monitorDOMchanges?: boolean;
+  registerEvents?: registerEventsType[];
 };
 
-type anchorType = anchorMethodType | anchorPositionType;
-type anchorMethodType = "auto";
-type anchorPositionType = "middle" | "left" | "right" | "top" | "bottom";
-type reactRefType = { current: null | HTMLElement };
-type refType = reactRefType | string;
-type labelsType = { start?: labelType; middle?: labelType; end?: labelType };
-type labelPropsType = { text: string; extra?: React.SVGAttributes<SVGTextElement> };
-type labelType = string | labelPropsType;
-type domEventType = keyof GlobalEventHandlersEventMap;
-type registerEventsType = {
+export type anchorType = anchorPositionType | anchorCustomPositionType;
+export type anchorPositionType = "middle" | "left" | "right" | "top" | "bottom" | "auto";
+export type anchorCustomPositionType = {
+  position: anchorPositionType;
+  offset: { rightness: number; bottomness: number };
+};
+export type reactRefType = { current: null | HTMLElement };
+export type refType = reactRefType | string;
+export type labelsType = { start?: labelType; middle?: labelType; end?: labelType };
+export type labelPropsType = { text: string; extra?: React.SVGAttributes<SVGTextElement> };
+export type labelType = string | labelPropsType;
+export type domEventType = keyof GlobalEventHandlersEventMap;
+export type registerEventsType = {
   ref: refType;
   eventName: domEventType;
   callback?: CallableFunction;
 };
+
+////////////////
+// private types
+
+type anchorSideType = "left" | "right" | "top" | "bottom";
 
 type prevPos = {
   start: {
@@ -69,6 +86,7 @@ const findCommonAncestor = (elem: HTMLElement, elem2: HTMLElement): HTMLElement 
     var parents1 = parents(node1);
     var parents2 = parents(node2);
 
+    // if (parents1[0] !== parents2[0]) throw new Error("No common ancestor!");
     if (parents1[0] !== parents2[0]) throw new Error("No common ancestor!");
 
     for (var i = 0; i < parents1.length; i++) {
@@ -119,7 +137,28 @@ please provide correct react refernce or provide id instead.`
   return myRef;
 };
 
-const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
+type extendedJtypes =
+  | "string"
+  | "number"
+  | "bigint"
+  | "boolean"
+  | "symbol"
+  | "undefined"
+  | "object"
+  | "function"
+  | "null"
+  | "array";
+
+const typeOf = (arg: any): extendedJtypes => {
+  let type: extendedJtypes = typeof arg;
+  if (type === "object") {
+    if (arg === null) type = "null";
+    else if (Array.isArray(arg)) type = "array";
+  }
+  return type;
+};
+
+const Xarrow: React.FC<xarrowPropsType> = ({ ...props }: xarrowPropsType) => {
   const selfRef = useRef(null) as reactRefType;
   const [anchorsRefs, setAnchorsRefs] = useState({ start: null, end: null });
 
@@ -132,10 +171,11 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
   // const [prevXarrowElemPos, setPrevXarrowElemPos] = useState<point>({ x: 0, y: 0 });
 
   const updateIfNeeded = () => {
+    // console.log("updateIfNeeded");
     if (checkIfAnchorsRefsChanged()) {
       initAnchorsRefs();
       // initProps();
-    } else if (!lodash.isEqual(props, prevProps)) {
+    } else if (!_.isEqual(props, prevProps)) {
       //first check if any properties changed
       if (prevProps) {
         initProps();
@@ -144,7 +184,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     } else {
       //if the properties did not changed - update position if needed
       let posState = getAnchorsPos();
-      if (!lodash.isEqual(prevPosState, posState)) {
+      if (!_.isEqual(prevPosState, posState)) {
         setPrevPosState(posState);
       }
     }
@@ -153,7 +193,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
   const checkIfAnchorsRefsChanged = () => {
     var start = getElementByPropGiven(props.start);
     var end = getElementByPropGiven(props.end);
-    return !lodash.isEqual(anchorsRefs, { start, end });
+    return !_.isEqual(anchorsRefs, { start, end });
   };
 
   const monitorDOMchanges = () => {
@@ -198,8 +238,10 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
       if (selfRef.current.parentElement !== anchorsCommonAncestor)
         console.warn(
           `Xarrow warning: you placed Xarrow not as son of the common ancestor of 'start' component and 'end' component.
-          the suggested element to put Xarrow inside of to prevent redundant rerenders is `,
+          the suggested element to put Xarrow inside of to prevent redundant rerenders iss `,
           anchorsCommonAncestor,
+          " and not ",
+          selfRef.current.parentElement,
           `if this was your intention set monitorDOMchanges to true so Xarrow will render whenever relevant DOM events are triggerd.
           to disable this warnings set consoleWarning property to false`
         );
@@ -210,34 +252,13 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
         console.warn(
           `Xarrow warning: set monitorDOMchanges to true - its possible that the positioning will get out of sync on DOM events(like scroll),
         on these elements`,
-          lodash.uniqWith([...allAncestorChildrensStart, ...allAncestorChildrensEnd], lodash.isEqual),
+          _.uniqWith([...allAncestorChildrensStart, ...allAncestorChildrensEnd], _.isEqual),
           `\nto disable this warnings set consoleWarning property to false`
         );
     }
   };
 
   const testUserGivenProperties = () => {
-    type extendedJtypes =
-      | "string"
-      | "number"
-      | "bigint"
-      | "boolean"
-      | "symbol"
-      | "undefined"
-      | "object"
-      | "function"
-      | "null"
-      | "array";
-
-    const typeOf = (arg: any): extendedJtypes => {
-      let type: extendedJtypes = typeof arg;
-      if (type === "object") {
-        if (arg === null) type = "null";
-        else if (Array.isArray(arg)) type = "array";
-      }
-      return type;
-    };
-
     const throwError = (errorMsg: string, consoleMsg?: any[]) => {
       let err = Error("Xarrows: " + errorMsg);
       if (consoleMsg) console.error("xarrow error: ", ...consoleMsg);
@@ -282,11 +303,16 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     };
 
     const checkAnchor = (anchor, name) => {
-      typeCheck(anchor, ["string", "array"], name);
+      typeCheck(anchor, ["string", "array", "object"], name);
       if (typeOf(anchor) === "string") valueCheck(anchor, ["auto", "left", "right", "top", "bottom", "middle"], name);
       else if (typeOf(anchor) === "array")
         anchor.forEach((an) => valueCheck(an, ["auto", "left", "right", "top", "bottom", "middle"], name));
     };
+
+    if (getElementByPropGiven(props.start) === getElementByPropGiven(props.end))
+      throwError(`'start' and 'end' props cannot point to the same element`, [
+        `'start' and 'end' props cannot point to the same element`,
+      ]);
 
     checkRef(props.start, "start");
     checkRef(props.end, "end");
@@ -383,10 +409,13 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     cpy1: 0,
     cpx2: 0,
     cpy2: 0,
-    headOrient: "auto", // determines to what side the arrowhead will point
+    headOrient: 0, // determines to what side the arrowhead will point
     labelStartPos: { x: 0, y: 0 },
     labelMiddlePos: { x: 0, y: 0 },
     labelEndPos: { x: 0, y: 0 },
+    arrowEnd: { x: 0, y: 0 },
+    arrowHeadOffset: { x: 0, y: 0 },
+    headOffset: 0,
     excRight: 0, //expand canvas to the right
     excLeft: 0, //expand canvas to the left
     excUp: 0, //expand canvas upwards
@@ -461,6 +490,12 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     labelEnd ? labelEnd.length : 0
   );
 
+  let {
+    passProps: adPassProps = { SVGcanvas: {}, arrowHead: {}, arrowBody: {} },
+    extendSVGcanvas: extendSVGcanvas = 0,
+  } = props.advanced;
+  let { SVGcanvas = {}, arrowBody = {}, arrowHead = {} } = adPassProps;
+
   const getSelfPos = () => {
     let { x: xarrowElemX, y: xarrowElemY } = selfRef.current.getBoundingClientRect();
     let xarrowStyle = getComputedStyle(selfRef.current);
@@ -498,11 +533,13 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     // you should set position by 'setPrevPosState(posState)' and that will trigger
     // this function in the useEffect hook.
 
-    let { start: s } = positions;
-    let { end: e } = positions;
-    let headOrient = "auto";
+    let { start: sPos } = positions;
+    let { end: ePos } = positions;
+    let headOrient: number = 0;
 
-    const getAnchorOffset = (width: number, height: number) => {
+    //////////////////////////////////////////////////////////////////////
+    // declare relevant functions for later
+    const getAnchorsDefaultOffsets = (width: number, height: number) => {
       return {
         middle: { rightness: width * 0.5, bottomness: height * 0.5 },
         left: { rightness: 0, bottomness: height * 0.5 },
@@ -511,69 +548,86 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
         bottom: { rightness: width * 0.5, bottomness: height },
       };
     };
-    let startAnchorOffsets = getAnchorOffset(s.right - s.x, s.bottom - s.y);
-    let endAnchorOffsets = getAnchorOffset(e.right - e.x, e.bottom - e.y);
 
-    let startAnchorChoice = Array.isArray(props.startAnchor) ? props.startAnchor : [props.startAnchor];
-    let endAnchorChoice = Array.isArray(props.endAnchor) ? props.endAnchor : [props.endAnchor];
+    const prepareAnchorLines = (anchor, anchorPos) => {
+      let defsOffsets = getAnchorsDefaultOffsets(anchorPos.right - anchorPos.x, anchorPos.bottom - anchorPos.y);
+      // convert given anchors to array if array not already given
+      let anchorChoice = Array.isArray(anchor) ? anchor : [anchor];
+      //now map each item in the list to relevent object
+      let anchorChoiceMapped = anchorChoice.map((anchorChoice) => {
+        if (typeOf(anchorChoice) === "string") {
+          anchorChoice = anchorChoice as anchorPositionType;
+          return { position: anchorChoice, offset: { rightness: 0, bottomness: 0 } };
+        } else if (typeOf(anchorChoice) === "object") {
+          if (!anchorChoice.offset) anchorChoice.offset = { rightness: 0, bottomness: 0 };
+          if (!anchorChoice.offset.bottomness) anchorChoice.offset.bottomness = 0;
+          if (!anchorChoice.offset.rightness) anchorChoice.offset.rightness = 0;
+          anchorChoice = anchorChoice as anchorCustomPositionType;
+          return anchorChoice;
+        }
+      });
+      //now build the object that represents the users possablities for diffrent anchors
+      let anchorPossabilities: anchorCustomPositionType[] = [];
+      if (anchorChoiceMapped.map((a) => a.position).includes("auto")) {
+        let autoAnchor = anchorChoiceMapped.find((a) => a.position === "auto");
+        (["left", "right", "top", "bottom"] as anchorSideType[]).forEach((anchor) => {
+          let offset = defsOffsets[anchor];
+          offset.rightness += autoAnchor.offset.rightness;
+          offset.bottomness += autoAnchor.offset.bottomness;
+          anchorPossabilities.push({ position: anchor, offset });
+        });
+      } else {
+        anchorChoiceMapped.forEach((customAnchor) => {
+          let offset = defsOffsets[customAnchor.position] as { rightness: number; bottomness: number };
+          offset.rightness += customAnchor.offset.rightness;
+          offset.bottomness += customAnchor.offset.bottomness;
+          anchorPossabilities.push({ position: customAnchor.position, offset });
+        });
+      }
+      // now preper this list of anchors to object expected by the `getShortestLine` function
+      let points = anchorPossabilities.map((pos) => ({
+        x: anchorPos.x + pos.offset.rightness,
+        y: anchorPos.y + pos.offset.bottomness,
+        anchorPosition: pos.position,
+      }));
+      return points;
+    };
+    //end declare functions
+    /////////////////////////////////////////////////////////////////////////////////////////
 
-    let startAnchorPossabilities = {};
-    let endAnchorPossabilities = {};
-
-    if (startAnchorChoice.includes("auto"))
-      ["left", "right", "top", "bottom"].forEach(
-        (anchor) => (startAnchorPossabilities[anchor] = startAnchorOffsets[anchor])
-      );
-    else {
-      startAnchorChoice.forEach((anchor) => (startAnchorPossabilities[anchor] = startAnchorOffsets[anchor]));
-    }
-    if (endAnchorChoice.includes("auto"))
-      ["left", "right", "top", "bottom"].forEach(
-        (anchor) => (endAnchorPossabilities[anchor] = endAnchorOffsets[anchor])
-      );
-    else {
-      endAnchorChoice.forEach((anchor) => (endAnchorPossabilities[anchor] = endAnchorOffsets[anchor]));
-    }
+    let startPointsObj = prepareAnchorLines(props.startAnchor, sPos);
+    let endPointsObj = prepareAnchorLines(props.endAnchor, ePos);
 
     const dist = (p1, p2) => {
       //length of line
       return Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2);
     };
 
-    const getShortestLine = (sPoints: object, ePoints: object): [object, object] => {
+    type t1 = { x: number; y: number; anchorPosition: anchorPositionType };
+
+    const getShortestLine = (sPoints: t1[], ePoints: t1[]) => {
       // closes tPair Of Points which feet to the specifed anchors
-      let minDist = Infinity;
-      let closestPair;
-      for (let startAnchor in sPoints) {
-        for (let endAnchor in ePoints) {
-          let d = dist(sPoints[startAnchor], ePoints[endAnchor]);
+      let minDist = Infinity,
+        d = Infinity;
+      let closestPair: { startPointObj: t1; endPointObj: t1 };
+      sPoints.forEach((sp) => {
+        ePoints.forEach((ep) => {
+          d = dist(sp, ep);
           if (d < minDist) {
             minDist = d;
-            closestPair = [{ [startAnchor]: sPoints[startAnchor] }, { [endAnchor]: ePoints[endAnchor] }];
+            closestPair = { startPointObj: sp, endPointObj: ep };
           }
-        }
-      }
-
+        });
+      });
       return closestPair;
     };
 
-    let startPoints = {};
-    for (let key in startAnchorPossabilities) {
-      startPoints[key] = {};
-      startPoints[key]["x"] = startAnchorPossabilities[key].rightness + s.x;
-      startPoints[key]["y"] = startAnchorPossabilities[key].bottomness + s.y;
-    }
-    let endPoints = {};
-    for (let key in endAnchorPossabilities) {
-      endPoints[key] = {};
-      endPoints[key]["x"] = endAnchorPossabilities[key].rightness + e.x;
-      endPoints[key]["y"] = endAnchorPossabilities[key].bottomness + e.y;
-    }
-    let [startPointObj, endPointObj] = getShortestLine(startPoints, endPoints);
-    let startPoint = Object.values(startPointObj)[0],
-      endPoint = Object.values(endPointObj)[0];
-    let startAnchor = Object.keys(startPointObj)[0],
-      endAnchor = Object.keys(endPointObj)[0];
+    let { startPointObj, endPointObj } = getShortestLine(startPointsObj, endPointsObj);
+
+    let startAnchor = startPointObj.anchorPosition,
+      endAnchor = endPointObj.anchorPosition;
+    let startPoint = _.pick(startPointObj, ["x", "y"]),
+      endPoint = _.pick(endPointObj, ["x", "y"]);
 
     let xarrowElemPos = getSelfPos();
     let cx0 = Math.min(startPoint.x, endPoint.x) - xarrowElemPos.x;
@@ -591,10 +645,10 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     let excLeft = strokeWidth;
     let excUp = strokeWidth + labalCanvExtraY;
     let excDown = strokeWidth + labalCanvExtraY;
-    excLeft += Number(props.advanced.extendSVGcanvas);
-    excRight += Number(props.advanced.extendSVGcanvas);
-    excUp += Number(props.advanced.extendSVGcanvas);
-    excDown += Number(props.advanced.extendSVGcanvas);
+    excLeft += Number(extendSVGcanvas);
+    excRight += Number(extendSVGcanvas);
+    excUp += Number(extendSVGcanvas);
+    excDown += Number(extendSVGcanvas);
 
     ////////////////////////////////////
     // arrow point to point calculations
@@ -606,23 +660,51 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     if (dy < 0) [y1, y2] = [y2, y1];
 
     ////////////////////////////////////
-    // arrow curveness calculations
+    // arrow curveness and arrowhead placement calculations
+    let xHeadOffset = 0;
+    let yHeadOffset = 0;
     if (cu === 0) {
-      let angel = Math.atan(absDy / absDx);
-      x2 -= headOffset * xSign * Math.cos(angel);
-      y2 -= headOffset * ySign * Math.sin(angel);
+      let headAngel = Math.atan(absDy / absDx);
+      x2 -= headOffset * xSign * Math.cos(headAngel);
+      y2 -= headOffset * ySign * Math.sin(headAngel);
+      headAngel *= ySign;
+      if (xSign < 0) headAngel = (Math.PI - headAngel * xSign) * xSign;
+      xHeadOffset = ((Math.cos(headAngel) * headOffset) / 3 - (Math.sin(headAngel) * (headSize * strokeWidth)) / 2) * 1;
+      yHeadOffset = ((Math.cos(headAngel) * (headSize * strokeWidth)) / 2 + (Math.sin(headAngel) * headOffset) / 3) * 1;
+      headOrient = (headAngel * 180) / Math.PI;
     } else {
       if (endAnchor === "middle") {
-        if (absDx > absDy) x2 -= headOffset * xSign;
-        else y2 -= headOffset * ySign;
-      } else {
-        if (["left", "right"].includes(endAnchor)) {
-          x2 -= headOffset * xSign;
-        } else if (["top", "bottom"].includes(endAnchor)) {
-          y2 -= headOffset * ySign;
+        if (absDx > absDy) {
+          endAnchor = xSign ? "left" : "right";
+        } else {
+          endAnchor = ySign ? "top" : "bottom";
+        }
+      }
+      if (["left", "right"].includes(endAnchor)) {
+        x2 -= headOffset * xSign;
+        xHeadOffset = (headOffset * xSign) / 3;
+        yHeadOffset = (headSize * strokeWidth * xSign) / 2;
+        if (endAnchor === "left") {
+          headOrient = 0;
+          if (xSign < 0) headOrient += 180;
+        } else {
+          headOrient = 180;
+          if (xSign > 0) headOrient += 180;
+        }
+      } else if (["top", "bottom"].includes(endAnchor)) {
+        yHeadOffset = (headOffset * ySign) / 3;
+        xHeadOffset = (headSize * strokeWidth * -ySign) / 2;
+        y2 -= headOffset * ySign;
+        if (endAnchor === "top") {
+          headOrient = 270;
+          if (ySign > 0) headOrient += 180;
+        } else {
+          headOrient = 90;
+          if (ySign < 0) headOrient += 180;
         }
       }
     }
+    let arrowHeadOffset = { x: xHeadOffset, y: yHeadOffset };
 
     excRight += (strokeWidth * headSize) / 2;
     excLeft += (strokeWidth * headSize) / 2;
@@ -748,6 +830,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     let labelStartPos = { x: bzx(0.01), y: bzy(0.01) };
     let labelMiddlePos = { x: bzx(0.5), y: bzy(0.5) };
     let labelEndPos = { x: bzx(0.99), y: bzy(0.99) };
+    let arrowEnd = { x: bzx(1), y: bzy(1) };
 
     setSt({
       cx0,
@@ -770,23 +853,30 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
       labelStartPos,
       labelMiddlePos,
       labelEndPos,
+      arrowEnd,
       excLeft,
       excRight,
       excUp,
       excDown,
+      headOffset,
+      arrowHeadOffset,
     });
   };
 
-  let arrowPath = `M ${st.x1} ${st.y1} C ${st.cpx1} ${st.cpy1}, ${st.cpx2} ${st.cpy2}, ${st.x2} ${st.y2}`;
+  let fHeadSize = headSize * strokeWidth; //factored headsize
+  let xOffsetHead = st.x2 - st.arrowHeadOffset.x;
+  let yOffsetHead = st.y2 - st.arrowHeadOffset.y;
 
+  let arrowPath = `M ${st.x1} ${st.y1} C ${st.cpx1} ${st.cpy1}, ${st.cpx2} ${st.cpy2}, ${st.x2} ${st.y2}`;
   // arrowPath = `M ${st.x1} ${st.y1}  ${st.x2} ${st.y2}`;
+
   let arrowHeadId = "arrowHeadMarker" + arrowPath.replace(/ /g, "");
+
   return (
     <svg
       ref={(selfRef as unknown) as React.LegacyRef<SVGSVGElement>}
       width={st.cw}
       height={st.ch}
-      // viewBox={`${-excx / 2} ${-excy / 2} ${st.cw} ${st.ch}`}
       style={{
         // border: "2px yellow dashed",
         position: "absolute",
@@ -794,9 +884,9 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
         top: st.cy0,
         pointerEvents: "none",
       }}
+      {...(SVGcanvas as string)}
     >
-      {/* <defs> */}
-      <marker
+      {/* <marker
         id={arrowHeadId}
         viewBox="0 0 12 12"
         refX="3"
@@ -806,9 +896,12 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
         markerWidth={headSize}
         markerHeight={headSize}
         orient={st.headOrient}
+        onClick={() => console.log("headCLick!")}
+        onMouseEnter={() => console.log("onMouseEnter!")}
       >
         <path d="M 0 0 L 12 6 L 0 12 L 3 6 z" fill={headColor} />
-      </marker>
+      </marker> */}
+
       {/* <circle r="5" cx={st.cpx1} cy={st.cpy1} fill="green" /> */}
       {/* <circle r="5" cx={st.cpx2} cy={st.cpy2} fill="blue" /> */}
       {/* <circle r="7" cx={xarrowElemPos.x} cy={xarrowElemPos.y} fill="black" /> */}
@@ -822,6 +915,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
         strokeWidth="2px"
       /> */}
 
+      {/* body of the arrow */}
       <path
         d={arrowPath}
         stroke={lineColor}
@@ -829,6 +923,9 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
         strokeWidth={strokeWidth}
         fill="transparent"
         markerEnd={`url(#${arrowHeadId})`}
+        pointerEvents="visibleStroke"
+        {...(props.passProps as string)}
+        {...(arrowBody as string)}
       >
         {animationSpeed ? (
           <animate
@@ -839,6 +936,17 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
           />
         ) : null}
       </path>
+
+      {/* head of the arrow */}
+
+      <path
+        d={`M 0 0 L ${fHeadSize} ${fHeadSize / 2} L 0 ${fHeadSize} L ${fHeadSize / 4} ${fHeadSize / 2} z`}
+        fill={headColor}
+        style={{ pointerEvents: "all" }}
+        transform={`translate(${xOffsetHead},${yOffsetHead}) rotate(${st.headOrient})`}
+        {...(props.passProps as string)}
+        {...(arrowHead as string)}
+      />
 
       {labelStart ? (
         <text
@@ -877,25 +985,11 @@ Xarrow.defaultProps = {
   headSize: 6,
   curveness: 0.8,
   dashness: false,
+  consoleWarning: true,
+  passProps: {},
+  advanced: { extendSVGcanvas: 0, passProps: { arrowBody: {}, arrowHead: {}, SVGcanvas: {} } },
   monitorDOMchanges: true,
   registerEvents: [],
-  consoleWarning: true,
-  advanced: { extendSVGcanvas: 0 },
 };
 
-// to do:
-// 1. fix absolute relative issue
-export type {
-  xarrowPropsType,
-  anchorType,
-  anchorMethodType,
-  anchorPositionType,
-  reactRefType,
-  refType,
-  labelsType,
-  labelPropsType,
-  labelType,
-  domEventType,
-  registerEventsType,
-};
 export default Xarrow;
