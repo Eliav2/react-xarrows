@@ -1,5 +1,6 @@
 {
   "author": "Eliav Louski",
+  "main": "src/index.jsx",
   "dependencies": {
     "material-icons-react": "^1.0.4",
     "react": "^16.12.0",
