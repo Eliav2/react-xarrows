@@ -4,6 +4,7 @@ import "./Playground.css";
 import Box from "./components/Box";
 import TopBar from "./components/TopBar";
 import Xarrow from "./components/Xarrow";
+import MenuWindow from "./components/MenuWindow";
 
 const shapes = ["wideBox", "tallBox", "intefaceBox"];
 
@@ -33,17 +34,15 @@ const PlayGround = () => {
       // endAnchor: "middle",
       strokeWidth: 10,
       label: {
-        start: { text: "Start!", extra: { alignmentBaseline: "text-after-edge" } },
-        middle: "middle",
-        end: "end",
+        middle: {text: "clickMe!", extra: {alignmentBaseline: "text-after-edge"}},
       },
     },
   ]);
 
   // selected:{id:string,type:"arrow"|"box"}
   const [selected, setSelected] = useState(null);
-
   const [actionState, setActionState] = useState("Normal");
+  const [menuWindowOpened, setMenuWindowOpened] = useState(true);
 
   const handleSelect = (e) => {
     if (e === null) {
@@ -124,23 +123,22 @@ const PlayGround = () => {
         </strong>
       </p>
 
-      <div className="canvasContainerStyle">
         <div className="canvasStyle" id="canvas" onClick={() => handleSelect(null)}>
           <div className="toolboxMenu">
-            <div className="toolboxTitle">Toolbox menu</div>
-            <hr />
+            <div className="toolboxTitle">Drag & drop me!</div>
+            <hr/>
             <div className="toolboxContainer">
               {shapes.map((shapeName) => (
-                <div
-                  key={shapeName}
-                  className={shapeName}
-                  onDragStart={(e) => e.dataTransfer.setData("shape", shapeName)}
-                  draggable
-                >
-                  {shapeName}
-                  {/* <div style={{ textAlign: "center" }}> {shapeName}</div>
+                  <div
+                      key={shapeName}
+                      className={shapeName}
+                      onDragStart={(e) => e.dataTransfer.setData("shape", shapeName)}
+                      draggable
+                  >
+                    {shapeName}
+                    {/* <div style={{ textAlign: "center" }}> {shapeName}</div>
                   <img src={shapeName2Icon[shapeName]} alt="SwitchIcon" className={"switchIcon"} /> */}
-                </div>
+                  </div>
               ))}
             </div>
           </div>
@@ -177,16 +175,16 @@ const PlayGround = () => {
           >
             <u className="interfaceTitleStyle">outputs</u>
             {interfaces
-              .filter((itr) => itr.type === "output")
-              .map((itr) => (
-                <Box {...boxProps} key={itr.id} box={{ ...itr, id: itr.id }} position="static" sidePos="right" />
-              ))}
+                .filter((itr) => itr.type === "output")
+                .map((itr) => (
+                    <Box {...boxProps} key={itr.id} box={{...itr, id: itr.id}} position="static" sidePos="right"/>
+                ))}
           </div>
           {lines.map((line, i) => (
-            <Xarrow key={line.start + "-" + line.end + i} line={line} selected={selected} setSelected={setSelected} />
+              <Xarrow key={line.start + "-" + line.end + i} line={line} selected={selected} setSelected={setSelected}/>
           ))}
+          {menuWindowOpened ? <MenuWindow/> : null}
         </div>
-      </div>
     </div>
   );
 };

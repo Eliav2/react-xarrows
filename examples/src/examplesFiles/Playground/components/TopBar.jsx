@@ -2,7 +2,10 @@ import React from "react";
 import "./TopBar.css";
 import MaterialIcon from "material-icons-react";
 
-const actions = { box: ["Add Connections", "Remove Connections", "Delete"], arrow: ["Remove Connection"] };
+const actions = {
+  box: ["Add Connections", "Remove Connections", "Delete"],
+  arrow: ["Edit Properties", "Remove Connection"],
+};
 
 const TopBar = (props) => {
   const handleEditAction = (action) => {
@@ -23,6 +26,11 @@ const TopBar = (props) => {
         props.setActionState(action);
         break;
       case "Remove Connection":
+        props.setLines((lines) =>
+          lines.filter((line) => !(line.start === props.selected.id.start && line.end === props.selected.id.end))
+        );
+        break;
+      case "E Connection":
         props.setLines((lines) =>
           lines.filter((line) => !(line.start === props.selected.id.start && line.end === props.selected.id.end))
         );
