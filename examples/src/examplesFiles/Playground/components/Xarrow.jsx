@@ -15,7 +15,6 @@ export default ({ line, setSelected, selected }) => {
       },
       cursor: "pointer",
     },
-    advanced: { passProps: { arrowHead: { onClick: () => console.log("head clicked!") } } },
   };
   let color = state.color;
   if (selected && selected.type === "arrow" && selected.id.start === line.start && selected.id.end === line.end)
