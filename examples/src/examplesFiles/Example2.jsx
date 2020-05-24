@@ -23,10 +23,8 @@ const canvasStyle = {
 };
 
 const Box = (props) => {
-  const [lastPoint, setLastPoint] = useState({ x: 0, y: 0 });
-  console.log("box render");
   return (
-    <Draggable onDrag={() => setLastPoint({ ...lastPoint })}>
+    <Draggable onDrag={() => props.setBox({ ...props.box })}>
       <div ref={props.box.ref} id={props.box.id} style={{ ...boxStyle, left: props.box.x, top: props.box.y }}>
         {props.box.id}
       </div>
