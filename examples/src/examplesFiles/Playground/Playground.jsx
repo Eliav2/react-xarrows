@@ -118,7 +118,7 @@ const PlayGround = () => {
         <br />
         <strong>
           it's strongly recommended to use full screen!{" "}
-          <a href="https://lwwwp.csb.app/Playground" target="_blank" and rel="noopener noreferrer">
+          <a href="https://lwwwp.csb.app/Playground" target="_blank" rel="noopener noreferrer">
             click here
           </a>
         </strong>

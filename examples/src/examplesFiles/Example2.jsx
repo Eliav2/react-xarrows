@@ -1,5 +1,6 @@
 import React, { useState, useRef } from "react";
 import Xarrow from "react-xarrows";
+import Draggable from "react-draggable";
 
 const boxStyle = {
   position: "absolute",
@@ -23,32 +24,13 @@ const canvasStyle = {
 
 const Box = (props) => {
   const [lastPoint, setLastPoint] = useState({ x: 0, y: 0 });
-
-  const handlDragStart = (e) => {
-    setLastPoint({ x: e.clientX, y: e.clientY });
-  };
-
-  const handleDragEnd = (e, boxId) => {
-    let newBox = { ...props.box };
-    let newX = newBox.x + e.clientX - lastPoint.x,
-      newY = newBox.y + e.clientY - lastPoint.y;
-    if (newX < 0 || newY < 0) return;
-    newBox.x = newX;
-    newBox.y = newY;
-    props.setBox(newBox);
-  };
-
+  console.log("box render");
   return (
-    <div
-      ref={props.box.ref}
-      id={props.box.id}
-      style={{ ...boxStyle, left: props.box.x, top: props.box.y }}
-      onDragStart={(e) => handlDragStart(e)}
-      onDragEnd={(e) => handleDragEnd(e, props.box.id)}
-      draggable
-    >
-      {props.box.id}
-    </div>
+    <Draggable onDrag={() => setLastPoint({ ...lastPoint })}>
+      <div ref={props.box.ref} id={props.box.id} style={{ ...boxStyle, left: props.box.x, top: props.box.y }}>
+        {props.box.id}
+      </div>
+    </Draggable>
   );
 };
 

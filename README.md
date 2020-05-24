@@ -206,7 +206,7 @@ you can pass properties to visible parts of the arrow (such event handlers and m
 examples:
 
 - `passProps: {onClick: () => console.log("xarrow clicked!")}` - now the arrow will console log a message when clicked.
-- `passProps: {onClick: () => console.log("xarrow clicked!")}` - now the cursor will change to pointer style when hovering over Xarrow.
+- `passProps: {cursor: "pointer"}` - now the cursor will change to pointer style when hovering over Xarrow.
 
 #### consoleWarning
 

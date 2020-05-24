@@ -1,5 +1,6 @@
 import React, { useState, useRef } from "react";
 import Xarrow from "react-xarrows";
+import Draggable from "react-draggable";
 
 const canvasStyle = {
   width: "100%",
@@ -60,23 +61,6 @@ const Example1 = () => {
     },
   ]);
 
-  const [lastPoint, setLastPoint] = useState({ x: 0, y: 0 });
-
-  const handlDragStart = (e) => {
-    setLastPoint({ x: e.clientX, y: e.clientY });
-  };
-
-  const handleDragEnd = (e, boxId) => {
-    let i = boxes.findIndex((box) => box.id === boxId);
-    let newBoxes = [...boxes];
-    let newX = newBoxes[i].x + e.clientX - lastPoint.x,
-      newY = newBoxes[i].y + e.clientY - lastPoint.y;
-    if (newX < 0 || newY < 0) return;
-    newBoxes[i].x = newX;
-    newBoxes[i].y = newY;
-    setBoxes(newBoxes);
-  };
-
   return (
     <React.Fragment>
       <h3>
@@ -90,16 +74,11 @@ const Example1 = () => {
         <div style={boxContainerStyle} id="boxContainerConatinerStyle">
           <div style={boxContainerStyle} id="boxContainerStyle">
             {boxes.map((box, i) => (
-              <div
-                ref={box.ref}
-                key={i}
-                style={{ ...boxStyle, left: box.x, top: box.y }}
-                onDragStart={(e) => handlDragStart(e)}
-                onDragEnd={(e) => handleDragEnd(e, box.id)}
-                draggable
-              >
-                {box.id}
-              </div>
+              <Draggable onDrag={() => setBoxes([...boxes])}>
+                <div ref={box.ref} key={i} style={{ ...boxStyle, left: box.x, top: box.y }}>
+                  {box.id}
+                </div>
+              </Draggable>
             ))}
             {lines.map((line, i) => (
               <Xarrow

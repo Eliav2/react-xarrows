@@ -3,10 +3,7 @@ import "./Box.css";
 import Draggable from "react-draggable";
 
 const Box = (props) => {
-  const handleDrag = (e, boxId) => {
-    let newBoxes = [...props.boxes];
-    props.setBoxes(newBoxes);
-  };
+  const handleDrag = () => props.setBoxes([...props.boxes]);
   const handleClick = (e) => {
     e.stopPropagation(); //so only the click event on the box will fire on not on the conainer itself
     if (props.actionState === "Normal") {
