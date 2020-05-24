@@ -74,8 +74,8 @@ const Example1 = () => {
         <div style={boxContainerStyle} id="boxContainerConatinerStyle">
           <div style={boxContainerStyle} id="boxContainerStyle">
             {boxes.map((box, i) => (
-              <Draggable onDrag={() => setBoxes([...boxes])}>
-                <div ref={box.ref} key={i} style={{ ...boxStyle, left: box.x, top: box.y }}>
+              <Draggable onDrag={() => setBoxes([...boxes])} key={i}>
+                <div ref={box.ref} style={{ ...boxStyle, left: box.x, top: box.y }}>
                   {box.id}
                 </div>
               </Draggable>
