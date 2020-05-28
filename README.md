@@ -266,22 +266,4 @@ Xarrow.defaultProps = {
 
 ## Versions
 
-- 1.0.0 - initial release.
-- 1.0.3 - props added: `label`, `dashness` and `advance`.
-- 1.1.0 - API changed! `arrowStyle` removed and all his contained properties flattened to be props of xarrow directly. `strokeColor` renamed to `lineColor`. `advance` renamed to `advanced`.
-- 1.1.1 - bug fix now labels not exceed the svg canvas. the headArrow is calcualted now . this means the line ends at the start at the arrow - and this is more natural looking(especially at large headarrows).
-- 1.1.2 bug fix. (the first arrow fixed the headarrow style for all next comming arrows)
-- 1.1.3 - An entirely new algorithm to calcualte arrow path and curveness. now the arrow acting "smarter". this include bug fixes,improvements and some adjustments.
-  `monitorDOMchanges` prop default changed to `true`.
-- 1.1.4 - bug fixes, calculation optimizations, and smart svg canvas size adjusment.
-- 1.1.5 - optimazed calculations and label positioning. (Buzier curve extrema point are calculated now using derivatives and not by interpolation) other improvements as well.
-- 1.1.6 - errors and warnings improved. smart adjustments for diffrent positioning style(of anchors elemntes and common ancestor element) . minor bug fixes.
-- 1.1.7 minor bug fixes.
-- 1.2.0 added support for javascript projects that imported the lib locally. many changes to the repo folders structure.
-- 1.2.1 minor bug fix (intellij suggestinons did not apear)
-- 1.2.2 bug fixes(1#changing anchors refs without remounting broke the arrow. 2#other minors)
-- 1.3.0: bug fixes and features update.
-  1. now `startAnchor` and `endAnchor` can be offset from normal position. see `anchorCustomPositionType` type in types declaration to see how to offset anchors.
-  2. a new powerful feature: `passProps` - now its possible to pass methods (such event handlers) or attributes to the inner components of Xarrow.
-  3. `consoleWarning` default prop changed to `false`.
-  4. bug fixes and inner optimizations(arrow head implemnted now purly using path element without marker elements).
+All version notes moved to [releases](https://github.com/Eliav2/react-xarrows/releases).
