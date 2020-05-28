@@ -1,6 +1,7 @@
-import React from "react";
+import React, {useState} from "react";
 import "./Box.css";
 import Draggable from "react-draggable";
+import MenuWindow from "./MenuWindow";
 
 const Box = (props) => {
   const handleDrag = () => props.setBoxes([...props.boxes]);
@@ -9,7 +10,10 @@ const Box = (props) => {
     if (props.actionState === "Normal") {
       props.handleSelect(e);
     } else if (props.actionState === "Add Connections" && props.selected.id !== props.box.id) {
-      props.setLines((lines) => [...lines, { start: props.selected.id, end: props.box.id }]);
+      props.setLines((lines) => [...lines, {
+        props: {start: props.selected.id, end: props.box.id},
+        menuWindowOpened: false
+      }]);
     } else if (props.actionState === "Remove Connections") {
       props.setLines((lines) =>
         lines.filter((line) => !(line.start === props.selected.id && line.end === props.box.id))
@@ -29,29 +33,34 @@ const Box = (props) => {
   ) {
     background = "LemonChiffon";
   }
+
   return (
-    <Draggable
-      onStart={() => (props.position === "static" ? false : true)}
-      bounds="parent"
-      onDrag={(e) => handleDrag(e, props.box.id)}
-    >
-      <div
-        ref={props.box.ref}
-        className={`${props.box.shape} ${props.position} hoverMarker`}
-        style={{
-          left: props.box.x,
-          top: props.box.y,
-          background,
-          // border: "black solid 2px",
-        }}
-        onClick={handleClick}
-        id={props.box.id}
+    <React.Fragment>
+      <Draggable
+        onStart={() => (props.position !== "static")}
+        bounds="parent"
+        onDrag={(e) => handleDrag(e, props.box.id)}
       >
-        {props.box.name ? props.box.name : props.box.id}
-        {/* <div style={{ textAlign: "center" }}> {props.box.id}</div>
-      <img src={SwitchIcon} alt="SwitchIcon" className={"switchIcon"} id={props.box.id} /> */}
-      </div>
-    </Draggable>
+        <div
+          ref={props.box.ref}
+          className={`${props.box.shape} ${props.position} hoverMarker`}
+          style={{
+            left: props.box.x,
+            top: props.box.y,
+            background,
+            // border: "black solid 2px",
+          }}
+          onClick={handleClick}
+          id={props.box.id}
+        >
+          {props.box.name ? props.box.name : props.box.id}
+        </div>
+      </Draggable>
+      {/*{type === "middleBox" && menuWindowOpened ?*/}
+      {/*  <MenuWindow setBoxes={props.setBoxes} box={props.box}/> : null*/}
+      {/*}*/}
+    </React.Fragment>
+
   );
 };
 

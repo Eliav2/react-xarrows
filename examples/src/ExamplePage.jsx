@@ -20,12 +20,15 @@ const ExamplePage = () => {
         Draw arrows between components in React!
         <br />
         <br />
-        I've noticed react was missing a good and relaible arrows component in npm - so i've decided to create on of my
-        own and share it.
-        <br />
-        this component will rerender and will update the anchors position whenever needed(not like other similar npm
-        libraries).
-        <br />
+        <a href="https://github.com/Eliav2/react-xarrows" target="_blank" rel="noopener noreferrer">
+          View on Github
+        </a><br />
+        <a href="https://www.npmjs.com/package/react-xarrows" target="_blank" rel="noopener noreferrer">
+          View on npm
+        </a><br />
+        <a href="https://eliav2.github.io/react-xarrows/" target="_blank" rel="noopener noreferrer">
+          Home page
+        </a><br />
         <br />
         no magical css traformations - just great react.
         <br />

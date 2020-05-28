@@ -16,7 +16,7 @@ const TopBar = (props) => {
           while ([...boxes, ...props.interfaces].map((a) => a.id).includes(newName))
             newName = prompt("Name Already taken,Choose another: ");
           if (!newName) return;
-          return boxes.map((box) => (box.id === props.selected.id ? { ...box, id: newName } : box));
+          return boxes.map((box) => (box.id === props.selected.id ? {...box, id: newName} : box));
         });
         break;
       case "Add Connections":
@@ -30,10 +30,12 @@ const TopBar = (props) => {
           lines.filter((line) => !(line.start === props.selected.id.start && line.end === props.selected.id.end))
         );
         break;
-      case "E Connection":
-        props.setLines((lines) =>
-          lines.filter((line) => !(line.start === props.selected.id.start && line.end === props.selected.id.end))
-        );
+      case "Edit Properties":
+        props.setLines(lines => lines.map(line => line.props.start === props.selected.id.start && line.props.end === props.selected.id.end ? {
+            ...line,
+            menuWindowOpened: true
+          } : line)
+        )
         break;
       case "Delete":
         if (window.confirm(`are you sure you want to delete ${props.selected.id}?`)) {
@@ -93,11 +95,11 @@ const TopBar = (props) => {
   return (
     <div
       className="topBarStyle"
-      style={{ height: props.selected === null ? "0" : "60px" }}
+      style={{height: props.selected === null ? "0" : "60px"}}
       onClick={(e) => e.stopPropagation()}
     >
       <div className="topBarLabel" onClick={() => props.handleSelect(null)}>
-        <MaterialIcon size={30} icon="keyboard_arrow_up" className="material-icons topBarToggleIcon" />
+        <MaterialIcon size={30} icon="keyboard_arrow_up" className="material-icons topBarToggleIcon"/>
         {/* <p>Edit Menu</p> */}
       </div>
       {returnTopBarApearnce()}

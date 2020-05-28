@@ -205,8 +205,8 @@ new and powerful feature!
 you can pass properties to visible parts of the arrow (such event handlers and much more).
 examples:
 
-- `passProps: {onClick: () => console.log("xarrow clicked!")}` - now the arrow will console log a message when clicked.
-- `passProps: {cursor: "pointer"}` - now the cursor will change to pointer style when hovering over Xarrow.
+- `passProps= {{onClick: () => console.log("xarrow clicked!")}}` - now the arrow will console log a message when clicked.
+- `passProps= {{cursor: "pointer"}}` - now the cursor will change to pointer style when hovering over Xarrow.
 
 #### consoleWarning
 
@@ -219,7 +219,7 @@ here i will provide some flexibility to the API for some cases that i may not th
 ##### extendSVGcanvas
 
 will extend the svg canvas at all sides. can be usefull if for some reason the arrow(or labels) is cutted though to small svg canvas(should be used in advanced custom arrows, for example if you used `dx` to move one of the labels and at exceeded the canvas).
-example: `advanced: {extendSVGcanvas: 30 }` - will extended svg canvas in all sides by 30 pixels.
+example: `advanced= {{extendSVGcanvas: 30 }}` - will extended svg canvas in all sides by 30 pixels.
 
 ##### passProps
 
@@ -227,7 +227,7 @@ if you wish you can pass props specipically to either the body of the arrow,or h
 note that `arrowBody` and `arrowHead` recives props of svg path element and `SVGcanvas` recives props of svg element.
 examples:
 
-- `advanced: {passProps: {arrowHead:{onClick: () => console.log("head clicked!")}}}` - now only the head will console log a message when clicked.
+- `advanced= {{passProps: {arrowHead:{onClick: () => console.log("head clicked!")}}}}` - now only the head will console log a message when clicked.
 
 #### monitorDOMchanges
 
