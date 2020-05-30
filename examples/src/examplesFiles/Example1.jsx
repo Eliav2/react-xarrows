@@ -8,16 +8,8 @@ const canvasStyle = {
   background: "white",
   overflow: "auto",
   display: "flex",
-};
-
-const boxContainerStyle = {
   position: "relative",
-  overflow: "auto",
-  width: "120%",
-  height: "120%",
-  background: "white",
   color: "black",
-  border: "black solid 1px",
 };
 
 const boxStyle = {
@@ -27,6 +19,7 @@ const boxStyle = {
   textAlign: "center",
   width: "100px",
   height: "30px",
+  // color: "black",
 };
 
 const Example1 = () => {
@@ -48,7 +41,11 @@ const Example1 = () => {
       to: "box3",
       color: "red",
       label: {
-        middle: { text: "I am a thick red line!", extra: { textLength: "200", fill: "blue" } },
+        middle: (
+          <div contenteditable="true" style={{ font: "italic 1.5em serif", color: "purple" }}>
+            Editable label
+          </div>
+        ),
       },
       headSize: 0,
       strokeWidth: 15,
@@ -58,6 +55,7 @@ const Example1 = () => {
       to: "box1",
       color: "green",
       dashness: { animation: 1 },
+      path: "grid",
     },
   ]);
 
@@ -71,25 +69,21 @@ const Example1 = () => {
         around.
       </p>
       <div style={canvasStyle} id="canvas">
-        <div style={boxContainerStyle} id="boxContainerConatinerStyle">
-          <div style={boxContainerStyle} id="boxContainerStyle">
-            {boxes.map((box, i) => (
-              <Draggable onDrag={() => setBoxes([...boxes])} key={i}>
-                <div ref={box.ref} style={{ ...boxStyle, left: box.x, top: box.y }}>
-                  {box.id}
-                </div>
-              </Draggable>
-            ))}
-            {lines.map((line, i) => (
-              <Xarrow
-                key={i}
-                start={boxes.find((box) => box.id === line.from).ref}
-                end={boxes.find((box) => box.id === line.to).ref}
-                {...line}
-              />
-            ))}
-          </div>
-        </div>
+        {boxes.map((box, i) => (
+          <Draggable onDrag={() => setBoxes([...boxes])} key={i}>
+            <div ref={box.ref} style={{ ...boxStyle, left: box.x, top: box.y }}>
+              {box.id}
+            </div>
+          </Draggable>
+        ))}
+        {lines.map((line, i) => (
+          <Xarrow
+            key={i}
+            start={boxes.find((box) => box.id === line.from).ref}
+            end={boxes.find((box) => box.id === line.to).ref}
+            {...line}
+          />
+        ))}
       </div>
       <br />
     </React.Fragment>
