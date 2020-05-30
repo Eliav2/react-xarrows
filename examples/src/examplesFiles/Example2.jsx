@@ -76,6 +76,7 @@ const Example2 = () => {
     registerEvents: [],
     consoleWarning: true,
     advanced: { extendSVGcanvas: 20 },
+    path: "smooth",
   };
 
   return (
