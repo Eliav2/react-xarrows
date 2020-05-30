@@ -20,6 +20,7 @@ const canvasStyle = {
   overflow: "auto",
   display: "flex",
   position: "relative",
+  color: "black",
 };
 
 const Box = (props) => {
@@ -65,13 +66,13 @@ const Example2 = () => {
     headColor: headColor,
     strokeWidth: Number(strokeWidth),
     headSize: Number(headSize),
-    // dashness: true   // can be simply boolean or object:
     dashness: dashed ? { animation: Number(animation) } : false,
-    // label: "middle"  //can be simply string of middle label or object:
-    label: {
-      start: "startLabel",
-      end: { text: "endLabel", extra: { fill: "blue", dy: -10 } },
-    },
+    path: "grid",
+    // label: {
+    //   middle: "middle label!",
+    //   start: "start",
+    //   end: <div style={{ fontSize: "1.3em", fontFamily: "fantasy", fontStyle: "italic" }}>big end label</div>,
+    // },
     monitorDOMchanges: false,
     registerEvents: [],
     consoleWarning: true,

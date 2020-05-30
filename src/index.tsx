@@ -15,6 +15,7 @@ export type xarrowPropsType = {
   headColor?: string | null;
   strokeWidth?: number;
   headSize?: number;
+  path: "smooth" | "grid" | "straight";
   curveness?: number;
   dashness?: boolean | { strokeLen?: number; nonStrokeLen?: number; animation?: boolean | number };
   consoleWarning?: boolean;
@@ -40,8 +41,7 @@ export type anchorCustomPositionType = {
 export type reactRefType = { current: null | HTMLElement };
 export type refType = reactRefType | string;
 export type labelsType = { start?: labelType; middle?: labelType; end?: labelType };
-export type labelPropsType = { text: string; extra?: React.SVGAttributes<SVGTextElement> };
-export type labelType = string | labelPropsType;
+export type labelType = JSX.Element;
 export type domEventType = keyof GlobalEventHandlersEventMap;
 export type registerEventsType = {
   ref: refType;
@@ -95,16 +95,6 @@ const findCommonAncestor = (elem: HTMLElement, elem2: HTMLElement): HTMLElement 
   }
   return commonAncestor(elem, elem2);
 };
-
-// const findAllParents = (elem: HTMLElement) => {
-//   let parents: HTMLElement[] = [];
-//   let parent = elem;
-//   while (true) {
-//     if (parent.parentElement === null) return parents;
-//     else parent = parent.parentElement;
-//     parents.push(parent);
-//   }
-// };
 
 const findAllChildrens = (child: HTMLElement, parent: HTMLElement) => {
   if (child === parent) return [];
@@ -164,17 +154,12 @@ const Xarrow: React.FC<xarrowPropsType> = ({ ...props }: xarrowPropsType) => {
 
   const [prevPosState, setPrevPosState] = useState<prevPos>(null);
   const [prevProps, setPrevProps] = useState<xarrowPropsType>(null);
-  // const [selfParents, setSelfParents] = useState<HTMLElement[]>(null); //list parents of the common ascestor of the arrow with start and end(until "root elemnt")
   const [anchorsParents, setAnchorsParents] = useState<anchorsParents>(null); //list childrens of the common ascestor of the arrow with start and end until start or end
   const [commonAncestor, setCommonAncestor] = useState<HTMLElement>(null); //list childrens of the common ascestor of the arrow with start and end until start or end
-  // const [xarrowElemPos, setXarrowElemPos] = useState<point>({ x: 0, y: 0 });
-  // const [prevXarrowElemPos, setPrevXarrowElemPos] = useState<point>({ x: 0, y: 0 });
 
   const updateIfNeeded = () => {
-    // console.log("updateIfNeeded");
     if (checkIfAnchorsRefsChanged()) {
       initAnchorsRefs();
-      // initProps();
     } else if (!_.isEqual(props, prevProps)) {
       //first check if any properties changed
       if (prevProps) {
@@ -448,47 +433,16 @@ const Xarrow: React.FC<xarrowPropsType> = ({ ...props }: xarrowPropsType) => {
     animationDirection = -1;
   }
 
-  const isLabelPropsType = (label: labelPropsType | labelsType): label is labelPropsType => {
-    return (label as labelPropsType).text !== undefined;
-  };
-
-  let labelStart, labelMiddle, labelEnd;
-  let labelStartExtra = {},
-    labelMiddleExtra = {},
-    labelEndExtra = {};
-  let labalCanvExtraY = 0;
+  let labelStart = null,
+    labelMiddle = null,
+    labelEnd = null;
   if (props.label) {
-    labalCanvExtraY = 14;
-    if (typeof props.label === "string") labelMiddle = props.label;
-    else if (typeof props.label === "object") {
-      if (isLabelPropsType(props.label)) {
-        labelMiddle = props.label;
-        labelMiddleExtra = labelMiddle.extra;
-        labelMiddle = labelMiddle.text;
-      } else {
-        labelStart = props.label.start;
-        labelMiddle = props.label.middle;
-        labelEnd = props.label.end;
-        if (typeof labelStart === "object") {
-          labelStartExtra = labelStart.extra;
-          labelStart = labelStart.text;
-        }
-        if (typeof labelMiddle === "object") {
-          labelMiddleExtra = labelMiddle.extra;
-          labelMiddle = labelMiddle.text;
-        }
-        if (typeof labelEnd === "object") {
-          labelEndExtra = labelEnd.extra;
-          labelEnd = labelEnd.text;
-        }
-      }
+    if (typeof props.label === "string" || "type" in props.label) labelMiddle = props.label;
+    else if (["start", "middle", "end"].some((key) => key in props.label)) {
+      props.label = props.label as labelsType;
+      ({ start: labelStart, middle: labelMiddle, end: labelEnd } = props.label);
     }
   }
-  let labalCanvExtraX = Math.max(
-    labelStart ? labelStart.length : 0,
-    labelMiddle ? labelMiddle.length : 0,
-    labelEnd ? labelEnd.length : 0
-  );
 
   let {
     passProps: adPassProps = { SVGcanvas: {}, arrowHead: {}, arrowBody: {} },
@@ -641,10 +595,10 @@ const Xarrow: React.FC<xarrowPropsType> = ({ ...props }: xarrowPropsType) => {
     let headOffset = ((headSize * 3) / 4) * strokeWidth;
     let cu = Number(props.curveness);
 
-    let excRight = strokeWidth;
-    let excLeft = strokeWidth;
-    let excUp = strokeWidth + labalCanvExtraY;
-    let excDown = strokeWidth + labalCanvExtraY;
+    let excRight = strokeWidth + (strokeWidth * headSize) / 2;
+    let excLeft = strokeWidth + (strokeWidth * headSize) / 2;
+    let excUp = strokeWidth + (strokeWidth * headSize) / 2;
+    let excDown = strokeWidth + (strokeWidth * headSize) / 2;
     excLeft += Number(extendSVGcanvas);
     excRight += Number(extendSVGcanvas);
     excUp += Number(extendSVGcanvas);
@@ -706,40 +660,57 @@ const Xarrow: React.FC<xarrowPropsType> = ({ ...props }: xarrowPropsType) => {
     }
     let arrowHeadOffset = { x: xHeadOffset, y: yHeadOffset };
 
-    excRight += (strokeWidth * headSize) / 2;
-    excLeft += (strokeWidth * headSize) / 2;
-    excUp += (strokeWidth * headSize) / 2;
-    excDown += (strokeWidth * headSize) / 2;
-
     let cpx1 = x1,
       cpy1 = y1,
       cpx2 = x2,
       cpy2 = y2;
 
-    const curvesPossabilties = {
-      hh: () => {
-        //horizinatl - from right to left or the opposite
-        cpx1 += absDx * cu * xSign;
-        cpx2 -= absDx * cu * xSign;
-      },
-      vv: () => {
-        //vertical - from top to bottom or opposite
-        cpy1 += absDy * cu * ySign;
-        cpy2 -= absDy * cu * ySign;
-      },
-      hv: () => {
-        // start horizintaly then verticaly
-        // from v side to h side
-        cpx1 += absDx * cu * xSign;
-        cpy2 -= absDy * cu * ySign;
-      },
-      vh: () => {
-        // start verticaly then horizintaly
-        // from h side to v side
-        cpy1 += absDy * cu * ySign;
-        cpx2 -= absDx * cu * xSign;
-      },
-    };
+    let curvesPossabilties = {};
+    if (props.path === "smooth")
+      curvesPossabilties = {
+        hh: () => {
+          //horizinatl - from right to left or the opposite
+          cpx1 += absDx * cu * xSign;
+          cpx2 -= absDx * cu * xSign;
+          // cpx1 += headOffset * 2 * xSign;
+          // cpx2 -= headOffset * 2 * xSign;
+        },
+        vv: () => {
+          //vertical - from top to bottom or opposite
+          cpy1 += absDy * cu * ySign;
+          cpy2 -= absDy * cu * ySign;
+          // cpy1 += headOffset * 2 * ySign;
+          // cpy2 -= headOffset * 2 * ySign;
+        },
+        hv: () => {
+          // start horizintaly then verticaly
+          // from v side to h side
+          cpx1 += absDx * cu * xSign;
+          cpy2 -= absDy * cu * ySign;
+        },
+        vh: () => {
+          // start verticaly then horizintaly
+          // from h side to v side
+          cpy1 += absDy * cu * ySign;
+          cpx2 -= absDx * cu * xSign;
+        },
+      };
+    else if (props.path === "grid") {
+      curvesPossabilties = {
+        hh: () => {
+          cpx1 += (absDx * 0.5 - headOffset / 2) * xSign;
+          cpx2 -= (absDx * 0.5 - headOffset / 2) * xSign;
+        },
+        vv: () => {
+          cpy1 += (absDy * 0.5 - headOffset / 2) * ySign;
+          cpy2 -= (absDy * 0.5 - headOffset / 2) * ySign;
+        },
+        hv: () => {
+          cpx1 = x2;
+        },
+        vh: () => {},
+      };
+    }
 
     let choosedCurveness = "";
     if (["left", "right"].includes(startAnchor)) choosedCurveness += "h";
@@ -809,9 +780,6 @@ const Xarrow: React.FC<xarrowPropsType> = ({ ...props }: xarrowPropsType) => {
     if (ySol1 < 0) excUp += -ySol1;
     if (ySol2 > absDy) excDown += ySol2 - absDy;
 
-    excLeft += labalCanvExtraX * 4;
-    excRight += labalCanvExtraX * 4;
-
     x1 += excLeft;
     x2 += excLeft;
     y1 += excUp;
@@ -867,110 +835,116 @@ const Xarrow: React.FC<xarrowPropsType> = ({ ...props }: xarrowPropsType) => {
   let xOffsetHead = st.x2 - st.arrowHeadOffset.x;
   let yOffsetHead = st.y2 - st.arrowHeadOffset.y;
 
+  let { path = "smooth" } = props;
   let arrowPath = `M ${st.x1} ${st.y1} C ${st.cpx1} ${st.cpy1}, ${st.cpx2} ${st.cpy2}, ${st.x2} ${st.y2}`;
-  // arrowPath = `M ${st.x1} ${st.y1}  ${st.x2} ${st.y2}`;
-
-  // let arrowHeadId = "arrowHeadMarker" + arrowPath.replace(/ /g, "");
+  if (path === "straight") arrowPath = `M ${st.x1} ${st.y1}  ${st.x2} ${st.y2}`;
+  if (path === "grid")
+    arrowPath = `M ${st.x1} ${st.y1} L  ${st.cpx1} ${st.cpy1} L ${st.cpx2} ${st.cpy2} L  ${st.x2} ${st.y2}`;
 
   return (
-    <svg
-      ref={(selfRef as unknown) as React.LegacyRef<SVGSVGElement>}
-      width={st.cw}
-      height={st.ch}
-      style={{
-        // border: "2px yellow dashed",
-        position: "absolute",
-        left: st.cx0,
-        top: st.cy0,
-        pointerEvents: "none",
-      }}
-      {...(SVGcanvas as string)}
-    >
-      {/* <marker
-        id={arrowHeadId}
-        viewBox="0 0 12 12"
-        refX="3"
-        refY="6"
-        // re
-        markerUnits="strokeWidth"
-        markerWidth={headSize}
-        markerHeight={headSize}
-        orient={st.headOrient}
-        onClick={() => console.log("headCLick!")}
-        onMouseEnter={() => console.log("onMouseEnter!")}
+    <div style={{ position: "absolute" }}>
+      <svg
+        ref={(selfRef as unknown) as React.LegacyRef<SVGSVGElement>}
+        width={st.cw}
+        height={st.ch}
+        style={{
+          // border: "2px yellow dashed",
+          position: "absolute",
+          left: st.cx0,
+          top: st.cy0,
+          pointerEvents: "none",
+          // overflow: "hidden",
+        }}
+        overflow="auto"
+        {...(SVGcanvas as string)}
       >
-        <path d="M 0 0 L 12 6 L 0 12 L 3 6 z" fill={headColor} />
-      </marker> */}
+        {/* <circle r="5" cx={st.cpx1} cy={st.cpy1} fill="green" /> */}
+        {/* <circle r="5" cx={st.cpx2} cy={st.cpy2} fill="blue" /> */}
+        {/* <circle r="7" cx={xarrowElemPos.x} cy={xarrowElemPos.y} fill="black" /> */}
+        {/* <rect
+          x={st.excLeft}
+          y={st.excUp}
+          width={st.absDx}
+          height={st.absDy}
+          fill="none"
+          stroke="pink"
+          strokeWidth="2px"
+        /> */}
 
-      {/* <circle r="5" cx={st.cpx1} cy={st.cpy1} fill="green" /> */}
-      {/* <circle r="5" cx={st.cpx2} cy={st.cpy2} fill="blue" /> */}
-      {/* <circle r="7" cx={xarrowElemPos.x} cy={xarrowElemPos.y} fill="black" /> */}
-      {/* <rect
-        x={st.excLeft}
-        y={st.excUp}
-        width={st.absDx}
-        height={st.absDy}
-        fill="none"
-        stroke="pink"
-        strokeWidth="2px"
-      /> */}
+        {/* body of the arrow */}
+        <path
+          d={arrowPath}
+          stroke={lineColor}
+          strokeDasharray={`${dashStroke} ${dashNone}`}
+          strokeWidth={strokeWidth}
+          fill="transparent"
+          // markerEnd={`url(#${arrowHeadId})`}
+          pointerEvents="visibleStroke"
+          {...(props.passProps as string)}
+          {...(arrowBody as string)}
+        >
+          {animationSpeed ? (
+            <animate
+              attributeName="stroke-dashoffset"
+              values={`${dashoffset * animationDirection};0`}
+              dur={`${1 / animationSpeed}s`}
+              repeatCount="indefinite"
+            />
+          ) : null}
+        </path>
 
-      {/* body of the arrow */}
-      <path
-        d={arrowPath}
-        stroke={lineColor}
-        strokeDasharray={`${dashStroke} ${dashNone}`}
-        strokeWidth={strokeWidth}
-        fill="transparent"
-        // markerEnd={`url(#${arrowHeadId})`}
-        pointerEvents="visibleStroke"
-        {...(props.passProps as string)}
-        {...(arrowBody as string)}
-      >
-        {animationSpeed ? (
-          <animate
-            attributeName="stroke-dashoffset"
-            values={`${dashoffset * animationDirection};0`}
-            dur={`${1 / animationSpeed}s`}
-            repeatCount="indefinite"
-          />
-        ) : null}
-      </path>
-
-      {/* head of the arrow */}
-
-      <path
-        d={`M 0 0 L ${fHeadSize} ${fHeadSize / 2} L 0 ${fHeadSize} L ${fHeadSize / 4} ${fHeadSize / 2} z`}
-        fill={headColor}
-        style={{ pointerEvents: "all" }}
-        transform={`translate(${xOffsetHead},${yOffsetHead}) rotate(${st.headOrient})`}
-        {...(props.passProps as string)}
-        {...(arrowHead as string)}
-      />
+        {/* head of the arrow */}
+        <path
+          d={`M 0 0 L ${fHeadSize} ${fHeadSize / 2} L 0 ${fHeadSize} L ${fHeadSize / 4} ${fHeadSize / 2} z`}
+          fill={headColor}
+          style={{ pointerEvents: "all" }}
+          transform={`translate(${xOffsetHead},${yOffsetHead}) rotate(${st.headOrient})`}
+          {...(props.passProps as string)}
+          {...(arrowHead as string)}
+        />
+      </svg>
 
       {labelStart ? (
-        <text
-          {...labelStartExtra}
-          textAnchor={st.dx > 0 ? "start" : "end"}
-          x={st.labelStartPos.x}
-          y={st.labelStartPos.y}
+        <div
+          style={{
+            transform: st.dx < 0 ? "translate(-100% , -50%)" : "translate(-0% , -50%)",
+            width: "max-content",
+            position: "absolute",
+            left: st.cx0 + st.labelStartPos.x,
+            top: st.cy0 + st.labelStartPos.y - strokeWidth - 5,
+          }}
         >
           {labelStart}
-        </text>
+        </div>
       ) : null}
-
       {labelMiddle ? (
-        <text {...labelMiddleExtra} textAnchor="middle" x={st.labelMiddlePos.x} y={st.labelMiddlePos.y}>
+        <div
+          style={{
+            display: "table",
+            width: "max-content",
+            transform: "translate(-50% , -50%)",
+            position: "absolute",
+            left: st.cx0 + st.labelMiddlePos.x,
+            top: st.cy0 + st.labelMiddlePos.y,
+          }}
+        >
           {labelMiddle}
-        </text>
+        </div>
       ) : null}
-
       {labelEnd ? (
-        <text {...labelEndExtra} textAnchor={st.dx > 0 ? "end" : "start"} x={st.labelEndPos.x} y={st.labelEndPos.y}>
+        <div
+          style={{
+            transform: st.dx > 0 ? "translate(-100% , -50%)" : "translate(-0% , -50%)",
+            width: "max-content",
+            position: "absolute",
+            left: st.cx0 + st.labelEndPos.x,
+            top: st.cy0 + st.labelEndPos.y + strokeWidth + 5,
+          }}
+        >
           {labelEnd}
-        </text>
+        </div>
       ) : null}
-    </svg>
+    </div>
   );
 };
 
@@ -983,6 +957,7 @@ Xarrow.defaultProps = {
   headColor: null,
   strokeWidth: 4,
   headSize: 6,
+  path: "smooth",
   curveness: 0.8,
   dashness: false,
   consoleWarning: false,
