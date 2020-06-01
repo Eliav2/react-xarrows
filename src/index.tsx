@@ -594,6 +594,11 @@ const Xarrow: React.FC<xarrowPropsType> = ({ ...props }: xarrowPropsType) => {
     let ySign = dy > 0 ? 1 : -1;
     let headOffset = ((headSize * 3) / 4) * strokeWidth;
     let cu = Number(props.curveness);
+    let { path } = props;
+    if (path === "straight") {
+      cu = 0;
+      path = "smooth";
+    }
 
     let excRight = strokeWidth + (strokeWidth * headSize) / 2;
     let excLeft = strokeWidth + (strokeWidth * headSize) / 2;
@@ -666,7 +671,7 @@ const Xarrow: React.FC<xarrowPropsType> = ({ ...props }: xarrowPropsType) => {
       cpy2 = y2;
 
     let curvesPossabilties = {};
-    if (props.path === "smooth")
+    if (path === "smooth")
       curvesPossabilties = {
         hh: () => {
           //horizinatl - from right to left or the opposite
@@ -695,7 +700,7 @@ const Xarrow: React.FC<xarrowPropsType> = ({ ...props }: xarrowPropsType) => {
           cpx2 -= absDx * cu * xSign;
         },
       };
-    else if (props.path === "grid") {
+    else if (path === "grid") {
       curvesPossabilties = {
         hh: () => {
           cpx1 += (absDx * 0.5 - headOffset / 2) * xSign;

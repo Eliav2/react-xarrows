@@ -42,7 +42,11 @@ const Example1 = () => {
       color: "red",
       label: {
         middle: (
-          <div contenteditable="true" style={{ font: "italic 1.5em serif", color: "purple" }}>
+          <div
+            contentEditable
+            suppressContentEditableWarning={true}
+            style={{ font: "italic 1.5em serif", color: "purple" }}
+          >
             Editable label
           </div>
         ),
