@@ -48,7 +48,16 @@ const Example1 = () => {
       to: "box3",
       color: "red",
       label: {
-        middle: { text: "I am a thick red line!", extra: { textLength: "200", fill: "blue" } },
+        middle: (
+          <div
+            contentEditable
+            suppressContentEditableWarning={true}
+            style={{ font: "italic 1.5em serif", color: "purple" }}
+          >
+            Editable label
+          </div>
+        ),
+
       },
       headSize: 0,
       strokeWidth: 15,

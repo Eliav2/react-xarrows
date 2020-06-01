@@ -98,6 +98,7 @@ export type xarrowPropsType = {
   headColor?: string | null;
   strokeWidth?: number;
   headSize?: number;
+  path: "smooth" | "grid" | "straight";
   curveness?: number;
   dashness?: boolean | { strokeLen?: number; nonStrokeLen?: number; animation?: boolean | number };
   consoleWarning?: boolean;
@@ -123,8 +124,7 @@ export type anchorCustomPositionType = {
 export type reactRefType = { current: null | HTMLElement };
 export type refType = reactRefType | string;
 export type labelsType = { start?: labelType; middle?: labelType; end?: labelType };
-export type labelPropsType = { text: string; extra?: React.SVGAttributes<SVGTextElement> };
-export type labelType = string | labelPropsType;
+export type labelType = JSX.Element;
 export type domEventType = keyof GlobalEventHandlersEventMap;
 export type registerEventsType = {
   ref: refType;
@@ -154,14 +154,14 @@ examples:
 
 #### label
 
+changed api since v1.4.0. now each label can be jsx element or string, but not object.
+
 can be a string that will default to be at the middle or an object that decribes where to place label and how to customize it. see `label` at `xarrowPropsType` above.
 examples:
 
 - `label="middleLabel"`
-- `label={{ start:"I'm start label",middle: "middleLable",end:{text:"i'm custom end label",extra:{fill:"red"}} }}`
-
-  you can pass to `extra` most of the [svg presentation attributes](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/Presentation), with them you can custom your text how you realy wants.
-  use the suggestion of visual code(or your IDE) to see all possibilities.
+- `label=<div style={{ fontSize: "1.3em", fontFamily: "fantasy", fontStyle: "italic" }}>styled middle label</div>`
+- `label={{ start:"I'm start label",middle: "middleLable",end:<div style={{ fontSize: "1.3em", fontFamily: "fantasy", fontStyle: "italic" }}>big end label</div> }}`
 
 #### color,lineColor and headColor
 
@@ -172,6 +172,8 @@ examples:
 - `headColor="red"` will change the color of the head of the arrow to red.
 - `lineColor="red"` will change the color of the body of the arrow to red.
 
+(NOTE - maybe `headColor` and `lineColor` will be combined to color)
+
 #### strokeWidth and headSize
 
 strokeWidth defines the thickness of the arrow(line and head).
@@ -181,13 +183,20 @@ examples:
 - `strokeWidth={15}` will make the arrow more thick(body and head).
 - `headSize={15}` will make the head of the arrow more thick(relative to strokeWidth as well).
 
+#### path
+
+`path` can be one of: `"smooth" | "grid" | "straight"`, and it controls the path arrow is drawn, exactly how thier name suggest.
+examples:
+
+- `path={"grid"}` will draw the line in sharp curves(90 degrees) like grid.
+
 #### curvness
 
 defines how much the lines curve.
 examples:
 
-- `curvness={false}` will make the line stright without curves.
-- `curvness={true}` will choose defualt values of curvness
+- `curvness={false}` will make the line stright without curves(exacly like path='straight').
+- `curvness={true}` will choose defualt values of curvness.
 - `curvness={2}` will make Xarrow extra curved.
 
 #### dashness
@@ -207,6 +216,7 @@ examples:
 
 - `passProps= {{onClick: () => console.log("xarrow clicked!")}}` - now the arrow will console log a message when clicked.
 - `passProps= {{cursor: "pointer"}}` - now the cursor will change to pointer style when hovering over Xarrow.
+- `passProps= {{pointerEvents: "none"}}` - now the user cannot interact with Xarrow via mouse events.
 
 #### consoleWarning
 
@@ -254,16 +264,19 @@ Xarrow.defaultProps = {
   headColor: null,
   strokeWidth: 4,
   headSize: 6,
+  path: "smooth",
   curveness: 0.8,
   dashness: false,
-  passProps: {},
   consoleWarning: false,
+  passProps: {},
   advanced: { extendSVGcanvas: 0, passProps: { arrowBody: {}, arrowHead: {}, SVGcanvas: {} } },
   monitorDOMchanges: true,
   registerEvents: [],
+};
 };
 ```
 
 ## Versions
 
 All version notes moved to [releases](https://github.com/Eliav2/react-xarrows/releases).
+1.4.0 - changed `label` property API and added `path` property.

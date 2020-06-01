@@ -48,6 +48,7 @@ const Example2 = () => {
   const [endAnchor, setEndAnchor] = useState(["auto"]);
   const [dashed, setDashed] = useState(true);
   const [animation, setAnimation] = useState(1);
+  const [pathGrid, setPathGrid] = useState("smooth");
 
   const colorOptions = ["red", "BurlyWood", "CadetBlue", "Coral"];
   const bodyColorOptions = [null, ...colorOptions];
@@ -67,10 +68,13 @@ const Example2 = () => {
     headSize: Number(headSize),
     // dashness: true   // can be simply boolean or object:
     dashness: dashed ? { animation: Number(animation) } : false,
-    // label: "middle"  //can be simply string of middle label or object:
+    path: pathGrid,
+    startAnchor,
     label: {
-      start: "startLabel",
-      end: { text: "endLabel", extra: { fill: "blue", dy: -10 } },
+      start: "I'm start label",
+      middle: "middleLable",
+      end: <div style={{ fontSize: "1.3em", fontFamily: "fantasy", fontStyle: "italic" }}>big end label</div>,
+
     },
     monitorDOMchanges: false,
     registerEvents: [],
@@ -235,6 +239,16 @@ const Example2 = () => {
                       value={animation}
                       onChange={(e) => setAnimation(e.target.value)}
                     />
+                  </div>
+                </td>
+                <td>
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <p>path: </p>
+                    <select onChange={(e) => setPathGrid(e.target.value)}>
+                      {["smooth", "grid", "straight"].map((o, i) => (
+                        <option key={i}>{o}</option>
+                      ))}
+                    </select>
                   </div>
                 </td>
               </tr>

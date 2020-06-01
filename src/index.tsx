@@ -640,6 +640,11 @@ const Xarrow: React.FC<xarrowPropsType> = ({ ...props }: xarrowPropsType) => {
     let ySign = dy > 0 ? 1 : -1;
     let headOffset = ((headSize * 3) / 4) * strokeWidth;
     let cu = Number(props.curveness);
+    let { path } = props;
+    if (path === "straight") {
+      cu = 0;
+      path = "smooth";
+    }
 
     let excRight = strokeWidth;
     let excLeft = strokeWidth;
@@ -716,30 +721,55 @@ const Xarrow: React.FC<xarrowPropsType> = ({ ...props }: xarrowPropsType) => {
       cpx2 = x2,
       cpy2 = y2;
 
-    const curvesPossabilties = {
-      hh: () => {
-        //horizinatl - from right to left or the opposite
-        cpx1 += absDx * cu * xSign;
-        cpx2 -= absDx * cu * xSign;
-      },
-      vv: () => {
-        //vertical - from top to bottom or opposite
-        cpy1 += absDy * cu * ySign;
-        cpy2 -= absDy * cu * ySign;
-      },
-      hv: () => {
-        // start horizintaly then verticaly
-        // from v side to h side
-        cpx1 += absDx * cu * xSign;
-        cpy2 -= absDy * cu * ySign;
-      },
-      vh: () => {
-        // start verticaly then horizintaly
-        // from h side to v side
-        cpy1 += absDy * cu * ySign;
-        cpx2 -= absDx * cu * xSign;
-      },
-    };
+    let curvesPossabilties = {};
+    if (path === "smooth")
+      curvesPossabilties = {
+        hh: () => {
+          //horizinatl - from right to left or the opposite
+          cpx1 += absDx * cu * xSign;
+          cpx2 -= absDx * cu * xSign;
+          // cpx1 += headOffset * 2 * xSign;
+          // cpx2 -= headOffset * 2 * xSign;
+        },
+        vv: () => {
+          //vertical - from top to bottom or opposite
+          cpy1 += absDy * cu * ySign;
+          cpy2 -= absDy * cu * ySign;
+          // cpy1 += headOffset * 2 * ySign;
+          // cpy2 -= headOffset * 2 * ySign;
+        },
+        hv: () => {
+          // start horizintaly then verticaly
+          // from v side to h side
+          cpx1 += absDx * cu * xSign;
+          cpy2 -= absDy * cu * ySign;
+        },
+        vh: () => {
+          // start verticaly then horizintaly
+          // from h side to v side
+          cpy1 += absDy * cu * ySign;
+          cpx2 -= absDx * cu * xSign;
+        },
+      };
+    else if (path === "grid") {
+      curvesPossabilties = {
+        hh: () => {
+          cpx1 += (absDx * 0.5 - headOffset / 2) * xSign;
+          cpx2 -= (absDx * 0.5 - headOffset / 2) * xSign;
+        },
+        vv: () => {
+          cpy1 += (absDy * 0.5 - headOffset / 2) * ySign;
+          cpy2 -= (absDy * 0.5 - headOffset / 2) * ySign;
+        },
+        hv: () => {
+          cpx1 = x2;
+        },
+        vh: () => {
+          cpy1 = y2;
+        },
+      };
+    }
+
 
     let choosedCurveness = "";
     if (["left", "right"].includes(startAnchor)) choosedCurveness += "h";
