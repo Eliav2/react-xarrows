@@ -20,7 +20,6 @@ const canvasStyle = {
   overflow: "auto",
   display: "flex",
   position: "relative",
-  color: "black",
 };
 
 const Box = (props) => {
@@ -67,6 +66,7 @@ const Example2 = () => {
     headColor: headColor,
     strokeWidth: Number(strokeWidth),
     headSize: Number(headSize),
+    // dashness: true   // can be simply boolean or object:
     dashness: dashed ? { animation: Number(animation) } : false,
     path: pathGrid,
     startAnchor,
@@ -74,11 +74,12 @@ const Example2 = () => {
       start: "I'm start label",
       middle: "middleLable",
       end: <div style={{ fontSize: "1.3em", fontFamily: "fantasy", fontStyle: "italic" }}>big end label</div>,
+
     },
     monitorDOMchanges: false,
     registerEvents: [],
     consoleWarning: true,
-    advanced: { extendSVGcanvas: 0 },
+    advanced: { extendSVGcanvas: 20 },
   };
 
   return (

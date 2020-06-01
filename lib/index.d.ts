@@ -10,7 +10,6 @@ export declare type xarrowPropsType = {
     headColor?: string | null;
     strokeWidth?: number;
     headSize?: number;
-    path: "smooth" | "grid" | "straight";
     curveness?: number;
     dashness?: boolean | {
         strokeLen?: number;
@@ -48,7 +47,11 @@ export declare type labelsType = {
     middle?: labelType;
     end?: labelType;
 };
-export declare type labelType = JSX.Element;
+export declare type labelPropsType = {
+    text: string;
+    extra?: React.SVGAttributes<SVGTextElement>;
+};
+export declare type labelType = string | labelPropsType;
 export declare type domEventType = keyof GlobalEventHandlersEventMap;
 export declare type registerEventsType = {
     ref: refType;
