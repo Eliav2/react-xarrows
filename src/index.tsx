@@ -708,7 +708,9 @@ const Xarrow: React.FC<xarrowPropsType> = ({ ...props }: xarrowPropsType) => {
         hv: () => {
           cpx1 = x2;
         },
-        vh: () => {},
+        vh: () => {
+          cpy1 = y2;
+        },
       };
     }
 

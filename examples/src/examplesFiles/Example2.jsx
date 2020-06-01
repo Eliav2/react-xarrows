@@ -68,6 +68,7 @@ const Example2 = () => {
     headSize: Number(headSize),
     dashness: dashed ? { animation: Number(animation) } : false,
     path: "grid",
+    startAnchor,
     // label: {
     //   middle: "middle label!",
     //   start: "start",
