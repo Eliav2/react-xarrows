@@ -77,7 +77,7 @@ const Example2 = () => {
     },
     monitorDOMchanges: false,
     registerEvents: [],
-    consoleWarning: true,
+    // consoleWarning: true,
     advanced: { extendSVGcanvas: 0 },
   };
 
