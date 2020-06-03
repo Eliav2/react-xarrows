@@ -3,17 +3,11 @@
 import React, { useState } from "react";
 import Draggable from "react-draggable";
 import MaterialIcon from "material-icons-react";
-import { Resizable, ResizableBox } from "react-resizable";
 import Popup from "reactjs-popup";
 import "./MenuWindow.css";
-import { xarrowPropsType } from "react-xarrows";
 
 export default ({ setLines, line: { props: lineProp } }) => {
   const [pos, setPos] = useState({ width: 200, height: 200 });
-
-  //   const onResize = (event, { element, size, handle }) => {
-  //     setPos({ width: size.width, height: size.height });
-  //   };
 
   //   const d = {
   //     startAnchor: ["middle", "left", "right", "top", "bottom", "auto"],
@@ -71,6 +65,9 @@ export default ({ setLines, line: { props: lineProp } }) => {
         <div className={"header"}>{`${lineProp.start}->${lineProp.end}`}</div>
         <hr style={{ width: "80%" }} />
         <MaterialIcon size={30} icon="close" className="material-icons closeButton" onClick={handleClose} />
+        <div style={{ width: "80%", margin: "auto" }}>
+          you are welcome to edit this example and add UI for editing the properties dynamically. PRs are very welcomed.
+        </div>
       </div>
     </Draggable>
   );
