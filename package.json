@@ -27,8 +27,7 @@
   },
   "bugs": "https://github.com/Eliav2/react-xarrows/issues",
   "dependencies": {
-    "lodash": "^4.17.15",
-    "react-resizable": "^1.10.1"
+    "lodash": "^4.17.15"
   },
   "peerDependencies": {
     "react": ">=16.0.0"

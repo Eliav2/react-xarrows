@@ -179,7 +179,6 @@ const PlayGround = () => {
             <MenuWindow key={line.props.start + "-" + line.props.end + i} setLines={setLines} line={line} />
           ) : null
         )}
-        )
       </div>
     </div>
   );
