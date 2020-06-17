@@ -96,15 +96,15 @@ const findCommonAncestor = (elem: HTMLElement, elem2: HTMLElement): HTMLElement 
   return commonAncestor(elem, elem2);
 };
 
-const findAllChildrens = (child: HTMLElement, parent: HTMLElement) => {
+const findAllChildren = (child: HTMLElement, parent: HTMLElement) => {
   if (child === parent) return [];
-  let childrens: HTMLElement[] = [];
+  let children: HTMLElement[] = [];
   let childParent = child.parentElement;
   while (childParent !== parent) {
-    childrens.push(childParent);
+    children.push(childParent);
     childParent = childParent.parentElement;
   }
-  return childrens;
+  return children;
 };
 
 const getElementByPropGiven = (ref: refType): HTMLElement => {
@@ -113,7 +113,7 @@ const getElementByPropGiven = (ref: refType): HTMLElement => {
     myRef = document.getElementById(ref);
     if (myRef === null)
       throw Error(
-        `'${ref}' is not an id of element in the dom. make sure you provided currect id or provide a React reference to element instead.`
+        `'${ref}' is not an id of element in the dom. make sure you provided current id or provide a React reference to element instead.`
       );
   } else myRef = ref.current;
   if (myRef === null)
@@ -121,7 +121,7 @@ const getElementByPropGiven = (ref: refType): HTMLElement => {
       `'${ref}' is not a valid react reference to html element
 OR
 you tried to render Xarrow before one of the anchors.
-please provide correct react refernce or provide id instead.`
+please provide correct react reference or provide id instead.`
     );
 
   return myRef;
@@ -154,8 +154,8 @@ const Xarrow: React.FC<xarrowPropsType> = ({ ...props }: xarrowPropsType) => {
 
   const [prevPosState, setPrevPosState] = useState<prevPos>(null);
   const [prevProps, setPrevProps] = useState<xarrowPropsType>(null);
-  const [anchorsParents, setAnchorsParents] = useState<anchorsParents>(null); //list childrens of the common ascestor of the arrow with start and end until start or end
-  const [commonAncestor, setCommonAncestor] = useState<HTMLElement>(null); //list childrens of the common ascestor of the arrow with start and end until start or end
+  const [anchorsParents, setAnchorsParents] = useState<anchorsParents>(null); //list children of the common ancestor of the arrow with start and end until start or end
+  const [commonAncestor, setCommonAncestor] = useState<HTMLElement>(null); //list children of the common ancestor of the arrow with start and end until start or end
 
   const updateIfNeeded = () => {
     if (checkIfAnchorsRefsChanged()) {
@@ -199,15 +199,15 @@ const Xarrow: React.FC<xarrowPropsType> = ({ ...props }: xarrowPropsType) => {
       commonAncestor.removeEventListener("scroll", updateIfNeeded);
   };
 
-  const initParentsChildrens = () => {
+  const initParentsChildren = () => {
     let anchorsCommonAncestor = findCommonAncestor(anchorsRefs.start, anchorsRefs.end);
     let allAncestor = findCommonAncestor(anchorsCommonAncestor, selfRef.current);
-    let allAncestorChildrensStart = findAllChildrens(anchorsRefs.start, allAncestor);
-    let allAncestorChildrensEnd = findAllChildrens(anchorsRefs.end, allAncestor);
+    let allAncestorChildrenStart = findAllChildren(anchorsRefs.start, allAncestor);
+    let allAncestorChildrenEnd = findAllChildren(anchorsRefs.end, allAncestor);
     setCommonAncestor(allAncestor);
     setAnchorsParents({
-      start: allAncestorChildrensStart,
-      end: allAncestorChildrensEnd,
+      start: allAncestorChildrenStart,
+      end: allAncestorChildrenEnd,
     });
     let allAncestorPosStyle = window.getComputedStyle(allAncestor).position;
     if (props.consoleWarning) {
@@ -216,7 +216,7 @@ const Xarrow: React.FC<xarrowPropsType> = ({ ...props }: xarrowPropsType) => {
         (allAncestor.scrollHeight > allAncestor.clientHeight || allAncestor.scrollWidth > allAncestor.clientWidth)
       )
         console.warn(
-          `Xarrow warning: it is recomnded to set common ancestor positioning style to 'relative',this will prevent rerender on every scroll event. 
+          `Xarrow warning: it is recommended to set common ancestor positioning style to 'relative',this will prevent rerender on every scroll event. 
         change position style from '${allAncestorPosStyle}' to 'relative' of element `,
           allAncestor
         );
@@ -227,17 +227,17 @@ const Xarrow: React.FC<xarrowPropsType> = ({ ...props }: xarrowPropsType) => {
           anchorsCommonAncestor,
           " and not ",
           selfRef.current.parentElement,
-          `if this was your intention set monitorDOMchanges to true so Xarrow will render whenever relevant DOM events are triggerd.
+          `if this was your intention set monitorDOMchanges to true so Xarrow will render whenever relevant DOM events are triggered.
           to disable this warnings set consoleWarning property to false`
         );
       if (
-        (allAncestorChildrensStart.length > 0 || allAncestorChildrensEnd.length > 0) &&
+        (allAncestorChildrenStart.length > 0 || allAncestorChildrenEnd.length > 0) &&
         props.monitorDOMchanges === false
       )
         console.warn(
           `Xarrow warning: set monitorDOMchanges to true - its possible that the positioning will get out of sync on DOM events(like scroll),
         on these elements`,
-          _.uniqWith([...allAncestorChildrensStart, ...allAncestorChildrensEnd], _.isEqual),
+          _.uniqWith([...allAncestorChildrenStart, ...allAncestorChildrenEnd], _.isEqual),
           `\nto disable this warnings set consoleWarning property to false`
         );
     }
@@ -337,7 +337,7 @@ const Xarrow: React.FC<xarrowPropsType> = ({ ...props }: xarrowPropsType) => {
   };
 
   useEffect(() => {
-    // equilavent to componentDidMount
+    // equivalent to componentDidMount
     // console.log("xarrow mounted");
     initProps();
     initRegisterEvents();
@@ -349,9 +349,9 @@ const Xarrow: React.FC<xarrowPropsType> = ({ ...props }: xarrowPropsType) => {
   }, []);
 
   useEffect(() => {
-    // Heppens only at mounting (or props changed) after anchorsRefs initialized
+    // Happens only at mounting (or props changed) after anchorsRefs initialized
     if (anchorsRefs.start) {
-      initParentsChildrens();
+      initParentsChildren();
     }
   }, [anchorsRefs]);
 
@@ -367,7 +367,7 @@ const Xarrow: React.FC<xarrowPropsType> = ({ ...props }: xarrowPropsType) => {
   }, [anchorsParents]);
 
   useEffect(() => {
-    // triggers position update when prevPosState changed(can heppen in any render)
+    // triggers position update when prevPosState changed(can happen in any render)
     if (prevPosState) updatePosition(prevPosState);
   }, [prevPosState]);
 
@@ -386,11 +386,11 @@ const Xarrow: React.FC<xarrowPropsType> = ({ ...props }: xarrowPropsType) => {
     y1: 0, //the y starting point of the line inside the canvas
     x2: 0, //the x ending point of the line inside the canvas
     y2: 0, //the y ending point of the line inside the canvas
-    dx: 0, // the x diffrence between 'start' anchor to 'end' anchor
-    dy: 0, // the y diffrence between 'start' anchor to 'end' anchor
-    absDx: 0, // the x length(positive) diffrence
-    absDy: 0, // the y length(positive) diffrence
-    cpx1: 0, // control points - control the curveness of the line
+    dx: 0, // the x difference between 'start' anchor to 'end' anchor
+    dy: 0, // the y difference between 'start' anchor to 'end' anchor
+    absDx: 0, // the x length(positive) difference
+    absDy: 0, // the y length(positive) difference
+    cpx1: 0, // control points - control the curviness of the line
     cpy1: 0,
     cpx2: 0,
     cpy2: 0,
@@ -404,7 +404,7 @@ const Xarrow: React.FC<xarrowPropsType> = ({ ...props }: xarrowPropsType) => {
     excRight: 0, //expand canvas to the right
     excLeft: 0, //expand canvas to the left
     excUp: 0, //expand canvas upwards
-    excDown: 0, // exapnd canvas downward
+    excDown: 0, // expand canvas downward
   });
 
   let { color, lineColor, headColor, headSize, strokeWidth, dashness } = props;
@@ -483,7 +483,7 @@ const Xarrow: React.FC<xarrowPropsType> = ({ ...props }: xarrowPropsType) => {
   };
 
   const updatePosition = (positions: prevPos): void => {
-    // Do NOT call thie function directly.
+    // Do NOT call this function directly.
     // you should set position by 'setPrevPosState(posState)' and that will trigger
     // this function in the useEffect hook.
 
@@ -507,7 +507,7 @@ const Xarrow: React.FC<xarrowPropsType> = ({ ...props }: xarrowPropsType) => {
       let defsOffsets = getAnchorsDefaultOffsets(anchorPos.right - anchorPos.x, anchorPos.bottom - anchorPos.y);
       // convert given anchors to array if array not already given
       let anchorChoice = Array.isArray(anchor) ? anchor : [anchor];
-      //now map each item in the list to relevent object
+      //now map each item in the list to relevant object
       let anchorChoiceMapped = anchorChoice.map((anchorChoice) => {
         if (typeOf(anchorChoice) === "string") {
           anchorChoice = anchorChoice as anchorPositionType;
@@ -520,26 +520,26 @@ const Xarrow: React.FC<xarrowPropsType> = ({ ...props }: xarrowPropsType) => {
           return anchorChoice;
         }
       });
-      //now build the object that represents the users possablities for diffrent anchors
-      let anchorPossabilities: anchorCustomPositionType[] = [];
+      //now build the object that represents the users possibilities for different anchors
+      let anchorPossibilities: anchorCustomPositionType[] = [];
       if (anchorChoiceMapped.map((a) => a.position).includes("auto")) {
         let autoAnchor = anchorChoiceMapped.find((a) => a.position === "auto");
         (["left", "right", "top", "bottom"] as anchorSideType[]).forEach((anchor) => {
           let offset = defsOffsets[anchor];
           offset.rightness += autoAnchor.offset.rightness;
           offset.bottomness += autoAnchor.offset.bottomness;
-          anchorPossabilities.push({ position: anchor, offset });
+          anchorPossibilities.push({ position: anchor, offset });
         });
       } else {
         anchorChoiceMapped.forEach((customAnchor) => {
           let offset = defsOffsets[customAnchor.position] as { rightness: number; bottomness: number };
           offset.rightness += customAnchor.offset.rightness;
           offset.bottomness += customAnchor.offset.bottomness;
-          anchorPossabilities.push({ position: customAnchor.position, offset });
+          anchorPossibilities.push({ position: customAnchor.position, offset });
         });
       }
-      // now preper this list of anchors to object expected by the `getShortestLine` function
-      let points = anchorPossabilities.map((pos) => ({
+      // now prepare this list of anchors to object expected by the `getShortestLine` function
+      let points = anchorPossibilities.map((pos) => ({
         x: anchorPos.x + pos.offset.rightness,
         y: anchorPos.y + pos.offset.bottomness,
         anchorPosition: pos.position,
@@ -560,7 +560,7 @@ const Xarrow: React.FC<xarrowPropsType> = ({ ...props }: xarrowPropsType) => {
     type t1 = { x: number; y: number; anchorPosition: anchorPositionType };
 
     const getShortestLine = (sPoints: t1[], ePoints: t1[]) => {
-      // closes tPair Of Points which feet to the specifed anchors
+      // closes tPair Of Points which feet to the specified anchors
       let minDist = Infinity,
         d = Infinity;
       let closestPair: { startPointObj: t1; endPointObj: t1 };
@@ -619,7 +619,7 @@ const Xarrow: React.FC<xarrowPropsType> = ({ ...props }: xarrowPropsType) => {
     if (dy < 0) [y1, y2] = [y2, y1];
 
     ////////////////////////////////////
-    // arrow curveness and arrowhead placement calculations
+    // arrow curviness and arrowhead placement calculations
     let xHeadOffset = 0;
     let yHeadOffset = 0;
     if (cu === 0) {
@@ -670,11 +670,11 @@ const Xarrow: React.FC<xarrowPropsType> = ({ ...props }: xarrowPropsType) => {
       cpx2 = x2,
       cpy2 = y2;
 
-    let curvesPossabilties = {};
+    let curvesPossibilities = {};
     if (path === "smooth")
-      curvesPossabilties = {
+      curvesPossibilities = {
         hh: () => {
-          //horizinatl - from right to left or the opposite
+          //horizontal - from right to left or the opposite
           cpx1 += absDx * cu * xSign;
           cpx2 -= absDx * cu * xSign;
           // cpx1 += headOffset * 2 * xSign;
@@ -688,20 +688,20 @@ const Xarrow: React.FC<xarrowPropsType> = ({ ...props }: xarrowPropsType) => {
           // cpy2 -= headOffset * 2 * ySign;
         },
         hv: () => {
-          // start horizintaly then verticaly
+          // start horizontally then vertically
           // from v side to h side
           cpx1 += absDx * cu * xSign;
           cpy2 -= absDy * cu * ySign;
         },
         vh: () => {
-          // start verticaly then horizintaly
+          // start vertically then horizontally
           // from h side to v side
           cpy1 += absDy * cu * ySign;
           cpx2 -= absDx * cu * xSign;
         },
       };
     else if (path === "grid") {
-      curvesPossabilties = {
+      curvesPossibilities = {
         hh: () => {
           cpx1 += (absDx * 0.5 - headOffset / 2) * xSign;
           cpx2 -= (absDx * 0.5 - headOffset / 2) * xSign;
@@ -719,19 +719,19 @@ const Xarrow: React.FC<xarrowPropsType> = ({ ...props }: xarrowPropsType) => {
       };
     }
 
-    let choosedCurveness = "";
-    if (["left", "right"].includes(startAnchor)) choosedCurveness += "h";
-    else if (["bottom", "top"].includes(startAnchor)) choosedCurveness += "v";
-    else if (startAnchor === "middle") choosedCurveness += "m";
-    if (["left", "right"].includes(endAnchor)) choosedCurveness += "h";
-    else if (["bottom", "top"].includes(endAnchor)) choosedCurveness += "v";
-    else if (endAnchor === "middle") choosedCurveness += "m";
-    if (absDx > absDy) choosedCurveness = choosedCurveness.replace(/m/g, "h");
-    else choosedCurveness = choosedCurveness.replace(/m/g, "v");
-    curvesPossabilties[choosedCurveness]();
+    let selectedCurviness = "";
+    if (["left", "right"].includes(startAnchor)) selectedCurviness += "h";
+    else if (["bottom", "top"].includes(startAnchor)) selectedCurviness += "v";
+    else if (startAnchor === "middle") selectedCurviness += "m";
+    if (["left", "right"].includes(endAnchor)) selectedCurviness += "h";
+    else if (["bottom", "top"].includes(endAnchor)) selectedCurviness += "v";
+    else if (endAnchor === "middle") selectedCurviness += "m";
+    if (absDx > absDy) selectedCurviness = selectedCurviness.replace(/m/g, "h");
+    else selectedCurviness = selectedCurviness.replace(/m/g, "v");
+    curvesPossibilities[selectedCurviness]();
 
     ////////////////////////////////////
-    // Buzier curve calcualtions
+    // Buzier curve calculations
     // bzCurve function:  bz = (1−t)^3*p1 + 3(1−t)^2*t*p2 +3(1−t)*t^2*p3 + t^3*p4
     // dt(bz) = -3 p1 (1 - t)^2 + 3 p2 (1 - t)^2 - 6 p2 (1 - t) t + 6 p3 (1 - t) t - 3 p3 t^2 + 3 p4 t^2
     // when p1=(x1,y1),p2=(cpx1,cpy1),p3=(cpx2,cpy2),p4=(x2,y2)
@@ -848,6 +848,8 @@ const Xarrow: React.FC<xarrowPropsType> = ({ ...props }: xarrowPropsType) => {
   if (path === "grid")
     arrowPath = `M ${st.x1} ${st.y1} L  ${st.cpx1} ${st.cpy1} L ${st.cpx2} ${st.cpy2} L  ${st.x2} ${st.y2}`;
 
+  // console.log("test");
+
   return (
     <div style={{ position: "absolute" }}>
       <svg
@@ -899,12 +901,11 @@ const Xarrow: React.FC<xarrowPropsType> = ({ ...props }: xarrowPropsType) => {
             />
           ) : null}
         </path>
-
         {/* head of the arrow */}
         <path
           d={`M 0 0 L ${fHeadSize} ${fHeadSize / 2} L 0 ${fHeadSize} L ${fHeadSize / 4} ${fHeadSize / 2} z`}
           fill={headColor}
-          style={{ pointerEvents: "all" }}
+          // pointerEvents="all"
           transform={`translate(${xOffsetHead},${yOffsetHead}) rotate(${st.headOrient})`}
           {...(props.passProps as string)}
           {...(arrowHead as string)}
