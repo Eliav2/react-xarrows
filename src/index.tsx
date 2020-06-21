@@ -164,13 +164,16 @@ const Xarrow: React.FC<xarrowPropsType> = ({ ...props }: xarrowPropsType) => {
       //first check if any properties changed
       if (prevProps) {
         initProps();
-        setPrevPosState(getAnchorsPos());
+        let posState = getAnchorsPos();
+        setPrevPosState(posState);
+        updatePosition(posState);
       }
     } else {
       //if the properties did not changed - update position if needed
       let posState = getAnchorsPos();
       if (!_.isEqual(prevPosState, posState)) {
         setPrevPosState(posState);
+        updatePosition(posState);
       }
     }
   };
@@ -366,10 +369,10 @@ const Xarrow: React.FC<xarrowPropsType> = ({ ...props }: xarrowPropsType) => {
     }
   }, [anchorsParents]);
 
-  useEffect(() => {
-    // triggers position update when prevPosState changed(can happen in any render)
-    if (prevPosState) updatePosition(prevPosState);
-  }, [prevPosState]);
+  // useEffect(() => {
+  //   // triggers position update when prevPosState changed(can happen in any render)
+  //   if (prevPosState) updatePosition(prevPosState);
+  // }, [prevPosState]);
 
   useEffect(() => {
     // console.log("xarrow rendered!");
