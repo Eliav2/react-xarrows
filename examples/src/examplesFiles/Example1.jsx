@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import Xarrow, { XarrowElement } from "react-xarrows";
+import Xarrow from "react-xarrows";
 import Draggable from "react-draggable";
 
 const canvasStyle = {
@@ -29,27 +29,6 @@ const boxStyle = {
   height: "30px",
 };
 
-const Box = (props) => {
-  const [dumyRender, setDumyRender] = useState({});
-  console.log(props.box.id + " render");
-  props.connectedLines.forEach((l) => {
-    if (l.reference.current) l.reference.current.triggerUpdate();
-  });
-  return (
-    <Draggable
-      onDrag={() => setDumyRender({})}
-      onStop={() => setDumyRender({})}
-      // onDrag={() => props.setBoxes((boxes) => [...boxes])}
-      // onStop={() => props.setBoxes((boxes) => [...boxes])}
-      defaultPosition={{ x: props.box.x, y: props.box.y }}
-    >
-      <div ref={props.box.ref} id={props.box.id} style={boxStyle}>
-        {props.box.id}
-      </div>
-    </Draggable>
-  );
-};
-
 const Example1 = () => {
   const [boxes, setBoxes] = useState([
     { id: "box1", x: 50, y: 20, ref: useRef(null) },
@@ -59,41 +38,39 @@ const Example1 = () => {
 
   const [lines] = useState([
     {
-      start: "box1",
-      end: "box2",
+      from: "box1",
+      to: "box2",
       headSize: 14,
-      label: { end: "endLabel" },
-      reference: useRef(),
+      label: { end: "endLable" },
     },
-    // {
-    //   start: "box2",
-    //   end: "box3",
-    //   color: "red",
-    //   label: {
-    //     middle: (
-    //       <div
-    //         contentEditable
-    //         suppressContentEditableWarning={true}
-    //         style={{ font: "italic 1.5em serif", color: "purple" }}
-    //       >
-    //         Editable label
-    //       </div>
-    //     ),
-    //   },
-    //   headSize: 0,
-    //   strokeWidth: 15,
-    //   reference: useRef(),
-    // },
-    // {
-    //   start: "box3",
-    //   end: "box1",
-    //   color: "green",
-    //   dashness: { animation: 1 },
-    //   reference: useRef(),
-    // },
+    {
+      from: "box2",
+      to: "box3",
+      color: "red",
+      label: {
+        middle: (
+          <div
+            contentEditable
+            suppressContentEditableWarning={true}
+            style={{ font: "italic 1.5em serif", color: "purple" }}
+          >
+            Editable label
+          </div>
+        ),
+      },
+      headSize: 0,
+      strokeWidth: 15,
+    },
+    {
+      from: "box3",
+      to: "box1",
+      color: "green",
+      path: "grid",
+
+      dashness: { animation: 1 },
+    },
   ]);
 
-  console.log(lines);
   return (
     <React.Fragment>
       <h3>
@@ -106,26 +83,21 @@ const Example1 = () => {
       <div style={canvasStyle} id="canvas">
         <div style={boxContainerStyle} id="boxContainerConatinerStyle">
           <div style={boxContainerStyle} id="boxContainerStyle">
-            {/* <XarrowProvider> */}
             {boxes.map((box, i) => (
-              // <XarrowElement key={i}>
-              <Box
-                key={i}
-                box={box}
-                setBoxes={setBoxes}
-                connectedLines={lines.filter((l) => l.start === box.id || l.end === box.id)}
-              />
-              // </XarrowElement>
-              // <Draggable onDrag={() => setBoxes([...boxes])} key={i}>
-              //   <div ref={box.ref} style={{ ...boxStyle, left: box.x, top: box.y }}>
-              //     {box.id}
-              //   </div>
-              // </Draggable>
+              <Draggable onDrag={() => setBoxes([...boxes])} key={i}>
+                <div ref={box.ref} style={{ ...boxStyle, left: box.x, top: box.y }}>
+                  {box.id}
+                </div>
+              </Draggable>
             ))}
             {lines.map((line, i) => (
-              <Xarrow key={i} ref={line.reference} {...line} />
+              <Xarrow
+                key={i}
+                start={boxes.find((box) => box.id === line.from).ref}
+                end={boxes.find((box) => box.id === line.to).ref}
+                {...line}
+              />
             ))}
-            {/* </XarrowProvider> */}
           </div>
         </div>
       </div>
