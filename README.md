@@ -4,11 +4,14 @@
 
 Draw arrows between components in React!
 
-This library is all about customizable and reliable arrows(or lines) between DOM elements in React.
+#### main features
 
-I've needed such a components in one of my projects - and found out(surprisingly enough) that there is no such(good) lib, so I've decided to create one from scratch, and share it.
-
-now (since v1.1.4) i can say, after a lot of tests and improvements- the arrows should work and act naturally under any normal circumstances(but don't try put some negative curveness ha?).
+- Connect between elements by passing a ref or an id for startElement and endElement.
+- Automatic anchoring based on smallest path.
+- can add customizable labels
+- relatively fast algorithm to find path and to adjust canvas.
+- Easily customize the look and behavior of the arrow.
+- Written in typescript so you get nice props suggestions(but support js also of course).
 
 found a problem? not a problem! post a new issue([here](https://github.com/Eliav2/react-xarrows/issues)) and i will do my best to fix it.
 
@@ -22,6 +25,8 @@ with npm `npm install react-xarrows`.
 (or `yarn add react-xarrows`)
 
 ## Examples
+
+#### Demos
 
 [see here!](https://codesandbox.io/embed/github/Eliav2/react-xarrows/tree/master/examples?fontsize=14&hidenavigation=1&theme=dark) codebox of few examples(in this repo at /examples).
 
@@ -42,7 +47,9 @@ const boxStyle = {
 function SimpleExample() {
   const box1Ref = useRef(null);
   return (
-    <div style={{ display: "flex", justifyContent: "space-evenly", width: "100%" }}>
+    <div
+      style={{ display: "flex", justifyContent: "space-evenly", width: "100%" }}
+    >
       <div ref={box1Ref} style={boxStyle}>
         hey
       </div>
@@ -114,8 +121,10 @@ export type registerEventsType = {
 ```
 
 you can keep things simple or provide more detailed props for more custom behavior - the API except both.
-for example - you can provide `label:"middleLabel"` and the string will appear as middle label or customize the labels as you please: `label:{end:{text:"end",extra:{fill:"red",dx:-10}}}`.
+for example - you can provide:<br/> `label:"middleLabel"` and the string will appear as middle label.<br/> or customize the labels as you please: `label:{end:<div style={{ fontSize: "1.3em", fontFamily: "fantasy", fontStyle: "italic" }}>big end label</div>}}`.
 see typescript types above for detailed descriptions of what type excepts every prop.
+
+### Properties
 
 #### 'start' and 'end'
 
