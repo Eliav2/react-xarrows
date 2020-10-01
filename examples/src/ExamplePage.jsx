@@ -1,9 +1,10 @@
 import React from "react";
 import Example1 from "./examplesFiles/Example1";
 import Example2 from "./examplesFiles/Example2";
-import Example4 from "./examplesFiles/Example4";
+// import Example4 from "./examplesFiles/Example4";
 import SimpleExample from "./examplesFiles/SimpleExample";
 import Playground from "./examplesFiles/Playground/Playground";
+import Zoom from "./examplesFiles/Zoom";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 
 const titleStyle = {
@@ -20,15 +21,30 @@ const ExamplePage = () => {
         Draw arrows between components in React!
         <br />
         <br />
-        <a href="https://github.com/Eliav2/react-xarrows" target="_blank" rel="noopener noreferrer">
+        <a
+          href="https://github.com/Eliav2/react-xarrows"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           View on Github
-        </a><br />
-        <a href="https://www.npmjs.com/package/react-xarrows" target="_blank" rel="noopener noreferrer">
+        </a>
+        <br />
+        <a
+          href="https://www.npmjs.com/package/react-xarrows"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           View on npm
-        </a><br />
-        <a href="https://eliav2.github.io/react-xarrows/" target="_blank" rel="noopener noreferrer">
+        </a>
+        <br />
+        <a
+          href="https://eliav2.github.io/react-xarrows/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           Home page
-        </a><br />
+        </a>
+        <br />
         <br />
         no magical css traformations - just great react.
         <br />
@@ -48,15 +64,32 @@ const ExamplePage = () => {
             <Link to="/Example2">
               <button>Example2</button>
             </Link>
-            <Link to="/Example4">
-              <button>Example4</button>
-            </Link>
+            {/*<Link to="/Example4">*/}
+            {/*  <button>Example4</button>*/}
+            {/*</Link>*/}
           </div>
-          <div style={{ display: "flex", justifyContent: "center", marginTop: "10px" }}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              marginTop: "10px",
+            }}
+          >
             <Link to="/Playground">
               <button>Playground</button>
             </Link>
           </div>
+          {/*<div*/}
+          {/*  style={{*/}
+          {/*    display: "flex",*/}
+          {/*    justifyContent: "center",*/}
+          {/*    marginTop: "10px",*/}
+          {/*  }}*/}
+          {/*>*/}
+          {/*  <Link to="/Zoom">*/}
+          {/*    <button>Zoom</button>*/}
+          {/*  </Link>*/}
+          {/*</div>*/}
         </div>
 
         <Switch>
@@ -77,12 +110,15 @@ const ExamplePage = () => {
           <Route path="/Example2">
             <Example2 />
           </Route>
-          <Route path="/Example4">
-            <Example4 />
-          </Route>
+          {/*<Route path="/Example4">*/}
+          {/*  <Example4 />*/}
+          {/*</Route>*/}
           <Route path="/Playground">
             <Playground />
           </Route>
+          {/*<Route path="/Zoom">*/}
+          {/*  <Zoom />*/}
+          {/*</Route>*/}
         </Switch>
       </Router>
     </div>

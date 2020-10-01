@@ -89,7 +89,6 @@ export type xarrowPropsType = {
   path: "smooth" | "grid" | "straight";
   curveness?: number;
   dashness?: boolean | { strokeLen?: number; nonStrokeLen?: number; animation?: boolean | number };
-  consoleWarning?: boolean;
   passProps?: React.SVGProps<SVGPathElement>;
   advanced?: {
     extendSVGcanvas?: number;
@@ -99,8 +98,6 @@ export type xarrowPropsType = {
       arrowHead?: React.SVGProps<SVGPathElement>;
     };
   };
-  monitorDOMchanges?: boolean;
-  registerEvents?: registerEventsType[];
 };
 
 export type anchorType = anchorPositionType | anchorCustomPositionType;
@@ -139,9 +136,9 @@ can also be a list of possible anchors. if list is provided - the minimal length
 you can also offset each anchor passing `offset`.
 examples:
 
-- `endAnchor="middle"` will choose anchor or the end of the line to in the middle of the element
+- `endAnchor="middle"` will set the anchor of the end of the line to the middle of the end element.
 - `endAnchor= { position: "auto", offset: { rightness: 20 } }` will choose automatic anchoring for end anchor but will offset it 20 pixels to the right after normal positioning.
-
+- `endAnchor= ["right", {position: "left", offset: {bottomness: -10}}]` only right and left anchors are allowed for endAnchor, and the left side will be offset 10 pixels up 
 #### label
 
 changed api since v1.4.0. now each label can be jsx element or string, but not object.
@@ -208,10 +205,6 @@ examples:
 - `passProps= {{cursor: "pointer"}}` - now the cursor will change to pointer style when hovering over Xarrow.
 - `passProps= {{pointerEvents: "none"}}` - now the user cannot interact with Xarrow via mouse events.
 
-#### consoleWarning
-
-we provide some nice warnings (and errors) whenever we detect issues. see 'Example3' at the examples codesandbox.
-
 #### advanced
 
 here i will provide some flexibility to the API for some cases that i may not thought of.
@@ -228,17 +221,6 @@ note that `arrowBody` and `arrowHead` receives props of svg path element and `SV
 examples:
 
 - `advanced= {{passProps: {arrowHead:{onClick: () => console.log("head clicked!")}}}}` - now only the head will console log a message when clicked.
-
-#### monitorDOMchanges
-
-A boolean. set this property to true to add relevant eventListeners to the DOM so the xarrow component will update anchors position whenever needed(scroll and resize and so on). (NOTE - maybe will removed in future updates )
-examples:
-
-- `monitorDOMchanges={false}` will disable any DOM monitoring.
-
-#### registerEvents
-
-you can register the xarrow to DOM event as you please. each time a event that his registered will fire the xarrow component will update his position and will call `callback` (if provided). (NOTE - planned to be removed)
 
 ### default props
 
@@ -257,17 +239,10 @@ Xarrow.defaultProps = {
   path: "smooth",
   curveness: 0.8,
   dashness: false,
-  consoleWarning: false,
   passProps: {},
   advanced: { extendSVGcanvas: 0, passProps: { arrowBody: {}, arrowHead: {}, SVGcanvas: {} } },
-  monitorDOMchanges: true,
-  registerEvents: [],
-};
 };
 ```
 
 ## Versions
-
-All version notes moved to [releases](https://github.com/Eliav2/react-xarrows/releases).
-1.4.0 - changed `label` property API and added `path` property.
-1.4.1-2 - minor bug fixes, performance improvement.
+See CHANGELOG.md in this repo.

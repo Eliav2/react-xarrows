@@ -96,8 +96,20 @@ const Example4 = () => {
   useEffect(() => {
     let { scrollHeight: h1, scrollWidth: w1 } = boxContainerRef.current;
     let { scrollHeight: h2, scrollWidth: w2 } = boxContainer2Ref.current;
-    setBoxes((boxes) => boxes.map((box) => ({ ...box, x: 0.01 * box.x * w1, y: 0.01 * box.y * h1 })));
-    setBoxes2((boxes) => boxes.map((box) => ({ ...box, x: 0.01 * box.x * w2, y: 0.01 * box.y * h2 })));
+    setBoxes((boxes) =>
+      boxes.map((box) => ({
+        ...box,
+        x: 0.01 * box.x * w1,
+        y: 0.01 * box.y * h1,
+      }))
+    );
+    setBoxes2((boxes) =>
+      boxes.map((box) => ({
+        ...box,
+        x: 0.01 * box.x * w2,
+        y: 0.01 * box.y * h2,
+      }))
+    );
   }, []);
 
   return (
@@ -106,29 +118,45 @@ const Example4 = () => {
         <u>Example4:</u>
       </h3>
 
-      <p> works perfectly no matter the parent-child relationship between the Xarrow and the source and target.</p>
+      <p>
+        {" "}
+        works perfectly no matter the parent-child relationship between the
+        Xarrow and the source and target.
+      </p>
       <div style={canvasStyle} id="canvas">
         <div ref={boxContainerRef} style={boxContainerStyle} id="boxContainer1">
           {boxes.map((box, i) => (
             <Box key={i} box={box} boxes={boxes} setBoxes={setBoxes} />
           ))}
         </div>
-        <div ref={boxContainer2Ref} style={boxContainerStyle} id="boxContainer2">
+        {lines.map((line, i) => (
+          <Xarrow
+            key={i}
+            start={getRefById(line.from)}
+            end={getRefById(line.to)}
+            monitorDOMchanges={true}
+          />
+        ))}
+
+        <div
+          ref={boxContainer2Ref}
+          style={boxContainerStyle}
+          id="boxContainer2"
+        >
           {boxes2.map((box, i) => (
             <Box key={i} box={box} boxes={boxes2} setBoxes={setBoxes2} />
           ))}
         </div>
-        {lines.map((line, i) => (
-          <Xarrow key={i} start={getRefById(line.from)} end={getRefById(line.to)} monitorDOMchanges={true} />
-        ))}
       </div>
       <p>
         {" "}
         set <code>monitorDOMchanges </code>
-        property to <code>true</code> to enable this behavior - this will add eventListeners to the DOM and will trigger
-        update when needed(expereintial).
-        <br /> however - make sure you put the Xarrow component as son of the common ancestor of 'start' component and
-        'end' component <b>so the Xarrow will not rerender when not needed</b>.{" "}
+        property to <code>true</code> to enable this behavior - this will add
+        eventListeners to the DOM and will trigger update when
+        needed(expereintial).
+        <br /> however - make sure you put the Xarrow component as son of the
+        common ancestor of 'start' component and 'end' component{" "}
+        <b>so the Xarrow will not rerender when not needed</b>.{" "}
       </p>
     </React.Fragment>
   );

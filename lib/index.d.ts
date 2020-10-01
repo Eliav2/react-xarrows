@@ -10,7 +10,7 @@ export declare type xarrowPropsType = {
     headColor?: string | null;
     strokeWidth?: number;
     headSize?: number;
-    path: "smooth" | "grid" | "straight";
+    path?: "smooth" | "grid" | "straight";
     curveness?: number;
     dashness?: boolean | {
         strokeLen?: number;

@@ -1,0 +1,3 @@
+- fix https://github.com/Eliav2/react-xarrows/issues/27
+- fix https://github.com/Eliav2/react-xarrows/issues/30
+- fix https://github.com/Eliav2/react-xarrows/issues/29

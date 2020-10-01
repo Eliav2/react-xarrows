@@ -26,7 +26,11 @@ const canvasStyle = {
 const Box = (props) => {
   return (
     <Draggable onDrag={() => props.setBox({ ...props.box })}>
-      <div ref={props.box.ref} id={props.box.id} style={{ ...boxStyle, left: props.box.x, top: props.box.y }}>
+      <div
+        ref={props.box.ref}
+        id={props.box.id}
+        style={{ ...boxStyle, left: props.box.x, top: props.box.y }}
+      >
         {props.box.id}
       </div>
     </Draggable>
@@ -36,8 +40,18 @@ const Box = (props) => {
 const Example2 = () => {
   const [showMe, setShowMe] = useState(true);
 
-  const [box, setBox] = useState({ id: "box1", x: 20, y: 20, ref: useRef(null) });
-  const [box2, setBox2] = useState({ id: "box2", x: 320, y: 120, ref: useRef(null) });
+  const [box, setBox] = useState({
+    id: "box1",
+    x: 20,
+    y: 20,
+    ref: useRef(null),
+  });
+  const [box2, setBox2] = useState({
+    id: "box2",
+    x: 320,
+    y: 120,
+    ref: useRef(null),
+  });
 
   const [color, setColor] = useState("red");
   const [lineColor, setLineColor] = useState(null);
@@ -69,11 +83,20 @@ const Example2 = () => {
     headSize: Number(headSize),
     dashness: dashed ? { animation: Number(animation) } : false,
     path: pathGrid,
-    startAnchor,
     label: {
       start: "I'm start label",
       middle: "middleLable",
-      end: <div style={{ fontSize: "1.3em", fontFamily: "fantasy", fontStyle: "italic" }}>big end label</div>,
+      end: (
+        <div
+          style={{
+            fontSize: "1.3em",
+            fontFamily: "fantasy",
+            fontStyle: "italic",
+          }}
+        >
+          big end label
+        </div>
+      ),
     },
     monitorDOMchanges: false,
     registerEvents: [],
@@ -88,20 +111,32 @@ const Example2 = () => {
       </h3>
       <p>
         {" "}
-        This example shows some of the main API options. give the arrow diffrent properties to customize his look. note
-        that some options are cannot be changed though this GUI(like custom lables or advande dashness and more) play
-        with them directly at this codesandbox!.
+        This example shows some of the main API options. give the arrow diffrent
+        properties to customize his look. note that some options are cannot be
+        changed though this GUI(like custom lables or advande dashness and more)
+        play with them directly at this codesandbox!.
       </p>
 
       <button onClick={() => setShowMe(!showMe)}>toggle</button>
       {showMe ? (
         <div>
-          <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
-            <div style={{ display: "flex", alignItems: "center", marginRight: 20 }}>
+          <div
+            style={{ width: "100%", display: "flex", justifyContent: "center" }}
+          >
+            <div
+              style={{ display: "flex", alignItems: "center", marginRight: 20 }}
+            >
               <p>startAnchor: </p>
               <div>
                 {anchorsTypes.map((anchor, i) => (
-                  <div key={i} style={{ display: "flex", alignItems: "center", height: 25 }}>
+                  <div
+                    key={i}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      height: 25,
+                    }}
+                  >
                     <p>{anchor}</p>
                     <input
                       style={{ height: "15px", width: "15px" }}
@@ -122,11 +157,20 @@ const Example2 = () => {
                 ))}
               </div>
             </div>{" "}
-            <div style={{ display: "flex", alignItems: "center", marginLeft: 20 }}>
+            <div
+              style={{ display: "flex", alignItems: "center", marginLeft: 20 }}
+            >
               <p>endAnchor: </p>
               <div>
                 {anchorsTypes.map((anchor, i) => (
-                  <div key={i} style={{ display: "flex", alignItems: "center", height: 25 }}>
+                  <div
+                    key={i}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      height: 25,
+                    }}
+                  >
                     <p>{anchor}</p>
                     <input
                       style={{ height: "15px", width: "15px" }}
@@ -225,7 +269,9 @@ const Example2 = () => {
                       style={{ height: "15px", width: "15px" }}
                       type="checkBox"
                       checked={dashed}
-                      onChange={(e) => setDashed(e.target.checked ? true : false)}
+                      onChange={(e) =>
+                        setDashed(e.target.checked ? true : false)
+                      }
                     />
                   </div>
                 </td>

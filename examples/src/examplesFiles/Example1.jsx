@@ -66,7 +66,7 @@ const Example1 = () => {
       to: "box1",
       color: "green",
       path: "grid",
-
+      // endAnchor: ["right", {position: "left", offset: {bottomness: -10}}],
       dashness: { animation: 1 },
     },
   ]);
@@ -77,15 +77,18 @@ const Example1 = () => {
         <u>Example1:</u>
       </h3>
       <p>
-        automatic anchoring to the minimal length. works also when inside scrollable window. drag the boxes to play
-        around.
+        automatic anchoring to the minimal length. works also when inside
+        scrollable window. drag the boxes to play around.
       </p>
       <div style={canvasStyle} id="canvas">
         <div style={boxContainerStyle} id="boxContainerConatinerStyle">
           <div style={boxContainerStyle} id="boxContainerStyle">
             {boxes.map((box, i) => (
               <Draggable onDrag={() => setBoxes([...boxes])} key={i}>
-                <div ref={box.ref} style={{ ...boxStyle, left: box.x, top: box.y }}>
+                <div
+                  ref={box.ref}
+                  style={{ ...boxStyle, left: box.x, top: box.y }}
+                >
                   {box.id}
                 </div>
               </Draggable>
