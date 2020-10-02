@@ -4,7 +4,7 @@ import Example2 from "./examplesFiles/Example2";
 // import Example4 from "./examplesFiles/Example4";
 import SimpleExample from "./examplesFiles/SimpleExample";
 import Playground from "./examplesFiles/Playground/Playground";
-import Zoom from "./examplesFiles/Zoom";
+// import Zoom from "./examplesFiles/Zoom";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 
 const titleStyle = {
