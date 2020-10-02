@@ -25,7 +25,7 @@ const canvasStyle = {
 
 const Box = (props) => {
   return (
-    <Draggable onDrag={() => props.setBox({ ...props.box })}>
+    <Draggable onDrag={props.forceRerender} onStop={props.forceRerender}>
       <div
         ref={props.box.ref}
         id={props.box.id}
@@ -38,20 +38,24 @@ const Box = (props) => {
 };
 
 const Example2 = () => {
+  const [, setRender] = useState({});
+  const forceRerender = () => setRender({});
+
   const [showMe, setShowMe] = useState(true);
 
-  const [box, setBox] = useState({
+  const box = {
     id: "box1",
     x: 20,
     y: 20,
     ref: useRef(null),
-  });
-  const [box2, setBox2] = useState({
+  };
+
+  const box2 = {
     id: "box2",
     x: 320,
     y: 120,
     ref: useRef(null),
-  });
+  };
 
   const [color, setColor] = useState("red");
   const [lineColor, setLineColor] = useState(null);
@@ -141,7 +145,7 @@ const Example2 = () => {
                     <input
                       style={{ height: "15px", width: "15px" }}
                       type="checkBox"
-                      checked={startAnchor.includes(anchor) ? true : false}
+                      checked={startAnchor.includes(anchor)}
                       // value={}
                       onChange={(e) => {
                         if (e.target.checked) {
@@ -175,7 +179,7 @@ const Example2 = () => {
                     <input
                       style={{ height: "15px", width: "15px" }}
                       type="checkBox"
-                      checked={endAnchor.includes(anchor) ? true : false}
+                      checked={endAnchor.includes(anchor)}
                       // value={}
                       onChange={(e) => {
                         if (e.target.checked) {
@@ -269,9 +273,7 @@ const Example2 = () => {
                       style={{ height: "15px", width: "15px" }}
                       type="checkBox"
                       checked={dashed}
-                      onChange={(e) =>
-                        setDashed(e.target.checked ? true : false)
-                      }
+                      onChange={(e) => setDashed(e.target.checked)}
                     />
                   </div>
                 </td>
@@ -301,11 +303,11 @@ const Example2 = () => {
           </table>
           <br />
           <div style={canvasStyle} id="canvas">
-            <Box box={box} setBox={setBox} />
-            <Box box={box2} setBox={setBox2} />
+            <Box box={box} forceRerender={forceRerender} />
+            <Box box={box2} forceRerender={forceRerender} />
             <Xarrow {...props} />
           </div>
-          {/*what will heppen if you will move Xarrow here? try!*/}
+          {/*what will happen if you will move Xarrow here? try!*/}
         </div>
       ) : null}
     </div>

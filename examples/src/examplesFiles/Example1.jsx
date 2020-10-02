@@ -30,22 +30,25 @@ const boxStyle = {
 };
 
 const Example1 = () => {
-  const [boxes, setBoxes] = useState([
+  const [, setRender] = useState({});
+  const forceRerender = () => setRender({});
+
+  const boxes = [
     { id: "box1", x: 50, y: 20, ref: useRef(null) },
     { id: "box2", x: 20, y: 250, ref: useRef(null) },
     { id: "box3", x: 350, y: 80, ref: useRef(null) },
-  ]);
+  ];
 
   const [lines] = useState([
     {
-      from: "box1",
-      to: "box2",
+      start: "box1",
+      end: "box2",
       headSize: 14,
       label: { end: "endLable" },
     },
     {
-      from: "box2",
-      to: "box3",
+      start: "box2",
+      end: "box3",
       color: "red",
       label: {
         middle: (
@@ -62,8 +65,8 @@ const Example1 = () => {
       strokeWidth: 15,
     },
     {
-      from: "box3",
-      to: "box1",
+      start: "box3",
+      end: "box1",
       color: "green",
       path: "grid",
       // endAnchor: ["right", {position: "left", offset: {bottomness: -10}}],
@@ -84,9 +87,9 @@ const Example1 = () => {
         <div style={boxContainerStyle} id="boxContainerConatinerStyle">
           <div style={boxContainerStyle} id="boxContainerStyle">
             {boxes.map((box, i) => (
-              <Draggable onDrag={() => setBoxes([...boxes])} key={i}>
+              <Draggable onStop={forceRerender} onDrag={forceRerender} key={i}>
                 <div
-                  ref={box.ref}
+                  id={box.id}
                   style={{ ...boxStyle, left: box.x, top: box.y }}
                 >
                   {box.id}
@@ -94,12 +97,7 @@ const Example1 = () => {
               </Draggable>
             ))}
             {lines.map((line, i) => (
-              <Xarrow
-                key={i}
-                start={boxes.find((box) => box.id === line.from).ref}
-                end={boxes.find((box) => box.id === line.to).ref}
-                {...line}
-              />
+              <Xarrow key={i} {...line} />
             ))}
           </div>
         </div>
