@@ -245,4 +245,4 @@ Xarrow.defaultProps = {
 ```
 
 ## Versions
-See CHANGELOG.md in this repo.
+See [CHANGELOG.md](https://github.com/Eliav2/react-xarrows/blob/master/CHANGELOG.md) in this repo.
