@@ -92,8 +92,6 @@ const Example2 = () => {
         </TransformComponent>
       </TransformWrapper>
       <Xarrow {...props} />
-
-      {/*what will heppen if you will move Xarrow here? try!*/}
     </div>
   );
 };

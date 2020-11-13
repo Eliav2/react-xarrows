@@ -102,10 +102,7 @@ const Example2 = () => {
         </div>
       ),
     },
-    monitorDOMchanges: false,
-    registerEvents: [],
-    // consoleWarning: true,
-    advanced: { extendSVGcanvas: 0 },
+    // extendSVGcanvas: 500,
   };
 
   return (

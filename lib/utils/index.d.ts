@@ -2,4 +2,4 @@ declare type extendedJtypes = "string" | "number" | "bigint" | "boolean" | "symb
 export declare const getElementByPropGiven: (ref: any) => HTMLElement;
 export declare const typeOf: (arg: any) => extendedJtypes;
 export {};
-//# sourceMappingURL=utils.d.ts.map
+//# sourceMappingURL=index.d.ts.map
