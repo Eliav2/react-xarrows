@@ -1,11 +1,4 @@
 import React from "react";
-// import Example1 from "./examplesFiles/Example1";
-// import Example2 from "./examplesFiles/Example2";
-// import ZindexExample from "./examplesFiles/ZindexExample";
-// // import Example4 from "./examplesFiles/Example4";
-//
-// import SimpleExample from "./examplesFiles/SimpleExample";
-// import Playground from "./examplesFiles/Playground/Playground";
 
 import examples from "./examplesFiles";
 

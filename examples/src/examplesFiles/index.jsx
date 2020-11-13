@@ -9,7 +9,7 @@ export default {
   SimpleExample: { name: "SimpleExample", component: SimpleExample },
   Example1: { name: "Example1", component: Example1 },
   Example2: { name: "Example2", component: Example2 },
-  Example4: { name: "Example4", component: Example4 },
+  // Example4: { name: "Example4", component: Example4 },
   // ZindexExample: { name: "ZindexExample", component: ZindexExample },
   Playground: { name: "Playground", component: Playground },
 };
