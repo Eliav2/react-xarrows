@@ -6522,20 +6522,10 @@ lodash._reinterpolate@^3.0.0:
   resolved "https://registry.yarnpkg.com/lodash._reinterpolate/-/lodash._reinterpolate-3.0.0.tgz#0ccf2d89166af03b3663c796538b75ac6e114d9d"
   integrity sha1-DM8tiRZq8Ds2Y8eWU4t1rG4RTZ0=
 
-lodash.isequal@^4.5.0:
-  version "4.5.0"
-  resolved "https://registry.yarnpkg.com/lodash.isequal/-/lodash.isequal-4.5.0.tgz#415c4478f2bcc30120c22ce10ed3226f7d3e18e0"
-  integrity sha1-QVxEePK8wwEgwizhDtMib30+GOA=
-
 lodash.memoize@^4.1.2:
   version "4.1.2"
   resolved "https://registry.yarnpkg.com/lodash.memoize/-/lodash.memoize-4.1.2.tgz#bcc6c49a42a2840ed997f323eada5ecd182e0bfe"
   integrity sha1-vMbEmkKihA7Zl/Mj6tpezRguC/4=
-
-lodash.pick@^4.4.0:
-  version "4.4.0"
-  resolved "https://registry.yarnpkg.com/lodash.pick/-/lodash.pick-4.4.0.tgz#52f05610fff9ded422611441ed1fc123a03001b3"
-  integrity sha1-UvBWEP/53tQiYRRB7R/BI6AwAbM=
 
 lodash.sortby@^4.7.0:
   version "4.7.0"
@@ -8739,15 +8729,6 @@ react-scripts@^3.3.0:
     workbox-webpack-plugin "4.3.1"
   optionalDependencies:
     fsevents "2.1.2"
-
-react-xarrows@latest:
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/react-xarrows/-/react-xarrows-1.5.0.tgz#ddcb675e53f3a588257ea7e3ca724803bdce37cb"
-  integrity sha512-j0HbDjVgZr4pm6xXEK/7QshrCzZH7rQ0KDZ7YbE8SeHcUecm6jMaFjNXRGmoxK6ZM2s74C2n/Bu48t1xJlEa4A==
-  dependencies:
-    lodash.isequal "^4.5.0"
-    lodash.pick "^4.4.0"
-    prop-types "^15.7.2"
 
 react-zoom-pan-pinch@^1.6.1:
   version "1.6.1"
