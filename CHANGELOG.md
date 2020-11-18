@@ -2,7 +2,8 @@
 - properties that are completely removed and no longer supported: `consoleWarning`, `monitorDOMchanges` and `registerEvents`.
 - issues related to jest and other issues has fixed.
 - dependencies changed: prop-types added in lodash replaced with lodash.isequal and lodash.pick.
-- v1.5.1 - minor code and docs updates. 
+- v1.5.1 - minor code and docs updates. [DEPRECATED]
+- v1.5.2 - debug element was published by mistake at v1.5.1. 
 
 improved documentation:
 - added CHANGELOG.md file.
