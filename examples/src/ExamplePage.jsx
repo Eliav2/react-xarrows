@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 
 import examples from "./examplesFiles";
 
@@ -10,6 +10,7 @@ const titleStyle = {
 };
 
 const ExamplePage = () => {
+  console.log("h ey!");
   return (
     <div>
       <header style={titleStyle}>react-xarrows</header>
@@ -59,7 +60,7 @@ const ExamplePage = () => {
               <button>home</button>
             </Link>
             {Object.keys(examples).map((exampleName) => (
-              <Link to={"/" + exampleName}>
+              <Link to={"/" + exampleName} key={exampleName}>
                 <button>{exampleName}</button>
               </Link>
             ))}

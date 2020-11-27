@@ -1,4 +1,4 @@
-//// @ts-nocheck
+// @ts-nocheck
 
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import isEqual from "lodash.isequal";
