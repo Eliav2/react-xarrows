@@ -226,8 +226,8 @@ examples:
 
 ##### extendSVGcanvas
 
-will extend the svg canvas at all sides. can be useful if for some reason the arrow(or labels) is cut though to small svg canvas(should be used in advanced custom arrows, for example if you used `dx` to move one of the labels and at exceeded the canvas).
-example: `advanced= {{extendSVGcanvas: 30 }}` - will extended svg canvas in all sides by 30 pixels.
+will extend the svg canvas at all sides. can be useful if for some reason the arrow(or labels) is cut though to small svg canvas(should be used in advanced custom arrows).
+example: `extendSVGcanvas = {30}` - will extended svg canvas in all sides by 30 pixels.
 
 ##### passProps
 
