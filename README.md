@@ -37,7 +37,6 @@ with npm `npm install react-xarrows`.
 
 ![react-xarrow-picture-1 4 2](https://user-images.githubusercontent.com/47307889/87698325-facfc480-c79b-11ea-976a-dbad0ecd9b48.png)
 
-
 ### simple example:
 
 ```jsx
@@ -53,9 +52,7 @@ const boxStyle = {
 function SimpleExample() {
   const box1Ref = useRef(null);
   return (
-    <div
-      style={{ display: "flex", justifyContent: "space-evenly", width: "100%" }}
-    >
+    <div style={{ display: "flex", justifyContent: "space-evenly", width: "100%" }}>
       <div ref={box1Ref} style={boxStyle}>
         hey
       </div>
@@ -73,7 +70,14 @@ function SimpleExample() {
 export default SimpleExample;
 ```
 
-## The API
+## Usage
+
+react-xarrows does not renders automatically if one of the connected elements is rendered.
+You have to manually trigger an update on the arrows whenever one of the connected elements renders(possibaly by trigger update on the parent of the arrows) ,this is because the Xarrow component does not have any control or awareness of the connected elements.
+in addition, make sure to render Xarrows later in the DOM then the connected elements else the app will crash.
+**this is planned to be changed in react-xarrows v2.**
+
+## API
 
 ### types definitions
 
@@ -81,39 +85,41 @@ the properties the xarrow component receives is as follow:
 
 ```js
 export type xarrowPropsType = {
-  start: refType;
-  end: refType;
-  startAnchor?: anchorType | anchorType[];
-  endAnchor?: anchorType | anchorType[];
-  label?: labelType | labelsType;
-  color?: string;
-  lineColor?: string | null;
-  headColor?: string | null;
-  strokeWidth?: number;
-  headSize?: number;
-  path: "smooth" | "grid" | "straight";
-  curveness?: number;
-  dashness?: boolean | { strokeLen?: number; nonStrokeLen?: number; animation?: boolean | number };
-  passProps?: React.SVGProps<SVGPathElement>;
-  extendSVGcanvas?: number;
-  SVGcanvasProps?: React.SVGAttributes<SVGSVGElement>;
-  arrowBodyProps?: React.SVGProps<SVGPathElement>;
-  arrowHeadProps?: React.SVGProps<SVGPathElement>;
-  divContainerProps?: React.HTMLProps<HTMLDivElement>;
+  start: refType,
+  end: refType,
+  startAnchor?: anchorType | anchorType[],
+  endAnchor?: anchorType | anchorType[],
+  label?: labelType | labelsType,
+  color?: string,
+  lineColor?: string | null,
+  headColor?: string | null,
+  strokeWidth?: number,
+  headSize?: number,
+  path: "smooth" | "grid" | "straight",
+  curveness?: number,
+  dashness?: boolean | { strokeLen?: number, nonStrokeLen?: number, animation?: boolean | number },
+  passProps?: React.SVGProps<SVGPathElement>,
+  extendSVGcanvas?: number,
+  SVGcanvasProps?: React.SVGAttributes<SVGSVGElement>,
+  arrowBodyProps?: React.SVGProps<SVGPathElement>,
+  arrowHeadProps?: React.SVGProps<SVGPathElement>,
+  divContainerProps?: React.HTMLProps<HTMLDivElement>,
 };
 
 export type anchorType = anchorPositionType | anchorCustomPositionType;
 export type anchorPositionType = "middle" | "left" | "right" | "top" | "bottom" | "auto";
 export type anchorCustomPositionType = {
-  position: anchorPositionType;
-  offset: { rightness: number; bottomness: number };
+  position: anchorPositionType,
+  offset: { rightness: number, bottomness: number },
 };
 export type reactRefType = { current: null | HTMLElement };
 export type refType = reactRefType | string;
-export type labelsType = { start?: labelType; middle?: labelType; end?: labelType };
+export type labelsType = { start?: labelType, middle?: labelType, end?: labelType };
 export type labelType = JSX.Element;
 ```
-##### API flexibility 
+
+##### API flexibility
+
 This API has built in such way that most props can accept different types. you can keep things simple or provide more detailed props for more custom behavior - the API except both(see `startAnchor` or `label` properties for good examples).<br/>
 see typescript types above for detailed descriptions of what type excepts every prop.
 
@@ -133,7 +139,8 @@ examples:
 
 - `endAnchor="middle"` will set the anchor of the end of the line to the middle of the end element.
 - `endAnchor= { position: "auto", offset: { rightness: 20 } }` will choose automatic anchoring for end anchor but will offset it 20 pixels to the right after normal positioning.
-- `endAnchor= ["right", {position: "left", offset: {bottomness: -10}}]` only right and left anchors will be allowed for endAnchor, and if the left side connected then it will be offset 10 pixels up. 
+- `endAnchor= ["right", {position: "left", offset: {bottomness: -10}}]` only right and left anchors will be allowed for endAnchor, and if the left side connected then it will be offset 10 pixels up.
+
 #### label
 
 can be a string that will default to be at the middle or an object that describes where to place label and how to customize it. see `label` at `xarrowPropsType` above.
@@ -191,7 +198,7 @@ examples:
 ### passing props
 
 The xarrow is fully customizable, and you can pass props to any part of the component.
-if unlisted(unknown) property is passed to xarrow so by default it'll be passed down to `divConatiner`. 
+if unlisted(unknown) property is passed to xarrow so by default it'll be passed down to `divConatiner`.
 
 #### passProps
 
@@ -212,7 +219,8 @@ The properties below can be used to customize the arrow even farther:
 ![image](https://user-images.githubusercontent.com/47307889/95031511-09ed5100-06bf-11eb-95a3-4cdc8d0be0ad.png)
 
 if you wish you can pass props specific part of the component.
-- `divContainerProps` - the container which contains the SVG canvas, and the optional labels elements. It takes no place, and located where you normaly placed him in the elements tree(no offset). The SVGcanvas and the labels will be placed in a offset from this div. 
+
+- `divContainerProps` - the container which contains the SVG canvas, and the optional labels elements. It takes no place, and located where you normaly placed him in the elements tree(no offset). The SVGcanvas and the labels will be placed in a offset from this div.
 - `SVGcanvasProps` - the svg canvas which contains arrow head and body.
 - `arrowBodyProps` - the body of the arrow
 - `arrowHeadProps` - the arrow head.
@@ -223,14 +231,12 @@ examples:
 
 - `arrowHead = {onClick: () => console.log("head clicked!")}` - now only the head will console log a message when clicked.
 
-
 ##### extendSVGcanvas
 
 will extend the svg canvas at all sides. can be useful if for some reason the arrow(or labels) is cut though to small svg canvas(should be used in advanced custom arrows, for example if you used `dx` to move one of the labels and at exceeded the canvas).
 example: `advanced= {{extendSVGcanvas: 30 }}` - will extended svg canvas in all sides by 30 pixels.
 
 ##### passProps
-
 
 ### default props
 
@@ -259,4 +265,5 @@ Xarrow.defaultProps = {
 ```
 
 ## Versions
+
 See [CHANGELOG.md](https://github.com/Eliav2/react-xarrows/blob/master/CHANGELOG.md) in this repo.
