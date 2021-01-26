@@ -73,6 +73,13 @@ function SimpleExample() {
 export default SimpleExample;
 ```
 
+## Usage
+
+react-xarrows does not renders automatically if one of the connected elements is rendered.<br/>
+You have to manually trigger an update on the arrows whenever one of the connected elements renders(possibaly by trigger update on the parent of the arrows) ,this is because the Xarrow component does not have any control or awareness of the connected elements.<br/>
+in addition, make sure to render Xarrows later in the DOM then the connected elements else the app will crash.<br/>
+**this is planned to be changed in react-xarrows v2.**
+
 ## The API
 
 ### types definitions
