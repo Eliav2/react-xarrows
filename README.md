@@ -72,12 +72,21 @@ export default SimpleExample;
 
 ## Usage
 
+<<<<<<< HEAD
 react-xarrows does not renders automatically if one of the connected elements is rendered.
 You have to manually trigger an update on the arrows whenever one of the connected elements renders(possibaly by trigger update on the parent of the arrows) ,this is because the Xarrow component does not have any control or awareness of the connected elements.
 in addition, make sure to render Xarrows later in the DOM then the connected elements else the app will crash.
 **this is planned to be changed in react-xarrows v2.**
 
 ## API
+=======
+react-xarrows does not renders automatically if one of the connected elements is rendered.<br/>
+You have to manually trigger an update on the arrows whenever one of the connected elements renders(possibaly by trigger update on the parent of the arrows) ,this is because the Xarrow component does not have any control or awareness of the connected elements.<br/>
+in addition, make sure to render Xarrows later in the DOM then the connected elements else the app will crash.<br/>
+**this is planned to be changed in react-xarrows v2.**
+
+## The API
+>>>>>>> afbd18251c3c05e9230d0bc78f53fe74c7251e79
 
 ### types definitions
 
@@ -233,8 +242,8 @@ examples:
 
 ##### extendSVGcanvas
 
-will extend the svg canvas at all sides. can be useful if for some reason the arrow(or labels) is cut though to small svg canvas(should be used in advanced custom arrows, for example if you used `dx` to move one of the labels and at exceeded the canvas).
-example: `advanced= {{extendSVGcanvas: 30 }}` - will extended svg canvas in all sides by 30 pixels.
+will extend the svg canvas at all sides. can be useful if for some reason the arrow(or labels) is cut though to small svg canvas(should be used in advanced custom arrows).
+example: `extendSVGcanvas = {30}` - will extended svg canvas in all sides by 30 pixels.
 
 ##### passProps
 
