@@ -18,11 +18,13 @@ export declare type xarrowPropsType = {
         animation?: boolean | number;
     };
     passProps?: React.SVGProps<SVGPathElement>;
-    extendSVGcanvas?: number;
     SVGcanvasProps?: React.SVGAttributes<SVGSVGElement>;
     arrowBodyProps?: React.SVGProps<SVGPathElement>;
     arrowHeadProps?: React.SVGProps<SVGPathElement>;
     divContainerProps?: React.HTMLProps<HTMLDivElement>;
+    SVGcanvasStyle?: React.CSSProperties;
+    divContainerStyle?: React.CSSProperties;
+    extendSVGcanvas?: number;
 };
 export declare type anchorType = anchorPositionType | anchorCustomPositionType;
 export declare type anchorPositionType = "middle" | "left" | "right" | "top" | "bottom" | "auto";

@@ -1,4 +1,4 @@
-// @ts-nocheck
+//// @ts-nocheck
 
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import isEqual from "lodash.isequal";
@@ -32,11 +32,13 @@ export type xarrowPropsType = {
         animation?: boolean | number;
       };
   passProps?: React.SVGProps<SVGPathElement>;
-  extendSVGcanvas?: number;
   SVGcanvasProps?: React.SVGAttributes<SVGSVGElement>;
   arrowBodyProps?: React.SVGProps<SVGPathElement>;
   arrowHeadProps?: React.SVGProps<SVGPathElement>;
   divContainerProps?: React.HTMLProps<HTMLDivElement>;
+  SVGcanvasStyle?: React.CSSProperties;
+  divContainerStyle?: React.CSSProperties;
+  extendSVGcanvas?: number;
 };
 
 export type anchorType = anchorPositionType | anchorCustomPositionType;
@@ -103,6 +105,8 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     arrowBodyProps,
     arrowHeadProps,
     divContainerProps,
+    SVGcanvasStyle,
+    divContainerStyle,
     extendSVGcanvas,
     ...extraProps
   } = props;
@@ -525,7 +529,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     });
   };
 
-  const fHeadSize = headSize * strokeWidth; //factored headsize
+  const fHeadSize = headSize * strokeWidth; //factored head size
   const xOffsetHead = st.x2 - st.arrowHeadOffset.x;
   const yOffsetHead = st.y2 - st.arrowHeadOffset.y;
 
@@ -536,8 +540,8 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
 
   return (
     <div
-      style={{ position: "absolute" }}
       {...divContainerProps}
+      style={{ position: "absolute", ...divContainerStyle }}
       {...extraProps}
     >
       <svg
@@ -545,15 +549,16 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
         width={st.cw}
         height={st.ch}
         style={{
-          // border: "2px yellow dashed",
           position: "absolute",
           left: st.cx0,
           top: st.cy0,
           pointerEvents: "none",
+          ...SVGcanvasStyle,
+          // border: "2px yellow dashed",
           // overflow: "hidden",
         }}
         overflow="auto"
-        {...(SVGcanvasProps as string)}
+        {...SVGcanvasProps}
       >
         {/*/!* debug elements *!/*/}
         {/*/!* control points circles *!/*/}
@@ -579,8 +584,9 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
           fill="transparent"
           // markerEnd={`url(#${arrowHeadId})`}
           pointerEvents="visibleStroke"
-          {...(passProps as string)}
-          {...(arrowBodyProps as string)}
+          {...passProps}
+          // style = {...passStyle}
+          {...arrowBodyProps}
         >
           {animationSpeed ? (
             <animate
@@ -599,8 +605,8 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
           fill={headColor}
           // pointerEvents="all"
           transform={`translate(${xOffsetHead},${yOffsetHead}) rotate(${st.headOrient})`}
-          {...(passProps as string)}
-          {...(arrowHeadProps as string)}
+          {...passProps}
+          {...arrowHeadProps}
         />
       </svg>
 

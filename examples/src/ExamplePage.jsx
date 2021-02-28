@@ -10,7 +10,6 @@ const titleStyle = {
 };
 
 const ExamplePage = () => {
-  console.log("h ey!");
   return (
     <div>
       <header style={titleStyle}>react-xarrows</header>
@@ -79,7 +78,7 @@ const ExamplePage = () => {
           {Object.keys(examples).map((exampleName) => {
             const Component = examples[exampleName].component;
             return (
-              <Route path={"/" + exampleName}>
+              <Route path={"/" + exampleName} key={exampleName}>
                 <Component />
               </Route>
             );
