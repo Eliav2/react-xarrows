@@ -31,26 +31,18 @@ export declare type anchorPositionType = "middle" | "left" | "right" | "top" | "
 export declare type anchorCustomPositionType = {
     position: anchorPositionType;
     offset: {
-        rightness: number;
-        bottomness: number;
+        rightness?: number;
+        bottomness?: number;
     };
 };
-export declare type reactRefType = {
-    current: null | HTMLElement;
-};
-export declare type refType = reactRefType | string;
+export declare type refType = React.MutableRefObject<any> | string;
 export declare type labelsType = {
     start?: labelType;
     middle?: labelType;
     end?: labelType;
 };
-export declare type labelType = JSX.Element;
+export declare type labelType = JSX.Element | string;
 export declare type domEventType = keyof GlobalEventHandlersEventMap;
-export declare type registerEventsType = {
-    ref: refType;
-    eventName: domEventType;
-    callback?: CallableFunction;
-};
 declare const Xarrow: React.FC<xarrowPropsType>;
 export default Xarrow;
 //# sourceMappingURL=index.d.ts.map

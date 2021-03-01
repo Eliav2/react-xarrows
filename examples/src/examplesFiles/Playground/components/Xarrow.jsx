@@ -1,25 +1,32 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import Xarrow from "react-xarrows";
 
 //{props: {line, setSelected, selected}}
-export default ({setSelected, selected, line: {props}}) => {
+export default ({ setSelected, selected, line: { props } }) => {
   // console.log(sss)
-  const [state, setState] = useState({color: "coral"});
+  const [state, setState] = useState({ color: "coral" });
   const defProps = {
-    consoleWarning: false,
     passProps: {
       className: "xarrow",
-      onMouseEnter: () => setState({color: "IndianRed"}),
-      onMouseLeave: () => setState({color: "coral"}),
+      onMouseEnter: () => setState({ color: "IndianRed" }),
+      onMouseLeave: () => setState({ color: "coral" }),
       onClick: (e) => {
         e.stopPropagation(); //so only the click event on the box will fire on not on the conainer itself
-        setSelected({id: {start: props.start, end: props.end}, type: "arrow"});
+        setSelected({
+          id: { start: props.start, end: props.end },
+          type: "arrow",
+        });
       },
       cursor: "pointer",
     },
   };
   let color = state.color;
-  if (selected && selected.type === "arrow" && selected.id.start === props.start && selected.id.end === props.end)
+  if (
+    selected &&
+    selected.type === "arrow" &&
+    selected.id.start === props.start &&
+    selected.id.end === props.end
+  )
     color = "red";
-  return <Xarrow {...{...defProps, ...props, ...state, color}} />;
+  return <Xarrow {...{ ...defProps, ...props, ...state, color }} />;
 };

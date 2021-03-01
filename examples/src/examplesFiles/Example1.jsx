@@ -44,7 +44,7 @@ const Example1 = () => {
       start: "box1",
       end: "box2",
       headSize: 14,
-      label: { end: "endLable" },
+      label: { end: "endLabel" },
     },
     {
       start: "box2",

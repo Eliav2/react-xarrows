@@ -3,8 +3,8 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import isEqual from "lodash.isequal";
 import pick from "lodash.pick";
-import { getElementByPropGiven, typeOf } from "./utils";
-import PropTypes from "prop-types";
+import { getElementByPropGiven } from "./utils";
+import PT from "prop-types";
 import { buzzierMinSols, bzFunction } from "./utils/buzzier";
 import { getShortestLine, prepareAnchorLines } from "./utils/anchors";
 
@@ -52,22 +52,17 @@ export type anchorPositionType =
 
 export type anchorCustomPositionType = {
   position: anchorPositionType;
-  offset: { rightness: number; bottomness: number };
+  offset: { rightness?: number; bottomness?: number };
 };
-export type reactRefType = { current: null | HTMLElement };
-export type refType = reactRefType | string;
+// export type reactRefType = { current: null | HTMLElement };
+export type refType = React.MutableRefObject<any> | string;
 export type labelsType = {
   start?: labelType;
   middle?: labelType;
   end?: labelType;
 };
-export type labelType = JSX.Element;
+export type labelType = JSX.Element | string;
 export type domEventType = keyof GlobalEventHandlersEventMap;
-export type registerEventsType = {
-  ref: refType;
-  eventName: domEventType;
-  callback?: CallableFunction;
-};
 
 ////////////////
 // private types
@@ -111,14 +106,15 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     ...extraProps
   } = props;
 
-  const selfRef = useRef(null) as reactRefType;
+  const selfRef = useRef(null);
   const [anchorsRefs, setAnchorsRefs] = useState({ start: null, end: null });
+  // console.log("end", anchorsRefs.end);
 
   const [prevPosState, setPrevPosState] = useState<prevPos>(null);
   const [prevProps, setPrevProps] = useState<xarrowPropsType>(null);
 
   /**
-   * determine a an update is needed and update if so.
+   * determine if an update is needed and update if so.
    * update is needed if one of the connected elements position was changed since last render, or if the ref to one
    * of the elements has changed(it points to a different element).
    */
@@ -235,7 +231,9 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     labelEnd = null;
   if (label) {
     if (typeof label === "string" || "type" in label) labelMiddle = label;
-    else if (["start", "middle", "end"].some((key) => key in label)) {
+    else if (
+      ["start", "middle", "end"].some((key) => key in (label as labelsType))
+    ) {
       label = label as labelsType;
       ({ start: labelStart, middle: labelMiddle, end: labelEnd } = label);
     }
@@ -656,53 +654,66 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
   );
 };
 
-const pAnchorPositionType = PropTypes.oneOf([
+//////////////////////////////
+// propTypes
+
+const pAnchorPositionType = PT.oneOf([
   "middle",
   "left",
   "right",
   "top",
   "bottom",
   "auto",
-]);
+] as const);
 
-const pAnchorCustomPositionType = PropTypes.shape({
+const pAnchorCustomPositionType = PT.exact({
   position: pAnchorPositionType.isRequired,
-  offset: PropTypes.shape({
-    rightness: PropTypes.number,
-    bottomness: PropTypes.number,
-  }),
+  offset: PT.shape({
+    rightness: PT.number,
+    bottomness: PT.number,
+  }).isRequired,
 });
 
-const pAnchorType = PropTypes.oneOfType([
+const _pAnchorType = PT.oneOfType([
   pAnchorPositionType,
   pAnchorCustomPositionType,
-  PropTypes.arrayOf(
-    PropTypes.oneOfType([pAnchorPositionType, pAnchorCustomPositionType])
-  ),
 ]);
 
-const pRefType = PropTypes.oneOfType([PropTypes.string, PropTypes.object]);
+const pAnchorType = PT.oneOfType([_pAnchorType, PT.arrayOf(_pAnchorType)]);
+
+const pRefType = PT.oneOfType([
+  PT.string,
+  PT.exact({ current: PT.instanceOf(Element) }),
+]);
+
+const _pLabelType = PT.oneOfType([PT.element, PT.string]);
+
+const pLabelsType = PT.exact({
+  start: _pLabelType,
+  middle: _pLabelType,
+  end: _pLabelType,
+});
 
 Xarrow.propTypes = {
   start: pRefType.isRequired,
   end: pRefType.isRequired,
   startAnchor: pAnchorType,
   endAnchor: pAnchorType,
-  label: PropTypes.oneOfType([PropTypes.elementType, PropTypes.object]),
-  color: PropTypes.string,
-  lineColor: PropTypes.string,
-  headColor: PropTypes.string,
-  strokeWidth: PropTypes.number,
-  headSize: PropTypes.number,
-  path: PropTypes.oneOf(["smooth", "grid", "straight"]),
-  curveness: PropTypes.number,
-  dashness: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
-  passProps: PropTypes.object,
-  arrowBodyProps: PropTypes.object,
-  arrowHeadProps: PropTypes.object,
-  SVGcanvasProps: PropTypes.object,
-  divContainerProps: PropTypes.object,
-  extendSVGcanvas: PropTypes.number,
+  label: PT.oneOfType([_pLabelType, pLabelsType]),
+  color: PT.string,
+  lineColor: PT.string,
+  headColor: PT.string,
+  strokeWidth: PT.number,
+  headSize: PT.number,
+  path: PT.oneOf(["smooth", "grid", "straight"]),
+  curveness: PT.number,
+  dashness: PT.oneOfType([PT.bool, PT.object]),
+  passProps: PT.object,
+  arrowBodyProps: PT.object,
+  arrowHeadProps: PT.object,
+  SVGcanvasProps: PT.object,
+  divContainerProps: PT.object,
+  extendSVGcanvas: PT.number,
 };
 
 Xarrow.defaultProps = {
