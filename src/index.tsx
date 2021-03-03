@@ -1,6 +1,6 @@
 //// @ts-nocheck
 
-import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import isEqual from "lodash.isequal";
 import pick from "lodash.pick";
 import { getElementByPropGiven, typeOf } from "./utils";
@@ -162,7 +162,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     initAnchorsRefs();
   }, []);
 
-  useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     // console.log("xarrow rendered!");
     updateIfNeeded();
   });
