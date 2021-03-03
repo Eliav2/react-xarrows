@@ -7,6 +7,7 @@ import { getElementByPropGiven, typeOf } from "./utils";
 import PropTypes from "prop-types";
 import { buzzierMinSols, bzFunction } from "./utils/buzzier";
 import { getShortestLine, prepareAnchorLines } from "./utils/anchors";
+import { useIsomorphicLayoutEffect } from "./utils/useIsomorphicLayoutEffect";
 
 ///////////////
 // public types
@@ -155,7 +156,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     setPrevProps(props);
   };
 
-  useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     // console.log("xarrow mounted");
     initProps();
     initAnchorsRefs();
