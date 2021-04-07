@@ -10,7 +10,7 @@ export default {
   SimpleExample: { name: "SimpleExample", component: SimpleExample },
   Example1: { name: "Example1", component: Example1 },
   Example2: { name: "Example2", component: Example2 },
-  test: { name: "test", component: TestExample },
+  // test: { name: "test", component: TestExample },
   // Example4: { name: "Example4", component: Example4 },
   // ZindexExample: { name: "ZindexExample", component: ZindexExample },
   Playground: { name: "Playground", component: Playground },

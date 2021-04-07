@@ -22,10 +22,10 @@ export const prepareAnchorLines = (anchor, anchorPos) => {
     anchorPos.right - anchorPos.x,
     anchorPos.bottom - anchorPos.y
   );
-  // convert given anchors to array if array not already given
+  // convert given anchors to array if not array already
   let anchorChoice = Array.isArray(anchor) ? anchor : [anchor];
   if (anchorChoice.length == 0) anchorChoice = ["auto"];
-  //now map each item in the list to relevant object
+  //now map each item in the array to relevant object
   let anchorChoiceMapped = anchorChoice.map((anchorChoice) => {
     if (typeOf(anchorChoice) === "string") {
       anchorChoice = anchorChoice as anchorPositionType;

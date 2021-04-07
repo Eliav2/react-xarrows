@@ -13,10 +13,14 @@ const TopBar = (props) => {
       case "Edit Name":
         props.setBoxes((boxes) => {
           var newName = prompt("Enter new name: ");
-          while ([...boxes, ...props.interfaces].map((a) => a.id).includes(newName))
+          while (
+            [...boxes, ...props.interfaces].map((a) => a.id).includes(newName)
+          )
             newName = prompt("Name Already taken,Choose another: ");
           if (!newName) return;
-          return boxes.map((box) => (box.id === props.selected.id ? {...box, id: newName} : box));
+          return boxes.map((box) =>
+            box.id === props.selected.id ? { ...box, id: newName } : box
+          );
         });
         break;
       case "Add Connections":
@@ -27,29 +31,57 @@ const TopBar = (props) => {
         break;
       case "Remove Connection":
         props.setLines((lines) =>
-          lines.filter((line) => !(line.start === props.selected.id.start && line.end === props.selected.id.end))
+          lines.filter(
+            (line) =>
+              !(
+                line.props.start === props.selected.id.start &&
+                line.props.end === props.selected.id.end
+              )
+          )
         );
         break;
       case "Edit Properties":
-        props.setLines(lines => lines.map(line => line.props.start === props.selected.id.start && line.props.end === props.selected.id.end ? {
-            ...line,
-            menuWindowOpened: true
-          } : line)
-        )
+        props.setLines((lines) =>
+          lines.map((line) =>
+            line.props.start === props.selected.id.start &&
+            line.props.end === props.selected.id.end
+              ? {
+                  ...line,
+                  menuWindowOpened: true,
+                }
+              : line
+          )
+        );
         break;
       case "Delete":
-        if (window.confirm(`are you sure you want to delete ${props.selected.id}?`)) {
+        if (
+          window.confirm(
+            `are you sure you want to delete ${props.selected.id}?`
+          )
+        ) {
           // first remove any lines connected to the node.
           props.setLines((lines) => {
-            return lines.filter((line) => !(line.start === props.selected.id || line.end === props.selected.id));
+            return lines.filter(
+              (line) =>
+                !(
+                  line.props.start === props.selected.id ||
+                  line.props.end === props.selected.id
+                )
+            );
           });
           // if its a box remove from boxes
           if (props.boxes.map((box) => box.id).includes(props.selected.id)) {
-            props.setBoxes((boxes) => boxes.filter((box) => !(box.id === props.selected.id)));
+            props.setBoxes((boxes) =>
+              boxes.filter((box) => !(box.id === props.selected.id))
+            );
           }
           // if its a interface remove from interfaces
-          else if (props.interfaces.map((itr) => itr.id).includes(props.selected.id)) {
-            props.setInterfaces((itrs) => itrs.filter((itr) => !(itr.id === props.selected.id)));
+          else if (
+            props.interfaces.map((itr) => itr.id).includes(props.selected.id)
+          ) {
+            props.setInterfaces((itrs) =>
+              itrs.filter((itr) => !(itr.id === props.selected.id))
+            );
           }
           props.handleSelect(null);
         }
@@ -66,7 +98,11 @@ const TopBar = (props) => {
         return (
           <div className="actionBubbles">
             {allowedActions.map((action, i) => (
-              <div className="actionBubble" key={i} onClick={() => handleEditAction(action)}>
+              <div
+                className="actionBubble"
+                key={i}
+                onClick={() => handleEditAction(action)}
+              >
                 {action}
               </div>
             ))}
@@ -76,7 +112,10 @@ const TopBar = (props) => {
         return (
           <div className="actionBubbles">
             <p>To where connect new connection?</p>
-            <div className="actionBubble" onClick={() => props.setActionState("Normal")}>
+            <div
+              className="actionBubble"
+              onClick={() => props.setActionState("Normal")}
+            >
               finish
             </div>
           </div>
@@ -95,11 +134,15 @@ const TopBar = (props) => {
   return (
     <div
       className="topBarStyle"
-      style={{height: props.selected === null ? "0" : "60px"}}
+      style={{ height: props.selected === null ? "0" : "60px" }}
       onClick={(e) => e.stopPropagation()}
     >
       <div className="topBarLabel" onClick={() => props.handleSelect(null)}>
-        <MaterialIcon size={30} icon="keyboard_arrow_up" className="material-icons topBarToggleIcon"/>
+        <MaterialIcon
+          size={30}
+          icon="keyboard_arrow_up"
+          className="material-icons topBarToggleIcon"
+        />
         {/* <p>Edit Menu</p> */}
       </div>
       {returnTopBarApearnce()}

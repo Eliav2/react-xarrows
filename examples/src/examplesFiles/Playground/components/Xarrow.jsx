@@ -11,7 +11,7 @@ export default ({ setSelected, selected, line: { props } }) => {
       onMouseEnter: () => setState({ color: "IndianRed" }),
       onMouseLeave: () => setState({ color: "coral" }),
       onClick: (e) => {
-        e.stopPropagation(); //so only the click event on the box will fire on not on the conainer itself
+        e.stopPropagation(); //so only the click event on the box will fire on not on the container itself
         setSelected({
           id: { start: props.start, end: props.end },
           type: "arrow",

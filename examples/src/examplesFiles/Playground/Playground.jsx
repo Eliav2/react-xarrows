@@ -5,18 +5,18 @@ import TopBar from "./components/TopBar";
 import Xarrow from "./components/Xarrow";
 import MenuWindow from "./components/MenuWindow";
 
-const shapes = ["wideBox", "tallBox", "intefaceBox"];
+const shapes = ["wideBox", "tallBox", "interfaceBox"];
 
 const PlayGround = () => {
   const [interfaces, setInterfaces] = useState([
     {
       id: "static1",
-      shape: "intefaceBox",
+      shape: "interfaceBox",
       type: "input",
     },
     {
       id: "static2",
-      shape: "intefaceBox",
+      shape: "interfaceBox",
       type: "output",
     },
   ]);
@@ -96,18 +96,26 @@ const PlayGround = () => {
         <u>Playground</u>
       </h3>
       <p>
-        you can drag and drop shpaes from the left toolbox menu. you can select any shape and then topbar will apear
-        with some options.
+        you can drag and drop shpaes from the left toolbox menu. you can select
+        any shape and then topbar will apear with some options.
         <br />
         <strong>
           it's strongly recommended to use full screen!{" "}
-          <a href="https://lwwwp.csb.app/Playground" target="_blank" rel="noopener noreferrer">
+          <a
+            href="https://lwwwp.csb.app/Playground"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             click here
           </a>
         </strong>
       </p>
 
-      <div className="canvasStyle" id="canvas" onClick={() => handleSelect(null)}>
+      <div
+        className="canvasStyle"
+        id="canvas"
+        onClick={() => handleSelect(null)}
+      >
         <div className="toolboxMenu">
           <div className="toolboxTitle">Drag & drop me!</div>
           <hr />
@@ -136,7 +144,13 @@ const PlayGround = () => {
           {interfaces
             .filter((itr) => itr.type === "input")
             .map((itr) => (
-              <Box {...boxProps} key={itr.id} box={{ ...itr, id: itr.id }} position="static" sidePos="left" />
+              <Box
+                {...boxProps}
+                key={itr.id}
+                box={{ ...itr, id: itr.id }}
+                position="static"
+                sidePos="left"
+              />
             ))}
         </div>
         <div
@@ -148,7 +162,13 @@ const PlayGround = () => {
           <TopBar {...props} />
 
           {boxes.map((box) => (
-            <Box {...boxProps} key={box.id} box={box} position="absolute" sidePos="middle" />
+            <Box
+              {...boxProps}
+              key={box.id}
+              box={box}
+              position="absolute"
+              sidePos="middle"
+            />
           ))}
         </div>
         <div
@@ -161,7 +181,13 @@ const PlayGround = () => {
           {interfaces
             .filter((itr) => itr.type === "output")
             .map((itr) => (
-              <Box {...boxProps} key={itr.id} box={{ ...itr, id: itr.id }} position="static" sidePos="right" />
+              <Box
+                {...boxProps}
+                key={itr.id}
+                box={{ ...itr, id: itr.id }}
+                position="static"
+                sidePos="right"
+              />
             ))}
         </div>
         {/* xarrow connections*/}
@@ -176,7 +202,11 @@ const PlayGround = () => {
         {/* boxes menu that may be opened */}
         {lines.map((line, i) =>
           line.menuWindowOpened ? (
-            <MenuWindow key={line.props.start + "-" + line.props.end + i} setLines={setLines} line={line} />
+            <MenuWindow
+              key={line.props.start + "-" + line.props.end + i}
+              setLines={setLines}
+              line={line}
+            />
           ) : null
         )}
       </div>

@@ -1,3 +1,10 @@
+## next: 
+- proptypes - typescript types issues fixed.
+- now all pointer events enabled in the arrowhead by default ([#50](https://github.com/Eliav2/react-xarrows/issues/50))
+- added properties: `SVGcanvasStyle` and `divContainerStyle`
+- examples: bugfixes(playground) and examples update.  
+- new properties: `showHead`,`showTail`,`tailSize`,`tailColor` .
+
 ## 1.5.0 
 - properties that are completely removed and no longer supported: `consoleWarning`, `monitorDOMchanges` and `registerEvents`.
 - issues related to jest and other issues has fixed.
