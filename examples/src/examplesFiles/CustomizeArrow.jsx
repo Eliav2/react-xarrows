@@ -236,7 +236,12 @@ const CustomizeArrow = () => {
   const [startLabel, setStartLabel] = useState("I'm start label");
   const [middleLabel, setMiddleLabel] = useState("middleLabel");
   const [endLabel, setEndLabel] = useState("fancy end label");
-  const [extendSVGcanvas, setExtendSVGcanvas] = useState(0);
+  const [_extendSVGcanvas, setExtendSVGcanvas] = useState(0);
+  const [_debug, set_Debug] = useState(false);
+  const [_cpx1Offset, set_Cpx1] = useState(0);
+  const [_cpy1Offset, set_Cpy1] = useState(0);
+  const [_cpx2Offset, set_Cpx2] = useState(0);
+  const [_cpy2Offset, set_Cpy2] = useState(0);
 
   // this is the important part of the example! play with the props to understand better the API options
   const props = {
@@ -253,8 +258,8 @@ const CustomizeArrow = () => {
     showHead: showHead,
     headColor: headColor,
     headSize: Number(headSize),
-    showTail: showTail,
-    tailColor: tailColor,
+    showTail,
+    tailColor,
     tailSize: Number(tailSize),
 
     label: {
@@ -273,7 +278,12 @@ const CustomizeArrow = () => {
         </div>
       ),
     },
-    extendSVGcanvas: extendSVGcanvas,
+    _extendSVGcanvas,
+    _debug,
+    _cpx1Offset: _cpx1Offset,
+    _cpy1Offset: _cpy1Offset,
+    _cpx2Offset: _cpx2Offset,
+    _cpy2Offset: _cpy2Offset,
   };
 
   return (
@@ -342,14 +352,6 @@ const CustomizeArrow = () => {
                 onChange={(val) => setAnimation(val)}
                 style={{ input: { width: 60 } }}
               />
-
-              {/*<input*/}
-              {/*  style={{ width: "30px" }}*/}
-              {/*  type="text"*/}
-              {/*  value={animation}*/}
-              {/*  onChange={(e) => setAnimation(e.target.value)}*/}
-              {/*/>*/}
-
               <p>dashed: </p>
               <input
                 style={{ height: "15px", width: "15px" }}
@@ -400,14 +402,56 @@ const CustomizeArrow = () => {
             />
           </CollapsibleDiv>
 
-          <CollapsibleDiv title={"advanced"}>
-            <p>extendSVGcanvas: </p>
-            <NumericInput
-              value={extendSVGcanvas}
-              onChange={(val) => setExtendSVGcanvas(val)}
-              style={{ input: { width: 70 } }}
-            />
-          </CollapsibleDiv>
+          <MyCollapsible title={"advanced"}>
+            <Div>
+              <p>_extendSVGcanvas: </p>
+              <NumericInput
+                value={_extendSVGcanvas}
+                onChange={(val) => setExtendSVGcanvas(val)}
+                style={{ input: { width: 70 } }}
+              />
+              <p>_debug</p>
+              <input
+                style={{ height: "15px", width: "15px" }}
+                type="checkBox"
+                checked={_debug}
+                // value={}
+                onChange={(e) => {
+                  set_Debug(e.target.checked);
+                }}
+              />
+            </Div>
+            <Div>
+              <p>_cpx1Offset: </p>
+              <NumericInput
+                value={_cpx1Offset}
+                onChange={(val) => set_Cpx1(val)}
+                style={{ input: { width: 70 } }}
+                step={2}
+              />
+              <p>_cpy1Offset: </p>
+              <NumericInput
+                value={_cpy1Offset}
+                onChange={(val) => set_Cpy1(val)}
+                style={{ input: { width: 70 } }}
+                step={2}
+              />
+              <p>_cpx2Offset: </p>
+              <NumericInput
+                value={_cpx2Offset}
+                onChange={(val) => set_Cpx2(val)}
+                style={{ input: { width: 70 } }}
+                step={2}
+              />
+              <p>_cpy2Offset: </p>
+              <NumericInput
+                value={_cpy2Offset}
+                onChange={(val) => set_Cpy2(val)}
+                style={{ input: { width: 70 } }}
+                step={2}
+              />
+            </Div>
+          </MyCollapsible>
           <br />
           <div style={canvasStyle} id="canvas">
             <Box box={box} forceRerender={forceRerender} />

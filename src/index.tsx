@@ -41,7 +41,12 @@ export type xarrowPropsType = {
   divContainerProps?: React.HTMLProps<HTMLDivElement>;
   SVGcanvasStyle?: React.CSSProperties;
   divContainerStyle?: React.CSSProperties;
-  extendSVGcanvas?: number;
+  _extendSVGcanvas?: number;
+  _debug: boolean;
+  _cpx1Offset: number;
+  _cpy1Offset: number;
+  _cpx2Offset: number;
+  _cpy2Offset: number;
 };
 
 export type anchorType = anchorPositionType | anchorCustomPositionType;
@@ -57,7 +62,6 @@ export type anchorCustomPositionType = {
   position: anchorPositionType;
   offset: { rightness?: number; bottomness?: number };
 };
-// export type reactRefType = { current: null | HTMLElement };
 export type refType = React.MutableRefObject<any> | string;
 export type labelsType = {
   start?: labelType;
@@ -110,7 +114,12 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     divContainerProps,
     SVGcanvasStyle,
     divContainerStyle,
-    extendSVGcanvas,
+    _extendSVGcanvas,
+    _debug,
+    _cpx1Offset,
+    _cpy1Offset,
+    _cpx2Offset,
+    _cpy2Offset,
     ...extraProps
   } = props;
 
@@ -340,10 +349,10 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     let excLeft = strokeWidth + (strokeWidth * biggerSide) / 2;
     let excUp = strokeWidth + (strokeWidth * biggerSide) / 2;
     let excDown = strokeWidth + (strokeWidth * biggerSide) / 2;
-    excLeft += Number(extendSVGcanvas);
-    excRight += Number(extendSVGcanvas);
-    excUp += Number(extendSVGcanvas);
-    excDown += Number(extendSVGcanvas);
+    excLeft += Number(_extendSVGcanvas);
+    excRight += Number(_extendSVGcanvas);
+    excUp += Number(_extendSVGcanvas);
+    excDown += Number(_extendSVGcanvas);
 
     ////////////////////////////////////
     // arrow point to point calculations
@@ -547,6 +556,11 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     else selectedCurviness = selectedCurviness.replace(/m/g, "v");
     curvesPossibilities[selectedCurviness]();
 
+    cpx1 += _cpx1Offset;
+    cpy1 += _cpy1Offset;
+    cpx2 += _cpx2Offset;
+    cpy2 += _cpy2Offset;
+
     ////////////////////////////////////
     // canvas smart size adjustments
     const [xSol1, xSol2] = buzzierMinSols(x1, cpx1, cpx2, x2);
@@ -640,27 +654,32 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
           left: st.cx0,
           top: st.cy0,
           pointerEvents: "none",
+          border: _debug ? "1px dashed yellow" : null,
           ...SVGcanvasStyle,
-          // border: "2px yellow dashed",
           // overflow: "hidden",
         }}
         overflow="auto"
         {...SVGcanvasProps}
       >
         {/* debug elements */}
-        {/* control points circles */}
-        <circle r="5" cx={st.cpx1} cy={st.cpy1} fill="green" />
-        <circle r="5" cx={st.cpx2} cy={st.cpy2} fill="blue" />
-        {/* start to end rectangle wrapper */}
-        <rect
-          x={st.excLeft}
-          y={st.excUp}
-          width={st.absDx}
-          height={st.absDy}
-          fill="none"
-          stroke="pink"
-          strokeWidth="2px"
-        />
+        {_debug ? (
+          <>
+            {/* control points circles */}
+            <circle r="5" cx={st.cpx1} cy={st.cpy1} fill="green" />
+            <circle r="5" cx={st.cpx2} cy={st.cpy2} fill="blue" />
+            {/* start to end rectangle wrapper */}
+            <rect
+              x={st.excLeft}
+              y={st.excUp}
+              width={st.absDx}
+              height={st.absDy}
+              fill="none"
+              stroke="pink"
+              strokeWidth="2px"
+            />
+          </>
+        ) : null}
+
         {/* arrow tail */}
         {showTail ? (
           <path
@@ -822,7 +841,12 @@ Xarrow.propTypes = {
   arrowTailProps: PT.object,
   SVGcanvasProps: PT.object,
   divContainerProps: PT.object,
-  extendSVGcanvas: PT.number,
+  _extendSVGcanvas: PT.number,
+  _debug: PT.bool,
+  _cpx1Offset: PT.number,
+  _cpy1Offset: PT.number,
+  _cpx2Offset: PT.number,
+  _cpy2Offset: PT.number,
 };
 
 Xarrow.defaultProps = {
@@ -847,7 +871,12 @@ Xarrow.defaultProps = {
   arrowTailProps: {},
   SVGcanvasProps: {},
   divContainerProps: {},
-  extendSVGcanvas: 0,
+  _extendSVGcanvas: 0,
+  _debug: false,
+  _cpx1Offset: 0,
+  _cpy1Offset: 0,
+  _cpx2Offset: 0,
+  _cpy2Offset: 0,
 };
 
 export default Xarrow;

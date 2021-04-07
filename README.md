@@ -81,70 +81,64 @@ addition, make sure to render Xarrows later in the DOM then the connected elemen
 
 ### types definitions
 
-the properties the xarrow component receives is as follow:
+the properties the xarrow component receives is as follows(don't panic,the important ones exmplained next):
 
-```js
-export
-type
-xarrowPropsType = {
+```ts
+export type xarrowPropsType = {
     start: refType;
     end: refType;
-    startAnchor? : anchorType | anchorType[];
-    endAnchor? : anchorType | anchorType[];
-    label? : labelType | labelsType;
-    color? : string;
-    lineColor? : string | null;
-    headColor? : string | null;
-    tailColor? : string | null;
-    strokeWidth? : number;
-    showHead? : boolean;
-    headSize? : number;
-    showTail? : boolean;
-    tailSize? : number;
-    path? : "smooth" | "grid" | "straight";
-    curveness? : number;
-    dashness? : | boolean | {strokeLen? : number;nonStrokeLen? : number;animation? : boolean | number;};
-passProps ? : React.SVGProps < SVGPathElement >;
-SVGcanvasProps ? : React.SVGAttributes < SVGSVGElement >;
-arrowBodyProps ? : React.SVGProps < SVGPathElement >;
-arrowHeadProps ? : React.SVGProps < SVGPathElement >;
-divContainerProps ? : React.HTMLProps < HTMLDivElement >;
-SVGcanvasStyle ? : React.CSSProperties;
-divContainerStyle ? : React.CSSProperties;
-extendSVGcanvas ? : number;
-}
-;
-
-export
-type
-anchorType = anchorPositionType | anchorCustomPositionType;
-export
-type
-anchorPositionType = "middle" | "left" | "right" | "top" | "bottom" | "auto";
-export
-type
-anchorCustomPositionType = {
-    position: anchorPositionType,
-    offset: {rightness: number, bottomness: number},
+    startAnchor?: anchorType | anchorType[];
+    endAnchor?: anchorType | anchorType[];
+    label?: labelType | labelsType;
+    color?: string;
+    lineColor?: string | null;
+    headColor?: string | null;
+    tailColor?: string | null;
+    strokeWidth?: number;
+    showHead?: boolean;
+    headSize?: number;
+    showTail?: boolean;
+    tailSize?: number;
+    path?: "smooth" | "grid" | "straight";
+    curveness?: number;
+    dashness?: | boolean | { strokeLen?: number; nonStrokeLen?: number; animation?: boolean | number; };
+    passProps?: React.SVGProps<SVGPathElement>;
+    SVGcanvasProps?: React.SVGAttributes<SVGSVGElement>;
+    arrowBodyProps?: React.SVGProps<SVGPathElement>;
+    arrowHeadProps?: React.SVGProps<SVGPathElement>;
+    arrowTailProps?: React.SVGProps<SVGPathElement>;
+    divContainerProps?: React.HTMLProps<HTMLDivElement>;
+    SVGcanvasStyle?: React.CSSProperties;
+    divContainerStyle?: React.CSSProperties;
+    _extendSVGcanvas?: number;
+    _debug: boolean;
+    _cpx1Offset: number;
+    _cpy1Offset: number;
+    _cpx2Offset: number;
+    _cpy2Offset: number;
 };
-export
-type
-reactRefType = {current: null | HTMLElement};
-export
-type
-refType = reactRefType | string;
-export
-type
-labelsType = {start? : labelType, middle? : labelType, end? : labelType};
-export
-type
-labelType = JSX.Element;
+
+export type anchorType = anchorPositionType | anchorCustomPositionType;
+export type anchorPositionType = | "middle" | "left" | "right" | "top" | "bottom" | "auto";
+
+export type anchorCustomPositionType = {
+    position: anchorPositionType;
+    offset: { rightness?: number; bottomness?: number };
+};
+export type refType = React.MutableRefObject<any> | string;
+export type labelsType = {
+    start?: labelType;
+    middle?: labelType;
+    end?: labelType;
+};
+export type labelType = JSX.Element | string;
+export type domEventType = keyof GlobalEventHandlersEventMap;
 ```
 
 ##### API flexibility
 
 This API is built in such way that most props can accept different types. you can keep things simple or provide more
-detailed props for more custom behavior - the API except both(see `startAnchor` or `label` properties for good examples)
+detailed props for more custom behavior - the API except both(see [`startAnchor`](#'start'-and-'end') or `label` properties for good examples)
 .<br/>
 see typescript types above for detailed descriptions of what type excepts every prop.
 
@@ -157,7 +151,8 @@ this documentation is examples driven.
 _required_\
 can be a reference to a react ref to html element or string - an id of a DOM element.
 
-examples: 
+examples:
+
 - `start="myid"` - `myid` is id of a dom element.
 - `start={myRef}` -  `myRef` is a react ref.
 
@@ -181,14 +176,16 @@ _optional, default: null_ \
 you can place up to 3 labels. see examples
 
 - `label="middleLabel"` - middle label
-- `label=<div style={{ fontSize: "1.3em", fontFamily: "fantasy", fontStyle: "italic" }}>styled middle label</div>` - custom middle label
-- `label={{ start:"I'm start label",middle: "middleLabel",end:<div style={{ fontSize: "1.3em", fontFamily: "fantasy", fontStyle: "italic" }}>big end label</div> }}` - start and middle label and custom end label
+- `label=<div style={{ fontSize: "1.3em", fontFamily: "fantasy", fontStyle: "italic" }}>styled middle label</div>` -
+  custom middle label
+- `label={{ start:"I'm start label",middle: "middleLabel",end:<div style={{ fontSize: "1.3em", fontFamily: "fantasy", fontStyle: "italic" }}>big end label</div> }}`
+    - start and middle label and custom end label
 
 #### color,lineColor and headColor and tailColor
 
 _optional, default: "CornflowerBlue"_ \
-`color` defines color to the entire arrow. lineColor,headColor and tailColor will override color
-specifically for line,tail or head. examples:
+`color` defines color to the entire arrow. lineColor,headColor and tailColor will override color specifically for
+line,tail or head. examples:
 
 - `color="red"` will change the color of the arrow to red(body and head).
 - `headColor="red"` will change only the color of the head to red.
@@ -198,8 +195,8 @@ specifically for line,tail or head. examples:
 #### strokeWidth and headSize and tailSize
 
 _optional, default: 6_ \
-strokeWidth defines the thickness of the entire arrow. headSize and tailSize defines how big will be the head or tail relative to the
-strokeWidth. examples:
+strokeWidth defines the thickness of the entire arrow. headSize and tailSize defines how big will be the head or tail
+relative to the strokeWidth. examples:
 
 - `strokeWidth={15}` will make the arrow more thick(body and head).
 - `headSize={15}` will make the head of the arrow more thick(relative to strokeWidth as well).
@@ -268,13 +265,16 @@ examples:
 - `arrowHead = {onClick: () => console.log("head clicked!")}` - now only the head will console log a message when
   clicked.
 
-##### extendSVGcanvas
+##### _extendSVGcanvas
 
 will extend the svg canvas at all sides. can be useful if for some reason the arrow(or labels) is cut though to small
-svg canvas(should be used in advanced custom arrows). example: `extendSVGcanvas = {30}` - will extended svg canvas in
+svg canvas(should be used in advanced custom arrows). example: `_extendSVGcanvas = {30}` - will extended svg canvas in
 all sides by 30 pixels.
 
-##### passProps
+##### _cpx1Offset,_cpy1Offset,_cpx2Offset,_cpy2Offset
+
+now you can manipulate and offset the control points of the arrow. this way you can control how the line curves. check out the interactive codesandbox, set _debug to true and play with these
+properties.
 
 ### default props
 
@@ -298,7 +298,12 @@ Xarrow.defaultProps = {
     arrowHeadProps: {},
     SVGcanvasProps: {},
     divContainerProps: {},
-    extendSVGcanvas: 0,
+    _extendSVGcanvas: 0,
+    _debug: false,
+    _cpx1Offset: 0,
+    _cpy1Offset: 0,
+    _cpx2Offset: 0,
+    _cpy2Offset: 0,
 };
 ```
 
