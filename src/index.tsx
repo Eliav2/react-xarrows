@@ -345,10 +345,11 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     }
 
     let biggerSide = headSize > tailSize ? headSize : tailSize;
-    let excRight = strokeWidth + (strokeWidth * biggerSide) / 2;
-    let excLeft = strokeWidth + (strokeWidth * biggerSide) / 2;
-    let excUp = strokeWidth + (strokeWidth * biggerSide) / 2;
-    let excDown = strokeWidth + (strokeWidth * biggerSide) / 2;
+    let calc = strokeWidth + (strokeWidth * biggerSide) / 2;
+    let excRight = calc;
+    let excLeft = calc;
+    let excUp = calc;
+    let excDown = calc;
     excLeft += Number(_extendSVGcanvas);
     excRight += Number(_extendSVGcanvas);
     excUp += Number(_extendSVGcanvas);
@@ -451,7 +452,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
       }
     }
 
-    if (showTail) {
+    if (showTail && cu !== 0) {
       if (["left", "right"].includes(startAnchorPosition)) {
         x1 += tailOffset * xSign;
         xTailOffset = -(tailOffset * xSign) / 3;
@@ -525,12 +526,32 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     else if (path === "grid") {
       curvesPossibilities = {
         hh: () => {
-          cpx1 += (absDx * 0.5 - headOffset / 2) * xSign;
-          cpx2 -= (absDx * 0.5 - headOffset / 2) * xSign;
+          // cpx1 += (absDx * 0.5 - headOffset / 2) * xSign;
+          // cpx2 -= (absDx * 0.5 - headOffset / 2) * xSign;
+          cpx1 += absDx * 0.5 * xSign;
+          cpx2 -= absDx * 0.5 * xSign;
+          if (showHead) {
+            cpx1 -= (headOffset / 2) * xSign;
+            cpx2 += (headOffset / 2) * xSign;
+          }
+          if (showTail) {
+            cpx1 -= (tailOffset / 2) * xSign;
+            cpx2 += (tailOffset / 2) * xSign;
+          }
         },
         vv: () => {
-          cpy1 += (absDy * 0.5 - headOffset / 2) * ySign;
-          cpy2 -= (absDy * 0.5 - headOffset / 2) * ySign;
+          // cpy1 += (absDy * 0.5 - headOffset / 2) * ySign;
+          // cpy2 -= (absDy * 0.5 - headOffset / 2) * ySign;
+          cpy1 += absDy * 0.5 * ySign;
+          cpy2 -= absDy * 0.5 * ySign;
+          if (showHead) {
+            cpy1 -= (headOffset / 2) * ySign;
+            cpy2 += (headOffset / 2) * ySign;
+          }
+          if (showTail) {
+            cpy1 -= (tailOffset / 2) * ySign;
+            cpy2 += (tailOffset / 2) * ySign;
+          }
         },
         hv: () => {
           cpx1 = x2;
@@ -569,6 +590,13 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     if (xSol2 > absDx) excRight += xSol2 - absDx;
     if (ySol1 < 0) excUp += -ySol1;
     if (ySol2 > absDy) excDown += ySol2 - absDy;
+
+    if (path === "grid") {
+      excLeft += calc;
+      excRight += calc;
+      excUp += calc;
+      excDown += calc;
+    }
 
     x1 += excLeft;
     x2 += excLeft;
