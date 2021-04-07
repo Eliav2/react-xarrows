@@ -138,7 +138,8 @@ export type domEventType = keyof GlobalEventHandlersEventMap;
 ##### API flexibility
 
 This API is built in such way that most props can accept different types. you can keep things simple or provide more
-detailed props for more custom behavior - the API except both(see [`startAnchor`](#'start'-and-'end') or `label` properties for good examples)
+detailed props for more custom behavior - the API except both(see [`startAnchor`](#startAnchor-and-endAnchor) or `label`
+properties for good examples)
 .<br/>
 see typescript types above for detailed descriptions of what type excepts every prop.
 
@@ -204,6 +205,7 @@ relative to the strokeWidth. examples:
 
 #### path
 
+_optional, default: "smooth"_ \
 `path` can be one of: `"smooth" | "grid" | "straight"`, and it controls the path arrow is drawn, exactly how their name
 suggest. examples:
 
@@ -211,6 +213,7 @@ suggest. examples:
 
 #### curveness
 
+_optional, default: 0.8_ \
 defines how much the lines curve. examples:
 
 - `curveness={false}` will make the line straight without curves(exactly like path='straight').
@@ -219,6 +222,7 @@ defines how much the lines curve. examples:
 
 #### dashness
 
+_optional, default: false_ \
 can make the arrow dashed and can even animate. if true default values(for dashness) are chosen. if object is passed
 then default values are chosen except what passed. examples:
 
@@ -232,6 +236,7 @@ passed to xarrow so by default it'll be passed down to `divConatiner`.
 
 #### passProps
 
+_optional, default: {}_ \
 you can pass properties to visible parts(body and head) of the arrow (such event handlers and much more). this supposed
 to be enough for most cases. examples:
 
@@ -245,6 +250,8 @@ to be enough for most cases. examples:
 The properties below can be used to customize the arrow even farther:
 
 #### arrowBodyProps, arrowHeadProps, SVGcanvasProps, divContainerProps
+
+_optional, default: {}_ \
 
 ![image](https://user-images.githubusercontent.com/47307889/95031511-09ed5100-06bf-11eb-95a3-4cdc8d0be0ad.png)
 
@@ -267,14 +274,16 @@ examples:
 
 ##### _extendSVGcanvas
 
+_optional, default: 0_ \
 will extend the svg canvas at all sides. can be useful if for some reason the arrow(or labels) is cut though to small
-svg canvas(should be used in advanced custom arrows). example: `_extendSVGcanvas = {30}` - will extended svg canvas in
-all sides by 30 pixels.
+svg canvas(should be used in advanced custom arrows). example: `_extendSVGcanvas = {30}` - will extend svg canvas in all
+sides by 30 pixels.
 
 ##### _cpx1Offset,_cpy1Offset,_cpx2Offset,_cpy2Offset
 
-now you can manipulate and offset the control points of the arrow. this way you can control how the line curves. check out the interactive codesandbox, set _debug to true and play with these
-properties.
+_optional, default: 0_ \
+now you can manipulate and offset the control points of the arrow. this way you can control how the line curves. check
+out the interactive codesandbox, set _debug to true and play with these properties.
 
 ### default props
 
