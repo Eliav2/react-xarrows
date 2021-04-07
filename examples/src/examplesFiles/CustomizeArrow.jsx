@@ -198,7 +198,7 @@ const ArrowLabel = ({ labelName, label, setLabel }) => {
   );
 };
 
-const Example2 = () => {
+const CustomizeArrow = () => {
   const [, setRender] = useState({});
   const forceRerender = () => setRender({});
 
@@ -289,7 +289,7 @@ const Example2 = () => {
         play with them directly at this codesandbox!.
       </p>
 
-      <button onClick={() => setShowMe(!showMe)}>toggle</button>
+      {/*<button onClick={() => setShowMe(!showMe)}>toggle</button>*/}
       {showMe ? (
         <div>
           <CollapsibleDiv title={"anchors"}>
@@ -421,4 +421,4 @@ const Example2 = () => {
   );
 };
 
-export default Example2;
+export default CustomizeArrow;

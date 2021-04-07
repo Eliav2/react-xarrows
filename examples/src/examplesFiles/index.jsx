@@ -1,5 +1,5 @@
-import Example1 from "./Example1";
-import Example2 from "./Example2";
+import FewArrows from "./FewArrows";
+import CustomizeArrow from "./CustomizeArrow";
 import Example4 from "./Example4";
 import ZindexExample from "./ZindexExample";
 import SimpleExample from "./SimpleExample";
@@ -8,8 +8,8 @@ import TestExample from "./TestExample";
 
 export default {
   SimpleExample: { name: "SimpleExample", component: SimpleExample },
-  Example1: { name: "Example1", component: Example1 },
-  Example2: { name: "Example2", component: Example2 },
+  FewArrows: { name: "FewArrows", component: FewArrows },
+  CustomizeArrow: { name: "CustomizeArrow", component: CustomizeArrow },
   // test: { name: "test", component: TestExample },
   // Example4: { name: "Example4", component: Example4 },
   // ZindexExample: { name: "ZindexExample", component: ZindexExample },

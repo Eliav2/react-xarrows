@@ -1,5 +1,3 @@
-//// @ts-nocheck
-
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import isEqual from "lodash.isequal";
 import pick from "lodash.pick";
@@ -39,6 +37,7 @@ export type xarrowPropsType = {
   SVGcanvasProps?: React.SVGAttributes<SVGSVGElement>;
   arrowBodyProps?: React.SVGProps<SVGPathElement>;
   arrowHeadProps?: React.SVGProps<SVGPathElement>;
+  arrowTailProps?: React.SVGProps<SVGPathElement>;
   divContainerProps?: React.HTMLProps<HTMLDivElement>;
   SVGcanvasStyle?: React.CSSProperties;
   divContainerStyle?: React.CSSProperties;
@@ -107,6 +106,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     SVGcanvasProps,
     arrowBodyProps,
     arrowHeadProps,
+    arrowTailProps,
     divContainerProps,
     SVGcanvasStyle,
     divContainerStyle,
@@ -672,7 +672,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
             transform={`translate(${xOffsetTail},${yOffsetTail}) rotate(${st.tailOrient})`}
             // transform={`translate(${xOffsetHead},${yOffsetHead}) rotate(${st.headOrient})`}
             {...passProps}
-            {...arrowHeadProps}
+            {...arrowTailProps}
           />
         ) : null}
 
@@ -806,15 +806,20 @@ Xarrow.propTypes = {
   label: PT.oneOfType([_pLabelType, pLabelsType]),
   color: PT.string,
   lineColor: PT.string,
+  showHead: PT.bool,
   headColor: PT.string,
-  strokeWidth: PT.number,
   headSize: PT.number,
+  tailSize: PT.number,
+  tailColor: PT.string,
+  strokeWidth: PT.number,
+  showTail: PT.bool,
   path: PT.oneOf(["smooth", "grid", "straight"]),
   curveness: PT.number,
   dashness: PT.oneOfType([PT.bool, PT.object]),
   passProps: PT.object,
   arrowBodyProps: PT.object,
   arrowHeadProps: PT.object,
+  arrowTailProps: PT.object,
   SVGcanvasProps: PT.object,
   divContainerProps: PT.object,
   extendSVGcanvas: PT.number,
@@ -839,6 +844,7 @@ Xarrow.defaultProps = {
   passProps: {},
   arrowBodyProps: {},
   arrowHeadProps: {},
+  arrowTailProps: {},
   SVGcanvasProps: {},
   divContainerProps: {},
   extendSVGcanvas: 0,

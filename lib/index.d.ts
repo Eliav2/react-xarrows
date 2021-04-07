@@ -25,6 +25,7 @@ export declare type xarrowPropsType = {
     SVGcanvasProps?: React.SVGAttributes<SVGSVGElement>;
     arrowBodyProps?: React.SVGProps<SVGPathElement>;
     arrowHeadProps?: React.SVGProps<SVGPathElement>;
+    arrowTailProps?: React.SVGProps<SVGPathElement>;
     divContainerProps?: React.HTMLProps<HTMLDivElement>;
     SVGcanvasStyle?: React.CSSProperties;
     divContainerStyle?: React.CSSProperties;
