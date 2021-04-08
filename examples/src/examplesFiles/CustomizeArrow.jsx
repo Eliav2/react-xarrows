@@ -325,7 +325,7 @@ const CustomizeArrow = () => {
                   <option key={i}>{o}</option>
                 ))}
               </select>
-              <p>stroke color: </p>
+              <p>line color: </p>
               <select onChange={(e) => setLineColor(e.target.value)}>
                 {bodyColorOptions.map((o, i) => (
                   <option key={i}>{o}</option>
