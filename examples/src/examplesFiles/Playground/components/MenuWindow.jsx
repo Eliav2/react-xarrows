@@ -64,9 +64,15 @@ export default ({ setLines, line: { props: lineProp } }) => {
       <div className="menuWindowContainer">
         <div className={"header"}>{`${lineProp.start}->${lineProp.end}`}</div>
         <hr style={{ width: "80%" }} />
-        <MaterialIcon size={30} icon="close" className="material-icons closeButton" onClick={handleClose} />
+        <MaterialIcon
+          size={30}
+          icon="close"
+          className="material-icons closeButton"
+          onClick={handleClose}
+        />
         <div style={{ width: "80%", margin: "auto" }}>
-          you are welcome to edit this example and add UI for editing the properties dynamically. PRs are very welcomed.
+          you are welcome to edit this example and add UI for editing the
+          properties dynamically. PRs are very welcomed.
         </div>
       </div>
     </Draggable>

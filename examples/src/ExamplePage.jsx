@@ -43,7 +43,7 @@ const ExamplePage = () => {
         </a>
         <br />
         <br />
-        no magical css traformations - just great react.
+        Just great react.
         <br />
       </p>
       <Router>

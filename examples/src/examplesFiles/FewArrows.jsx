@@ -29,7 +29,7 @@ const boxStyle = {
   height: "30px",
 };
 
-const Example1 = () => {
+const FewArrows = () => {
   const [, setRender] = useState({});
   const forceRerender = () => setRender({});
 
@@ -44,7 +44,7 @@ const Example1 = () => {
       start: "box1",
       end: "box2",
       headSize: 14,
-      label: { end: "endLable" },
+      label: { end: "endLabel" },
     },
     {
       start: "box2",
@@ -107,4 +107,4 @@ const Example1 = () => {
   );
 };
 
-export default Example1;
+export default FewArrows;

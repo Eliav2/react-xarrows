@@ -8,8 +8,12 @@ export declare type xarrowPropsType = {
     color?: string;
     lineColor?: string | null;
     headColor?: string | null;
+    tailColor?: string | null;
     strokeWidth?: number;
+    showHead?: boolean;
     headSize?: number;
+    showTail?: boolean;
+    tailSize?: number;
     path?: "smooth" | "grid" | "straight";
     curveness?: number;
     dashness?: boolean | {
@@ -21,36 +25,34 @@ export declare type xarrowPropsType = {
     SVGcanvasProps?: React.SVGAttributes<SVGSVGElement>;
     arrowBodyProps?: React.SVGProps<SVGPathElement>;
     arrowHeadProps?: React.SVGProps<SVGPathElement>;
+    arrowTailProps?: React.SVGProps<SVGPathElement>;
     divContainerProps?: React.HTMLProps<HTMLDivElement>;
     SVGcanvasStyle?: React.CSSProperties;
     divContainerStyle?: React.CSSProperties;
-    extendSVGcanvas?: number;
+    _extendSVGcanvas?: number;
+    _debug: boolean;
+    _cpx1Offset: number;
+    _cpy1Offset: number;
+    _cpx2Offset: number;
+    _cpy2Offset: number;
 };
 export declare type anchorType = anchorPositionType | anchorCustomPositionType;
 export declare type anchorPositionType = "middle" | "left" | "right" | "top" | "bottom" | "auto";
 export declare type anchorCustomPositionType = {
     position: anchorPositionType;
     offset: {
-        rightness: number;
-        bottomness: number;
+        rightness?: number;
+        bottomness?: number;
     };
 };
-export declare type reactRefType = {
-    current: null | HTMLElement;
-};
-export declare type refType = reactRefType | string;
+export declare type refType = React.MutableRefObject<any> | string;
 export declare type labelsType = {
     start?: labelType;
     middle?: labelType;
     end?: labelType;
 };
-export declare type labelType = JSX.Element;
+export declare type labelType = JSX.Element | string;
 export declare type domEventType = keyof GlobalEventHandlersEventMap;
-export declare type registerEventsType = {
-    ref: refType;
-    eventName: domEventType;
-    callback?: CallableFunction;
-};
 declare const Xarrow: React.FC<xarrowPropsType>;
 export default Xarrow;
 //# sourceMappingURL=index.d.ts.map

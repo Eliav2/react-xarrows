@@ -85,7 +85,7 @@
   height: calc(100% - 68px);
 }
 .wideBox,
-.intefaceBox {
+.interfaceBox {
   border: 1px #999 solid;
   border-radius: 10px;
   text-align: center;
@@ -107,7 +107,7 @@
   writing-mode: vertical-rl;
   text-orientation: mixed;
 }
-.intefaceBox {
+.interfaceBox {
   height: 50px;
 }
 

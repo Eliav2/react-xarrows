@@ -1,8 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import Example1 from "../examples/src/examplesFiles/Example1";
+import FewArrows from "../examples/src/examplesFiles/FewArrows";
 
 test("renders without crashing", () => {
   const div = document.createElement("div");
-  // ReactDOM.render(<Example1/>,div)
+  // ReactDOM.render(<FewArrows/>,div)
 });

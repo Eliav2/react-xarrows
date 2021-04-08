@@ -1,3 +1,13 @@
+## v1.6.0: 
+- proptypes - typescript types issues fixed.
+- now all pointer events enabled in the arrowhead by default ([#50](https://github.com/Eliav2/react-xarrows/issues/50))
+- added properties: `SVGcanvasStyle` and `divContainerStyle` ([#42])(https://github.com/Eliav2/react-xarrows/issues/42)
+- examples: bugfixes(playground) and examples update.
+- a new feature! tail support!  new properties: `showHead`,`showTail`,`tailSize`,`tailColor`,`arrowTailProps` .
+- renamed `extendSVGcanvas` to `_extendSVGcanvas`
+- advanced customization support: newProperties: `_cpx1Offset`,`_cpy1Offset`,`_cpx2Offset`,`_cpy2Offset`.
+- bugfix: in grid mode in some cases exceeded canvas.
+
 ## 1.5.0 
 - properties that are completely removed and no longer supported: `consoleWarning`, `monitorDOMchanges` and `registerEvents`.
 - issues related to jest and other issues has fixed.
