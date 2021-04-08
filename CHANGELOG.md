@@ -1,4 +1,4 @@
-## next: 
+## v1.6.0: 
 - proptypes - typescript types issues fixed.
 - now all pointer events enabled in the arrowhead by default ([#50](https://github.com/Eliav2/react-xarrows/issues/50))
 - added properties: `SVGcanvasStyle` and `divContainerStyle` ([#42])(https://github.com/Eliav2/react-xarrows/issues/42)
