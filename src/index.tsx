@@ -10,6 +10,7 @@ import { getShortestLine, prepareAnchorLines } from "./utils/anchors";
 // public types
 
 export type xarrowPropsType = {
+  id?: string | null;
   start: refType;
   end: refType;
   startAnchor?: anchorType | anchorType[];
@@ -33,6 +34,7 @@ export type xarrowPropsType = {
         nonStrokeLen?: number;
         animation?: boolean | number;
       };
+  animateDrawing?: boolean | string;
   passProps?: React.SVGProps<SVGPathElement>;
   SVGcanvasProps?: React.SVGAttributes<SVGSVGElement>;
   arrowBodyProps?: React.SVGProps<SVGPathElement>;
@@ -89,8 +91,11 @@ type prevPos = {
   };
 };
 
+const generateArrowId = () => `arrow${Date.now()}${Math.floor(Math.random() * 100)}`;
+
 const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
   let {
+    id,
     startAnchor,
     endAnchor,
     label,
@@ -106,6 +111,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     path,
     curveness,
     dashness,
+    animateDrawing,
     passProps,
     SVGcanvasProps,
     arrowBodyProps,
@@ -124,10 +130,14 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
   } = props;
 
   const selfRef = useRef(null);
+  const lineRef = useRef(null);
   const [anchorsRefs, setAnchorsRefs] = useState({ start: null, end: null });
 
   const [prevPosState, setPrevPosState] = useState<prevPos>(null);
   const [prevProps, setPrevProps] = useState<xarrowPropsType>(null);
+  const [lineLength, setLineLength] = useState(0);
+
+  id = id || generateArrowId();
 
   /**
    * determine if an update is needed and update if so.
@@ -135,6 +145,9 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
    * of the elements has changed(it points to a different element).
    */
   const updateIfNeeded = () => {
+    if (lineRef.current && lineRef.current.getTotalLength) {
+      setLineLength(lineRef.current.getTotalLength())
+    }
     // check if anchors refs changed
     const start = getElementByPropGiven(props.start);
     const end = getElementByPropGiven(props.end);
@@ -249,11 +262,6 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
       dashNone = Number(strokeWidth);
       animationSpeed = null;
     }
-  }
-  let dashoffset = dashStroke + dashNone;
-  if (animationSpeed < 0) {
-    animationSpeed *= -1;
-    animationDirection = -1;
   }
 
   let labelStart = null,
@@ -661,6 +669,35 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
   const yOffsetTail = st.y1 - st.arrowTailOffset.y;
 
   // console.log("x1,x2,tailOrient\n:", st.x1, st.x2, st.tailOrient);
+  let dashoffset = dashStroke + dashNone;
+  if (animationSpeed < 0) {
+    animationSpeed *= -1;
+    animationDirection = -1;
+  }
+  let dashArray,
+    animationDuration,
+    animationRepeatCount,
+    animationStartValue,
+    animationEndValue = null;
+
+  if (animateDrawing) {
+    if (typeof animateDrawing === "string") {
+      animationDuration = animateDrawing;
+    } else {
+      animationDuration = "1s";
+    }
+
+    dashArray = lineLength;
+    animationStartValue = lineLength;
+    animationRepeatCount = 1;
+    animationEndValue = 0;
+  } else {
+    dashArray = `${dashStroke} ${dashNone}`;
+    animationDuration = `${1 / animationSpeed}s`;
+    animationStartValue = dashoffset * animationDirection;
+    animationRepeatCount = 'indefinite';
+    animationEndValue = 0;
+  }
 
   let arrowPath = `M ${st.x1} ${st.y1} C ${st.cpx1} ${st.cpy1}, ${st.cpx2} ${st.cpy2}, ${st.x2} ${st.y2} `;
   if (path === "straight") arrowPath = `M ${st.x1} ${st.y1}  ${st.x2} ${st.y2}`;
@@ -674,6 +711,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
       {...extraProps}
     >
       <svg
+        id={id}
         ref={(selfRef as unknown) as React.LegacyRef<SVGSVGElement>}
         width={st.cw}
         height={st.ch}
@@ -711,6 +749,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
         {/* arrow tail */}
         {showTail ? (
           <path
+            id={`${id}tail`}
             d={`M 0 0 L ${fTailSize} ${fTailSize / 2} L 0 ${fTailSize} L ${
               fTailSize / 4
             } ${fTailSize / 2} z`}
@@ -725,9 +764,11 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
 
         {/* body of the arrow */}
         <path
+          id={`${id}line`}
+          ref={(lineRef as unknown) as React.LegacyRef<SVGPathElement>}
           d={arrowPath}
           stroke={lineColor}
-          strokeDasharray={`${dashStroke} ${dashNone}`}
+          strokeDasharray={dashArray}
           strokeWidth={strokeWidth}
           fill="transparent"
           pointerEvents="visibleStroke"
@@ -735,27 +776,43 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
           // style = {...passStyle}
           {...arrowBodyProps}
         >
-          {animationSpeed ? (
+          {animationSpeed || animateDrawing ? (
             <animate
+              id={`${id}animate`}
               attributeName="stroke-dashoffset"
-              values={`${dashoffset * animationDirection};0`}
-              dur={`${1 / animationSpeed}s`}
-              repeatCount="indefinite"
+              values={`${animationStartValue};${animationEndValue}`}
+              dur={animationDuration}
+              repeatCount={animationRepeatCount}
             />
           ) : null}
         </path>
         {/* head of the arrow */}
         {showHead ? (
           <path
+            id={`${id}head`}
             d={`M 0 0 L ${fHeadSize} ${fHeadSize / 2} L 0 ${fHeadSize} L ${
               fHeadSize / 4
             } ${fHeadSize / 2} z`}
             fill={headColor}
             pointerEvents="all"
             transform={`translate(${xOffsetHead},${yOffsetHead}) rotate(${st.headOrient})`}
+            opacity={animateDrawing ? "0" : "1"}
             {...passProps}
             {...arrowHeadProps}
-          />
+          > 
+            {animateDrawing ? (
+              <animate
+                id={`${id}showhead`}
+                dur="0.05s"
+                attributeName="opacity"
+                from="0"
+                to="1"
+                begin={`${id}animate.end`}
+                repeatCount="0"
+                fill="freeze"
+              />
+            ) : null}
+          </path>
         ) : null}
       </svg>
 
@@ -846,6 +903,7 @@ const pLabelsType = PT.exact({
 });
 
 Xarrow.propTypes = {
+  id: PT.string,
   start: pRefType.isRequired,
   end: pRefType.isRequired,
   startAnchor: pAnchorType,
@@ -863,6 +921,7 @@ Xarrow.propTypes = {
   path: PT.oneOf(["smooth", "grid", "straight"]),
   curveness: PT.number,
   dashness: PT.oneOfType([PT.bool, PT.object]),
+  animateDrawing: PT.oneOfType([PT.bool, PT.string]),
   passProps: PT.object,
   arrowBodyProps: PT.object,
   arrowHeadProps: PT.object,
@@ -878,6 +937,7 @@ Xarrow.propTypes = {
 };
 
 Xarrow.defaultProps = {
+  id: null,
   startAnchor: "auto",
   endAnchor: "auto",
   label: null,
@@ -893,6 +953,7 @@ Xarrow.defaultProps = {
   path: "smooth",
   curveness: 0.8,
   dashness: false,
+  animateDrawing: false,
   passProps: {},
   arrowBodyProps: {},
   arrowHeadProps: {},

@@ -1,5 +1,6 @@
 import React from "react";
 export declare type xarrowPropsType = {
+    id?: string | null;
     start: refType;
     end: refType;
     startAnchor?: anchorType | anchorType[];
@@ -21,6 +22,7 @@ export declare type xarrowPropsType = {
         nonStrokeLen?: number;
         animation?: boolean | number;
     };
+    animateDrawing?: boolean | string;
     passProps?: React.SVGProps<SVGPathElement>;
     SVGcanvasProps?: React.SVGAttributes<SVGSVGElement>;
     arrowBodyProps?: React.SVGProps<SVGPathElement>;
