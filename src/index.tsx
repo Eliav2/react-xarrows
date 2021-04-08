@@ -409,8 +409,6 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
           (Math.sin(tailAngel) * tailOffset) / 3;
         tailOrient = (tailAngel * 180) / Math.PI;
       }
-
-      //todo: add tail support
     } else {
       // in case of smooth path
       if (endAnchorPosition === "middle") {
