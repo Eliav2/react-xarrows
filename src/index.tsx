@@ -33,6 +33,8 @@ export type xarrowPropsType = {
         nonStrokeLen?: number;
         animation?: boolean | number;
       };
+  headOffset?: number; // from 0 to 1
+  tailOffset?: number; // from 0 to 1
   passProps?: React.SVGProps<SVGPathElement>;
   SVGcanvasProps?: React.SVGAttributes<SVGSVGElement>;
   arrowBodyProps?: React.SVGProps<SVGPathElement>;
@@ -42,11 +44,11 @@ export type xarrowPropsType = {
   SVGcanvasStyle?: React.CSSProperties;
   divContainerStyle?: React.CSSProperties;
   _extendSVGcanvas?: number;
-  _debug: boolean;
-  _cpx1Offset: number;
-  _cpy1Offset: number;
-  _cpx2Offset: number;
-  _cpy2Offset: number;
+  _debug?: boolean;
+  _cpx1Offset?: number;
+  _cpy1Offset?: number;
+  _cpx2Offset?: number;
+  _cpy2Offset?: number;
 };
 
 export type anchorType = anchorPositionType | anchorCustomPositionType;
@@ -89,7 +91,12 @@ type prevPos = {
   };
 };
 
+const normalArrowShape = `M 0 0 L 1 0.5 L 0 1 L 0.25 0.5 z`;
+// const heartShape = `M 0,2 A 1,1 0,0,1 4,2 A 1,1 0,0,1 8,2 Q 8,5 4,8 Q 0,5 0,2 z`;
+const heartShape = `M 0,0.25 A 0.125,0.125 0,0,1 0.5,0.25 A 0.125,0.125 0,0,1 1,0.25 Q 1,0.625 0.5,1 Q 0,0.625 0,0.25 z`;
+
 const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
+  console.log();
   let {
     startAnchor,
     endAnchor,
@@ -106,6 +113,8 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     path,
     curveness,
     dashness,
+    headOffset,
+    tailOffset,
     passProps,
     SVGcanvasProps,
     arrowBodyProps,
@@ -316,6 +325,9 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     let startPointsObj = prepareAnchorLines(startAnchor, sPos);
     let endPointsObj = prepareAnchorLines(endAnchor, ePos);
 
+    if (_debug) {
+    }
+
     // choose the smallest path for 2 points from these possibilities.
     let { startPointObj, endPointObj } = getShortestLine(
       startPointsObj,
@@ -336,8 +348,8 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     let absDy = Math.abs(endPoint.y - startPoint.y);
     let xSign = dx > 0 ? 1 : -1;
     let ySign = dy > 0 ? 1 : -1;
-    let headOffset = ((headSize * 3) / 4) * strokeWidth;
-    let tailOffset = ((tailSize * 3) / 4) * strokeWidth;
+    let _headOffset = headSize * headOffset * strokeWidth;
+    let _tailOffset = tailSize * tailOffset * strokeWidth;
     let cu = Number(curveness);
     if (path === "straight") {
       cu = 0;
@@ -377,36 +389,34 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
       let headAngel = Math.atan(absDy / absDx);
 
       if (showHead) {
-        x2 -= headOffset * xSign * Math.cos(headAngel);
-        y2 -= headOffset * ySign * Math.sin(headAngel);
+        x2 -= _headOffset * xSign * Math.cos(headAngel);
+        y2 -= _headOffset * ySign * Math.sin(headAngel);
 
         // cpx2 -= headOffset * xSign * Math.cos(headAngel);
         // cpy2 -= headOffset * ySign * Math.sin(headAngel);
         headAngel *= ySign;
         if (xSign < 0) headAngel = (Math.PI - headAngel * xSign) * xSign;
         xHeadOffset =
-          (Math.cos(headAngel) * headOffset) / 3 -
+          (Math.cos(headAngel) * _headOffset) / 3 -
           (Math.sin(headAngel) * (headSize * strokeWidth)) / 2;
         yHeadOffset =
           (Math.cos(headAngel) * (headSize * strokeWidth)) / 2 +
-          (Math.sin(headAngel) * headOffset) / 3;
+          (Math.sin(headAngel) * _headOffset) / 3;
         headOrient = (headAngel * 180) / Math.PI;
       }
 
       let tailAngel = Math.atan(absDy / absDx);
       if (showTail) {
-        x1 += tailOffset * xSign * Math.cos(tailAngel);
-        y1 += tailOffset * ySign * Math.sin(tailAngel);
-        // cpx2 -= headOffset * xSign * Math.cos(headAngel);
-        // cpy2 -= headOffset * ySign * Math.sin(headAngel);
+        x1 += _tailOffset * xSign * Math.cos(tailAngel);
+        y1 += _tailOffset * ySign * Math.sin(tailAngel);
         tailAngel *= -ySign;
         if (xSign > 0) tailAngel = (Math.PI - tailAngel * xSign) * xSign;
         xTailOffset =
-          (Math.cos(tailAngel) * tailOffset) / 3 -
+          (Math.cos(tailAngel) * _tailOffset) / 3 -
           (Math.sin(tailAngel) * (tailSize * strokeWidth)) / 2;
         yTailOffset =
           (Math.cos(tailAngel) * (tailSize * strokeWidth)) / 2 +
-          (Math.sin(tailAngel) * tailOffset) / 3;
+          (Math.sin(tailAngel) * _tailOffset) / 3;
         tailOrient = (tailAngel * 180) / Math.PI;
       }
     } else {
@@ -421,10 +431,8 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
       }
       if (showHead) {
         if (["left", "right"].includes(endAnchorPosition)) {
-          x2 -= headOffset * xSign;
-          // cpx2 -= headOffset * xSign * 2;
-          // cpx1 += headOffset * xSign;
-          xHeadOffset = (headOffset * xSign) / 3;
+          x2 -= _headOffset * xSign;
+          xHeadOffset = (_headOffset * xSign) / 3;
           yHeadOffset = (headSize * strokeWidth * xSign) / 2;
           if (endAnchorPosition === "left") {
             headOrient = 0;
@@ -434,11 +442,9 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
             if (xSign > 0) headOrient += 180;
           }
         } else if (["top", "bottom"].includes(endAnchorPosition)) {
-          yHeadOffset = (headOffset * ySign) / 3;
+          yHeadOffset = (_headOffset * ySign) / 3;
           xHeadOffset = (headSize * strokeWidth * -ySign) / 2;
-          y2 -= headOffset * ySign;
-          // cpy1 += headOffset * ySign;
-          // cpy2 -= headOffset * ySign;
+          y2 -= _headOffset * ySign;
           if (endAnchorPosition === "top") {
             headOrient = 270;
             if (ySign > 0) headOrient += 180;
@@ -452,8 +458,8 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
 
     if (showTail && cu !== 0) {
       if (["left", "right"].includes(startAnchorPosition)) {
-        x1 += tailOffset * xSign;
-        xTailOffset = -(tailOffset * xSign) / 3;
+        x1 += _tailOffset * xSign;
+        xTailOffset = -(_tailOffset * xSign) / 3;
         yTailOffset = -(tailSize * strokeWidth * xSign) / 2;
         if (startAnchorPosition === "left") {
           tailOrient = 180;
@@ -463,11 +469,9 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
           if (xSign > 0) tailOrient += 180;
         }
       } else if (["top", "bottom"].includes(startAnchorPosition)) {
-        yTailOffset = -(tailOffset * ySign) / 3;
+        yTailOffset = -(_tailOffset * ySign) / 3;
         xTailOffset = -(tailSize * strokeWidth * -ySign) / 2;
-        y1 += tailOffset * ySign;
-        // cpy1 += tailOffset * ySign;
-        // cpy2 -= tailOffset * ySign;
+        y1 += _tailOffset * ySign;
         if (startAnchorPosition === "top") {
           tailOrient = 90;
           if (ySign > 0) tailOrient += 180;
@@ -529,12 +533,12 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
           cpx1 += absDx * 0.5 * xSign;
           cpx2 -= absDx * 0.5 * xSign;
           if (showHead) {
-            cpx1 -= (headOffset / 2) * xSign;
-            cpx2 += (headOffset / 2) * xSign;
+            cpx1 -= (_headOffset / 2) * xSign;
+            cpx2 += (_headOffset / 2) * xSign;
           }
           if (showTail) {
-            cpx1 -= (tailOffset / 2) * xSign;
-            cpx2 += (tailOffset / 2) * xSign;
+            cpx1 -= (_tailOffset / 2) * xSign;
+            cpx2 += (_tailOffset / 2) * xSign;
           }
         },
         vv: () => {
@@ -543,12 +547,12 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
           cpy1 += absDy * 0.5 * ySign;
           cpy2 -= absDy * 0.5 * ySign;
           if (showHead) {
-            cpy1 -= (headOffset / 2) * ySign;
-            cpy2 += (headOffset / 2) * ySign;
+            cpy1 -= (_headOffset / 2) * ySign;
+            cpy2 += (_headOffset / 2) * ySign;
           }
           if (showTail) {
-            cpy1 -= (tailOffset / 2) * ySign;
-            cpy2 += (tailOffset / 2) * ySign;
+            cpy1 -= (_tailOffset / 2) * ySign;
+            cpy2 += (_tailOffset / 2) * ySign;
           }
         },
         hv: () => {
@@ -582,6 +586,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
 
     ////////////////////////////////////
     // canvas smart size adjustments
+    // todo: fix: calc edges size and adjust canvas
     const [xSol1, xSol2] = buzzierMinSols(x1, cpx1, cpx2, x2);
     const [ySol1, ySol2] = buzzierMinSols(y1, cpy1, cpy2, y2);
     if (xSol1 < 0) excLeft += -xSol1;
@@ -645,7 +650,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
       excRight,
       excUp,
       excDown,
-      headOffset,
+      headOffset: _headOffset,
       arrowHeadOffset,
       arrowTailOffset,
     });
@@ -709,12 +714,14 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
         {/* arrow tail */}
         {showTail ? (
           <path
-            d={`M 0 0 L ${fTailSize} ${fTailSize / 2} L 0 ${fTailSize} L ${
-              fTailSize / 4
-            } ${fTailSize / 2} z`}
+            // d={`M 0 0 L ${fTailSize} ${fTailSize / 2} L 0 ${fTailSize} L ${
+            //   fTailSize / 4
+            // } ${fTailSize / 2} z`}
+            // d={factorDpathStr(normalArrowShape, fTailSize)}
+            d={normalArrowShape}
             fill={tailColor}
             pointerEvents="all"
-            transform={`translate(${xOffsetTail},${yOffsetTail}) rotate(${st.tailOrient})`}
+            transform={`translate(${xOffsetTail},${yOffsetTail}) rotate(${st.tailOrient}) scale(${fTailSize})`}
             // transform={`translate(${xOffsetHead},${yOffsetHead}) rotate(${st.headOrient})`}
             {...passProps}
             {...arrowTailProps}
@@ -745,12 +752,13 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
         {/* head of the arrow */}
         {showHead ? (
           <path
-            d={`M 0 0 L ${fHeadSize} ${fHeadSize / 2} L 0 ${fHeadSize} L ${
-              fHeadSize / 4
-            } ${fHeadSize / 2} z`}
+            // d={`M 0 0 L ${fHeadSize} ${fHeadSize / 2} L 0 ${fHeadSize} L ${
+            //   fHeadSize / 4
+            // } ${fHeadSize / 2} z`}
+            d={normalArrowShape}
             fill={headColor}
-            pointerEvents="all"
-            transform={`translate(${xOffsetHead},${yOffsetHead}) rotate(${st.headOrient})`}
+            pointerEvents="auto"
+            transform={`translate(${xOffsetHead},${yOffsetHead}) rotate(${st.headOrient}) scale(${fHeadSize})`}
             {...passProps}
             {...arrowHeadProps}
           />
@@ -861,6 +869,8 @@ Xarrow.propTypes = {
   path: PT.oneOf(["smooth", "grid", "straight"]),
   curveness: PT.number,
   dashness: PT.oneOfType([PT.bool, PT.object]),
+  headOffset: PT.number,
+  tailOffset: PT.number,
   passProps: PT.object,
   arrowBodyProps: PT.object,
   arrowHeadProps: PT.object,
@@ -891,6 +901,8 @@ Xarrow.defaultProps = {
   path: "smooth",
   curveness: 0.8,
   dashness: false,
+  headOffset: 0.75,
+  tailOffset: 0.75,
   passProps: {},
   arrowBodyProps: {},
   arrowHeadProps: {},

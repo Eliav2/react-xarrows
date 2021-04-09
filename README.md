@@ -163,7 +163,7 @@ examples:
 
 #### 'startAnchor' and 'endAnchor'
 
-_required_\
+_optional_\
 each anchor can be: `"auto" | "middle" | "left" | "right" | "top" | "bottom"`.
 `auto` will choose automatically the path with the smallest length. can also be a list of possible anchors. if list is
 provided - the minimal length anchors will be choose from the list. you can also offset each anchor passing `offset`.

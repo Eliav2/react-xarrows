@@ -151,6 +151,8 @@ const ArrowSide = ({
   setSide,
   sideSize,
   setSideSize,
+  sideOffset,
+  setSideOffset,
   showSide,
   setShowSide,
 }) => {
@@ -179,6 +181,13 @@ const ArrowSide = ({
         value={sideSize}
         onChange={(val) => setSideSize(val)}
         style={{ input: { width: 60 } }}
+      />
+      <p>{sideName}Offset: </p>
+      <NumericInput
+        value={sideOffset}
+        onChange={(val) => setSideOffset(val)}
+        style={{ input: { width: 70 } }}
+        step={0.01}
       />
     </Div>
   );
@@ -223,6 +232,8 @@ const CustomizeArrow = () => {
   const [showHead, setShowHead] = useState(true);
   const [headColor, setHeadColor] = useState(null);
   const [headSize, setHeadSize] = useState(6);
+  const [headOffset, setHeadOffset] = useState(0.75);
+  const [tailOffset, setTailOffset] = useState(0.75);
   const [showTail, setShowTail] = useState(false);
   const [tailColor, setTailColor] = useState(null);
   const [tailSize, setTailSize] = useState(6);
@@ -258,6 +269,8 @@ const CustomizeArrow = () => {
     showHead: showHead,
     headColor: headColor,
     headSize: Number(headSize),
+    headOffset: Number(headOffset),
+    tailOffset: Number(tailOffset),
     showTail,
     tailColor,
     tailSize: Number(tailSize),
@@ -373,6 +386,8 @@ const CustomizeArrow = () => {
               setSideSize={setHeadSize}
               showSide={showHead}
               setShowSide={setShowHead}
+              sideOffset={headOffset}
+              setSideOffset={setHeadOffset}
             />
             <ArrowSide
               sideName={"tail"}
@@ -381,6 +396,8 @@ const CustomizeArrow = () => {
               setSideSize={setTailSize}
               showSide={showTail}
               setShowSide={setShowTail}
+              sideOffset={tailOffset}
+              setSideOffset={setTailOffset}
             />
           </MyCollapsible>
 
