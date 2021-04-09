@@ -166,6 +166,7 @@ examples:
 - `start={myRef}` -  `myRef` is a react ref.
 
 #### 'startAnchor' and 'endAnchor'
+_optional, default: "auto"_ \
 
 each anchor can be: `"auto" | "middle" | "left" | "right" | "top" | "bottom"`.
 `auto` will choose automatically the path with the smallest length. can also be a list of possible anchors. if list is

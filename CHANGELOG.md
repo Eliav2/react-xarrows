@@ -7,6 +7,7 @@
 - renamed `extendSVGcanvas` to `_extendSVGcanvas`
 - advanced customization support: newProperties: `_cpx1Offset`,`_cpy1Offset`,`_cpx2Offset`,`_cpy2Offset`.
 - bugfix: in grid mode in some cases exceeded canvas.
+- 1.6.1 - typescript fix: optional properties were require
 
 ## 1.5.0 
 - properties that are completely removed and no longer supported: `consoleWarning`, `monitorDOMchanges` and `registerEvents`.
