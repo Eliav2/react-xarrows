@@ -41,7 +41,6 @@ codebox of few examples(in this repo at /examples).
 see this interactive example: https://lwwwp.csb.app/CustomizeArrow
 ![react-xarrows-v1 6](https://user-images.githubusercontent.com/47307889/113949468-070f1c80-9818-11eb-90e6-ddc6d814b912.gif)
 
-
 ### simple example:
 
 ```jsx
@@ -82,6 +81,11 @@ an update on the arrows whenever one of the connected elements renders(possibaly
 arrows) ,this is because the Xarrow component does not have any control or awareness of the connected elements. in
 addition, make sure to render Xarrows later in the DOM then the connected elements else the app will crash.
 **this is planned to be changed in react-xarrows v2.**
+
+### react-xarrows v2
+v2 is on its way. want to contribute and participate in plannig the next react architecture for react-xarrows?
+see discussion [here](https://github.com/Eliav2/react-xarrows/discussions/53)!
+
 
 ### types definitions
 
@@ -163,7 +167,6 @@ examples:
 
 #### 'startAnchor' and 'endAnchor'
 
-_required_\
 each anchor can be: `"auto" | "middle" | "left" | "right" | "top" | "bottom"`.
 `auto` will choose automatically the path with the smallest length. can also be a list of possible anchors. if list is
 provided - the minimal length anchors will be choose from the list. you can also offset each anchor passing `offset`.
@@ -275,6 +278,11 @@ examples:
 
 - `arrowHead = {onClick: () => console.log("head clicked!")}` - now only the head will console log a message when
   clicked.
+
+##### SVGcanvasStyle divContainerStyle
+
+if you wish to pass style to divContainer or SVGcanvas use `SVGcanvasStyle`,`divContainerStyle` and not `SVGcanvasProps`
+,`divContainerProps` to not override existing style.
 
 ##### _extendSVGcanvas
 

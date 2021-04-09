@@ -30,11 +30,11 @@ export declare type xarrowPropsType = {
     SVGcanvasStyle?: React.CSSProperties;
     divContainerStyle?: React.CSSProperties;
     _extendSVGcanvas?: number;
-    _debug: boolean;
-    _cpx1Offset: number;
-    _cpy1Offset: number;
-    _cpx2Offset: number;
-    _cpy2Offset: number;
+    _debug?: boolean;
+    _cpx1Offset?: number;
+    _cpy1Offset?: number;
+    _cpx2Offset?: number;
+    _cpy2Offset?: number;
 };
 export declare type anchorType = anchorPositionType | anchorCustomPositionType;
 export declare type anchorPositionType = "middle" | "left" | "right" | "top" | "bottom" | "auto";
