@@ -232,8 +232,8 @@ const CustomizeArrow = () => {
   const [showHead, setShowHead] = useState(true);
   const [headColor, setHeadColor] = useState(null);
   const [headSize, setHeadSize] = useState(6);
-  const [headOffset, setHeadOffset] = useState(0.75);
-  const [tailOffset, setTailOffset] = useState(0.75);
+  const [headOffset, setHeadOffset] = useState(0.25);
+  const [tailOffset, setTailOffset] = useState(0.25);
   const [showTail, setShowTail] = useState(false);
   const [tailColor, setTailColor] = useState(null);
   const [tailSize, setTailSize] = useState(6);

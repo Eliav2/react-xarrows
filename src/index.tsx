@@ -96,7 +96,6 @@ const normalArrowShape = `M 0 0 L 1 0.5 L 0 1 L 0.25 0.5 z`;
 const heartShape = `M 0,0.25 A 0.125,0.125 0,0,1 0.5,0.25 A 0.125,0.125 0,0,1 1,0.25 Q 1,0.625 0.5,1 Q 0,0.625 0,0.25 z`;
 
 const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
-  console.log();
   let {
     startAnchor,
     endAnchor,
@@ -394,9 +393,11 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
 
         // cpx2 -= headOffset * xSign * Math.cos(headAngel);
         // cpy2 -= headOffset * ySign * Math.sin(headAngel);
+        //todo: fix for custom svg
         headAngel *= ySign;
         if (xSign < 0) headAngel = (Math.PI - headAngel * xSign) * xSign;
         xHeadOffset =
+          // (Math.cos(headAngel) *headSize * strokeWidth * (1 - headOffset)) -
           (Math.cos(headAngel) * _headOffset) / 3 -
           (Math.sin(headAngel) * (headSize * strokeWidth)) / 2;
         yHeadOffset =
@@ -431,8 +432,9 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
       }
       if (showHead) {
         if (["left", "right"].includes(endAnchorPosition)) {
-          x2 -= _headOffset * xSign;
-          xHeadOffset = (_headOffset * xSign) / 3;
+          xHeadOffset = _headOffset * xSign;
+          x2 -= headSize * strokeWidth * xSign - xHeadOffset;
+          // x2 -= headSize * strokeWidth * (1 - headOffset) * xSign; //same!
           yHeadOffset = (headSize * strokeWidth * xSign) / 2;
           if (endAnchorPosition === "left") {
             headOrient = 0;
@@ -442,9 +444,9 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
             if (xSign > 0) headOrient += 180;
           }
         } else if (["top", "bottom"].includes(endAnchorPosition)) {
-          yHeadOffset = (_headOffset * ySign) / 3;
           xHeadOffset = (headSize * strokeWidth * -ySign) / 2;
-          y2 -= _headOffset * ySign;
+          yHeadOffset = _headOffset * ySign;
+          y2 -= headSize * strokeWidth * ySign - yHeadOffset;
           if (endAnchorPosition === "top") {
             headOrient = 270;
             if (ySign > 0) headOrient += 180;
@@ -458,8 +460,8 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
 
     if (showTail && cu !== 0) {
       if (["left", "right"].includes(startAnchorPosition)) {
-        x1 += _tailOffset * xSign;
-        xTailOffset = -(_tailOffset * xSign) / 3;
+        xTailOffset = _tailOffset * -xSign;
+        x1 += tailSize * strokeWidth * xSign + xTailOffset;
         yTailOffset = -(tailSize * strokeWidth * xSign) / 2;
         if (startAnchorPosition === "left") {
           tailOrient = 180;
@@ -469,9 +471,9 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
           if (xSign > 0) tailOrient += 180;
         }
       } else if (["top", "bottom"].includes(startAnchorPosition)) {
-        yTailOffset = -(_tailOffset * ySign) / 3;
-        xTailOffset = -(tailSize * strokeWidth * -ySign) / 2;
-        y1 += _tailOffset * ySign;
+        yTailOffset = _tailOffset * -ySign;
+        y1 += tailSize * strokeWidth * ySign + yTailOffset;
+        xTailOffset = (tailSize * strokeWidth * ySign) / 2;
         if (startAnchorPosition === "top") {
           tailOrient = 90;
           if (ySign > 0) tailOrient += 180;
@@ -533,26 +535,24 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
           cpx1 += absDx * 0.5 * xSign;
           cpx2 -= absDx * 0.5 * xSign;
           if (showHead) {
-            cpx1 -= (_headOffset / 2) * xSign;
-            cpx2 += (_headOffset / 2) * xSign;
+            cpx1 -= ((headSize * strokeWidth * (1 - headOffset)) / 2) * xSign;
+            cpx2 += ((headSize * strokeWidth * (1 - headOffset)) / 2) * xSign;
           }
           if (showTail) {
-            cpx1 -= (_tailOffset / 2) * xSign;
-            cpx2 += (_tailOffset / 2) * xSign;
+            cpx1 -= ((tailSize * strokeWidth * (1 - tailOffset)) / 2) * xSign;
+            cpx2 += ((tailSize * strokeWidth * (1 - tailOffset)) / 2) * xSign;
           }
         },
         vv: () => {
-          // cpy1 += (absDy * 0.5 - headOffset / 2) * ySign;
-          // cpy2 -= (absDy * 0.5 - headOffset / 2) * ySign;
           cpy1 += absDy * 0.5 * ySign;
           cpy2 -= absDy * 0.5 * ySign;
           if (showHead) {
-            cpy1 -= (_headOffset / 2) * ySign;
-            cpy2 += (_headOffset / 2) * ySign;
+            cpy1 -= ((headSize * strokeWidth * (1 - headOffset)) / 2) * ySign;
+            cpy2 += ((headSize * strokeWidth * (1 - headOffset)) / 2) * ySign;
           }
           if (showTail) {
-            cpy1 -= (_tailOffset / 2) * ySign;
-            cpy2 += (_tailOffset / 2) * ySign;
+            cpy1 -= ((tailSize * strokeWidth * (1 - tailOffset)) / 2) * ySign;
+            cpy2 += ((tailSize * strokeWidth * (1 - tailOffset)) / 2) * ySign;
           }
         },
         hv: () => {
@@ -720,7 +720,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
             // d={factorDpathStr(normalArrowShape, fTailSize)}
             d={normalArrowShape}
             fill={tailColor}
-            pointerEvents="all"
+            pointerEvents="auto"
             transform={`translate(${xOffsetTail},${yOffsetTail}) rotate(${st.tailOrient}) scale(${fTailSize})`}
             // transform={`translate(${xOffsetHead},${yOffsetHead}) rotate(${st.headOrient})`}
             {...passProps}
@@ -755,7 +755,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
             // d={`M 0 0 L ${fHeadSize} ${fHeadSize / 2} L 0 ${fHeadSize} L ${
             //   fHeadSize / 4
             // } ${fHeadSize / 2} z`}
-            d={normalArrowShape}
+            d={heartShape}
             fill={headColor}
             pointerEvents="auto"
             transform={`translate(${xOffsetHead},${yOffsetHead}) rotate(${st.headOrient}) scale(${fHeadSize})`}
@@ -901,8 +901,8 @@ Xarrow.defaultProps = {
   path: "smooth",
   curveness: 0.8,
   dashness: false,
-  headOffset: 0.75,
-  tailOffset: 0.75,
+  headOffset: 0.25,
+  tailOffset: 0.25,
   passProps: {},
   arrowBodyProps: {},
   arrowHeadProps: {},
