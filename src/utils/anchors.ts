@@ -2,7 +2,11 @@
  * utility functions for preparing `startAnchor` and `endAnchor` to accept the diffrent types that can be passed.
  */
 
-import { anchorCustomPositionType, anchorPositionType } from "../index";
+import {
+  anchorCustomPositionType,
+  anchorPositionType,
+  anchorType,
+} from "../index";
 import { typeOf } from "./index";
 
 const getAnchorsDefaultOffsets = (width: number, height: number) => {

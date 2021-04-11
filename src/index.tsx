@@ -232,6 +232,9 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     excLeft: 0, //expand canvas to the left
     excUp: 0, //expand canvas upwards
     excDown: 0, // expand canvas downward
+    startPoints: [],
+    endPoints: [],
+    mainDivPos: { x: 0, y: 0 },
   });
 
   headSize = Number(headSize);
@@ -277,6 +280,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     }
   }
 
+  // get the absolute starting point of the canvas
   const getSelfPos = () => {
     let {
       left: xarrowElemX,
@@ -321,16 +325,13 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     let tailOrient: number = 0;
 
     // convert startAnchor and endAnchor to list of objects represents allowed anchors.
-    let startPointsObj = prepareAnchorLines(startAnchor, sPos);
-    let endPointsObj = prepareAnchorLines(endAnchor, ePos);
-
-    if (_debug) {
-    }
+    let startPoints = prepareAnchorLines(startAnchor, sPos);
+    let endPoints = prepareAnchorLines(endAnchor, ePos);
 
     // choose the smallest path for 2 points from these possibilities.
     let { startPointObj, endPointObj } = getShortestLine(
-      startPointsObj,
-      endPointsObj
+      startPoints,
+      endPoints
     );
 
     let startAnchorPosition = startPointObj.anchorPosition,
@@ -338,9 +339,9 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     let startPoint = pick(startPointObj, ["x", "y"]),
       endPoint = pick(endPointObj, ["x", "y"]);
 
-    let xarrowElemPos = getSelfPos();
-    let cx0 = Math.min(startPoint.x, endPoint.x) - xarrowElemPos.x;
-    let cy0 = Math.min(startPoint.y, endPoint.y) - xarrowElemPos.y;
+    let mainDivPos = getSelfPos();
+    let cx0 = Math.min(startPoint.x, endPoint.x) - mainDivPos.x;
+    let cy0 = Math.min(startPoint.y, endPoint.y) - mainDivPos.y;
     let dx = endPoint.x - startPoint.x;
     let dy = endPoint.y - startPoint.y;
     let absDx = Math.abs(endPoint.x - startPoint.x);
@@ -669,6 +670,9 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
       headOffset: _headOffset,
       arrowHeadOffset,
       arrowTailOffset,
+      startPoints,
+      endPoints,
+      mainDivPos,
     });
   };
 
@@ -822,6 +826,29 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
         >
           {labelEnd}
         </div>
+      ) : null}
+      {_debug ? (
+        <>
+          {/* possible anchor connections */}
+          {[...st.startPoints, ...st.endPoints].map((p, i) => {
+            return (
+              <div
+                key={i}
+                style={{
+                  background: "gray",
+                  opacity: 0.5,
+                  borderRadius: "50%",
+                  transform: "translate(-50%, -50%)",
+                  height: 5,
+                  width: 5,
+                  position: "absolute",
+                  left: p.x - st.mainDivPos.x,
+                  top: p.y - st.mainDivPos.y,
+                }}
+              />
+            );
+          })}
+        </>
       ) : null}
     </div>
   );
