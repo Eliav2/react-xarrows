@@ -440,6 +440,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
           // if (endAnchorPosition === "left") {
           //   headOrient = 90;
           // ...
+
           xHeadOffset = _headOffset * xSign;
           x2 -= fHeadSize * xSign - xHeadOffset;
           // x2 -= fHeadSize * (1 - headOffset) * xSign; //same!
