@@ -2,7 +2,7 @@ image: gitpod/workspace-full
 
 tasks:
   - name: examples
-    init: yarn install && yarn link && cd examples/ && yarn install && yarn link react-xarrows
+    init: yarn install && yarn link && cd examples/ && yarn install && yarn link react-xarrows && npm link ../node_modules/react
     command: cd examples/ && yarn start
   - name: ts watch
     command: tsc -w
