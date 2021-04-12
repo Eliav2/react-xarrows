@@ -90,6 +90,7 @@ type prevPos = {
 };
 
 const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
+    console.log("test!")
   let {
     startAnchor,
     endAnchor,
@@ -128,6 +129,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
 
   const [prevPosState, setPrevPosState] = useState<prevPos>(null);
   const [prevProps, setPrevProps] = useState<xarrowPropsType>(null);
+
 
   /**
    * determine if an update is needed and update if so.
