@@ -90,7 +90,6 @@ type prevPos = {
 };
 
 const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
-    console.log("test!")
   let {
     startAnchor,
     endAnchor,
