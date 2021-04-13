@@ -28,3 +28,13 @@ export const typeOf = (arg: any): extendedJtypes => {
   }
   return type;
 };
+
+// receives string representing a d path and factoring only the numbers
+export const factorDpathStr = (d: string, factor) => {
+  let l = d.split(/(\d+(?:\.\d+)?)/);
+  l = l.map((s) => {
+    if (Number(s)) return (Number(s) * factor).toString();
+    else return s;
+  });
+  return l.join("");
+};

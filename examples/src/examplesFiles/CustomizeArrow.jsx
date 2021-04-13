@@ -151,6 +151,8 @@ const ArrowSide = ({
   setSide,
   sideSize,
   setSideSize,
+  sideOffset,
+  setSideOffset,
   showSide,
   setShowSide,
 }) => {
@@ -179,6 +181,13 @@ const ArrowSide = ({
         value={sideSize}
         onChange={(val) => setSideSize(val)}
         style={{ input: { width: 60 } }}
+      />
+      <p>{sideName}Offset: </p>
+      <NumericInput
+        value={sideOffset}
+        onChange={(val) => setSideOffset(val)}
+        style={{ input: { width: 70 } }}
+        step={0.01}
       />
     </Div>
   );
@@ -220,9 +229,12 @@ const CustomizeArrow = () => {
 
   const [color, setColor] = useState("red");
   const [lineColor, setLineColor] = useState(null);
+  const [showArrow, setShowArrow] = useState(true);
   const [showHead, setShowHead] = useState(true);
   const [headColor, setHeadColor] = useState(null);
   const [headSize, setHeadSize] = useState(6);
+  const [headOffset, setHeadOffset] = useState(0.25);
+  const [tailOffset, setTailOffset] = useState(0.25);
   const [showTail, setShowTail] = useState(false);
   const [tailColor, setTailColor] = useState(null);
   const [tailSize, setTailSize] = useState(6);
@@ -230,7 +242,7 @@ const CustomizeArrow = () => {
   const [strokeWidth, setStrokeWidth] = useState(4);
   const [startAnchor, setStartAnchor] = useState(["auto"]);
   const [endAnchor, setEndAnchor] = useState(["auto"]);
-  const [dashed, setDashed] = useState(true);
+  const [dashed, setDashed] = useState(false);
   const [animation, setAnimation] = useState(1);
   const [pathGrid, setPathGrid] = useState("smooth");
   const [startLabel, setStartLabel] = useState("I'm start label");
@@ -242,6 +254,49 @@ const CustomizeArrow = () => {
   const [_cpy1Offset, set_Cpy1] = useState(0);
   const [_cpx2Offset, set_Cpx2] = useState(0);
   const [_cpy2Offset, set_Cpy2] = useState(0);
+
+  // this is the important part of the example! play with the props to understand better the API options
+  const props = {
+    start: "box1", //  can be string
+    end: box2.ref, //  or reference
+    startAnchor: startAnchor,
+    endAnchor: endAnchor,
+    curveness: Number(curveness),
+    color: color,
+    lineColor: lineColor,
+    strokeWidth: Number(strokeWidth),
+    dashness: dashed ? { animation: Number(animation) } : false,
+    path: pathGrid,
+    showHead: showHead,
+    headColor: headColor,
+    headSize: Number(headSize),
+    showTail,
+    tailColor,
+    tailSize: Number(tailSize),
+
+    label: {
+      start: startLabel,
+      middle: middleLabel,
+      end: (
+        <div
+          style={{
+            fontSize: "1.3em",
+            fontFamily: "fantasy",
+            fontStyle: "italic",
+            color: "purple",
+          }}
+        >
+          {endLabel}
+        </div>
+      ),
+    },
+    _extendSVGcanvas,
+    _debug,
+    _cpx1Offset: _cpx1Offset,
+    _cpy1Offset: _cpy1Offset,
+    _cpx2Offset: _cpx2Offset,
+    _cpy2Offset: _cpy2Offset,
+  };
 
   return (
     <div>
@@ -330,6 +385,8 @@ const CustomizeArrow = () => {
               setSideSize={setHeadSize}
               showSide={showHead}
               setShowSide={setShowHead}
+              sideOffset={headOffset}
+              setSideOffset={setHeadOffset}
             />
             <ArrowSide
               sideName={"tail"}
@@ -338,7 +395,20 @@ const CustomizeArrow = () => {
               setSideSize={setTailSize}
               showSide={showTail}
               setShowSide={setShowTail}
+              sideOffset={tailOffset}
+              setSideOffset={setTailOffset}
             />
+            <Div>
+              <p>show arrow: </p>
+              <input
+                style={{ height: "15px", width: "15px" }}
+                type="checkBox"
+                checked={showArrow}
+                onChange={(e) => {
+                  setShowArrow(e.target.checked);
+                }}
+              />
+            </Div>
           </MyCollapsible>
 
           <CollapsibleDiv title={"labels"}>
@@ -413,50 +483,55 @@ const CustomizeArrow = () => {
           <div style={canvasStyle} id="canvas">
             <Box box={box} forceRerender={forceRerender} />
             <Box box={box2} forceRerender={forceRerender} />
-            <Xarrow
-              {...{
-                // this is the important part of the example! play with the props to understand better the API options
-                start: "box1", //  can be string
-                end: box2.ref, //  or reference
-                startAnchor: startAnchor,
-                endAnchor: endAnchor,
-                curveness: Number(curveness),
-                color: color,
-                lineColor: lineColor,
-                strokeWidth: Number(strokeWidth),
-                dashness: dashed ? { animation: Number(animation) } : false,
-                path: pathGrid,
-                showHead: showHead,
-                headColor: headColor,
-                headSize: Number(headSize),
-                showTail,
-                tailColor,
-                tailSize: Number(tailSize),
-                label: {
-                  start: startLabel,
-                  middle: middleLabel,
-                  end: (
-                    <div
-                      style={{
-                        fontSize: "1.3em",
-                        fontFamily: "fantasy",
-                        fontStyle: "italic",
-                        color: "purple",
-                      }}
-                    >
-                      {endLabel}
-                    </div>
-                  ),
-                },
-                _extendSVGcanvas,
-                _debug,
-                _cpx1Offset: _cpx1Offset,
-                _cpy1Offset: _cpy1Offset,
-                _cpx2Offset: _cpx2Offset,
-                _cpy2Offset: _cpy2Offset,
-                animateDrawing: "2s",
-              }}
-            />
+            {showArrow ? (
+              <Xarrow
+                {...{
+                  // this is the important part of the example! play with the props to understand better the API options
+                  start: "box1", //  can be string
+                  end: box2.ref, //  or reference
+                  startAnchor: startAnchor,
+                  endAnchor: endAnchor,
+                  curveness: Number(curveness),
+                  color: color,
+                  lineColor: lineColor,
+                  strokeWidth: Number(strokeWidth),
+                  dashness: dashed ? { animation: Number(animation) } : false,
+                  path: pathGrid,
+                  showHead: showHead,
+                  headColor: headColor,
+                  headSize: Number(headSize),
+                  headOffset: Number(headOffset),
+                  tailOffset: Number(tailOffset),
+
+                  showTail,
+                  tailColor,
+                  tailSize: Number(tailSize),
+                  label: {
+                    start: startLabel,
+                    middle: middleLabel,
+                    end: (
+                      <div
+                        style={{
+                          fontSize: "1.3em",
+                          fontFamily: "fantasy",
+                          fontStyle: "italic",
+                          color: "purple",
+                        }}
+                      >
+                        {endLabel}
+                      </div>
+                    ),
+                  },
+                  _extendSVGcanvas,
+                  _debug,
+                  _cpx1Offset: _cpx1Offset,
+                  _cpy1Offset: _cpy1Offset,
+                  _cpx2Offset: _cpx2Offset,
+                  _cpy2Offset: _cpy2Offset,
+                  animateDrawing: "2s",
+                }}
+              />
+            ) : null}
           </div>
         </div>
       ) : null}

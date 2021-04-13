@@ -1,0 +1,15 @@
+image: gitpod/workspace-full
+
+tasks:
+  - name: examples
+    init: yarn install && yarn link && cd examples/ && yarn install && yarn link react-xarrows && npm link ../node_modules/react
+    command: yarn start
+  - name: ts watch
+    command: tsc -w
+
+
+
+vscode:
+  extensions:
+    - esbenp.prettier-vscode@6.3.2:13e527ae62035854197198eedd2bc84f
+    - streetsidesoftware.code-spell-checker@1.10.4:92856cb92ade23ff2764841b46d2fac2
