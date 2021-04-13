@@ -27,12 +27,12 @@ export type xarrowPropsType = {
   path?: "smooth" | "grid" | "straight";
   curveness?: number;
   dashness?:
-    | boolean
-    | {
-        strokeLen?: number;
-        nonStrokeLen?: number;
-        animation?: boolean | number;
-      };
+  | boolean
+  | {
+    strokeLen?: number;
+    nonStrokeLen?: number;
+    animation?: boolean | number;
+  };
   passProps?: React.SVGProps<SVGPathElement>;
   SVGcanvasProps?: React.SVGAttributes<SVGSVGElement>;
   arrowBodyProps?: React.SVGProps<SVGPathElement>;
@@ -714,7 +714,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
           <path
             d={`M 0 0 L ${fTailSize} ${fTailSize / 2} L 0 ${fTailSize} L ${
               fTailSize / 4
-            } ${fTailSize / 2} z`}
+              } ${fTailSize / 2} z`}
             fill={tailColor}
             pointerEvents="all"
             transform={`translate(${xOffsetTail},${yOffsetTail}) rotate(${st.tailOrient})`}
@@ -750,7 +750,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
           <path
             d={`M 0 0 L ${fHeadSize} ${fHeadSize / 2} L 0 ${fHeadSize} L ${
               fHeadSize / 4
-            } ${fHeadSize / 2} z`}
+              } ${fHeadSize / 2} z`}
             fill={headColor}
             pointerEvents="all"
             transform={`translate(${xOffsetHead},${yOffsetHead}) rotate(${st.headOrient})`}
