@@ -243,49 +243,6 @@ const CustomizeArrow = () => {
   const [_cpx2Offset, set_Cpx2] = useState(0);
   const [_cpy2Offset, set_Cpy2] = useState(0);
 
-  // this is the important part of the example! play with the props to understand better the API options
-  const props = {
-    start: "box1", //  can be string
-    end: box2.ref, //  or reference
-    startAnchor: startAnchor,
-    endAnchor: endAnchor,
-    curveness: Number(curveness),
-    color: color,
-    lineColor: lineColor,
-    strokeWidth: Number(strokeWidth),
-    dashness: dashed ? { animation: Number(animation) } : false,
-    path: pathGrid,
-    showHead: showHead,
-    headColor: headColor,
-    headSize: Number(headSize),
-    showTail,
-    tailColor,
-    tailSize: Number(tailSize),
-
-    label: {
-      start: startLabel,
-      middle: middleLabel,
-      end: (
-        <div
-          style={{
-            fontSize: "1.3em",
-            fontFamily: "fantasy",
-            fontStyle: "italic",
-            color: "purple",
-          }}
-        >
-          {endLabel}
-        </div>
-      ),
-    },
-    _extendSVGcanvas,
-    _debug,
-    _cpx1Offset: _cpx1Offset,
-    _cpy1Offset: _cpy1Offset,
-    _cpx2Offset: _cpx2Offset,
-    _cpy2Offset: _cpy2Offset,
-  };
-
   return (
     <div>
       <h3>
@@ -456,9 +413,51 @@ const CustomizeArrow = () => {
           <div style={canvasStyle} id="canvas">
             <Box box={box} forceRerender={forceRerender} />
             <Box box={box2} forceRerender={forceRerender} />
-            <Xarrow {...props} />
+            <Xarrow
+              {...{
+                // this is the important part of the example! play with the props to understand better the API options
+                start: "box1", //  can be string
+                end: box2.ref, //  or reference
+                startAnchor: startAnchor,
+                endAnchor: endAnchor,
+                curveness: Number(curveness),
+                color: color,
+                lineColor: lineColor,
+                strokeWidth: Number(strokeWidth),
+                dashness: dashed ? { animation: Number(animation) } : false,
+                path: pathGrid,
+                showHead: showHead,
+                headColor: headColor,
+                headSize: Number(headSize),
+                showTail,
+                tailColor,
+                tailSize: Number(tailSize),
+                label: {
+                  start: startLabel,
+                  middle: middleLabel,
+                  end: (
+                    <div
+                      style={{
+                        fontSize: "1.3em",
+                        fontFamily: "fantasy",
+                        fontStyle: "italic",
+                        color: "purple",
+                      }}
+                    >
+                      {endLabel}
+                    </div>
+                  ),
+                },
+                _extendSVGcanvas,
+                _debug,
+                _cpx1Offset: _cpx1Offset,
+                _cpy1Offset: _cpy1Offset,
+                _cpx2Offset: _cpx2Offset,
+                _cpy2Offset: _cpy2Offset,
+                animateDrawing: "2s",
+              }}
+            />
           </div>
-          {/*what will happen if you will move Xarrow here? try!*/}
         </div>
       ) : null}
     </div>
