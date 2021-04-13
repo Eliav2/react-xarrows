@@ -8,3 +8,7 @@ tasks:
     command: tsc -w
     
 
+
+vscode:
+  extensions:
+    - esbenp.prettier-vscode@6.3.2:13e527ae62035854197198eedd2bc84f
