@@ -280,7 +280,6 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     }
   }
 
-  // get the absolute starting point of the canvas
   const getSelfPos = () => {
     let {
       left: xarrowElemX,
@@ -817,29 +816,6 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
           {labelEnd}
         </div>
       ) : null}
-      {_debug ? (
-        <>
-          {/* possible anchor connections */}
-          {[...st.startPoints, ...st.endPoints].map((p, i) => {
-            return (
-              <div
-                key={i}
-                style={{
-                  background: "gray",
-                  opacity: 0.5,
-                  borderRadius: "50%",
-                  transform: "translate(-50%, -50%)",
-                  height: 5,
-                  width: 5,
-                  position: "absolute",
-                  left: p.x - st.mainDivPos.x,
-                  top: p.y - st.mainDivPos.y,
-                }}
-              />
-            );
-          })}
-        </>
-      ) : null}
     </div>
   );
 };
@@ -902,8 +878,6 @@ Xarrow.propTypes = {
   path: PT.oneOf(["smooth", "grid", "straight"]),
   curveness: PT.number,
   dashness: PT.oneOfType([PT.bool, PT.object]),
-  headOffset: PT.number,
-  tailOffset: PT.number,
   passProps: PT.object,
   arrowBodyProps: PT.object,
   arrowHeadProps: PT.object,
@@ -934,8 +908,6 @@ Xarrow.defaultProps = {
   path: "smooth",
   curveness: 0.8,
   dashness: false,
-  headOffset: 0.25,
-  tailOffset: 0.25,
   passProps: {},
   arrowBodyProps: {},
   arrowHeadProps: {},
