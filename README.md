@@ -94,8 +94,10 @@ here's a ready to use development environment with a click of a button(patience,
 this will set up environment that will clone react-xarrow master,and will link the code from the src to the examples,
 and will start examples,with typescript watch process that will recompile when any change is made.\
 this means that any code changes in src/index.tsx will immediately be reflected to the running example at port 3000!
-(add console.log("test") line and see!)/
-to reproduce this dev env on your local machine git clone and follow same commands as in [gitpod.yml](./.gitpod.yml)
+(add console.log("test") line and see!)\
+to reproduce this dev env on your local machine git clone and follow same commands as in [gitpod.yml](./.gitpod.yml).
+
+if you made an improvement that is relevant for most users, you can quickly submit a pull request using the right toolbar. 
 
 ### react-xarrows v2
 v2 is on its way. want to contribute and participate in plannig the next react architecture for react-xarrows?
@@ -103,7 +105,7 @@ see discussion [here](https://github.com/Eliav2/react-xarrows/discussions/53)!
 
 ### types definitions
 
-the properties the xarrow component receives is as follows(don't panic,the important ones exmplained next):
+the properties the xarrow component receives is as follows(don't panic,the important ones explained next):
 
 ```ts
 export type xarrowPropsType = {
