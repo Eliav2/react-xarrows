@@ -38,7 +38,7 @@ codebox of few examples(in this repo at [/examples](./examples)).
 
 ![react-xarrow-picture-1 4 2](https://user-images.githubusercontent.com/47307889/87698325-facfc480-c79b-11ea-976a-dbad0ecd9b48.png)
 
-see this interactive example: https://lwwwp.csb.app/CustomizeArrow
+see this interactive example: <https://lwwwp.csb.app/CustomizeArrow>
 ![react-xarrows-v1 6](https://user-images.githubusercontent.com/47307889/113949468-070f1c80-9818-11eb-90e6-ddc6d814b912.gif)
 
 ### simple example:
