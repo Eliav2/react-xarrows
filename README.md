@@ -24,8 +24,6 @@ found a problem? not a problem! post a new issue([here](https://github.com/Eliav
 
 liked my work? please star [this repo](https://github.com/Eliav2/react-xarrows).
 
-[see and fork easily on codesandbox](https://codesandbox.io/s/github/Eliav2/react-xarrows).
-
 ## installation
 
 with npm `npm install react-xarrows`.
@@ -36,7 +34,7 @@ with npm `npm install react-xarrows`.
 #### Demos
 
 [see here!](https://codesandbox.io/embed/github/Eliav2/react-xarrows/tree/master/examples?fontsize=14&hidenavigation=1&theme=dark)
-codebox of few examples(in this repo at /examples).
+codebox of few examples(in this repo at [/examples](./examples)).
 
 ![react-xarrow-picture-1 4 2](https://user-images.githubusercontent.com/47307889/87698325-facfc480-c79b-11ea-976a-dbad0ecd9b48.png)
 
@@ -84,10 +82,24 @@ arrows) ,this is because the Xarrow component does not have any control or aware
 addition, make sure to render Xarrows later in the DOM then the connected elements else the app will crash.
 **this is planned to be changed in react-xarrows v2.**
 
+
+### Contributing
+
+Want a feature that is not supported? found a bug?\
+no need to clone the repo and set up the dev environment anymore!\
+here's a ready to use development environment with a click of a button(patience, it takes about a minute to setup): 
+
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/Eliav2/react-xarrows/blob/master/src/index.tsx)
+
+this will set up environment that will clone react-xarrow master,and will link the code from the src to the examples,
+and will start examples,with typescript watch process that will recompile when any change is made.\
+this means that any code changes in src/index.tsx will immediately be reflected to the running example at port 3000!
+(add console.log("test") line and see!)/
+to reproduce this dev env on your local machine git clone and follow same commands as in [gitpod.yml](./.gitpod.yml)
+
 ### react-xarrows v2
 v2 is on its way. want to contribute and participate in plannig the next react architecture for react-xarrows?
 see discussion [here](https://github.com/Eliav2/react-xarrows/discussions/53)!
-
 
 ### types definitions
 
@@ -155,7 +167,8 @@ see typescript types above for detailed descriptions of what type excepts every 
 
 ## Properties
 
-this documentation is examples driven.
+This documentation is examples driven.\
+The examples is sorted from the most common use case to the most custom one.
 
 #### 'start' and 'end'
 
@@ -290,7 +303,7 @@ if you wish to pass style to divContainer or SVGcanvas use `SVGcanvasStyle`,`div
 ##### _extendSVGcanvas
 
 _optional, default: 0_ \
-will extend the svg canvas at all sides. can be useful if for some reason the arrow(or labels) is cut though to small
+will extend the svg canvas at all sides. can be useful if for some reason the arrow is cut though to small
 svg canvas(should be used in advanced custom arrows). example: `_extendSVGcanvas = {30}` - will extend svg canvas in all
 sides by 30 pixels.
 
@@ -333,4 +346,4 @@ Xarrow.defaultProps = {
 
 ## Versions
 
-See [CHANGELOG.md](https://github.com/Eliav2/react-xarrows/blob/master/CHANGELOG.md) in this repo.
+See [CHANGELOG.md](./CHANGELOG.md) in this repo.
