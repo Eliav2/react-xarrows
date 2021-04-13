@@ -1740,6 +1740,11 @@
   resolved "https://registry.yarnpkg.com/@types/prettier/-/prettier-2.2.3.tgz#ef65165aea2924c9359205bf748865b8881753c0"
   integrity sha512-PijRCG/K3s3w1We6ynUKdxEc5AcuuH3NBmMDP8uvKVp6X43UY7NQlTzczakXP3DJR0F4dfNQIGjU2cUeRYs2AA==
 
+"@types/prop-types@^15.7.3":
+  version "15.7.3"
+  resolved "https://registry.yarnpkg.com/@types/prop-types/-/prop-types-15.7.3.tgz#2ab0d5da2e5815f94b0b9d4b95d1e5f243ab2ca7"
+  integrity sha512-KfRL3PuHmqQLOG+2tGpRO26Ctg+Cq1E01D2DMriKEATHgWLfeNDmq9e29Q9WIky0dQ3NPkd1mzYH8Lm936Z9qw==
+
 "@types/q@^1.5.1":
   version "1.5.4"
   resolved "https://registry.yarnpkg.com/@types/q/-/q-1.5.4.tgz#15925414e0ad2cd765bfef58842f7e26a7accb24"
@@ -9191,11 +9196,12 @@ react-scripts@^4.0.1:
   optionalDependencies:
     fsevents "^2.1.3"
 
-react-xarrows@latest:
-  version "1.5.2"
-  resolved "https://registry.yarnpkg.com/react-xarrows/-/react-xarrows-1.5.2.tgz#c774c67a9c37a1def3437675ff756976bcdb6695"
-  integrity sha512-L0ATT5yfgoWYm8+bQU3sn9ry2zrxi8eSXisfnNJ5Uy5r/UT/5rDdgif+YPipWRd9KSSmQOIMwB+LXpvrQQ/3TA==
+react-xarrows@1.6.1:
+  version "1.6.1"
+  resolved "https://registry.yarnpkg.com/react-xarrows/-/react-xarrows-1.6.1.tgz#2c937cddd9d2e7fe01a839d5792c910c7ea93f73"
+  integrity sha512-mpfcLCQ6rs7OXSX/N28koxnB4A0/JwiS7a4G7nEUbDptSkxkbZXxbLISOr3/Jx6ATIl6nKqUE4SerMcyVf9mAg==
   dependencies:
+    "@types/prop-types" "^15.7.3"
     lodash.isequal "^4.5.0"
     lodash.pick "^4.4.0"
     prop-types "^15.7.2"

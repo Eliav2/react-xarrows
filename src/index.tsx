@@ -129,6 +129,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
   const [prevPosState, setPrevPosState] = useState<prevPos>(null);
   const [prevProps, setPrevProps] = useState<xarrowPropsType>(null);
 
+
   /**
    * determine if an update is needed and update if so.
    * update is needed if one of the connected elements position was changed since last render, or if the ref to one
