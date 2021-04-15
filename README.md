@@ -91,7 +91,7 @@ here's a ready to use development environment with a click of a button(patience,
 
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/Eliav2/react-xarrows/blob/master/src/index.tsx)
 
-<b>pro tip</b> - after signing into gitpod got to [IDE preferences](https://gitpod.io/preferences) and change default editor from theia to vscode!
+<b>pro tip</b> - after signing into Gitpod go to [IDE preferences](https://gitpod.io/preferences) and change default editor from theia to vscode!
 
 this will set up environment that will clone react-xarrow master,and will link the code from the src to the examples,
 and will start examples,with typescript watch process that will recompile when any change is made.\
