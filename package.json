@@ -58,5 +58,8 @@
     "lib",
     "package.json",
     "README.md"
-  ]
+  ],
+  "prettier":{
+    "printWidth": 120
+  }
 }
