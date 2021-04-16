@@ -89,7 +89,6 @@ type prevPos = {
 const normalArrowShape = `M 0 0 L 1 0.5 L 0 1 L 0.25 0.5 z`;
 // const heartShape = `M 0,2 A 1,1 0,0,1 4,2 A 1,1 0,0,1 8,2 Q 8,5 4,8 Q 0,5 0,2 z`;
 const heartShape = `M 0,0.25 A 0.125,0.125 0,0,1 0.5,0.25 A 0.125,0.125 0,0,1 1,0.25 Q 1,0.625 0.5,1 Q 0,0.625 0,0.25 z`;
-const generateArrowId = () => `arrow${Date.now()}${Math.floor(Math.random() * 100)}`;
 
 const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
   let {
@@ -222,21 +221,6 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
       cleanMonitorDOMchanges();
     };
   }, []);
-
-  // useEffect(() => {
-  //   console.log("123123");
-  //   const handleDrawAmimEnd = () => setDrawAnimEnded(true);
-  //   if (lineDrawAnimRef.current)
-  //     lineDrawAnimRef.current.addEventListener("endEvent", handleDrawAmimEnd);
-  //   return () => {
-  //     console.log("asdaxx");
-  //
-  //     lineDrawAnimRef.current.removeEventListener(
-  //       "endEvent",
-  //       handleDrawAmimEnd
-  //     );
-  //   };
-  // }, [lineDrawAnimRef]);
 
   useLayoutEffect(() => {
     // console.log("xarrow rendered!");
