@@ -710,6 +710,12 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
         animation = num * -1 + unitStr;
       }
     }
+  } else {
+    dashArray = `${dashStroke} ${dashNone}`;
+    animation = `${1 / animDashSpeed}s`;
+    animStartValue = dashoffset * animDirection;
+    animRepeatCount = "indefinite";
+    animEndValue = 0;
   }
 
   let arrowPath = `M ${st.x1} ${st.y1} C ${st.cpx1} ${st.cpy1}, ${st.cpx2} ${st.cpy2}, ${st.x2} ${st.y2} `;
