@@ -231,7 +231,7 @@ const CustomizeArrow = () => {
   const [_cpy2Offset, set_Cpy2] = useState(0);
   const [animateDrawing, setAnimateDrawing] = useState(1);
   const [enableAnimateDrawing, setEnableAnimateDrawing] = useState(false);
-  const _animateDrawing = enableAnimateDrawing ? animateDrawing + "s" : false;
+  const _animateDrawing = enableAnimateDrawing ? animateDrawing : false;
 
   // this is the important part of the example! play with the props to understand better the API options
   const props = {

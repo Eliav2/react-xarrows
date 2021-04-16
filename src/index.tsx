@@ -35,7 +35,7 @@ export type xarrowPropsType = {
       };
   headOffset?: number; // from 0 to 1
   tailOffset?: number; // from 0 to 1
-  animateDrawing?: boolean | string;
+  animateDrawing?: boolean | number;
   passProps?: React.SVGProps<SVGPathElement>;
   SVGcanvasProps?: React.SVGAttributes<SVGSVGElement>;
   arrowBodyProps?: React.SVGProps<SVGPathElement>;
@@ -239,7 +239,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
   // }, [lineDrawAnimRef]);
 
   useLayoutEffect(() => {
-    console.log("xarrow rendered!");
+    // console.log("xarrow rendered!");
     updateIfNeeded();
   });
 
@@ -698,16 +698,14 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
 
   // animateDrawing = "2s";
   if (animateDrawing && drawAnimEnded == false) {
-    if (typeof animateDrawing === "string") {
-      animation = animateDrawing;
+    if (typeof animateDrawing === "number") {
+      animation = animateDrawing + "s";
       dashArray = lineLength;
       animStartValue = lineLength;
       animRepeatCount = 1;
-      let unitStr = animateDrawing.split(/(\d+)/).pop();
-      let num = parseFloat(animateDrawing);
-      if (num < 0) {
+      if (animateDrawing < 0) {
         [animStartValue, animEndValue] = [animEndValue, animStartValue];
-        animation = num * -1 + unitStr;
+        animation = animateDrawing * -1 + "s";
       }
     }
   } else {
@@ -936,7 +934,7 @@ Xarrow.propTypes = {
   path: PT.oneOf(["smooth", "grid", "straight"]),
   curveness: PT.number,
   dashness: PT.oneOfType([PT.bool, PT.object]),
-  animateDrawing: PT.oneOfType([PT.bool, PT.string]),
+  animateDrawing: PT.oneOfType([PT.bool, PT.number]),
   passProps: PT.object,
   arrowBodyProps: PT.object,
   arrowHeadProps: PT.object,
