@@ -10,7 +10,6 @@ import { getShortestLine, prepareAnchorLines } from "./utils/anchors";
 // public types
 
 export type xarrowPropsType = {
-  id?: string | null;
   start: refType;
   end: refType;
   startAnchor?: anchorType | anchorType[];
@@ -54,13 +53,7 @@ export type xarrowPropsType = {
 };
 
 export type anchorType = anchorPositionType | anchorCustomPositionType;
-export type anchorPositionType =
-  | "middle"
-  | "left"
-  | "right"
-  | "top"
-  | "bottom"
-  | "auto";
+export type anchorPositionType = "middle" | "left" | "right" | "top" | "bottom" | "auto";
 
 export type anchorCustomPositionType = {
   position: anchorPositionType;
@@ -96,12 +89,10 @@ type prevPos = {
 const normalArrowShape = `M 0 0 L 1 0.5 L 0 1 L 0.25 0.5 z`;
 // const heartShape = `M 0,2 A 1,1 0,0,1 4,2 A 1,1 0,0,1 8,2 Q 8,5 4,8 Q 0,5 0,2 z`;
 const heartShape = `M 0,0.25 A 0.125,0.125 0,0,1 0.5,0.25 A 0.125,0.125 0,0,1 1,0.25 Q 1,0.625 0.5,1 Q 0,0.625 0,0.25 z`;
-const generateArrowId = () =>
-  `arrow${Date.now()}${Math.floor(Math.random() * 100)}`;
+const generateArrowId = () => `arrow${Date.now()}${Math.floor(Math.random() * 100)}`;
 
 const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
   let {
-    id,
     startAnchor,
     endAnchor,
     label,
@@ -137,15 +128,23 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     ...extraProps
   } = props;
 
-  const selfRef = useRef(null);
+  const mainDivRef = useRef(null);
   const lineRef = useRef(null);
+  const headRef = useRef<SVGPathElement>(null);
+  const tailRef = useRef(null);
+  const lineDrawAnimRef = useRef(null);
+  const lineDashAnimRef = useRef(null);
+  const headOpacityAnimRef = useRef<SVGAnimationElement>(null);
   const [anchorsRefs, setAnchorsRefs] = useState({ start: null, end: null });
 
   const [prevPosState, setPrevPosState] = useState<prevPos>(null);
   const [prevProps, setPrevProps] = useState<xarrowPropsType>(null);
   const [lineLength, setLineLength] = useState(0);
 
-  id = id || generateArrowId();
+  const [drawAnimEnded, setDrawAnimEnded] = useState(!animateDrawing);
+
+  const [_, setRerender] = useState({});
+  const dumyRenderer = () => setRerender({});
 
   /**
    * determine if an update is needed and update if so.
@@ -194,23 +193,53 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
 
   const monitorDOMchanges = () => {
     window.addEventListener("resize", updateIfNeeded);
-  };
-  const cleanMonitorDOMchanges = () => {
-    window.removeEventListener("resize", updateIfNeeded);
+
+    const handleDrawAmimEnd = () => {
+      setDrawAnimEnded(true);
+      headOpacityAnimRef.current.beginElement();
+      lineDashAnimRef.current?.beginElement();
+    };
+    const handleDrawAmimBegin = () => (headRef.current.style.opacity = "0");
+    if (lineDrawAnimRef.current && headRef.current) {
+      lineDrawAnimRef.current.addEventListener("endEvent", handleDrawAmimEnd);
+      lineDrawAnimRef.current.addEventListener("beginEvent", handleDrawAmimBegin);
+    }
+    return () => {
+      window.removeEventListener("resize", updateIfNeeded);
+      if (lineDrawAnimRef.current) {
+        lineDrawAnimRef.current.removeEventListener("endEvent", handleDrawAmimEnd);
+        if (headRef.current) lineDrawAnimRef.current.removeEventListener("beginEvent", handleDrawAmimBegin);
+      }
+    };
   };
 
   useEffect(() => {
     // console.log("xarrow mounted");
     initProps();
     initAnchorsRefs();
-    monitorDOMchanges();
+    const cleanMonitorDOMchanges = monitorDOMchanges();
     return () => {
       cleanMonitorDOMchanges();
     };
   }, []);
 
+  // useEffect(() => {
+  //   console.log("123123");
+  //   const handleDrawAmimEnd = () => setDrawAnimEnded(true);
+  //   if (lineDrawAnimRef.current)
+  //     lineDrawAnimRef.current.addEventListener("endEvent", handleDrawAmimEnd);
+  //   return () => {
+  //     console.log("asdaxx");
+  //
+  //     lineDrawAnimRef.current.removeEventListener(
+  //       "endEvent",
+  //       handleDrawAmimEnd
+  //     );
+  //   };
+  // }, [lineDrawAnimRef]);
+
   useLayoutEffect(() => {
-    // console.log("xarrow rendered!");
+    console.log("xarrow rendered!");
     updateIfNeeded();
   });
 
@@ -257,23 +286,17 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
   lineColor = lineColor ? lineColor : color;
   let dashStroke = 0,
     dashNone = 0,
-    animationDashSpeed,
-    animationDirection = 1;
+    animDashSpeed,
+    animDirection = 1;
   if (dashness) {
     if (typeof dashness === "object") {
-      dashStroke = dashness.strokeLen
-        ? Number(dashness.strokeLen)
-        : Number(strokeWidth) * 2;
-      dashNone = dashness.strokeLen
-        ? Number(dashness.nonStrokeLen)
-        : Number(strokeWidth);
-      animationDashSpeed = dashness.animation
-        ? Number(dashness.animation)
-        : null;
+      dashStroke = dashness.strokeLen ? Number(dashness.strokeLen) : Number(strokeWidth) * 2;
+      dashNone = dashness.strokeLen ? Number(dashness.nonStrokeLen) : Number(strokeWidth);
+      animDashSpeed = dashness.animation ? Number(dashness.animation) : null;
     } else if (typeof dashness === "boolean") {
       dashStroke = Number(strokeWidth) * 2;
       dashNone = Number(strokeWidth);
-      animationDashSpeed = null;
+      animDashSpeed = null;
     }
   }
 
@@ -282,20 +305,15 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     labelEnd = null;
   if (label) {
     if (typeof label === "string" || "type" in label) labelMiddle = label;
-    else if (
-      ["start", "middle", "end"].some((key) => key in (label as labelsType))
-    ) {
+    else if (["start", "middle", "end"].some((key) => key in (label as labelsType))) {
       label = label as labelsType;
       ({ start: labelStart, middle: labelMiddle, end: labelEnd } = label);
     }
   }
 
   const getSelfPos = () => {
-    let {
-      left: xarrowElemX,
-      top: xarrowElemY,
-    } = selfRef.current.getBoundingClientRect();
-    let xarrowStyle = getComputedStyle(selfRef.current);
+    let { left: xarrowElemX, top: xarrowElemY } = mainDivRef.current.getBoundingClientRect();
+    let xarrowStyle = getComputedStyle(mainDivRef.current);
     let xarrowStyleLeft = Number(xarrowStyle.left.slice(0, -2));
     let xarrowStyleTop = Number(xarrowStyle.top.slice(0, -2));
     return {
@@ -341,10 +359,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     let endPoints = prepareAnchorLines(endAnchor, ePos);
 
     // choose the smallest path for 2 points from these possibilities.
-    let { startPointObj, endPointObj } = getShortestLine(
-      startPoints,
-      endPoints
-    );
+    let { startPointObj, endPointObj } = getShortestLine(startPoints, endPoints);
 
     let startAnchorPosition = startPointObj.anchorPosition,
       endAnchorPosition = endPointObj.anchorPosition;
@@ -406,12 +421,8 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
 
         headAngel *= ySign;
         if (xSign < 0) headAngel = (Math.PI - headAngel * xSign) * xSign;
-        xHeadOffset =
-          Math.cos(headAngel) * _headOffset -
-          (Math.sin(headAngel) * fHeadSize) / 2;
-        yHeadOffset =
-          (Math.cos(headAngel) * fHeadSize) / 2 +
-          Math.sin(headAngel) * _headOffset;
+        xHeadOffset = Math.cos(headAngel) * _headOffset - (Math.sin(headAngel) * fHeadSize) / 2;
+        yHeadOffset = (Math.cos(headAngel) * fHeadSize) / 2 + Math.sin(headAngel) * _headOffset;
         headOrient = (headAngel * 180) / Math.PI;
       }
 
@@ -421,12 +432,8 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
         y1 += fTailSize * (1 - tailOffset) * ySign * Math.sin(tailAngel);
         tailAngel *= -ySign;
         if (xSign > 0) tailAngel = (Math.PI - tailAngel * xSign) * xSign;
-        xTailOffset =
-          Math.cos(tailAngel) * _tailOffset -
-          (Math.sin(tailAngel) * fTailSize) / 2;
-        yTailOffset =
-          (Math.cos(tailAngel) * fTailSize) / 2 +
-          Math.sin(tailAngel) * _tailOffset;
+        xTailOffset = Math.cos(tailAngel) * _tailOffset - (Math.sin(tailAngel) * fTailSize) / 2;
+        yTailOffset = (Math.cos(tailAngel) * fTailSize) / 2 + Math.sin(tailAngel) * _tailOffset;
         tailOrient = (tailAngel * 180) / Math.PI;
       }
     } else {
@@ -583,14 +590,11 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
 
     // smart select best curve for the current anchors
     let selectedCurviness = "";
-    if (["left", "right"].includes(startAnchorPosition))
-      selectedCurviness += "h";
-    else if (["bottom", "top"].includes(startAnchorPosition))
-      selectedCurviness += "v";
+    if (["left", "right"].includes(startAnchorPosition)) selectedCurviness += "h";
+    else if (["bottom", "top"].includes(startAnchorPosition)) selectedCurviness += "v";
     else if (startAnchorPosition === "middle") selectedCurviness += "m";
     if (["left", "right"].includes(endAnchorPosition)) selectedCurviness += "h";
-    else if (["bottom", "top"].includes(endAnchorPosition))
-      selectedCurviness += "v";
+    else if (["bottom", "top"].includes(endAnchorPosition)) selectedCurviness += "v";
     else if (endAnchorPosition === "middle") selectedCurviness += "m";
     if (absDx > absDy) selectedCurviness = selectedCurviness.replace(/m/g, "h");
     else selectedCurviness = selectedCurviness.replace(/m/g, "v");
@@ -682,33 +686,30 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
   const yOffsetTail = st.y1 - st.arrowTailOffset.y;
 
   let dashoffset = dashStroke + dashNone;
-  if (animationDashSpeed < 0) {
-    animationDashSpeed *= -1;
-    animationDirection = -1;
+  if (animDashSpeed < 0) {
+    animDashSpeed *= -1;
+    animDirection = -1;
   }
   let dashArray,
-    animationDuration,
-    animationRepeatCount,
-    animationStartValue,
-    animationEndValue = null;
+    animation,
+    animRepeatCount,
+    animStartValue,
+    animEndValue = 0;
 
-  // animateDrawing = "4s";
-  if (animateDrawing) {
+  // animateDrawing = "2s";
+  if (animateDrawing && drawAnimEnded == false) {
     if (typeof animateDrawing === "string") {
-      animationDuration = animateDrawing;
-    } else {
-      animationDuration = "1s";
+      animation = animateDrawing;
+      dashArray = lineLength;
+      animStartValue = lineLength;
+      animRepeatCount = 1;
+      let unitStr = animateDrawing.split(/(\d+)/).pop();
+      let num = parseFloat(animateDrawing);
+      if (num < 0) {
+        [animStartValue, animEndValue] = [animEndValue, animStartValue];
+        animation = num * -1 + unitStr;
+      }
     }
-    dashArray = lineLength;
-    animationStartValue = lineLength;
-    animationRepeatCount = 1;
-    animationEndValue = 0;
-  } else {
-    dashArray = `${dashStroke} ${dashNone}`;
-    animationDuration = `${1 / animationDashSpeed}s`;
-    animationStartValue = dashoffset * animationDirection;
-    animationRepeatCount = "indefinite";
-    animationEndValue = 0;
   }
 
   let arrowPath = `M ${st.x1} ${st.y1} C ${st.cpx1} ${st.cpy1}, ${st.cpx2} ${st.cpy2}, ${st.x2} ${st.y2} `;
@@ -717,13 +718,9 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     arrowPath = `M ${st.x1} ${st.y1} L  ${st.cpx1} ${st.cpy1} L ${st.cpx2} ${st.cpy2} L  ${st.x2} ${st.y2}`;
 
   return (
-    <div
-      {...divContainerProps}
-      style={{ position: "absolute", ...divContainerStyle }}
-      {...extraProps}
-    >
+    <div {...divContainerProps} style={{ position: "absolute", ...divContainerStyle }} {...extraProps}>
       <svg
-        ref={(selfRef as unknown) as React.LegacyRef<SVGSVGElement>}
+        ref={mainDivRef}
         width={st.cw}
         height={st.ch}
         style={{
@@ -771,57 +768,73 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
 
         {/* body of the arrow */}
         <path
-          ref={(lineRef as unknown) as React.LegacyRef<SVGPathElement>}
+          ref={lineRef}
           d={arrowPath}
           stroke={lineColor}
-          strokeDasharray={dashArray}
+          // strokeDasharray={50}
+          // strokeDasharray={`${Array(Math.floor(lineLength / 10)).fill("10 ")} ${lineLength}`}
           // strokeDasharray={`${dashStroke} ${dashNone}`}
+          strokeDasharray={dashArray}
           strokeWidth={strokeWidth}
           fill="transparent"
           pointerEvents="visibleStroke"
           {...passProps}
           {...arrowBodyProps}
         >
-          {/* old */}
-          {/*{animationDashSpeed ? (*/}
-          {/*  <animate*/}
-          {/*    attributeName="stroke-dashoffset"*/}
-          {/*    values={`${dashoffset * animationDirection};0`}*/}
-          {/*    dur={`${1 / animationDashSpeed}s`}*/}
-          {/*    repeatCount="indefinite"*/}
-          {/*  />*/}
-          {/*) : null}*/}
-          {animationDashSpeed || animateDrawing ? (
-            <animate
-              // id={`${id}animate`}
-              attributeName="stroke-dashoffset"
-              values={`${animationStartValue};${animationEndValue}`}
-              dur={animationDuration}
-              repeatCount={animationRepeatCount}
-            />
-          ) : null}
+          <>
+            {drawAnimEnded ? (
+              <>
+                {/* moving dashed line animation */}
+                {animDashSpeed ? (
+                  <animate
+                    ref={lineDashAnimRef}
+                    attributeName="stroke-dashoffset"
+                    values={`${dashoffset * animDirection};0`}
+                    dur={`${1 / animDashSpeed}s`}
+                    repeatCount="indefinite"
+                  />
+                ) : null}
+              </>
+            ) : (
+              <>
+                {/* the creation of the line animation */}
+                {animateDrawing ? (
+                  <animate
+                    ref={lineDrawAnimRef}
+                    id={`svgEndAnimate`}
+                    attributeName="stroke-dashoffset"
+                    values={`${animStartValue};${animEndValue}`}
+                    dur={animation}
+                    repeatCount={animRepeatCount}
+                  />
+                ) : null}
+              </>
+            )}
+          </>
         </path>
         {/* head of the arrow */}
         {showHead ? (
           <path
+            ref={headRef}
             d={normalArrowShape}
             fill={headColor}
             pointerEvents="auto"
             transform={`translate(${xOffsetHead},${yOffsetHead}) rotate(${st.headOrient}) scale(${fHeadSize})`}
-            opacity={animateDrawing ? "0" : "1"}
+            // opacity={animateDrawing && !drawAnimEnded ? 0 : 1}
             {...passProps}
             {...arrowHeadProps}
           >
-            {animateDrawing ? (
-              <animate
-                dur="0.05s"
-                attributeName="opacity"
-                from="0"
-                to="1"
-                repeatCount="0"
-                fill="freeze"
-              />
-            ) : null}
+            <animate
+              ref={headOpacityAnimRef}
+              dur={"0.4"}
+              attributeName="opacity"
+              from="0"
+              to="1"
+              begin={`indefinite`}
+              repeatCount="0"
+              fill="freeze"
+            />
+            ) : null
           </path>
         ) : null}
       </svg>
@@ -829,8 +842,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
       {labelStart ? (
         <div
           style={{
-            transform:
-              st.dx < 0 ? "translate(-100% , -50%)" : "translate(-0% , -50%)",
+            transform: st.dx < 0 ? "translate(-100% , -50%)" : "translate(-0% , -50%)",
             width: "max-content",
             position: "absolute",
             left: st.cx0 + st.labelStartPos.x,
@@ -857,8 +869,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
       {labelEnd ? (
         <div
           style={{
-            transform:
-              st.dx > 0 ? "translate(-100% , -50%)" : "translate(-0% , -50%)",
+            transform: st.dx > 0 ? "translate(-100% , -50%)" : "translate(-0% , -50%)",
             width: "max-content",
             position: "absolute",
             left: st.cx0 + st.labelEndPos.x,
@@ -875,14 +886,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
 //////////////////////////////
 // propTypes
 
-const pAnchorPositionType = PT.oneOf([
-  "middle",
-  "left",
-  "right",
-  "top",
-  "bottom",
-  "auto",
-] as const);
+const pAnchorPositionType = PT.oneOf(["middle", "left", "right", "top", "bottom", "auto"] as const);
 
 const pAnchorCustomPositionType = PT.exact({
   position: pAnchorPositionType.isRequired,
@@ -892,17 +896,11 @@ const pAnchorCustomPositionType = PT.exact({
   }).isRequired,
 });
 
-const _pAnchorType = PT.oneOfType([
-  pAnchorPositionType,
-  pAnchorCustomPositionType,
-]);
+const _pAnchorType = PT.oneOfType([pAnchorPositionType, pAnchorCustomPositionType]);
 
 const pAnchorType = PT.oneOfType([_pAnchorType, PT.arrayOf(_pAnchorType)]);
 
-const pRefType = PT.oneOfType([
-  PT.string,
-  PT.exact({ current: PT.instanceOf(Element) }),
-]);
+const pRefType = PT.oneOfType([PT.string, PT.exact({ current: PT.instanceOf(Element) })]);
 
 const _pLabelType = PT.oneOfType([PT.element, PT.string]);
 
@@ -913,7 +911,6 @@ const pLabelsType = PT.exact({
 });
 
 Xarrow.propTypes = {
-  // id: PT.string,
   start: pRefType.isRequired,
   end: pRefType.isRequired,
   startAnchor: pAnchorType,
@@ -949,7 +946,6 @@ Xarrow.propTypes = {
 };
 
 Xarrow.defaultProps = {
-  // id: null,
   startAnchor: "auto",
   endAnchor: "auto",
   label: null,
