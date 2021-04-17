@@ -107,6 +107,7 @@ the properties the xarrow component receives is as follows(don't panic,the impor
 
 ```ts
 export type xarrowPropsType = {
+    id?: string | null;
     start: refType;
     end: refType;
     startAnchor?: anchorType | anchorType[];
@@ -124,6 +125,7 @@ export type xarrowPropsType = {
     path?: "smooth" | "grid" | "straight";
     curveness?: number;
     dashness?: | boolean | { strokeLen?: number; nonStrokeLen?: number; animation?: boolean | number; };
+    animateDrawing?: boolean | string;
     passProps?: React.SVGProps<SVGPathElement>;
     SVGcanvasProps?: React.SVGAttributes<SVGSVGElement>;
     arrowBodyProps?: React.SVGProps<SVGPathElement>;
@@ -252,10 +254,19 @@ then default values are chosen except what passed. examples:
 - `dashness={true}` will make the line of the arrow to be dashed.
 - `dashness={{ strokeLen: 10, nonStrokeLen: 15, animation: -2 }}` will make a custom looking dashness.
 
+#### animateDrawing
+
+_optional, default: false_ \
+can animate the drawing of the arrow using svg animation.  if true animation duration is 1s. if string is passed then animation length is based on given string.  string must conform to a [`clock-value`](https://developer.mozilla.org/en-US/docs/Web/SVG/Content_type#clock-value). examples:
+
+- `animateDrawing` will animate the drawing of the arrow in 1 second.
+- `animateDrawing="5s"` will animate the drawing of the arrow in 5 seconds.
+- `animateDrawing="100ms"` will animate the drawing of the arrow in 100 milliseconds.
+
 ### passing props
 
 The xarrow is fully customizable, and you can pass props to any part of the component. if unlisted(unknown) property is
-passed to xarrow so by default it'll be passed down to `divConatiner`.
+passed to xarrow so by default it'll be passed down to `divContainer`.
 
 #### passProps
 

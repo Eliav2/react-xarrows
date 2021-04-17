@@ -98,11 +98,7 @@ const CollapsibleDiv = ({ children, style, title = "title", ...props }) => {
 const Box = (props) => {
   return (
     <Draggable onDrag={props.forceRerender} onStop={props.forceRerender}>
-      <div
-        ref={props.box.ref}
-        id={props.box.id}
-        style={{ ...boxStyle, left: props.box.x, top: props.box.y }}
-      >
+      <div ref={props.box.ref} id={props.box.id} style={{ ...boxStyle, left: props.box.x, top: props.box.y }}>
         {props.box.id}
       </div>
     </Draggable>
@@ -146,16 +142,7 @@ const ArrowAnchor = ({ anchorName, sideAnchor, setAnchor }) => {
   );
 };
 
-const ArrowSide = ({
-  sideName,
-  setSide,
-  sideSize,
-  setSideSize,
-  sideOffset,
-  setSideOffset,
-  showSide,
-  setShowSide,
-}) => {
+const ArrowSide = ({ sideName, setSide, sideSize, setSideSize, sideOffset, setSideOffset, showSide, setShowSide }) => {
   return (
     <Div title={"arrow " + sideName}>
       <p>show {sideName}: </p>
@@ -168,20 +155,13 @@ const ArrowSide = ({
         }}
       />
       <p>{sideName} color: </p>
-      <select
-        style={{ marginRight: 10 }}
-        onChange={(e) => setSide(e.target.value)}
-      >
+      <select style={{ marginRight: 10 }} onChange={(e) => setSide(e.target.value)}>
         {bodyColorOptions.map((o, i) => (
           <option key={i}>{o}</option>
         ))}
       </select>
       <p>{sideName}Size: </p>
-      <NumericInput
-        value={sideSize}
-        onChange={(val) => setSideSize(val)}
-        style={{ input: { width: 60 } }}
-      />
+      <NumericInput value={sideSize} onChange={(val) => setSideSize(val)} style={{ input: { width: 60 } }} />
       <p>{sideName}Offset: </p>
       <NumericInput
         value={sideOffset}
@@ -197,12 +177,7 @@ const ArrowLabel = ({ labelName, label, setLabel }) => {
   return (
     <Div>
       <p>{labelName} label:</p>
-      <input
-        style={{ width: "120px" }}
-        type="text"
-        value={label}
-        onChange={(e) => setLabel(e.target.value)}
-      />
+      <input style={{ width: "120px" }} type="text" value={label} onChange={(e) => setLabel(e.target.value)} />
     </Div>
   );
 };
@@ -229,6 +204,7 @@ const CustomizeArrow = () => {
 
   const [color, setColor] = useState("red");
   const [lineColor, setLineColor] = useState(null);
+  const [showArrow, setShowArrow] = useState(true);
   const [showHead, setShowHead] = useState(true);
   const [headColor, setHeadColor] = useState(null);
   const [headSize, setHeadSize] = useState(6);
@@ -241,7 +217,7 @@ const CustomizeArrow = () => {
   const [strokeWidth, setStrokeWidth] = useState(4);
   const [startAnchor, setStartAnchor] = useState(["auto"]);
   const [endAnchor, setEndAnchor] = useState(["auto"]);
-  const [dashed, setDashed] = useState(true);
+  const [dashed, setDashed] = useState(false);
   const [animation, setAnimation] = useState(1);
   const [pathGrid, setPathGrid] = useState("smooth");
   const [startLabel, setStartLabel] = useState("I'm start label");
@@ -253,6 +229,9 @@ const CustomizeArrow = () => {
   const [_cpy1Offset, set_Cpy1] = useState(0);
   const [_cpx2Offset, set_Cpx2] = useState(0);
   const [_cpy2Offset, set_Cpy2] = useState(0);
+  const [animateDrawing, setAnimateDrawing] = useState(1);
+  const [enableAnimateDrawing, setEnableAnimateDrawing] = useState(false);
+  const _animateDrawing = enableAnimateDrawing ? animateDrawing : false;
 
   // this is the important part of the example! play with the props to understand better the API options
   const props = {
@@ -269,8 +248,6 @@ const CustomizeArrow = () => {
     showHead: showHead,
     headColor: headColor,
     headSize: Number(headSize),
-    headOffset: Number(headOffset),
-    tailOffset: Number(tailOffset),
     showTail,
     tailColor,
     tailSize: Number(tailSize),
@@ -306,34 +283,22 @@ const CustomizeArrow = () => {
       </h3>
       <p>
         {" "}
-        This example shows some of the main API options. give the arrow diffrent
-        properties to customize his look. note that some options are cannot be
-        changed though this GUI(like custom lables or advande dashness and more)
-        play with them directly at this codesandbox!.
+        This example shows some of the main API options. give the arrow diffrent properties to customize his look. note
+        that some options are cannot be changed though this GUI(like custom lables or advande dashness and more) play
+        with them directly at this codesandbox!.
       </p>
 
       {/*<button onClick={() => setShowMe(!showMe)}>toggle</button>*/}
       {showMe ? (
         <div>
           <CollapsibleDiv title={"anchors"}>
-            <ArrowAnchor
-              sideAnchor={startAnchor}
-              anchorName={"startAnchor"}
-              setAnchor={setStartAnchor}
-            />
-            <ArrowAnchor
-              sideAnchor={endAnchor}
-              anchorName={"endAnchor"}
-              setAnchor={setEndAnchor}
-            />
+            <ArrowAnchor sideAnchor={startAnchor} anchorName={"startAnchor"} setAnchor={setStartAnchor} />
+            <ArrowAnchor sideAnchor={endAnchor} anchorName={"endAnchor"} setAnchor={setEndAnchor} />
           </CollapsibleDiv>
           <MyCollapsible title={"arrow apearance"} open={true}>
             <Div>
               <p>arrow color(all): </p>
-              <select
-                style={{ height: "20px", marginRight: 10 }}
-                onChange={(e) => setColor(e.target.value)}
-              >
+              <select style={{ height: "20px", marginRight: 10 }} onChange={(e) => setColor(e.target.value)}>
                 {colorOptions.map((o, i) => (
                   <option key={i}>{o}</option>
                 ))}
@@ -360,11 +325,7 @@ const CustomizeArrow = () => {
                 style={{ input: { width: 60 } }}
               />
               <p>animation: </p>
-              <NumericInput
-                value={animation}
-                onChange={(val) => setAnimation(val)}
-                style={{ input: { width: 60 } }}
-              />
+              <NumericInput value={animation} onChange={(val) => setAnimation(val)} style={{ input: { width: 60 } }} />
               <p>dashed: </p>
               <input
                 style={{ height: "15px", width: "15px" }}
@@ -399,24 +360,38 @@ const CustomizeArrow = () => {
               sideOffset={tailOffset}
               setSideOffset={setTailOffset}
             />
+            <Div>
+              <p>show arrow: </p>
+              <input
+                style={{ height: "15px", width: "15px" }}
+                type="checkBox"
+                checked={showArrow}
+                onChange={(e) => {
+                  setShowArrow(e.target.checked);
+                }}
+              />
+              <p>animateDrawing(secs): </p>
+              <input
+                style={{ height: "15px", width: "15px" }}
+                type="checkBox"
+                checked={enableAnimateDrawing}
+                onChange={(e) => {
+                  setEnableAnimateDrawing(e.target.checked);
+                }}
+              />
+              <NumericInput
+                value={animateDrawing}
+                onChange={(val) => setAnimateDrawing(val)}
+                style={{ input: { width: 60 } }}
+                step={0.2}
+              />
+            </Div>
           </MyCollapsible>
 
           <CollapsibleDiv title={"labels"}>
-            <ArrowLabel
-              labelName={"start"}
-              label={startLabel}
-              setLabel={setStartLabel}
-            />
-            <ArrowLabel
-              labelName={"middle"}
-              label={middleLabel}
-              setLabel={setMiddleLabel}
-            />
-            <ArrowLabel
-              labelName={"end"}
-              label={endLabel}
-              setLabel={setEndLabel}
-            />
+            <ArrowLabel labelName={"start"} label={startLabel} setLabel={setStartLabel} />
+            <ArrowLabel labelName={"middle"} label={middleLabel} setLabel={setMiddleLabel} />
+            <ArrowLabel labelName={"end"} label={endLabel} setLabel={setEndLabel} />
           </CollapsibleDiv>
 
           <MyCollapsible title={"advanced"}>
@@ -473,9 +448,56 @@ const CustomizeArrow = () => {
           <div style={canvasStyle} id="canvas">
             <Box box={box} forceRerender={forceRerender} />
             <Box box={box2} forceRerender={forceRerender} />
-            <Xarrow {...props} />
+            {showArrow ? (
+              <Xarrow
+                {...{
+                  // this is the important part of the example! play with the props to understand better the API options
+                  start: "box1", //  can be string
+                  end: box2.ref, //  or reference
+                  startAnchor: startAnchor,
+                  endAnchor: endAnchor,
+                  curveness: Number(curveness),
+                  color: color,
+                  lineColor: lineColor,
+                  strokeWidth: Number(strokeWidth),
+                  dashness: dashed ? { animation: Number(animation) } : false,
+                  path: pathGrid,
+                  showHead: showHead,
+                  headColor: headColor,
+                  headSize: Number(headSize),
+                  headOffset: Number(headOffset),
+                  tailOffset: Number(tailOffset),
+
+                  showTail,
+                  tailColor,
+                  tailSize: Number(tailSize),
+                  label: {
+                    start: startLabel,
+                    middle: middleLabel,
+                    end: (
+                      <div
+                        style={{
+                          fontSize: "1.3em",
+                          fontFamily: "fantasy",
+                          fontStyle: "italic",
+                          color: "purple",
+                        }}
+                      >
+                        {endLabel}
+                      </div>
+                    ),
+                  },
+                  _extendSVGcanvas,
+                  _debug,
+                  _cpx1Offset: _cpx1Offset,
+                  _cpy1Offset: _cpy1Offset,
+                  _cpx2Offset: _cpx2Offset,
+                  _cpy2Offset: _cpy2Offset,
+                  animateDrawing: _animateDrawing,
+                }}
+              />
+            ) : null}
           </div>
-          {/*what will happen if you will move Xarrow here? try!*/}
         </div>
       ) : null}
     </div>
