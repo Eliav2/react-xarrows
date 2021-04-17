@@ -95,6 +95,10 @@ const normalArrowShape = `M 0 0 L 1 0.5 L 0 1 L 0.25 0.5 z`;
 // const heartShape = `M 0,2 A 1,1 0,0,1 4,2 A 1,1 0,0,1 8,2 Q 8,5 4,8 Q 0,5 0,2 z`;
 const heartShape = `M 0,0.25 A 0.125,0.125 0,0,1 0.5,0.25 A 0.125,0.125 0,0,1 1,0.25 Q 1,0.625 0.5,1 Q 0,0.625 0,0.25 z`;
 
+// const arrowShapes={
+//   "heart"
+// }
+
 const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
   let {
     startAnchor,
@@ -432,23 +436,24 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
       if (showHead) {
         if (["left", "right"].includes(endAnchorPosition)) {
           //todo: rotate all transforms(and arrows svg) by 90
-          //// for 90 deg turn
-          // xHeadOffset = -fHeadSize + _headOffset * xSign;
-          // x2 -= fHeadSize * (1 - headOffset) * xSign;
-          // yHeadOffset = (fHeadSize / 2) * xSign;
-          // if (endAnchorPosition === "left") {
-          //   headOrient = 90;
-          // ...
-
-          xHeadOffset = _headOffset * xSign;
-          x2 -= fHeadSize * xSign - xHeadOffset;
-          // x2 -= fHeadSize * (1 - headOffset) * xSign; //same!
-          yHeadOffset = (fHeadSize * xSign) / 2;
+          // for 90 deg turn
+          xHeadOffset = (_headOffset - fHeadSize) * xSign;
+          x2 -= fHeadSize * (1 - headOffset) * xSign;
+          yHeadOffset = (fHeadSize / 2) * xSign;
           if (endAnchorPosition === "left") {
-            headOrient = 0;
+            headOrient = 90;
+          }
+
+          // xHeadOffset = _headOffset * xSign;
+          // x2 -= fHeadSize * xSign - xHeadOffset;
+
+          //// x2 -= fHeadSize * (1 - headOffset) * xSign; //same!
+          // yHeadOffset = (fHeadSize * xSign) / 2;
+          if (endAnchorPosition === "left") {
+            headOrient = 90;
             if (xSign < 0) headOrient += 180;
           } else {
-            headOrient = 180;
+            headOrient = 270;
             if (xSign > 0) headOrient += 180;
           }
         } else if (["top", "bottom"].includes(endAnchorPosition)) {
@@ -701,24 +706,24 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
         overflow="auto"
         {...SVGcanvasProps}
       >
-        {/* debug elements */}
-        {_debug ? (
-          <>
-            {/* control points circles */}
-            <circle r="5" cx={st.cpx1} cy={st.cpy1} fill="green" />
-            <circle r="5" cx={st.cpx2} cy={st.cpy2} fill="blue" />
-            {/* start to end rectangle wrapper */}
-            <rect
-              x={st.excLeft}
-              y={st.excUp}
-              width={st.absDx}
-              height={st.absDy}
-              fill="none"
-              stroke="pink"
-              strokeWidth="2px"
-            />
-          </>
-        ) : null}
+        {/*/!* debug elements *!/*/}
+        {/*{_debug ? (*/}
+        {/*  <>*/}
+        {/*    /!* control points circles *!/*/}
+        {/*    <circle r="5" cx={st.cpx1} cy={st.cpy1} fill="green" />*/}
+        {/*    <circle r="5" cx={st.cpx2} cy={st.cpy2} fill="blue" />*/}
+        {/*    /!* start to end rectangle wrapper *!/*/}
+        {/*    <rect*/}
+        {/*      x={st.excLeft}*/}
+        {/*      y={st.excUp}*/}
+        {/*      width={st.absDx}*/}
+        {/*      height={st.absDy}*/}
+        {/*      fill="none"*/}
+        {/*      stroke="pink"*/}
+        {/*      strokeWidth="2px"*/}
+        {/*    />*/}
+        {/*  </>*/}
+        {/*) : null}*/}
 
         {/* arrow tail */}
         {showTail ? (
@@ -815,6 +820,29 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
         >
           {labelEnd}
         </div>
+      ) : null}
+      {_debug ? (
+        <>
+          {/* possible anchor connections */}
+          {[...st.startPoints, ...st.endPoints].map((p, i) => {
+            return (
+              <div
+                key={i}
+                style={{
+                  background: "gray",
+                  opacity: 0.5,
+                  borderRadius: "50%",
+                  transform: "translate(-50%, -50%)",
+                  height: 5,
+                  width: 5,
+                  position: "absolute",
+                  left: p.x - st.mainDivPos.x,
+                  top: p.y - st.mainDivPos.y,
+                }}
+              />
+            );
+          })}
+        </>
       ) : null}
     </div>
   );
