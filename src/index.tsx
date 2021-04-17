@@ -909,6 +909,8 @@ Xarrow.defaultProps = {
   curveness: 0.8,
   dashness: false,
   passProps: {},
+  headOffset: 0.25,
+  tailOffset: 0.25,
   arrowBodyProps: {},
   arrowHeadProps: {},
   arrowTailProps: {},
