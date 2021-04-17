@@ -239,6 +239,8 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     startPoints: [],
     endPoints: [],
     mainDivPos: { x: 0, y: 0 },
+    xSign: 1,
+    ySign: 1,
   });
 
   headSize = Number(headSize);
@@ -435,25 +437,24 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
       }
       if (showHead) {
         if (["left", "right"].includes(endAnchorPosition)) {
-          //todo: rotate all transforms(and arrows svg) by 90
-          // for 90 deg turn
-          xHeadOffset = (_headOffset - fHeadSize) * xSign;
-          x2 -= fHeadSize * (1 - headOffset) * xSign;
-          yHeadOffset = (fHeadSize / 2) * xSign;
-          if (endAnchorPosition === "left") {
-            headOrient = 90;
-          }
+          // //todo: rotate all transforms(and arrows svg) by 90
+          // // for 90 deg turn
+          // xHeadOffset = (_headOffset - fHeadSize) * xSign;
+          // x2 -= fHeadSize * (1 - headOffset) * xSign;
+          // yHeadOffset = (fHeadSize / 2) * xSign;
+          // if (endAnchorPosition === "left") {
+          //   headOrient = 0;
+          // }
 
-          // xHeadOffset = _headOffset * xSign;
-          // x2 -= fHeadSize * xSign - xHeadOffset;
-
-          //// x2 -= fHeadSize * (1 - headOffset) * xSign; //same!
-          // yHeadOffset = (fHeadSize * xSign) / 2;
+          xHeadOffset = _headOffset * xSign;
+          x2 -= fHeadSize * xSign - xHeadOffset;
+          // x2 -= fHeadSize * (1 - headOffset) * xSign; //same!
+          yHeadOffset = (fHeadSize * xSign) / 2;
           if (endAnchorPosition === "left") {
-            headOrient = 90;
+            headOrient = 0;
             if (xSign < 0) headOrient += 180;
           } else {
-            headOrient = 270;
+            headOrient = 180;
             if (xSign > 0) headOrient += 180;
           }
         } else if (["top", "bottom"].includes(endAnchorPosition)) {
@@ -669,6 +670,8 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
       startPoints,
       endPoints,
       mainDivPos,
+      xSign,
+      ySign,
     });
   };
 
@@ -691,7 +694,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
       {...extraProps}
     >
       <svg
-        ref={(selfRef as unknown) as React.LegacyRef<SVGSVGElement>}
+        ref={selfRef}
         width={st.cw}
         height={st.ch}
         style={{
@@ -706,42 +709,6 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
         overflow="auto"
         {...SVGcanvasProps}
       >
-        {/*/!* debug elements *!/*/}
-        {/*{_debug ? (*/}
-        {/*  <>*/}
-        {/*    /!* control points circles *!/*/}
-        {/*    <circle r="5" cx={st.cpx1} cy={st.cpy1} fill="green" />*/}
-        {/*    <circle r="5" cx={st.cpx2} cy={st.cpy2} fill="blue" />*/}
-        {/*    /!* start to end rectangle wrapper *!/*/}
-        {/*    <rect*/}
-        {/*      x={st.excLeft}*/}
-        {/*      y={st.excUp}*/}
-        {/*      width={st.absDx}*/}
-        {/*      height={st.absDy}*/}
-        {/*      fill="none"*/}
-        {/*      stroke="pink"*/}
-        {/*      strokeWidth="2px"*/}
-        {/*    />*/}
-        {/*  </>*/}
-        {/*) : null}*/}
-
-        {/* arrow tail */}
-        {showTail ? (
-          <path
-            // d={`M 0 0 L ${fTailSize} ${fTailSize / 2} L 0 ${fTailSize} L ${
-            //   fTailSize / 4
-            // } ${fTailSize / 2} z`}
-            // d={factorDpathStr(normalArrowShape, fTailSize)}
-            d={normalArrowShape}
-            fill={tailColor}
-            pointerEvents="auto"
-            transform={`translate(${xOffsetTail},${yOffsetTail}) rotate(${st.tailOrient}) scale(${fTailSize})`}
-            // transform={`translate(${xOffsetHead},${yOffsetHead}) rotate(${st.headOrient})`}
-            {...passProps}
-            {...arrowTailProps}
-          />
-        ) : null}
-
         {/* body of the arrow */}
         <path
           d={arrowPath}
@@ -763,6 +730,27 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
             />
           ) : null}
         </path>
+        {/* arrow tail */}
+        {showTail ? (
+          <svg>
+            <g
+              transform={`translate(${xOffsetTail},${yOffsetTail}) rotate(${st.tailOrient}) scale(${fTailSize})`}
+            >
+              <svg x={"500%"}>
+                <path
+                  d={normalArrowShape}
+                  fill={tailColor}
+                  pointerEvents="auto"
+                  // transform={`translate(${xOffsetTail},${yOffsetTail}) rotate(${st.tailOrient}) scale(${fTailSize})`}
+                  // transform={`translate(${xOffsetHead},${yOffsetHead}) rotate(${st.headOrient})`}
+                  {...passProps}
+                  {...arrowTailProps}
+                />
+              </svg>
+            </g>
+          </svg>
+        ) : null}
+
         {/* head of the arrow */}
         {showHead ? (
           <path
@@ -773,6 +761,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
             fill={headColor}
             pointerEvents="auto"
             transform={`translate(${xOffsetHead},${yOffsetHead}) rotate(${st.headOrient}) scale(${fHeadSize})`}
+            // transform={`translate(${xOffsetHead},${yOffsetHead}) rotate(${st.headOrient}) scale(${fHeadSize})`}
             {...passProps}
             {...arrowHeadProps}
           />
