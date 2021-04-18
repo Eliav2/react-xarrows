@@ -24,7 +24,7 @@ export type xarrowPropsType = {
   headSize?: number;
   showTail?: boolean;
   tailSize?: number;
-  path?: "smooth" | "grid" | "straight";
+  path?: pathType;
   curveness?: number;
   dashness?:
     | boolean
@@ -33,8 +33,8 @@ export type xarrowPropsType = {
         nonStrokeLen?: number;
         animation?: boolean | number;
       };
-  headOffset?: number; // from 0 to 1
-  tailOffset?: number; // from 0 to 1
+  svgHead?: svgEdgeShapeType | svgCustomEdgeType;
+  svgTail?: svgEdgeShapeType | svgCustomEdgeType;
   animateDrawing?: boolean | number;
   passProps?: React.SVGProps<SVGPathElement>;
   SVGcanvasProps?: React.SVGAttributes<SVGSVGElement>;
@@ -52,6 +52,7 @@ export type xarrowPropsType = {
   _cpy2Offset?: number;
 };
 
+export type pathType = "smooth" | "grid" | "straight";
 export type anchorType = anchorPositionType | anchorCustomPositionType;
 export type anchorPositionType = "middle" | "left" | "right" | "top" | "bottom" | "auto";
 
@@ -66,6 +67,14 @@ export type labelsType = {
   end?: labelType;
 };
 export type labelType = JSX.Element | string;
+export type svgCustomEdgeType = {
+  svgElem: svgElemType;
+  svgProps?: { [key in keyof React.SVGProps<SVGElement>]: any };
+  offsetBack?: number;
+};
+export type svgEdgeShapeType = "sharpArrow" | "heart" | "circle";
+
+export type svgElemType = "circle" | "ellipse" | "line" | "path" | "polygon" | "polyline" | "rect";
 export type domEventType = keyof GlobalEventHandlersEventMap;
 
 ////////////////
@@ -86,14 +95,31 @@ type prevPos = {
   };
 };
 
-const normalArrowShape = `M 0 0 L 1 0.5 L 0 1 L 0.25 0.5 z`;
-// const heartShape = `M 0,2 A 1,1 0,0,1 4,2 A 1,1 0,0,1 8,2 Q 8,5 4,8 Q 0,5 0,2 z`;
-const heartShape = `M 0,0.25 A 0.125,0.125 0,0,1 0.5,0.25 A 0.125,0.125 0,0,1 1,0.25 Q 1,0.625 0.5,1 Q 0,0.625 0,0.25 z`;
+// const normalArrowShape = `M 0 0 L 1 0.5 L 0 1 L 0.25 0.5 z`;
+// // const heartShape = `M 0,2 A 1,1 0,0,1 4,2 A 1,1 0,0,1 8,2 Q 8,5 4,8 Q 0,5 0,2 z`;
+// const heartShape = `M 0,0.25 A 0.125,0.125 0,0,1 0.5,0.25 A 0.125,0.125 0,0,1 1,0.25 Q 1,0.625 0.5,1 Q 0,0.625 0,0.25 z`;
 
-// const arrowShapes={
-//   "heart"
-// }
-
+export const arrowShapes: { [key in svgEdgeShapeType]: svgCustomEdgeType } = {
+  sharpArrow: { svgElem: "path", svgProps: { d: `M 0 0 L 1 0.5 L 0 1 L 0.25 0.5 z` }, offsetBack: 0.25 },
+  heart: {
+    svgElem: "path",
+    svgProps: {
+      d: `M 0,0.25 A 0.125,0.125 0,0,1 0.5,0.25 A 0.125,0.125 0,0,1 1,0.25 Q 1,0.625 0.5,1 Q 0,0.625 0,0.25 z`,
+    },
+    offsetBack: 0.1,
+  },
+  circle: {
+    svgElem: "circle",
+    svgProps: {
+      r: 0.5,
+      cx: 0.5,
+      cy: 0.5,
+      children: <animate attributeType="XML" attributeName="r" from="0" to="40" dur="5s" fill="freeze" />,
+    },
+    offsetBack: 0.1,
+  },
+} as const;
+// type arrowShaoesTypes = keyof typeof arrowShapes
 const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
   let {
     startAnchor,
@@ -111,8 +137,8 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     path,
     curveness,
     dashness,
-    headOffset,
-    tailOffset,
+    svgHead,
+    svgTail,
     animateDrawing,
     passProps,
     SVGcanvasProps,
@@ -133,7 +159,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
 
   const mainDivRef = useRef(null);
   const lineRef = useRef(null);
-  const headRef = useRef<SVGPathElement>(null);
+  const headRef = useRef(null);
   const tailRef = useRef(null);
   const lineDrawAnimRef = useRef(null);
   const lineDashAnimRef = useRef(null);
@@ -200,6 +226,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
 
     const handleDrawAmimEnd = () => {
       setDrawAnimEnded(true);
+      // @ts-ignore
       headOpacityAnimRef.current.beginElement();
       lineDashAnimRef.current?.beginElement();
     };
@@ -302,6 +329,23 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     }
   }
 
+  const defaultEdge = (svgEdge): svgCustomEdgeType => {
+    if (typeof svgEdge == "string") svgEdge = arrowShapes[svgEdge as keyof svgEdgeShapeType];
+    svgEdge = svgEdge as svgCustomEdgeType;
+    if (svgEdge?.offsetBack === undefined) svgEdge.offsetBack = 0.25;
+    if (svgEdge?.svgElem === undefined) svgEdge.svgElem = "path";
+    if (svgEdge?.svgProps === undefined) svgEdge.svgProps = arrowShapes.sharpArrow.svgProps;
+    return svgEdge;
+  };
+  svgHead = defaultEdge(svgHead);
+  svgTail = defaultEdge(svgTail);
+
+  // if (typeof svgTail == "string") svgTail = arrowShapes[svgTail as keyof svgEdgeShapeType];
+  // svgTail = svgTail as svgCustomEdgeType;
+  // if (svgTail?.offsetBack === undefined) svgTail.offsetBack = 0.25;
+  // if (svgTail?.svgElem === undefined) svgTail.svgElem = "path";
+  // if (svgTail?.svgProps === undefined) svgTail.svgProps = arrowShapes.sharpArrow.svgProps;
+
   const getSelfPos = () => {
     let { left: xarrowElemX, top: xarrowElemY } = mainDivRef.current.getBoundingClientRect();
     let xarrowStyle = getComputedStyle(mainDivRef.current);
@@ -349,13 +393,16 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     let startPoints = prepareAnchorLines(startAnchor, sPos);
     let endPoints = prepareAnchorLines(endAnchor, ePos);
 
-    // choose the smallest path for 2 points from these possibilities.
+    // choose the smallest path for 2 ponts from these possibilities.
     let { startPointObj, endPointObj } = getShortestLine(startPoints, endPoints);
 
     let startAnchorPosition = startPointObj.anchorPosition,
       endAnchorPosition = endPointObj.anchorPosition;
     let startPoint = pick(startPointObj, ["x", "y"]),
       endPoint = pick(endPointObj, ["x", "y"]);
+
+    svgHead = svgHead as svgCustomEdgeType;
+    svgTail = svgTail as svgCustomEdgeType;
 
     let mainDivPos = getSelfPos();
     let cx0 = Math.min(startPoint.x, endPoint.x) - mainDivPos.x;
@@ -366,6 +413,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     let absDy = Math.abs(endPoint.y - startPoint.y);
     let xSign = dx > 0 ? 1 : -1;
     let ySign = dy > 0 ? 1 : -1;
+    let [headOffset, tailOffset] = [svgHead.offsetBack, svgTail.offsetBack];
     let _headOffset = fHeadSize * headOffset;
     let _tailOffset = fTailSize * tailOffset;
     let cu = Number(curveness);
@@ -780,34 +828,29 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
         </path>
         {/* arrow tail */}
         {showTail ? (
-          <svg>
-            <g
-              transform={`translate(${xOffsetTail},${yOffsetTail}) rotate(${st.tailOrient}) scale(${fTailSize})`}
-            >
-              <svg x={"500%"}>
-                <path
-                  d={normalArrowShape}
-                  fill={tailColor}
-                  pointerEvents="auto"
-                  // transform={`translate(${xOffsetTail},${yOffsetTail}) rotate(${st.tailOrient}) scale(${fTailSize})`}
-                  // transform={`translate(${xOffsetHead},${yOffsetHead}) rotate(${st.headOrient})`}
-                  {...passProps}
-                  {...arrowTailProps}
-                />
-              </svg>
-            </g>
-          </svg>
+          <svgTail.svgElem
+            // d={normalArrowShape}
+            fill={tailColor}
+            pointerEvents="auto"
+            transform={`translate(${xOffsetTail},${yOffsetTail}) rotate(${st.tailOrient}) scale(${fTailSize})`}
+            // transform={`translate(${xOffsetTail},${yOffsetTail}) rotate(${st.tailOrient}) scale(${fTailSize})`}
+            // transform={`translate(${xOffsetHead},${yOffsetHead}) rotate(${st.headOrient})`}
+            {...svgTail.svgProps}
+            {...passProps}
+            {...arrowTailProps}
+          />
         ) : null}
 
         {/* head of the arrow */}
         {showHead ? (
-          <path
+          <svgHead.svgElem
             ref={headRef}
-            d={normalArrowShape}
+            // d={normalArrowShape}
             fill={headColor}
             pointerEvents="auto"
             transform={`translate(${xOffsetHead},${yOffsetHead}) rotate(${st.headOrient}) scale(${fHeadSize})`}
-            // opacity={animateDrawing && !drawAnimEnded ? 0 : 1}
+            opacity={animateDrawing && !drawAnimEnded ? 0 : 1}
+            {...svgHead.svgProps}
             {...passProps}
             {...arrowHeadProps}
           >
@@ -822,7 +865,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
               fill="freeze"
             />
             ) : null
-          </path>
+          </svgHead.svgElem>
         ) : null}
       </svg>
 
@@ -893,6 +936,39 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
   );
 };
 
+Xarrow.defaultProps = {
+  startAnchor: "auto",
+  endAnchor: "auto",
+  label: null,
+  color: "CornflowerBlue",
+  lineColor: null,
+  headColor: null,
+  tailColor: null,
+  strokeWidth: 4,
+  showHead: true,
+  headSize: 6,
+  showTail: false,
+  tailSize: 6,
+  path: "smooth",
+  curveness: 0.8,
+  dashness: false,
+  svgHead: "sharpArrow",
+  svgTail: "sharpArrow",
+  animateDrawing: false,
+  passProps: {},
+  arrowBodyProps: {},
+  arrowHeadProps: {},
+  arrowTailProps: {},
+  SVGcanvasProps: {},
+  divContainerProps: {},
+  _extendSVGcanvas: 0,
+  _debug: false,
+  _cpx1Offset: 0,
+  _cpy1Offset: 0,
+  _cpx2Offset: 0,
+  _cpy2Offset: 0,
+};
+
 //////////////////////////////
 // propTypes
 
@@ -900,7 +976,7 @@ const pAnchorPositionType = PT.oneOf(["middle", "left", "right", "top", "bottom"
 
 const pAnchorCustomPositionType = PT.exact({
   position: pAnchorPositionType.isRequired,
-  offset: PT.shape({
+  offset: PT.exact({
     rightness: PT.number,
     bottomness: PT.number,
   }).isRequired,
@@ -920,6 +996,17 @@ const pLabelsType = PT.exact({
   end: _pLabelType,
 });
 
+const pSvgEdgeShapeType = PT.oneOf(["sharpArrow", "heart", "circle"] as const);
+const pSvgElemType = PT.oneOf(["circle", "ellipse", "line", "path", "polygon", "polyline", "rect"] as const);
+const pSvgEdgeType = PT.oneOfType([
+  pSvgEdgeShapeType,
+  PT.exact({
+    svgElem: pSvgElemType,
+    svgProps: PT.any,
+    offsetBack: PT.number,
+  }).isRequired,
+]);
+
 Xarrow.propTypes = {
   start: pRefType.isRequired,
   end: pRefType.isRequired,
@@ -935,11 +1022,11 @@ Xarrow.propTypes = {
   tailColor: PT.string,
   strokeWidth: PT.number,
   showTail: PT.bool,
-  tailOffset: PT.number,
-  headOffset: PT.number,
   path: PT.oneOf(["smooth", "grid", "straight"]),
   curveness: PT.number,
   dashness: PT.oneOfType([PT.bool, PT.object]),
+  svgHead: pSvgEdgeType,
+  svgTail: pSvgEdgeType,
   animateDrawing: PT.oneOfType([PT.bool, PT.number]),
   passProps: PT.object,
   arrowBodyProps: PT.object,
@@ -953,39 +1040,6 @@ Xarrow.propTypes = {
   _cpy1Offset: PT.number,
   _cpx2Offset: PT.number,
   _cpy2Offset: PT.number,
-};
-
-Xarrow.defaultProps = {
-  startAnchor: "auto",
-  endAnchor: "auto",
-  label: null,
-  color: "CornflowerBlue",
-  lineColor: null,
-  headColor: null,
-  tailColor: null,
-  strokeWidth: 4,
-  showHead: true,
-  headSize: 6,
-  showTail: false,
-  headOffset: 0.25,
-  tailOffset: 0.25,
-  tailSize: 6,
-  path: "smooth",
-  curveness: 0.8,
-  dashness: false,
-  animateDrawing: false,
-  passProps: {},
-  arrowBodyProps: {},
-  arrowHeadProps: {},
-  arrowTailProps: {},
-  SVGcanvasProps: {},
-  divContainerProps: {},
-  _extendSVGcanvas: 0,
-  _debug: false,
-  _cpx1Offset: 0,
-  _cpy1Offset: 0,
-  _cpx2Offset: 0,
-  _cpy2Offset: 0,
 };
 
 export default Xarrow;

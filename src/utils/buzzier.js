@@ -5,10 +5,7 @@
  * bzCurve with 2 control points function(4 points total):  bz = (1−t)^3*p1 + 3(1−t)^2*t*p2 +3(1−t)*t^2*p3 + t^3*p4
  */
 export const bzFunction = (p1, p2, p3, p4) => (t) =>
-  (1 - t) ** 3 * p1 +
-  3 * (1 - t) ** 2 * t * p2 +
-  3 * (1 - t) * t ** 2 * p3 +
-  t ** 3 * p4;
+  (1 - t) ** 3 * p1 + 3 * (1 - t) ** 2 * t * p2 + 3 * (1 - t) * t ** 2 * p3 + t ** 3 * p4;
 
 /**
  * returns 2 solutions from extram points for buzzier curve with 2 controls points
@@ -23,9 +20,7 @@ export const buzzierMinSols = (p1, p2, p3, p4) => {
   // tSol = A ± sqrt(B)
   // then solution we want is: bz(tSol)
   const A = -6 * p1 + 12 * p2 - 6 * p3;
-  const B =
-    (-6 * p1 + 12 * p2 - 6 * p3) ** 2 -
-    4 * (3 * p2 - 3 * p1) * (-3 * p1 + 9 * p2 - 9 * p3 + 3 * p4);
+  const B = (-6 * p1 + 12 * p2 - 6 * p3) ** 2 - 4 * (3 * p2 - 3 * p1) * (-3 * p1 + 9 * p2 - 9 * p3 + 3 * p4);
   const C = 2 * (-3 * p1 + 9 * p2 - 9 * p3 + 3 * p4);
 
   const sol1 = bz((A + Math.sqrt(B)) / C);

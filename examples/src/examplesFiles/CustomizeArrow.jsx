@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import Xarrow from "react-xarrows";
+import Xarrow, { arrowShapes } from "react-xarrows";
 import Draggable from "react-draggable";
 import NumericInput from "react-numeric-input";
 import Collapsible from "react-collapsible";
@@ -30,7 +30,7 @@ const bodyColorOptions = [null, ...colorOptions];
 const anchorsTypes = ["left", "right", "top", "bottom", "middle", "auto"];
 
 // one row div with elements centered
-const Div = ({ children, style, ...props }) => {
+const Div = ({ children, style = {}, ...props }) => {
   return (
     <div
       style={{
@@ -47,7 +47,7 @@ const Div = ({ children, style, ...props }) => {
   );
 };
 
-const MyCollapsible = ({ children, style, title = "title", ...props }) => {
+const MyCollapsible = ({ children, style = {}, title = "title", ...props }) => {
   // console.log(children);
   return (
     <Collapsible
@@ -72,8 +72,7 @@ const MyCollapsible = ({ children, style, title = "title", ...props }) => {
 };
 
 // not in single line
-const CollapsibleDiv = ({ children, style, title = "title", ...props }) => {
-  //  noo
+const CollapsibleDiv = ({ children, style = {}, title = "title", ...props }) => {
   return (
     <Collapsible
       open={false}
@@ -105,7 +104,7 @@ const Box = (props) => {
   );
 };
 
-const ArrowAnchor = ({ anchorName, sideAnchor, setAnchor }) => {
+const ArrowAnchor = ({ anchorName, edgeAnchor, setAnchor }) => {
   return (
     <div style={{ display: "flex", alignItems: "center", marginRight: 20 }}>
       <p>{anchorName}: </p>
@@ -123,14 +122,14 @@ const ArrowAnchor = ({ anchorName, sideAnchor, setAnchor }) => {
             <input
               style={{ height: "15px", width: "15px" }}
               type="checkBox"
-              checked={sideAnchor.includes(anchor)}
+              checked={edgeAnchor.includes(anchor)}
               // value={}
               onChange={(e) => {
                 if (e.target.checked) {
-                  setAnchor([...sideAnchor, anchor]);
+                  setAnchor([...edgeAnchor, anchor]);
                 } else {
-                  let a = [...sideAnchor];
-                  a.splice(sideAnchor.indexOf(anchor), 1);
+                  let a = [...edgeAnchor];
+                  a.splice(edgeAnchor.indexOf(anchor), 1);
                   setAnchor(a);
                 }
               }}
@@ -142,33 +141,83 @@ const ArrowAnchor = ({ anchorName, sideAnchor, setAnchor }) => {
   );
 };
 
-const ArrowSide = ({ sideName, setSide, sideSize, setSideSize, sideOffset, setSideOffset, showSide, setShowSide }) => {
+const ArrowEdge = ({ edgeName, setEdge, edgeSize, setEdgeSize, showEdge, setShowEdge, edgeShape, setEdgeShape }) => {
+  const shapes = Object.keys(arrowShapes);
+  const [selectedShape, setSelectedShape] = useState(shapes[0]);
+  const [adv, setAdv] = useState(false);
+
+  const [edgeOffset, setEdgeOffset] = useState(arrowShapes[shapes[0]].offsetBack);
+  const [svgElem, setSvgElem] = useState(arrowShapes[shapes[0]].svgElem);
+  const handleMenuSelectShape = (e) => {
+    const selectedShape = e.target.value;
+    setSelectedShape(selectedShape);
+    update({ shape: selectedShape });
+  };
+  const onAdvOpen = () => {
+    setAdv(true);
+    update({ _adv: true });
+  };
+  const onAdvClose = () => {
+    setAdv(false);
+    update({ _adv: false });
+  };
+  const update = ({ shape = selectedShape, offsetBack = edgeOffset, _adv = adv, _svgElem = svgElem }) => {
+    if (_adv) setEdgeShape({ ...arrowShapes[shape], offsetBack, svgElem: _svgElem });
+    else setEdgeShape(shape);
+  };
+
   return (
-    <Div title={"arrow " + sideName}>
-      <p>show {sideName}: </p>
+    <Div title={"arrow " + edgeName}>
+      <b>{edgeName}: </b>
+      <p>show: </p>
       <input
         style={{ height: "15px", width: "15px" }}
         type="checkBox"
-        checked={showSide}
+        checked={showEdge}
         onChange={(e) => {
-          setShowSide(e.target.checked);
+          setShowEdge(e.target.checked);
         }}
       />
-      <p>{sideName} color: </p>
-      <select style={{ marginRight: 10 }} onChange={(e) => setSide(e.target.value)}>
+      <p> color: </p>
+      <select style={{ marginRight: 10 }} onChange={(e) => setEdge(e.target.value)}>
         {bodyColorOptions.map((o, i) => (
           <option key={i}>{o}</option>
         ))}
       </select>
-      <p>{sideName}Size: </p>
-      <NumericInput value={sideSize} onChange={(val) => setSideSize(val)} style={{ input: { width: 60 } }} />
-      <p>{sideName}Offset: </p>
-      <NumericInput
-        value={sideOffset}
-        onChange={(val) => setSideOffset(val)}
-        style={{ input: { width: 70 } }}
-        step={0.01}
-      />
+      <p>size: </p>
+      <NumericInput value={edgeSize} onChange={(val) => setEdgeSize(val)} style={{ input: { width: 60 } }} />
+      <p>shape: </p>
+      <select onChange={handleMenuSelectShape}>
+        {shapes.map((o, i) => (
+          <option key={i}>{o}</option>
+        ))}
+      </select>
+
+      <MyCollapsible title={"advanced"} onOpen={onAdvOpen} onClose={onAdvClose}>
+        {/*<Div>*/}
+        <p>{edgeName}Offset: </p>
+        <NumericInput
+          value={edgeOffset}
+          onChange={(val) => {
+            setEdgeOffset(val);
+            update({ offsetBack: val });
+          }}
+          style={{ input: { width: 70 } }}
+          step={0.01}
+        />
+        <p>shape: </p>
+        <select
+          onChange={({ target: { value } }) => {
+            setSvgElem(value);
+            update({ _svgElem: value });
+          }}
+        >
+          {["circle", "ellipse", "line", "path", "polygon", "polyline", "rect"].map((o, i) => (
+            <option key={i}>{o}</option>
+          ))}
+        </select>
+        {/*</Div>*/}
+      </MyCollapsible>
     </Div>
   );
 };
@@ -208,8 +257,6 @@ const CustomizeArrow = () => {
   const [showHead, setShowHead] = useState(true);
   const [headColor, setHeadColor] = useState(null);
   const [headSize, setHeadSize] = useState(6);
-  const [headOffset, setHeadOffset] = useState(0.25);
-  const [tailOffset, setTailOffset] = useState(0.25);
   const [showTail, setShowTail] = useState(false);
   const [tailColor, setTailColor] = useState(null);
   const [tailSize, setTailSize] = useState(6);
@@ -219,7 +266,7 @@ const CustomizeArrow = () => {
   const [endAnchor, setEndAnchor] = useState(["auto"]);
   const [dashed, setDashed] = useState(false);
   const [animation, setAnimation] = useState(1);
-  const [pathGrid, setPathGrid] = useState("smooth");
+  const [path, setPath] = useState("smooth");
   const [startLabel, setStartLabel] = useState("I'm start label");
   const [middleLabel, setMiddleLabel] = useState("middleLabel");
   const [endLabel, setEndLabel] = useState("fancy end label");
@@ -232,9 +279,15 @@ const CustomizeArrow = () => {
   const [animateDrawing, setAnimateDrawing] = useState(1);
   const [enableAnimateDrawing, setEnableAnimateDrawing] = useState(false);
   const _animateDrawing = enableAnimateDrawing ? animateDrawing : false;
+  const [headShape, setHeadShape] = useState("sharpArrow");
+  const [tailShape, setTailShape] = useState("heart");
+  // const [headOffset, setHeadOffset] = useState(0.25);
+  // const [tailOffset, setTailOffset] = useState(0.25);
 
-  // this is the important part of the example! play with the props to understand better the API options
+  // const svgHead = { ...arrowShapes[headShape], ...{ offsetBack: headOffset } };
+  // console.log(headOffset);
   const props = {
+    // this is the important part of the example! play with the props to understand better the API options
     start: "box1", //  can be string
     end: box2.ref, //  or reference
     startAnchor: startAnchor,
@@ -244,14 +297,15 @@ const CustomizeArrow = () => {
     lineColor: lineColor,
     strokeWidth: Number(strokeWidth),
     dashness: dashed ? { animation: Number(animation) } : false,
-    path: pathGrid,
+    path: path,
     showHead: showHead,
     headColor: headColor,
     headSize: Number(headSize),
+    svgHead: headShape,
+    svgTail: tailShape,
     showTail,
     tailColor,
     tailSize: Number(tailSize),
-
     label: {
       start: startLabel,
       middle: middleLabel,
@@ -274,6 +328,7 @@ const CustomizeArrow = () => {
     _cpy1Offset: _cpy1Offset,
     _cpx2Offset: _cpx2Offset,
     _cpy2Offset: _cpy2Offset,
+    animateDrawing: _animateDrawing,
   };
 
   return (
@@ -292,8 +347,8 @@ const CustomizeArrow = () => {
       {showMe ? (
         <div>
           <CollapsibleDiv title={"anchors"}>
-            <ArrowAnchor sideAnchor={startAnchor} anchorName={"startAnchor"} setAnchor={setStartAnchor} />
-            <ArrowAnchor sideAnchor={endAnchor} anchorName={"endAnchor"} setAnchor={setEndAnchor} />
+            <ArrowAnchor edgeAnchor={startAnchor} anchorName={"startAnchor"} setAnchor={setStartAnchor} />
+            <ArrowAnchor edgeAnchor={endAnchor} anchorName={"endAnchor"} setAnchor={setEndAnchor} />
           </CollapsibleDiv>
           <MyCollapsible title={"arrow apearance"} open={true}>
             <Div>
@@ -334,31 +389,35 @@ const CustomizeArrow = () => {
                 onChange={(e) => setDashed(e.target.checked)}
               />
               <p>path: </p>
-              <select onChange={(e) => setPathGrid(e.target.value)}>
+              <select onChange={(e) => setPath(e.target.value)}>
                 {["smooth", "grid", "straight"].map((o, i) => (
                   <option key={i}>{o}</option>
                 ))}
               </select>
             </Div>
-            <ArrowSide
-              sideName={"head"}
-              setSide={setHeadColor}
-              sideSize={headSize}
-              setSideSize={setHeadSize}
-              showSide={showHead}
-              setShowSide={setShowHead}
-              sideOffset={headOffset}
-              setSideOffset={setHeadOffset}
+            <ArrowEdge
+              edgeName={"head"}
+              setEdge={setHeadColor}
+              edgeSize={headSize}
+              setEdgeSize={setHeadSize}
+              showEdge={showHead}
+              setShowEdge={setShowHead}
+              // edgeOffset={headOffset}
+              // setEdgeOffset={setHeadOffset}
+              edgeShape={headShape}
+              setEdgeShape={setHeadShape}
             />
-            <ArrowSide
-              sideName={"tail"}
-              setSide={setTailColor}
-              sideSize={tailSize}
-              setSideSize={setTailSize}
-              showSide={showTail}
-              setShowSide={setShowTail}
-              sideOffset={tailOffset}
-              setSideOffset={setTailOffset}
+            <ArrowEdge
+              edgeName={"tail"}
+              setEdge={setTailColor}
+              edgeSize={tailSize}
+              setEdgeSize={setTailSize}
+              showEdge={showTail}
+              setShowEdge={setShowTail}
+              // edgeOffset={tailOffset}
+              // setEdgeOffset={setTailOffset}
+              edgeShape={tailShape}
+              setEdgeShape={setTailShape}
             />
             <Div>
               <p>show arrow: </p>
@@ -448,56 +507,12 @@ const CustomizeArrow = () => {
           <div style={canvasStyle} id="canvas">
             <Box box={box} forceRerender={forceRerender} />
             <Box box={box2} forceRerender={forceRerender} />
-            {showArrow ? (
-              <Xarrow
-                {...{
-                  // this is the important part of the example! play with the props to understand better the API options
-                  start: "box1", //  can be string
-                  end: box2.ref, //  or reference
-                  startAnchor: startAnchor,
-                  endAnchor: endAnchor,
-                  curveness: Number(curveness),
-                  color: color,
-                  lineColor: lineColor,
-                  strokeWidth: Number(strokeWidth),
-                  dashness: dashed ? { animation: Number(animation) } : false,
-                  path: pathGrid,
-                  showHead: showHead,
-                  headColor: headColor,
-                  headSize: Number(headSize),
-                  headOffset: Number(headOffset),
-                  tailOffset: Number(tailOffset),
-
-                  showTail,
-                  tailColor,
-                  tailSize: Number(tailSize),
-                  label: {
-                    start: startLabel,
-                    middle: middleLabel,
-                    end: (
-                      <div
-                        style={{
-                          fontSize: "1.3em",
-                          fontFamily: "fantasy",
-                          fontStyle: "italic",
-                          color: "purple",
-                        }}
-                      >
-                        {endLabel}
-                      </div>
-                    ),
-                  },
-                  _extendSVGcanvas,
-                  _debug,
-                  _cpx1Offset: _cpx1Offset,
-                  _cpy1Offset: _cpy1Offset,
-                  _cpx2Offset: _cpx2Offset,
-                  _cpy2Offset: _cpy2Offset,
-                  animateDrawing: _animateDrawing,
-                }}
-              />
-            ) : null}
+            {showArrow ? <Xarrow {...props} /> : null}
           </div>
+          {/* todo: add generated code preview */}
+          <pre>
+            <code className="jsx">&lt;Xarrow {}/&gt;</code>
+          </pre>
         </div>
       ) : null}
     </div>

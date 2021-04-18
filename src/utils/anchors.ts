@@ -2,11 +2,7 @@
  * utility functions for preparing `startAnchor` and `endAnchor` to accept the diffrent types that can be passed.
  */
 
-import {
-  anchorCustomPositionType,
-  anchorPositionType,
-  anchorType,
-} from "../index";
+import { anchorCustomPositionType, anchorPositionType, anchorType } from "../index";
 import { typeOf } from "./index";
 
 const getAnchorsDefaultOffsets = (width: number, height: number) => {
@@ -22,10 +18,7 @@ const getAnchorsDefaultOffsets = (width: number, height: number) => {
 type anchorSideType = "left" | "right" | "top" | "bottom";
 
 export const prepareAnchorLines = (anchor, anchorPos) => {
-  let defsOffsets = getAnchorsDefaultOffsets(
-    anchorPos.right - anchorPos.x,
-    anchorPos.bottom - anchorPos.y
-  );
+  let defsOffsets = getAnchorsDefaultOffsets(anchorPos.right - anchorPos.x, anchorPos.bottom - anchorPos.y);
   // convert given anchors to array if not array already
   let anchorChoice = Array.isArray(anchor) ? anchor : [anchor];
   if (anchorChoice.length == 0) anchorChoice = ["auto"];
@@ -38,8 +31,7 @@ export const prepareAnchorLines = (anchor, anchorPos) => {
         offset: { rightness: 0, bottomness: 0 },
       };
     } else if (typeOf(anchorChoice) === "object") {
-      if (!anchorChoice.offset)
-        anchorChoice.offset = { rightness: 0, bottomness: 0 };
+      if (!anchorChoice.offset) anchorChoice.offset = { rightness: 0, bottomness: 0 };
       if (!anchorChoice.offset.bottomness) anchorChoice.offset.bottomness = 0;
       if (!anchorChoice.offset.rightness) anchorChoice.offset.rightness = 0;
       anchorChoice = anchorChoice as anchorCustomPositionType;
@@ -50,14 +42,12 @@ export const prepareAnchorLines = (anchor, anchorPos) => {
   let anchorPossibilities: anchorCustomPositionType[] = [];
   if (anchorChoiceMapped.map((a) => a.position).includes("auto")) {
     let autoAnchor = anchorChoiceMapped.find((a) => a.position === "auto");
-    (["left", "right", "top", "bottom"] as anchorSideType[]).forEach(
-      (anchor) => {
-        let offset = defsOffsets[anchor];
-        offset.rightness += autoAnchor.offset.rightness;
-        offset.bottomness += autoAnchor.offset.bottomness;
-        anchorPossibilities.push({ position: anchor, offset });
-      }
-    );
+    (["left", "right", "top", "bottom"] as anchorSideType[]).forEach((anchor) => {
+      let offset = defsOffsets[anchor];
+      offset.rightness += autoAnchor.offset.rightness;
+      offset.bottomness += autoAnchor.offset.bottomness;
+      anchorPossibilities.push({ position: anchor, offset });
+    });
   } else {
     anchorChoiceMapped.forEach((customAnchor) => {
       let offset = defsOffsets[customAnchor.position] as {

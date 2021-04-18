@@ -1,3 +1,8 @@
+## v1.7.0:
+**feature update**:
+- creation animation added (see `animateDrawing`)
+- custom svg now supported,added `circle` and `heart` shapes just for examples. 
+
 ## v1.6.0: 
 - proptypes - typescript types issues fixed.
 - now all pointer events enabled in the arrowhead by default ([#50](https://github.com/Eliav2/react-xarrows/issues/50))

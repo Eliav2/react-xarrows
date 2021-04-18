@@ -95,6 +95,8 @@ this means that any code changes in src/index.tsx will immediately be reflected 
 (add console.log("test") line and see!)\
 to reproduce this dev env on your local machine git clone and follow same commands as in [gitpod.yml](./.gitpod.yml).
 
+Pull requests - please from and to the dev-branch only. 
+
 if you made an improvement that is relevant for most users, you can quickly submit a pull request using the right toolbar. 
 
 ### react-xarrows v2
@@ -107,7 +109,6 @@ the properties the xarrow component receives is as follows(don't panic,the impor
 
 ```ts
 export type xarrowPropsType = {
-    id?: string | null;
     start: refType;
     end: refType;
     startAnchor?: anchorType | anchorType[];
