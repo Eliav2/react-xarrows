@@ -60,6 +60,8 @@
     "README.md"
   ],
   "prettier": {
-    "printWidth": 120
+    "printWidth": 120,
+    "jsxBracketSameLine": true,
+    "singleQuote": true
   }
 }
