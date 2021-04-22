@@ -80,12 +80,11 @@ arrows) ,this is because the Xarrow component does not have any control or aware
 addition, make sure to render Xarrows later in the DOM then the connected elements else the app will crash.
 **this is planned to be changed in react-xarrows v2.**
 
-
 ### Contributing
 
 Want a feature that is not supported? found a bug?\
 no need to clone the repo and set up the dev environment anymore!\
-here's a ready to use development environment with a click of a button(patience, it takes about a minute to setup): 
+here's a ready to use development environment with a click of a button(patience, it takes about a minute to setup):
 
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/Eliav2/react-xarrows/blob/master/src/index.tsx)
 
@@ -95,17 +94,21 @@ this means that any code changes in src/index.tsx will immediately be reflected 
 (add console.log("test") line and see!)\
 to reproduce this dev env on your local machine git clone and follow same commands as in [gitpod.yml](./.gitpod.yml).
 
-Pull requests - please from and to the dev-branch only. 
+Pull requests - please from and to the dev-branch only.
 
-if you made an improvement that is relevant for most users, you can quickly submit a pull request using the right toolbar. 
+if you made an improvement that is relevant for most users, you can quickly submit a pull request using the right
+toolbar.
 
 ### react-xarrows v2
-v2 is on its way. want to contribute and participate in plannig the next react architecture for react-xarrows?
-see discussion [here](https://github.com/Eliav2/react-xarrows/discussions/53)!
+
+v2 is on its way. want to contribute and participate in plannig the next react architecture for react-xarrows? see
+discussion [here](https://github.com/Eliav2/react-xarrows/discussions/53)!
 
 ### types definitions
 
 the properties the xarrow component receives is as follows(don't panic,the important ones explained next):
+
+[//]: # (todo: update readme type definitions!)
 
 ```ts
 export type xarrowPropsType = {
@@ -208,7 +211,7 @@ you can place up to 3 labels. see examples
 - `label={{ start:"I'm start label",middle: "middleLabel",end:<div style={{ fontSize: "1.3em", fontFamily: "fantasy", fontStyle: "italic" }}>big end label</div> }}`
     - start and middle label and custom end label
 
-#### color,lineColor and headColor and tailColor
+#### color,lineColor and headColor and~~~~ tailColor
 
 _optional, default: "CornflowerBlue"_ \
 `color` defines color to the entire arrow. lineColor,headColor and tailColor will override color specifically for
@@ -255,10 +258,15 @@ then default values are chosen except what passed. examples:
 - `dashness={true}` will make the line of the arrow to be dashed.
 - `dashness={{ strokeLen: 10, nonStrokeLen: 15, animation: -2 }}` will make a custom looking dashness.
 
+[//]: # (todo: add svg custom shapes docs!)
+
 #### animateDrawing
 
+[//]: # (todo: fix animateDrawing docs!)
 _optional, default: false_ \
-can animate the drawing of the arrow using svg animation.  if true animation duration is 1s. if string is passed then animation length is based on given string.  string must conform to a [`clock-value`](https://developer.mozilla.org/en-US/docs/Web/SVG/Content_type#clock-value). examples:
+can animate the drawing of the arrow using svg animation. if true animation duration is 1s. if string is passed then
+animation length is based on given string. string must conform to
+a [`clock-value`](https://developer.mozilla.org/en-US/docs/Web/SVG/Content_type#clock-value). examples:
 
 - `animateDrawing` will animate the drawing of the arrow in 1 second.
 - `animateDrawing="5s"` will animate the drawing of the arrow in 5 seconds.

@@ -5,122 +5,9 @@ import { getElementByPropGiven } from './utils';
 import PT from 'prop-types';
 import { buzzierMinSols, bzFunction } from './utils/buzzier';
 import { getShortestLine, prepareAnchorLines } from './utils/anchors';
+import { svgEdgeShapeType, svgCustomEdgeType, xarrowPropsType, labelsType, _prevPosType } from './types';
 
-///////////////
-// public types
-
-export type xarrowPropsType = {
-  start: refType;
-  end: refType;
-  startAnchor?: anchorType | anchorType[];
-  endAnchor?: anchorType | anchorType[];
-  label?: labelType | labelsType;
-  color?: string;
-  lineColor?: string | null;
-  headColor?: string | null;
-  tailColor?: string | null;
-  strokeWidth?: number;
-  showHead?: boolean;
-  headSize?: number;
-  showTail?: boolean;
-  tailSize?: number;
-  path?: pathType;
-  curveness?: number;
-  dashness?:
-    | boolean
-    | {
-        strokeLen?: number;
-        nonStrokeLen?: number;
-        animation?: boolean | number;
-      };
-  svgHead?: svgEdgeShapeType | svgCustomEdgeType;
-  svgTail?: svgEdgeShapeType | svgCustomEdgeType;
-  animateDrawing?: boolean | number;
-  passProps?: React.SVGProps<SVGPathElement>;
-  SVGcanvasProps?: React.SVGAttributes<SVGSVGElement>;
-  arrowBodyProps?: React.SVGProps<SVGPathElement>;
-  arrowHeadProps?: JSX.IntrinsicElements[svgElemType];
-  arrowTailProps?: JSX.IntrinsicElements[svgElemType];
-  // arrowTailProps?: React.SVGProps<SVGElement>;
-  divContainerProps?: React.HTMLProps<HTMLDivElement>;
-  SVGcanvasStyle?: React.CSSProperties;
-  divContainerStyle?: React.CSSProperties;
-  _extendSVGcanvas?: number;
-  _debug?: boolean;
-  _cpx1Offset?: number;
-  _cpy1Offset?: number;
-  _cpx2Offset?: number;
-  _cpy2Offset?: number;
-};
-
-export type pathType = 'smooth' | 'grid' | 'straight';
-export type anchorType = anchorPositionType | anchorCustomPositionType;
-export type anchorPositionType = 'middle' | 'left' | 'right' | 'top' | 'bottom' | 'auto';
-
-export type anchorCustomPositionType = {
-  position: anchorPositionType;
-  offset: { rightness?: number; bottomness?: number };
-};
-export type refType = React.MutableRefObject<any> | string;
-export type labelsType = {
-  start?: labelType;
-  middle?: labelType;
-  end?: labelType;
-};
-export type labelType = JSX.Element | string;
-
-export type svgCustomTypeGeneric<T extends svgElemType> = {
-  svgElem: T;
-  svgProps?: JSX.IntrinsicElements[T];
-  offsetBack?: number;
-};
-type svgCustomEdgeType = { [K in svgElemType]: svgCustomTypeGeneric<K> }[svgElemType];
-
-export type svgEdgeShapeType = 'sharpArrow' | 'heart' | 'circle';
-export type svgEdgeType = svgEdgeShapeType | svgCustomEdgeType;
-export type svgElemType = 'circle' | 'ellipse' | 'line' | 'path' | 'polygon' | 'polyline' | 'rect';
-
-////////////////
-// private types
-
-type prevPos = {
-  start: {
-    x: number;
-    y: number;
-    right: number;
-    bottom: number;
-  };
-  end: {
-    x: number;
-    y: number;
-    right: number;
-    bottom: number;
-  };
-};
-
-// const normalArrowShape = `M 0 0 L 1 0.5 L 0 1 L 0.25 0.5 z`;
-// // const heartShape = `M 0,2 A 1,1 0,0,1 4,2 A 1,1 0,0,1 8,2 Q 8,5 4,8 Q 0,5 0,2 z`;
-// const heartShape = `M 0,0.25 A 0.125,0.125 0,0,1 0.5,0.25 A 0.125,0.125 0,0,1 1,0.25 Q 1,0.625 0.5,1 Q 0,0.625 0,0.25 z`;
-
-export type SvgCustomTypeOneLiner = svgElemType extends infer T
-  ? T extends svgElemType
-    ? { svgElem: T; svgProps?: JSX.IntrinsicElements[T] }
-    : never
-  : never;
-
-// export type svgCustomType<svgElemType extends infer T? T extendssvg = svgElemType> = {
-//   svgElem: T;
-//   svgProps?: { [key in T]: JSX.IntrinsicElements[T] };
-//   offsetBack?: number;
-// };
-
-// export type svgCustomEdgeType2<T extends svgElemType = svgElemType> = {
-//   svgElem: T;
-//   svgProps?: { [key in T]: JSX.IntrinsicElements[T] };
-//   offsetBack?: number;
-// };
-
-//default arrows
+//default arrows svgs
 export const arrowShapes: { [key in svgEdgeShapeType]: svgCustomEdgeType } = {
   sharpArrow: { svgElem: 'path', svgProps: { d: `M 0 0 L 1 0.5 L 0 1 L 0.25 0.5 z` }, offsetBack: 0.25 },
   heart: {
@@ -136,13 +23,16 @@ export const arrowShapes: { [key in svgEdgeShapeType]: svgCustomEdgeType } = {
       r: 0.5,
       cx: 0.5,
       cy: 0.5,
-      children: <animate attributeName="r" values={'0.25;0.5;0.25'} dur="1s" repeatCount={'indefinite'} />,
+      // children: <animate attributeName="r" values={'0.25;0.5;0.25'} dur="1s" repeatCount={'indefinite'} />,
     },
     offsetBack: 0.1,
   },
 } as const;
 
-// type arrowShaoesTypes = keyof typeof arrowShapes
+//todo: could make some advanced generic typescript inferring. for example get type from svgHead.elem:T and
+// svgTail.elem:K force the type for passProps,arrowHeadProps,arrowTailProps property. for now `as any` is used to
+// avoid typescript conflicts
+// so todo- fix all the `passProps as any` assertions
 const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
   let {
     startAnchor,
@@ -189,7 +79,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
   const headOpacityAnimRef = useRef<SVGAnimationElement>(null);
   const [anchorsRefs, setAnchorsRefs] = useState({ start: null, end: null });
 
-  const [prevPosState, setPrevPosState] = useState<prevPos>(null);
+  const [prevPosState, setPrevPosState] = useState<_prevPosType>(null);
   const [prevProps, setPrevProps] = useState<xarrowPropsType>(null);
   const [lineLength, setLineLength] = useState(0);
 
@@ -371,7 +261,9 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
   // };
   svgHead = defaultEdge(svgHead);
   svgTail = defaultEdge(svgTail);
-  // console.log(svgHead, svgTail);
+
+  const fHeadSize = headSize * strokeWidth; //factored head size
+  const fTailSize = tailSize * strokeWidth; //factored head size
 
   const getSelfPos = () => {
     let { left: xarrowElemX, top: xarrowElemY } = mainDivRef.current.getBoundingClientRect();
@@ -384,7 +276,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     };
   };
 
-  const getAnchorsPos = (): prevPos => {
+  const getAnchorsPos = (): _prevPosType => {
     let s = anchorsRefs.start.getBoundingClientRect();
     let e = anchorsRefs.end.getBoundingClientRect();
     return {
@@ -403,14 +295,11 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     };
   };
 
-  const fHeadSize = headSize * strokeWidth; //factored head size
-  const fTailSize = tailSize * strokeWidth; //factored head size
-
   /**
    * The Main logic of path calculation for the arrow.
    * calculate new path, adjusting canvas, and set state based on given properties.
    * */
-  const updatePosition = (positions: prevPos): void => {
+  const updatePosition = (positions: _prevPosType): void => {
     let { start: sPos } = positions;
     let { end: ePos } = positions;
     let headOrient: number = 0;
@@ -789,6 +678,31 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
   if (path === 'grid')
     arrowPath = `M ${st.x1} ${st.y1} L  ${st.cpx1} ${st.cpy1} L ${st.cpx2} ${st.cpy2} L  ${st.x2} ${st.y2}`;
 
+  // ////////////////////////////////////
+  // let svgShape: svgEdgeType = { svgElem: 'circle', svgProps: {} };
+  // const test = (
+  //   <svgShape.svgElem
+  //     // d={normalArrowShape}
+  //     fill={tailColor}
+  //     pointerEvents="auto"
+  //     transform={`translate(${xOffsetTail},${yOffsetTail}) rotate(${st.tailOrient}) scale(${fTailSize})`}
+  //     // transform={`translate(${xOffsetTail},${yOffsetTail}) rotate(${st.tailOrient}) scale(${fTailSize})`}
+  //     // transform={`translate(${xOffsetHead},${yOffsetHead}) rotate(${st.headOrient})`}
+  //     {...passProps}
+  //   />
+  // );
+  //
+  // type svgShapeType = 'path' | 'circle';
+  // type svgCustomTypeGeneric<T extends svgShapeType> = {
+  //   svgElem: T;
+  //   svgProps?: JSX.IntrinsicElements[T];
+  // };
+  // let mySvgShape: svgEdgeType = { svgElem: 'path', svgProps: {} };
+  //
+  // const jsx = <mySvgShape.svgElem fill={'red'} pointerEvents="auto" />;
+  // // svgTail.svgElem
+  // ////////////////////////////////////////////////
+
   return (
     <div {...divContainerProps} style={{ position: 'absolute', ...divContainerStyle }} {...extraProps}>
       <svg
@@ -818,7 +732,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
           strokeWidth={strokeWidth}
           fill="transparent"
           pointerEvents="visibleStroke"
-          {...passProps}
+          {...(passProps as any)}
           {...arrowBodyProps}>
           <>
             {drawAnimEnded ? (
@@ -861,7 +775,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
             // transform={`translate(${xOffsetTail},${yOffsetTail}) rotate(${st.tailOrient}) scale(${fTailSize})`}
             // transform={`translate(${xOffsetHead},${yOffsetHead}) rotate(${st.headOrient})`}
             {...svgTail.svgProps}
-            {...passProps}
+            {...(passProps as any)}
             {...arrowTailProps}
           />
         ) : null}
@@ -869,14 +783,14 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
         {/* head of the arrow */}
         {showHead ? (
           <svgHead.svgElem
-            ref={headRef}
+            ref={headRef as any}
             // d={normalArrowShape}
             fill={headColor}
             pointerEvents="auto"
             transform={`translate(${xOffsetHead},${yOffsetHead}) rotate(${st.headOrient}) scale(${fHeadSize})`}
             opacity={animateDrawing && !drawAnimEnded ? 0 : 1}
             {...svgHead.svgProps}
-            {...passProps}
+            {...(passProps as any)}
             {...arrowHeadProps}>
             <animate
               ref={headOpacityAnimRef}
