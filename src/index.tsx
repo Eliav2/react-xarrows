@@ -27,12 +27,9 @@ export const arrowShapes: { [key in svgEdgeShapeType]: svgCustomEdgeType } = {
     },
     offsetBack: 0.1,
   },
+  // todo: add more default shapes
 } as const;
 
-//todo: could make some advanced generic typescript inferring. for example get type from svgHead.elem:T and
-// svgTail.elem:K force the type for passProps,arrowHeadProps,arrowTailProps property. for now `as any` is used to
-// avoid typescript conflicts
-// so todo- fix all the `passProps as any` assertions
 const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
   let {
     startAnchor,
@@ -653,7 +650,6 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     animStartValue,
     animEndValue = 0;
 
-  // animateDrawing = "2s";
   if (animateDrawing && drawAnimEnded == false) {
     if (typeof animateDrawing === 'number') {
       animation = animateDrawing + 's';
@@ -678,31 +674,10 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
   if (path === 'grid')
     arrowPath = `M ${st.x1} ${st.y1} L  ${st.cpx1} ${st.cpy1} L ${st.cpx2} ${st.cpy2} L  ${st.x2} ${st.y2}`;
 
-  // ////////////////////////////////////
-  // let svgShape: svgEdgeType = { svgElem: 'circle', svgProps: {} };
-  // const test = (
-  //   <svgShape.svgElem
-  //     // d={normalArrowShape}
-  //     fill={tailColor}
-  //     pointerEvents="auto"
-  //     transform={`translate(${xOffsetTail},${yOffsetTail}) rotate(${st.tailOrient}) scale(${fTailSize})`}
-  //     // transform={`translate(${xOffsetTail},${yOffsetTail}) rotate(${st.tailOrient}) scale(${fTailSize})`}
-  //     // transform={`translate(${xOffsetHead},${yOffsetHead}) rotate(${st.headOrient})`}
-  //     {...passProps}
-  //   />
-  // );
-  //
-  // type svgShapeType = 'path' | 'circle';
-  // type svgCustomTypeGeneric<T extends svgShapeType> = {
-  //   svgElem: T;
-  //   svgProps?: JSX.IntrinsicElements[T];
-  // };
-  // let mySvgShape: svgEdgeType = { svgElem: 'path', svgProps: {} };
-  //
-  // const jsx = <mySvgShape.svgElem fill={'red'} pointerEvents="auto" />;
-  // // svgTail.svgElem
-  // ////////////////////////////////////////////////
-
+  //todo: could make some advanced generic typescript inferring. for example get type from svgHead.elem:T and
+  // svgTail.elem:K force the type for passProps,arrowHeadProps,arrowTailProps property. for now `as any` is used to
+  // avoid typescript conflicts
+  // so todo- fix all the `passProps as any` assertions
   return (
     <div {...divContainerProps} style={{ position: 'absolute', ...divContainerStyle }} {...extraProps}>
       <svg
