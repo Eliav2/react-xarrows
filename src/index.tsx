@@ -692,7 +692,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     <path
      d={arrowPath}
      stroke={lineColor}
-     strokeDasharray={`${dashStroke} ${dashNone}`}
+     strokeDasharray={ dashness ? `${dashStroke} ${dashNone}` : 'none'}
      strokeWidth={strokeWidth}
      fill="transparent"
      pointerEvents="visibleStroke"
