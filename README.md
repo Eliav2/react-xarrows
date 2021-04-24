@@ -99,7 +99,7 @@ this means that any code changes in src/index.tsx will immediately be reflected 
 (add console.log("test") line and see!)\
 to reproduce this dev env on your local machine git clone and follow same commands as in [gitpod.yml](./.gitpod.yml).
 
-if you made an improvement that you think is relevant for most users, you can quickly submit a pull request using the right toolbar. 
+if you made an improvement that you think is relevant for most users, you can quickly submit a pull. Please always pull request from and into dev branch and not master. 
 
 ### react-xarrows v2
 v2 is on its way. want to contribute and participate in plannig the next react architecture for react-xarrows?
