@@ -30,17 +30,17 @@
     "@types/prop-types": "^15.7.3",
     "lodash.isequal": "^4.5.0",
     "lodash.pick": "^4.4.0",
-    "prop-types": "^15.7.2"
+    "prop-types": "^15.7.2",
+    "react-use-call-onnext-render": "^0.1.2"
   },
   "peerDependencies": {
-    "react": ">=16.0.0"
+    "react": ">=16.8.0"
   },
   "devDependencies": {
     "@types/react": "^16.9.19",
     "@typescript-eslint/parser": "^4.15.2",
     "eslint-import-resolver-typescript": "^2.4.0",
     "eslint-plugin-import": "^2.22.1",
-    "react": "^16.12.0",
     "typescript": "3.9"
   },
   "scripts": {
@@ -62,6 +62,7 @@
   "prettier": {
     "printWidth": 120,
     "jsxBracketSameLine": true,
-    "singleQuote": true
+    "singleQuote": true,
+    "tabWidth": 2
   }
 }

@@ -1,54 +1,52 @@
-import React, { useState, useRef } from "react";
-import Xarrow, { arrowShapes } from "react-xarrows";
-import Draggable from "react-draggable";
-import NumericInput from "react-numeric-input";
-import Collapsible from "react-collapsible";
+import React, { useState, useRef } from 'react';
+import Xarrow, { arrowShapes } from 'react-xarrows';
+import Draggable from 'react-draggable';
+import NumericInput from 'react-numeric-input';
+import Collapsible from 'react-collapsible';
 
 const boxStyle = {
-  position: "absolute",
-  background: "white",
-  border: "1px #999 solid",
-  borderRadius: "10px",
-  textAlign: "center",
-  width: "100px",
-  height: "30px",
-  color: "black",
+  position: 'absolute',
+  background: 'white',
+  border: '1px #999 solid',
+  borderRadius: '10px',
+  textAlign: 'center',
+  width: '100px',
+  height: '30px',
+  color: 'black',
 };
 
 const canvasStyle = {
-  width: "100%",
-  height: "60vh",
-  background: "white",
-  overflow: "auto",
-  display: "flex",
-  position: "relative",
-  color: "black",
+  width: '100%',
+  height: '60vh',
+  background: 'white',
+  overflow: 'auto',
+  display: 'flex',
+  position: 'relative',
+  color: 'black',
 };
 
-const colorOptions = ["red", "BurlyWood", "CadetBlue", "Coral"];
+const colorOptions = ['red', 'BurlyWood', 'CadetBlue', 'Coral'];
 const bodyColorOptions = [null, ...colorOptions];
-const anchorsTypes = ["left", "right", "top", "bottom", "middle", "auto"];
+const anchorsTypes = ['left', 'right', 'top', 'bottom', 'middle', 'auto'];
 
 // one row div with elements centered
 const Div = ({ children, style = {}, ...props }) => {
   return (
     <div
       style={{
-        width: "100%",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
+        width: '100%',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
         ...style,
       }}
-      {...props}
-    >
+      {...props}>
       {children}
     </div>
   );
 };
 
-const MyCollapsible = ({ children, style = {}, title = "title", ...props }) => {
-  // console.log(children);
+const MyCollapsible = ({ children, style = {}, title = 'title', ...props }) => {
   return (
     <Collapsible
       open={false}
@@ -56,23 +54,22 @@ const MyCollapsible = ({ children, style = {}, title = "title", ...props }) => {
       transitionTime={100}
       containerElementProps={{
         style: {
-          border: "1px #999 solid",
+          border: '1px #999 solid',
         },
       }}
       triggerStyle={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
       }}
-      {...props}
-    >
+      {...props}>
       {children}
     </Collapsible>
   );
 };
 
 // not in single line
-const CollapsibleDiv = ({ children, style = {}, title = "title", ...props }) => {
+const CollapsibleDiv = ({ children, style = {}, title = 'title', ...props }) => {
   return (
     <Collapsible
       open={false}
@@ -80,15 +77,14 @@ const CollapsibleDiv = ({ children, style = {}, title = "title", ...props }) => 
       transitionTime={100}
       containerElementProps={{
         style: {
-          border: "1px #999 solid",
+          border: '1px #999 solid',
         },
       }}
       triggerStyle={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-    >
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}>
       <Div {...{ children, style, ...props }}>{children}</Div>
     </Collapsible>
   );
@@ -106,21 +102,20 @@ const Box = (props) => {
 
 const ArrowAnchor = ({ anchorName, edgeAnchor, setAnchor }) => {
   return (
-    <div style={{ display: "flex", alignItems: "center", marginRight: 20 }}>
+    <div style={{ display: 'flex', alignItems: 'center', marginRight: 20 }}>
       <p>{anchorName}: </p>
       <div>
         {anchorsTypes.map((anchor, i) => (
           <div
             key={i}
             style={{
-              display: "flex",
-              alignItems: "center",
+              display: 'flex',
+              alignItems: 'center',
               height: 25,
-            }}
-          >
+            }}>
             <p>{anchor}</p>
             <input
-              style={{ height: "15px", width: "15px" }}
+              style={{ height: '15px', width: '15px' }}
               type="checkBox"
               checked={edgeAnchor.includes(anchor)}
               // value={}
@@ -146,7 +141,7 @@ const ArrowEdge = ({ edgeName, setEdge, edgeSize, setEdgeSize, showEdge, setShow
   const [selectedShape, setSelectedShape] = useState(shapes[0]);
   const [adv, setAdv] = useState(false);
 
-  const [edgeOffset, setEdgeOffset] = useState(arrowShapes[shapes[0]].offsetBack);
+  const [edgeOffset, setEdgeOffset] = useState(arrowShapes[shapes[0]].offsetForward);
   const [svgElem, setSvgElem] = useState(arrowShapes[shapes[0]].svgElem);
   const handleMenuSelectShape = (e) => {
     const selectedShape = e.target.value;
@@ -161,17 +156,17 @@ const ArrowEdge = ({ edgeName, setEdge, edgeSize, setEdgeSize, showEdge, setShow
     setAdv(false);
     update({ _adv: false });
   };
-  const update = ({ shape = selectedShape, offsetBack = edgeOffset, _adv = adv, _svgElem = svgElem }) => {
-    if (_adv) setEdgeShape({ ...arrowShapes[shape], offsetBack, svgElem: _svgElem });
+  const update = ({ shape = selectedShape, offsetForward = edgeOffset, _adv = adv, _svgElem = svgElem }) => {
+    if (_adv) setEdgeShape({ ...arrowShapes[shape], offsetForward: offsetForward, svgElem: _svgElem });
     else setEdgeShape(shape);
   };
 
   return (
-    <Div title={"arrow " + edgeName}>
+    <Div title={'arrow ' + edgeName}>
       <b>{edgeName}: </b>
       <p>show: </p>
       <input
-        style={{ height: "15px", width: "15px" }}
+        style={{ height: '15px', width: '15px' }}
         type="checkBox"
         checked={showEdge}
         onChange={(e) => {
@@ -193,14 +188,14 @@ const ArrowEdge = ({ edgeName, setEdge, edgeSize, setEdgeSize, showEdge, setShow
         ))}
       </select>
 
-      <MyCollapsible title={"advanced"} onOpen={onAdvOpen} onClose={onAdvClose}>
+      <MyCollapsible title={'advanced'} onOpen={onAdvOpen} onClose={onAdvClose}>
         {/*<Div>*/}
         <p>{edgeName}Offset: </p>
         <NumericInput
           value={edgeOffset}
           onChange={(val) => {
             setEdgeOffset(val);
-            update({ offsetBack: val });
+            update({ offsetForward: val });
           }}
           style={{ input: { width: 70 } }}
           step={0.01}
@@ -210,9 +205,8 @@ const ArrowEdge = ({ edgeName, setEdge, edgeSize, setEdgeSize, showEdge, setShow
           onChange={({ target: { value } }) => {
             setSvgElem(value);
             update({ _svgElem: value });
-          }}
-        >
-          {["circle", "ellipse", "line", "path", "polygon", "polyline", "rect"].map((o, i) => (
+          }}>
+          {['circle', 'ellipse', 'line', 'path', 'polygon', 'polyline', 'rect'].map((o, i) => (
             <option key={i}>{o}</option>
           ))}
         </select>
@@ -226,7 +220,7 @@ const ArrowLabel = ({ labelName, label, setLabel }) => {
   return (
     <Div>
       <p>{labelName} label:</p>
-      <input style={{ width: "120px" }} type="text" value={label} onChange={(e) => setLabel(e.target.value)} />
+      <input style={{ width: '120px' }} type="text" value={label} onChange={(e) => setLabel(e.target.value)} />
     </Div>
   );
 };
@@ -238,20 +232,20 @@ const CustomizeArrow = () => {
   const [showMe, setShowMe] = useState(true);
 
   const box = {
-    id: "box1",
+    id: 'box1',
     x: 20,
     y: 20,
     ref: useRef(null),
   };
 
   const box2 = {
-    id: "box2",
+    id: 'box2',
     x: 320,
     y: 120,
     ref: useRef(null),
   };
 
-  const [color, setColor] = useState("red");
+  const [color, setColor] = useState('red');
   const [lineColor, setLineColor] = useState(null);
   const [showArrow, setShowArrow] = useState(true);
   const [showHead, setShowHead] = useState(true);
@@ -262,14 +256,14 @@ const CustomizeArrow = () => {
   const [tailSize, setTailSize] = useState(6);
   const [curveness, setCurveness] = useState(0.8);
   const [strokeWidth, setStrokeWidth] = useState(4);
-  const [startAnchor, setStartAnchor] = useState(["auto"]);
-  const [endAnchor, setEndAnchor] = useState(["auto"]);
+  const [startAnchor, setStartAnchor] = useState(['auto']);
+  const [endAnchor, setEndAnchor] = useState(['auto']);
   const [dashed, setDashed] = useState(false);
   const [animation, setAnimation] = useState(1);
-  const [path, setPath] = useState("smooth");
+  const [path, setPath] = useState('smooth');
   const [startLabel, setStartLabel] = useState("I'm start label");
-  const [middleLabel, setMiddleLabel] = useState("middleLabel");
-  const [endLabel, setEndLabel] = useState("fancy end label");
+  const [middleLabel, setMiddleLabel] = useState('middleLabel');
+  const [endLabel, setEndLabel] = useState('fancy end label');
   const [_extendSVGcanvas, setExtendSVGcanvas] = useState(0);
   const [_debug, set_Debug] = useState(false);
   const [_cpx1Offset, set_Cpx1] = useState(0);
@@ -279,16 +273,16 @@ const CustomizeArrow = () => {
   const [animateDrawing, setAnimateDrawing] = useState(1);
   const [enableAnimateDrawing, setEnableAnimateDrawing] = useState(false);
   const _animateDrawing = enableAnimateDrawing ? animateDrawing : false;
-  const [headShape, setHeadShape] = useState("sharpArrow");
-  const [tailShape, setTailShape] = useState("heart");
+  const [headShape, setHeadShape] = useState(Object.keys(arrowShapes)[0]);
+  const [tailShape, setTailShape] = useState(Object.keys(arrowShapes)[1]);
   // const [headOffset, setHeadOffset] = useState(0.25);
   // const [tailOffset, setTailOffset] = useState(0.25);
 
-  // const svgHead = { ...arrowShapes[headShape], ...{ offsetBack: headOffset } };
+  // const svgHead = { ...arrowShapes[headShape], ...{ offsetForward: headOffset } };
   // console.log(headOffset);
   const props = {
     // this is the important part of the example! play with the props to understand better the API options
-    start: "box1", //  can be string
+    start: 'box1', //  can be string
     end: box2.ref, //  or reference
     startAnchor: startAnchor,
     endAnchor: endAnchor,
@@ -312,12 +306,11 @@ const CustomizeArrow = () => {
       end: (
         <div
           style={{
-            fontSize: "1.3em",
-            fontFamily: "fantasy",
-            fontStyle: "italic",
-            color: "purple",
-          }}
-        >
+            fontSize: '1.3em',
+            fontFamily: 'fantasy',
+            fontStyle: 'italic',
+            color: 'purple',
+          }}>
           {endLabel}
         </div>
       ),
@@ -337,7 +330,7 @@ const CustomizeArrow = () => {
         <u>Example2:</u>
       </h3>
       <p>
-        {" "}
+        {' '}
         This example shows some of the main API options. give the arrow diffrent properties to customize his look. note
         that some options are cannot be changed though this GUI(like custom lables or advande dashness and more) play
         with them directly at this codesandbox!.
@@ -346,14 +339,14 @@ const CustomizeArrow = () => {
       {/*<button onClick={() => setShowMe(!showMe)}>toggle</button>*/}
       {showMe ? (
         <div>
-          <CollapsibleDiv title={"anchors"}>
-            <ArrowAnchor edgeAnchor={startAnchor} anchorName={"startAnchor"} setAnchor={setStartAnchor} />
-            <ArrowAnchor edgeAnchor={endAnchor} anchorName={"endAnchor"} setAnchor={setEndAnchor} />
+          <CollapsibleDiv title={'anchors'}>
+            <ArrowAnchor edgeAnchor={startAnchor} anchorName={'startAnchor'} setAnchor={setStartAnchor} />
+            <ArrowAnchor edgeAnchor={endAnchor} anchorName={'endAnchor'} setAnchor={setEndAnchor} />
           </CollapsibleDiv>
-          <MyCollapsible title={"arrow apearance"} open={true}>
+          <MyCollapsible title={'arrow apearance'} open={true}>
             <Div>
               <p>arrow color(all): </p>
-              <select style={{ height: "20px", marginRight: 10 }} onChange={(e) => setColor(e.target.value)}>
+              <select style={{ height: '20px', marginRight: 10 }} onChange={(e) => setColor(e.target.value)}>
                 {colorOptions.map((o, i) => (
                   <option key={i}>{o}</option>
                 ))}
@@ -383,20 +376,20 @@ const CustomizeArrow = () => {
               <NumericInput value={animation} onChange={(val) => setAnimation(val)} style={{ input: { width: 60 } }} />
               <p>dashed: </p>
               <input
-                style={{ height: "15px", width: "15px" }}
+                style={{ height: '15px', width: '15px' }}
                 type="checkBox"
                 checked={dashed}
                 onChange={(e) => setDashed(e.target.checked)}
               />
               <p>path: </p>
               <select onChange={(e) => setPath(e.target.value)}>
-                {["smooth", "grid", "straight"].map((o, i) => (
+                {['smooth', 'grid', 'straight'].map((o, i) => (
                   <option key={i}>{o}</option>
                 ))}
               </select>
             </Div>
             <ArrowEdge
-              edgeName={"head"}
+              edgeName={'head'}
               setEdge={setHeadColor}
               edgeSize={headSize}
               setEdgeSize={setHeadSize}
@@ -408,7 +401,7 @@ const CustomizeArrow = () => {
               setEdgeShape={setHeadShape}
             />
             <ArrowEdge
-              edgeName={"tail"}
+              edgeName={'tail'}
               setEdge={setTailColor}
               edgeSize={tailSize}
               setEdgeSize={setTailSize}
@@ -422,7 +415,7 @@ const CustomizeArrow = () => {
             <Div>
               <p>show arrow: </p>
               <input
-                style={{ height: "15px", width: "15px" }}
+                style={{ height: '15px', width: '15px' }}
                 type="checkBox"
                 checked={showArrow}
                 onChange={(e) => {
@@ -431,7 +424,7 @@ const CustomizeArrow = () => {
               />
               <p>animateDrawing(secs): </p>
               <input
-                style={{ height: "15px", width: "15px" }}
+                style={{ height: '15px', width: '15px' }}
                 type="checkBox"
                 checked={enableAnimateDrawing}
                 onChange={(e) => {
@@ -447,13 +440,13 @@ const CustomizeArrow = () => {
             </Div>
           </MyCollapsible>
 
-          <CollapsibleDiv title={"labels"}>
-            <ArrowLabel labelName={"start"} label={startLabel} setLabel={setStartLabel} />
-            <ArrowLabel labelName={"middle"} label={middleLabel} setLabel={setMiddleLabel} />
-            <ArrowLabel labelName={"end"} label={endLabel} setLabel={setEndLabel} />
+          <CollapsibleDiv title={'labels'}>
+            <ArrowLabel labelName={'start'} label={startLabel} setLabel={setStartLabel} />
+            <ArrowLabel labelName={'middle'} label={middleLabel} setLabel={setMiddleLabel} />
+            <ArrowLabel labelName={'end'} label={endLabel} setLabel={setEndLabel} />
           </CollapsibleDiv>
 
-          <MyCollapsible title={"advanced"}>
+          <MyCollapsible title={'advanced'}>
             <Div>
               <p>_extendSVGcanvas: </p>
               <NumericInput
@@ -463,7 +456,7 @@ const CustomizeArrow = () => {
               />
               <p>_debug</p>
               <input
-                style={{ height: "15px", width: "15px" }}
+                style={{ height: '15px', width: '15px' }}
                 type="checkBox"
                 checked={_debug}
                 // value={}
@@ -509,10 +502,10 @@ const CustomizeArrow = () => {
             <Box box={box2} forceRerender={forceRerender} />
             {showArrow ? <Xarrow {...props} /> : null}
           </div>
-          {/* todo: add generated code preview */}
-          <pre>
-            <code className="jsx">&lt;Xarrow {}/&gt;</code>
-          </pre>
+          {/*/!* todo: add generated code preview *!/ */}
+          {/*<pre>*/}
+          {/*  <code className="jsx">&lt;Xarrow {}/&gt;</code>*/}
+          {/*</pre>*/}
         </div>
       ) : null}
     </div>

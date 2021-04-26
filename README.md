@@ -211,7 +211,7 @@ you can place up to 3 labels. see examples
 - `label={{ start:"I'm start label",middle: "middleLabel",end:<div style={{ fontSize: "1.3em", fontFamily: "fantasy", fontStyle: "italic" }}>big end label</div> }}`
     - start and middle label and custom end label
 
-#### color,lineColor and headColor and~~~~ tailColor
+#### color,lineColor and headColor and tailColor
 
 _optional, default: "CornflowerBlue"_ \
 `color` defines color to the entire arrow. lineColor,headColor and tailColor will override color specifically for
@@ -264,13 +264,31 @@ then default values are chosen except what passed. examples:
 
 [//]: # (todo: fix animateDrawing docs!)
 _optional, default: false_ \
-can animate the drawing of the arrow using svg animation. if true animation duration is 1s. if string is passed then
-animation length is based on given string. string must conform to
-a [`clock-value`](https://developer.mozilla.org/en-US/docs/Web/SVG/Content_type#clock-value). examples:
+can animate the drawing of the arrow using svg animation. type: boolean|number. if true animation duration is 1s. if
+number is passed then animation duration is number's value in seconds. examples:
 
 - `animateDrawing` will animate the drawing of the arrow in 1 second.
-- `animateDrawing="5s"` will animate the drawing of the arrow in 5 seconds.
-- `animateDrawing="100ms"` will animate the drawing of the arrow in 100 milliseconds.
+- `animateDrawing={5}` will animate the drawing of the arrow in 5 seconds.
+- `animateDrawing={0.1}` will animate the drawing of the arrow in 100 milliseconds.
+
+### custom svg arrows - svgHead and svgTail
+
+_optional, default: "arrow1"_ \
+_type_: `tSvgElems=  `  
+new feature! you can customize the svg edges (head or tail) of the arrow.  
+you can use predefined svg by passing string,one of `"arrow1" | "circle"`. if you really want to get fancy you can
+pass _your own_ svg shapes.  
+for example, you can pass the following object, and it will be exactly equivalent to passing `'arrow1'`:
+
+```js
+svgHead = {
+    svgElem: 'path',
+    svgProps: {d: `M 0 0 L 1 0.5 L 0 1 L 0.25 0.5 z`},
+    offsetForward: 0.25
+}
+```
+
+you can import `arrowShapes` which is object contains all predefined svg shapes.
 
 ### passing props
 

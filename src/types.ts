@@ -2,7 +2,7 @@
 // public types
 
 import React from 'react';
-
+import { tAnchorEdge, tPaths, tSvgElems, tArrowShapes } from '.';
 export type xarrowPropsType = {
   start: refType;
   end: refType;
@@ -47,9 +47,9 @@ export type xarrowPropsType = {
   _cpy2Offset?: number;
 };
 
-export type pathType = 'smooth' | 'grid' | 'straight';
+export type pathType = typeof tPaths[number];
 export type anchorType = anchorPositionType | anchorCustomPositionType;
-export type anchorPositionType = 'middle' | 'left' | 'right' | 'top' | 'bottom' | 'auto';
+export type anchorPositionType = typeof tAnchorEdge[number];
 
 export type anchorCustomPositionType = {
   position: anchorPositionType;
@@ -66,13 +66,12 @@ export type labelType = JSX.Element | string;
 export type svgCustomTypeGeneric<T extends svgElemType> = {
   svgElem: T;
   svgProps?: JSX.IntrinsicElements[T];
-  offsetBack?: number;
+  offsetForward?: number;
 };
 export type svgCustomEdgeType = { [K in svgElemType]: svgCustomTypeGeneric<K> }[svgElemType];
-
-export type svgEdgeShapeType = 'sharpArrow' | 'heart' | 'circle';
+export type svgEdgeShapeType = typeof tArrowShapes[number];
 export type svgEdgeType = svgEdgeShapeType | svgCustomEdgeType;
-export type svgElemType = 'circle' | 'ellipse' | 'line' | 'path' | 'polygon' | 'polyline' | 'rect';
+export type svgElemType = typeof tSvgElems[number];
 
 ////////////////
 // private types
@@ -92,9 +91,11 @@ export type _prevPosType = {
   };
 };
 
+// pick the common props between 2 objects
 type Common<A, B> = {
   [P in keyof A & keyof B]: A[P] | B[P];
 };
+
 // const c: Common<T1, T2> = { y: 123 };
 
 // export type SvgCustomTypeOneLiner = svgElemType extends infer T
@@ -106,5 +107,5 @@ type Common<A, B> = {
 // export type svgCustomType<T extends svgElemType> = {
 //   svgElem: T;
 //   svgProps?: { [key in T]: JSX.IntrinsicElements[T] };
-//   offsetBack?: number;
+//   offsetForward?: number;
 // };

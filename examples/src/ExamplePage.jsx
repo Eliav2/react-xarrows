@@ -1,12 +1,12 @@
-import React, { useRef } from "react";
+import React from 'react';
 
-import examples from "./examplesFiles";
+import examples from './examplesFiles';
 
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 
 const titleStyle = {
-  fontSize: "40px",
-  margin: "20px 0 0 20px",
+  fontSize: '40px',
+  margin: '20px 0 0 20px',
 };
 
 const ExamplePage = () => {
@@ -14,31 +14,19 @@ const ExamplePage = () => {
     <div>
       <header style={titleStyle}>react-xarrows</header>
       <hr />
-      <p style={{ textAlign: "center" }}>
+      <p style={{ textAlign: 'center' }}>
         Draw arrows between components in React!
         <br />
         <br />
-        <a
-          href="https://github.com/Eliav2/react-xarrows"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+        <a href="https://github.com/Eliav2/react-xarrows" target="_blank" rel="noopener noreferrer">
           View on Github
         </a>
         <br />
-        <a
-          href="https://www.npmjs.com/package/react-xarrows"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+        <a href="https://www.npmjs.com/package/react-xarrows" target="_blank" rel="noopener noreferrer">
           View on npm
         </a>
         <br />
-        <a
-          href="https://eliav2.github.io/react-xarrows/"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+        <a href="https://eliav2.github.io/react-xarrows/" target="_blank" rel="noopener noreferrer">
           Home page
         </a>
         <br />
@@ -50,16 +38,15 @@ const ExamplePage = () => {
         <div>
           <div
             style={{
-              display: "flex",
-              justifyContent: "center",
-              flexWrap: "wrap",
-            }}
-          >
+              display: 'flex',
+              justifyContent: 'center',
+              flexWrap: 'wrap',
+            }}>
             <Link to="/">
               <button>home</button>
             </Link>
             {Object.keys(examples).map((exampleName) => (
-              <Link to={"/" + exampleName} key={exampleName}>
+              <Link to={'/' + exampleName} key={exampleName}>
                 <button>{exampleName}</button>
               </Link>
             ))}
@@ -68,17 +55,17 @@ const ExamplePage = () => {
 
         <Switch>
           <Route exact path="/">
-            <div style={{ textAlign: "center" }}>
+            <div style={{ textAlign: 'center' }}>
               <h2>choose any example</h2>
               <h5>
-                see each example file at <code>/src/examplesFiles</code>{" "}
+                see each example file at <code>/src/examplesFiles</code>{' '}
               </h5>
             </div>
           </Route>
           {Object.keys(examples).map((exampleName) => {
             const Component = examples[exampleName].component;
             return (
-              <Route path={"/" + exampleName} key={exampleName}>
+              <Route path={'/' + exampleName} key={exampleName}>
                 <Component />
               </Route>
             );
