@@ -49,8 +49,6 @@ export const tArrowShapes = Object.keys(arrowShapes) as Array<keyof typeof arrow
 
 const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
   let {
-    start,
-    end,
     startAnchor,
     endAnchor,
     label,
@@ -86,9 +84,6 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     ...extraProps
   } = props;
 
-  const startElem = getElementByPropGiven(start);
-  const endElem = getElementByPropGiven(end);
-
   const mainDivRef = useRef(null);
   const lineRef = useRef(null);
   const headRef = useRef(null);
@@ -96,6 +91,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
   const lineDrawAnimRef = useRef(null);
   const lineDashAnimRef = useRef(null);
   const headOpacityAnimRef = useRef<SVGAnimationElement>(null);
+  const [anchorsRefs, setAnchorsRefs] = useState({ start: null, end: null });
 
   const [prevPosState, setPrevPosState] = useState<_prevPosType>(null);
   const [prevProps, setPrevProps] = useState<xarrowPropsType>(null);
@@ -124,14 +120,18 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
    * or if one of the given props has changed
    */
   const updateIfNeeded = () => {
-    // todo: move to state!
-
+    // check if anchors refs changed
+    const start = getElementByPropGiven(props.start);
+    const end = getElementByPropGiven(props.end);
     // in case one of the elements does not mounted skip any update
-    if (startElem == null || endElem == null) return;
-    if (!isEqual(props, prevProps)) {
+    if (start == null || end == null) return;
+    // if anchors changed re-set them
+    if (!isEqual(anchorsRefs, { start, end })) {
+      initAnchorsRefs();
+    } else if (!isEqual(props, prevProps)) {
       //first check if any properties changed
       if (prevProps) {
-        setPrevProps(props);
+        initProps();
         let posState = getAnchorsPos();
         setPrevPosState(posState);
         updatePosition(posState);
@@ -146,8 +146,18 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     }
   };
 
+  const initAnchorsRefs = () => {
+    const start = getElementByPropGiven(props.start);
+    const end = getElementByPropGiven(props.end);
+    setAnchorsRefs({ start, end });
+  };
+
+  const initProps = () => {
+    setPrevProps(props);
+  };
+
   const monitorDOMchanges = () => {
-    window.addEventListener('resize', dumyRenderer);
+    window.addEventListener('resize', updateIfNeeded);
     // window.addEventListener('resize', () => callOnNextRender(updateIfNeeded)); //works as well
 
     const handleDrawAmimEnd = () => {
@@ -279,10 +289,10 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
   };
 
   const getAnchorsPos = (): _prevPosType => {
-    // let s = anchorsRefs.start.getBoundingClientRect();
-    // let e = anchorsRefs.end.getBoundingClientRect();
-    let s = startElem.getBoundingClientRect();
-    let e = endElem.getBoundingClientRect();
+    let s = anchorsRefs.start.getBoundingClientRect();
+    let e = anchorsRefs.end.getBoundingClientRect();
+    // let s = startElem.getBoundingClientRect();
+    // let e = endElem.getBoundingClientRect();
     return {
       start: {
         x: s.left,
