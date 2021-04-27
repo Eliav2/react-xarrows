@@ -1,11 +1,11 @@
-import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import isEqual from 'lodash.isequal';
 import pick from 'lodash.pick';
 import { getElementByPropGiven } from './utils';
 import PT from 'prop-types';
 import { buzzierMinSols, bzFunction } from './utils/buzzier';
 import { getShortestLine, prepareAnchorLines } from './utils/anchors';
-import { svgEdgeShapeType, svgCustomEdgeType, xarrowPropsType, labelsType, _prevPosType } from './types';
+import { _prevPosType, labelsType, svgCustomEdgeType, svgEdgeShapeType, xarrowPropsType } from './types';
 import { useCallOnNextRender } from 'react-use-call-onnext-render';
 
 // constants used for typescript and proptypes definitions
@@ -111,8 +111,11 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
   const [arrowDidMount, setArrowDidMount] = useState(false); // will be used to determine if arrow fully loaded
 
   // debug
-  const renderCount = useRef(0);
-  renderCount.current += 1;
+  const _render = useRef(0);
+  const _call = useRef(-1);
+  _call.current += 1;
+  const consoleState = () => `{call:${_call.current},render:${_render.current}}`;
+  const log = (...args) => console.log(...args, consoleState());
 
   /**
    * determine if an update is needed and update if so.
@@ -122,11 +125,6 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
    */
   const updateIfNeeded = () => {
     // todo: move to state!
-    if (lineRef.current && lineRef.current.getTotalLength) {
-      // console.log('updateIfNeeded!!', lineRef.current.getTotalLength(), renderCount.current);
-      // setLineLength(lineRef.current.getTotalLength());
-      // console.log(lineRef.current.getTotalLength());
-    }
 
     // in case one of the elements does not mounted skip any update
     if (startElem == null || endElem == null) return;
@@ -147,8 +145,10 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
       }
     }
   };
+
   const monitorDOMchanges = () => {
-    window.addEventListener('resize', updateIfNeeded);
+    window.addEventListener('resize', dumyRenderer);
+    // window.addEventListener('resize', () => callOnNextRender(updateIfNeeded)); //works as well
 
     const handleDrawAmimEnd = () => {
       setDrawAnimEnded(true);
@@ -336,7 +336,8 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     let [headOffset, tailOffset] = [svgHead.offsetForward, svgTail.offsetForward];
     let _headOffset = fHeadSize * headOffset;
     let _tailOffset = fTailSize * tailOffset;
-    const headBox = headRef.current?.getBBox({ stroke: true }) ?? { x: 0, y: 0, width: 0, height: 0 };
+    // const headBox = headRef.current?.getBBox({ stroke: true }) ?? { x: 0, y: 0, width: 0, height: 0 };
+    const headBox = { x: 0, y: 0, width: 1, height: 1 };
 
     let cu = Number(curveness);
     if (path === 'straight') {
@@ -424,11 +425,9 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
           x2 -= fHeadSize * xSign - xHeadOffset;
           // x2 -= fHeadSize * (1 - headOffset) * xSign; //same!
           yHeadOffset = (fHeadSize * xSign * headBox.height) / 2;
-          const xm = 1 - (headBox.width + headBox.x);
-          // console.log(xHeadOffset);
-          xHeadOffset = xHeadOffset - xm * strokeWidth * xHeadOffset;
+          // const xm = 1 - (headBox.width + headBox.x);
+          // xHeadOffset = xHeadOffset - xm * strokeWidth * xHeadOffset;
           // yHeadOffset = yHeadOffset - (1 - headBox.height - headBox.y) * strokeWidth * yHeadOffset;
-          // console.log(xHeadOffset);
 
           if (endAnchorPosition === 'left') {
             headOrient = 0;
@@ -448,11 +447,10 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
             headOrient = 90;
             if (ySign < 0) headOrient += 180;
           }
-          const xm = 1 - headBox.width - headBox.x;
-          yHeadOffset = yHeadOffset - xm * strokeWidth * yHeadOffset;
+          // const xm = 1 - headBox.width - headBox.x;
+          // yHeadOffset = yHeadOffset - xm * strokeWidth * yHeadOffset;
         }
       }
-      // console.log('doit!');
     }
     if (showTail && cu !== 0) {
       if (['left', 'right'].includes(startAnchorPosition)) {
@@ -695,24 +693,19 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
   if (path === 'grid')
     arrowPath = `M ${st.x1} ${st.y1} L  ${st.cpx1} ${st.cpy1} L ${st.cpx2} ${st.cpy2} L  ${st.x2} ${st.y2}`;
 
-  // const callOnNextRender = useCallOnNextRender();
+  const callOnNextRender = useCallOnNextRender();
 
   useEffect(() => {
-    console.log('xarrow mounted', renderCount.current);
     setPrevProps(props);
-    // window.requestAnimationFrame(() => {
-    //   // console.log('requestAnimationFrame mount', lineRef.current.getTotalLength());
-    //   if (lineRef.current?.getTotalLength && animateDrawing) setLineLength(lineRef.current.getTotalLength());
-    // });
-    // callOnNextRender(() => {
-    //   if (lineRef.current?.getTotalLength && animateDrawing) setLineLength(lineRef.current.getTotalLength());
-    // }, 2);
+
+    // handle draw animation
+    if (lineRef.current?.getTotalLength && animateDrawing)
+      callOnNextRender(() => {
+        setLineLength(lineRef.current.getTotalLength());
+      }, 2);
 
     const cleanMonitorDOMchanges = monitorDOMchanges();
-    // elemsDidMount.current = true;
-    // updateIfNeeded();
-    // console.log(lineRef.current.getTotalLength());
-    // console.log(getAnchorsPos());
+    log('xarrow mounted');
     return () => {
       cleanMonitorDOMchanges();
     };
@@ -720,10 +713,10 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
 
   // useEffect(() => {
   //   if (elemsDidMount.current) {
-  //     // console.log('useEffect', lineRef.current.getTotalLength(), renderCount.current);
+  //     // console.log('useEffect', lineRef.current.getTotalLength(), callCount.current);
   //     // console.log('useEffect', startElem);
   //     // console.log(st);
-  //     console.log('useEffect', lineRef.current.getTotalLength(), renderCount.current);
+  //     console.log('useEffect', lineRef.current.getTotalLength(), callCount.current);
   //     elemsDidMountEffect.current = true;
   //     // updateIfNeeded();
   //   }
@@ -731,27 +724,25 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
   //
   // useEffect(() => {
   //   if (elemsDidMountEffect.current) {
-  //     console.log('elemsDidMountEffect', lineRef.current.getTotalLength(), renderCount.current);
+  //     console.log('elemsDidMountEffect', lineRef.current.getTotalLength(), callCount.current);
   //     elemsDidMountEffect.current = true;
   //     // updateIfNeeded();
   //   }
   // }, [elemsDidMountEffect.current]);
 
   // useWhenFirstChanged(() => {
-  //   console.log('stChanged', lineRef.current.getTotalLength(), renderCount.current);
+  //   console.log('stChanged', lineRef.current.getTotalLength(), callCount.current);
   // }, [st]);
 
-  console.log('xarrow call!', renderCount.current);
-
   useEffect(() => {
-    // console.log('xarrow has rendered!', renderCount.current);
+    // log('xarrow has rendered!');
+    _render.current += 1;
     updateIfNeeded();
-    // callOn(() => {
-    //   console.log('callOn', renderCount.current);
-    // }, renderCount.current);
   });
 
-  // callOn(()=>{console.log("hey!")})
+  // callOnNextRender(() => {
+  //   console.log('hey!');
+  // });
 
   // useEffect(() => {
   //   console.log('headBox useEffect', headRef.current.getBBox({ stroke: true }));
