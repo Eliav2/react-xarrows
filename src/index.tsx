@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import isEqual from 'lodash.isequal';
 import pick from 'lodash.pick';
 import { getElementByPropGiven } from './utils';
@@ -734,7 +734,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
   //   console.log('stChanged', lineRef.current.getTotalLength(), callCount.current);
   // }, [st]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     // log('xarrow has rendered!');
     _render.current += 1;
     updateIfNeeded();
