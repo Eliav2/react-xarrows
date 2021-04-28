@@ -1,3 +1,4 @@
+
 # react-xarrows
 
 ## introduction
@@ -94,10 +95,7 @@ this means that any code changes in src/index.tsx will immediately be reflected 
 (add console.log("test") line and see!)\
 to reproduce this dev env on your local machine git clone and follow same commands as in [gitpod.yml](./.gitpod.yml).
 
-Pull requests - please from and to the dev-branch only.
-
-if you made an improvement that is relevant for most users, you can quickly submit a pull request using the right
-toolbar.
+if you made an improvement that is relevant for most users, you can quickly submit a pull request using the right toolbar. 
 
 ### react-xarrows v2
 
@@ -129,7 +127,6 @@ export type xarrowPropsType = {
     path?: "smooth" | "grid" | "straight";
     curveness?: number;
     dashness?: | boolean | { strokeLen?: number; nonStrokeLen?: number; animation?: boolean | number; };
-    animateDrawing?: boolean | string;
     passProps?: React.SVGProps<SVGPathElement>;
     SVGcanvasProps?: React.SVGAttributes<SVGSVGElement>;
     arrowBodyProps?: React.SVGProps<SVGPathElement>;
@@ -187,8 +184,8 @@ examples:
 - `start={myRef}` -  `myRef` is a react ref.
 
 #### 'startAnchor' and 'endAnchor'
+_optional, default: "auto"_ \
 
-_required_\
 each anchor can be: `"auto" | "middle" | "left" | "right" | "top" | "bottom"`.
 `auto` will choose automatically the path with the smallest length. can also be a list of possible anchors. if list is
 provided - the minimal length anchors will be choose from the list. you can also offset each anchor passing `offset`.
@@ -333,10 +330,17 @@ examples:
 - `arrowHead = {onClick: () => console.log("head clicked!")}` - now only the head will console log a message when
   clicked.
 
+##### SVGcanvasStyle divContainerStyle
+
+if you wish to pass style to divContainer or SVGcanvas use `SVGcanvasStyle`,`divContainerStyle` and not `SVGcanvasProps`
+,`divContainerProps` to not override existing style.
+
+[//]: # (todo: check if width and height can't be automatically determined)
+
 ##### _extendSVGcanvas
 
 _optional, default: 0_ \
-will extend the svg canvas at all sides. can be useful if for some reason the arrow(or labels) is cut though to small
+will extend the svg canvas at all sides. can be useful if for some reason the arrow is cut though to small
 svg canvas(should be used in advanced custom arrows). example: `_extendSVGcanvas = {30}` - will extend svg canvas in all
 sides by 30 pixels.
 
@@ -379,4 +383,4 @@ Xarrow.defaultProps = {
 
 ## Versions
 
-See [CHANGELOG.md](https://github.com/Eliav2/react-xarrows/blob/master/CHANGELOG.md) in this repo.
+See [CHANGELOG.md](./CHANGELOG.md) in this repo.
