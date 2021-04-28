@@ -6,7 +6,7 @@ import PT from 'prop-types';
 import { buzzierMinSols, bzFunction } from './utils/buzzier';
 import { getShortestLine, prepareAnchorLines } from './utils/anchors';
 import { _prevPosType, labelsType, svgCustomEdgeType, svgEdgeShapeType, xarrowPropsType } from './types';
-import { useCallOnNextRender } from 'react-use-call-onnext-render';
+import useCallOnNextRender from 'react-use-call-onnext-render';
 
 // constants used for typescript and proptypes definitions
 export const tAnchorEdge = ['middle', 'left', 'right', 'top', 'bottom', 'auto'] as const;
@@ -36,6 +36,7 @@ export const arrowShapes = {
   arrow2: {
     svgElem: 'path',
     svgProps: {
+      //// handle automatic resize of the svg
       // d: `M 0.5 1 l -0.171749 -0.16666 0.3333 -0.3333 -0.3333 -0.3333 0.171749 -0.16666 0.494916 0.5 z`,
       // d: `M 0 1 l -0.171749 -0.16666 0.3333 -0.3333 -0.3333 -0.3333 0.171749 -0.16666 0.494916 0.5 z`,
       d: `M 0 24 l -4.122     -4      8      -8      -8      -8       4.122    -4 11.878 12 z`,
@@ -703,7 +704,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
   if (path === 'grid')
     arrowPath = `M ${st.x1} ${st.y1} L  ${st.cpx1} ${st.cpy1} L ${st.cpx2} ${st.cpy2} L  ${st.x2} ${st.y2}`;
 
-  const callOnNextRender = useCallOnNextRender();
+  const callOnNextRender = useCallOnNextRender(undefined, useLayoutEffect);
 
   useEffect(() => {
     setPrevProps(props);
@@ -715,7 +716,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
       }, 2);
 
     const cleanMonitorDOMchanges = monitorDOMchanges();
-    log('xarrow mounted');
+    // log('xarrow mounted');
     return () => {
       cleanMonitorDOMchanges();
     };
