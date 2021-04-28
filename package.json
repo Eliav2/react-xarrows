@@ -31,7 +31,7 @@
     "lodash.isequal": "^4.5.0",
     "lodash.pick": "^4.4.0",
     "prop-types": "^15.7.2",
-    "react-use-call-onnext-render": "^0.1.2"
+    "react-use-call-onnext-render": "^0.4.0"
   },
   "peerDependencies": {
     "react": ">=16.8.0"
