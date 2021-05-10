@@ -4,6 +4,33 @@ import examples from './examplesFiles';
 
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 
+export const canvasStyle = {
+  width: '100%',
+  height: '40vh',
+  background: 'white',
+  overflow: 'auto',
+  display: 'flex',
+};
+
+export const boxContainerStyle = {
+  position: 'relative',
+  overflow: 'auto',
+  width: '120%',
+  height: '120%',
+  background: 'white',
+  color: 'black',
+  border: 'black solid 1px',
+};
+
+export const boxStyle = {
+  position: 'absolute',
+  border: '1px #999 solid',
+  borderRadius: '10px',
+  textAlign: 'center',
+  width: '100px',
+  height: '30px',
+};
+
 const titleStyle = {
   fontSize: '40px',
   margin: '20px 0 0 20px',

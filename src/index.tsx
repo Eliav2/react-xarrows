@@ -1,7 +1,7 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import isEqual from 'lodash.isequal';
 import pick from 'lodash.pick';
-import { getElementByPropGiven } from './utils';
+import { getElementByPropGiven, measureFunc } from './utils';
 import PT from 'prop-types';
 import { buzzierMinSols, bzFunction } from './utils/buzzier';
 import { getShortestLine, prepareAnchorLines } from './utils/anchors';
@@ -92,11 +92,18 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
   const lineDrawAnimRef = useRef(null);
   const lineDashAnimRef = useRef(null);
   const headOpacityAnimRef = useRef<SVGAnimationElement>(null);
+
   const [anchorsRefs, setAnchorsRefs] = useState({ start: null, end: null });
+  const [startRef, setStartRef] = useState(null);
+  const [endRef, setEndRef] = useState(null);
+
+  // const startRef = useRef(null);
+  // const endRef = useRef(null);
 
   const [prevPosState, setPrevPosState] = useState<_prevPosType>(null);
   const [prevProps, setPrevProps] = useState<xarrowPropsType>(null);
-  const [lineLength, setLineLength] = useState(0);
+
+  const hasMounted = useRef(false);
   // const [headBox, setHeadBox] = useState({ x: 0, y: 0, width: 1, height: 1 });
   // const [tailBox, setTailBox] = useState({ x: 0, y: 0, width: 1, height: 1 });
 
@@ -105,14 +112,14 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
   const [_, setRerender] = useState({});
   const dumyRenderer = () => setRerender({});
 
-  const [arrowDidMount, setArrowDidMount] = useState(false); // will be used to determine if arrow fully loaded
-
-  // debug
-  const _render = useRef(0);
-  const _call = useRef(-1);
-  _call.current += 1;
-  const consoleState = () => `{call:${_call.current},render:${_render.current}}`;
-  const log = (...args) => console.log(...args, consoleState());
+  if (process.env.NODE_ENV === 'development') {
+    // debug
+    var _render = useRef(0);
+    var _call = useRef(-1);
+    _call.current += 1;
+    var consoleState = () => `{call:${_call.current},render:${_render.current}}`;
+    var log = (...args) => console.log(...args, consoleState());
+  }
 
   /**
    * determine if an update is needed and update if so.
@@ -122,24 +129,29 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
    */
   const updateIfNeeded = () => {
     // check if anchors refs changed
-    const start = getElementByPropGiven(props.start);
-    const end = getElementByPropGiven(props.end);
+    console.log('updateIfNeeded');
+
+    // const start = getElementByPropGiven(props.start);
+    // const end = getElementByPropGiven(props.end);
+
     // in case one of the elements does not mounted skip any update
-    if (start == null || end == null) return;
+    // if (start == null || end == null) return;
     // if anchors changed re-set them
-    if (!isEqual(anchorsRefs, { start, end })) {
-      initAnchorsRefs();
-    } else if (!isEqual(props, prevProps)) {
+
+    // if (!isEqual(anchorsRefs, { start, end })) {
+    //   initAnchorsRefs();
+    // } else
+    if (!isEqual(props, prevProps)) {
       //first check if any properties changed
       if (prevProps) {
         initProps();
-        let posState = getAnchorsPos();
+        let posState = getElemsPos();
         setPrevPosState(posState);
         updatePosition(posState);
       }
     } else {
       //if the properties did not changed - update position if needed
-      let posState = getAnchorsPos();
+      let posState = getElemsPos();
       if (!isEqual(prevPosState, posState)) {
         setPrevPosState(posState);
         updatePosition(posState);
@@ -151,6 +163,10 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     const start = getElementByPropGiven(props.start);
     const end = getElementByPropGiven(props.end);
     setAnchorsRefs({ start, end });
+    // const old = getElementByPropGiven(props.start);
+    // console.log('old===startRef', old === startRef);
+    // setStartRef(getElementByPropGiven(props.start));
+    // setEndRef(getElementByPropGiven(props.end));
   };
 
   const initProps = () => {
@@ -158,7 +174,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
   };
 
   const monitorDOMchanges = () => {
-    window.addEventListener('resize', updateIfNeeded);
+    window.addEventListener('resize', initXarrow);
     // window.addEventListener('resize', () => callOnNextRender(updateIfNeeded)); //works as well
 
     const handleDrawAmimEnd = () => {
@@ -220,6 +236,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     xSign: 1,
     ySign: 1,
     headBox: { x: 0, y: 0, width: 1, height: 1 },
+    lineLength: 0,
   });
 
   headSize = Number(headSize);
@@ -289,25 +306,22 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     };
   };
 
-  const getAnchorsPos = (): _prevPosType => {
-    let s = anchorsRefs.start.getBoundingClientRect();
-    let e = anchorsRefs.end.getBoundingClientRect();
-    // let s = startElem.getBoundingClientRect();
-    // let e = endElem.getBoundingClientRect();
+  const getElemPos = (elem) => {
+    const pos = elem.getBoundingClientRect();
     return {
-      start: {
-        x: s.left,
-        y: s.top,
-        right: s.right,
-        bottom: s.bottom,
-      },
-      end: {
-        x: e.left,
-        y: e.top,
-        right: e.right,
-        bottom: e.bottom,
-      },
+      x: pos.left,
+      y: pos.top,
+      right: pos.right,
+      bottom: pos.bottom,
     };
+  };
+
+  const getElemsPos = (): _prevPosType => {
+    let start = getElemPos(anchorsRefs.start);
+    let end = getElemPos(anchorsRefs.end);
+    // let start = getElemPos(startRef);
+    // let end = getElemPos(endRef);
+    return { start, end };
   };
 
   /**
@@ -347,8 +361,16 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     let [headOffset, tailOffset] = [svgHead.offsetForward, svgTail.offsetForward];
     let _headOffset = fHeadSize * headOffset;
     let _tailOffset = fTailSize * tailOffset;
-    // const headBox = headRef.current?.getBBox({ stroke: true }) ?? { x: 0, y: 0, width: 0, height: 0 };
-    const headBox = { x: 0, y: 0, width: 1, height: 1 };
+    const headBox = headRef.current?.getBBox({ stroke: true }) ?? { x: 0, y: 0, width: 1, height: 1 };
+    // const headBox = measureFunc(() => headRef.current?.getBBox({ stroke: true }), 'getBBox') ?? {
+    //   x: 0,
+    //   y: 0,
+    //   width: 0,
+    //   height: 0,
+    // };
+
+    // console.log(headRef.current?.getBBox({ stroke: true }));
+    // const headBox = { x: 0, y: 0, width: 1, height: 1 };
 
     let cu = Number(curveness);
     if (path === 'straight') {
@@ -661,6 +683,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
       xSign,
       ySign,
       headBox,
+      lineLength: lineRef.current.getTotalLength(),
     });
   };
 
@@ -683,8 +706,8 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
   if (animateDrawing && drawAnimEnded == false) {
     if (typeof animateDrawing === 'number') {
       animation = animateDrawing + 's';
-      dashArray = lineLength;
-      animStartValue = lineLength;
+      dashArray = st.lineLength;
+      animStartValue = st.lineLength;
       animRepeatCount = 1;
       if (animateDrawing < 0) {
         [animStartValue, animEndValue] = [animEndValue, animStartValue];
@@ -703,24 +726,6 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
   if (path === 'straight') arrowPath = `M ${st.x1} ${st.y1}  ${st.x2} ${st.y2}`;
   if (path === 'grid')
     arrowPath = `M ${st.x1} ${st.y1} L  ${st.cpx1} ${st.cpy1} L ${st.cpx2} ${st.cpy2} L  ${st.x2} ${st.y2}`;
-
-  const callOnNextRender = useCallOnNextRender(undefined, useLayoutEffect);
-
-  useEffect(() => {
-    setPrevProps(props);
-
-    // handle draw animation
-    if (lineRef.current?.getTotalLength && animateDrawing)
-      callOnNextRender(() => {
-        setLineLength(lineRef.current.getTotalLength());
-      }, 2);
-
-    const cleanMonitorDOMchanges = monitorDOMchanges();
-    // log('xarrow mounted');
-    return () => {
-      cleanMonitorDOMchanges();
-    };
-  }, []);
 
   // useEffect(() => {
   //   if (elemsDidMount.current) {
@@ -745,11 +750,69 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
   //   console.log('stChanged', lineRef.current.getTotalLength(), callCount.current);
   // }, [st]);
 
+  const callOnNextRender = useCallOnNextRender(useEffect);
+
+  // useEffect(() => {
+  //   setPrevProps(props);
+  //
+  //   // handle draw animation
+  //   if (lineRef.current?.getTotalLength && animateDrawing)
+  //     callOnNextRender(() => {
+  //       setSt((prevSt) => ({ ...prevSt, lineLength: lineRef.current.getTotalLength() }));
+  //     }, 2);
+  //
+  //   const cleanMonitorDOMchanges = monitorDOMchanges();
+  //   log('xarrow mounted', getElementByPropGiven(props.start).getBoundingClientRect());
+  //   /**
+  //    * expected steps on mount
+  //    *
+  //    */
+  //   return () => {
+  //     cleanMonitorDOMchanges();
+  //   };
+  // }, []);
+
+  const initXarrow = () => {
+    setPrevProps(props);
+    initAnchorsRefs();
+    console.log('initXarrow', props.end);
+  };
+
   useLayoutEffect(() => {
-    // log('xarrow has rendered!');
-    _render.current += 1;
-    updateIfNeeded();
+    if (hasMounted.current) {
+      updateIfNeeded();
+    }
+
+    if (process.env.NODE_ENV === 'development') {
+      log('xarrow has rendered!');
+      _render.current += 1;
+    }
   });
+
+  // useLayoutEffect(() => {
+  //   initAnchorsRefs();
+  //   console.log('initAnchorsRefs useLayoutEffect?');
+  // }, [props.start, props.end]);
+  useLayoutEffect(() => {
+    initAnchorsRefs();
+    console.log('initAnchorsRefs useLayoutEffect?');
+  }, [props.start, props.end]);
+
+  useLayoutEffect(() => {
+    initXarrow();
+
+    // // handle draw animation
+    // if (lineRef.current?.getTotalLength && animateDrawing)
+    //   callOnNextRender(() => {
+    //     setSt((prevSt) => ({ ...prevSt, lineLength: lineRef.current.getTotalLength() }));
+    //   }, 2);
+
+    hasMounted.current = true;
+    const cleanMonitorDOMchanges = monitorDOMchanges();
+    return () => {
+      cleanMonitorDOMchanges();
+    };
+  }, []);
 
   // callOnNextRender(() => {
   //   console.log('hey!');
@@ -773,6 +836,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
   // svgTail.elem:K force the type for passProps,arrowHeadProps,arrowTailProps property. for now `as any` is used to
   // avoid typescript conflicts
   // so todo- fix all the `passProps as any` assertions
+
   return (
     <div {...divContainerProps} style={{ position: 'absolute', ...divContainerStyle }} {...extraProps}>
       <svg

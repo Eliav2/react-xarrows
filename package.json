@@ -31,18 +31,19 @@
     "lodash.isequal": "^4.5.0",
     "lodash.pick": "^4.4.0",
     "prop-types": "^15.7.2",
-    "react-use-call-onnext-render": "^0.4.0"
+    "react-use-call-onnext-render": "^0.5.0"
   },
   "peerDependencies": {
     "react": ">=16.8.0"
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.168",
+    "@types/node": "^15.0.1",
     "@types/react": "^16.9.19",
     "@typescript-eslint/parser": "^4.15.2",
     "eslint-import-resolver-typescript": "^2.4.0",
     "eslint-plugin-import": "^2.22.1",
-    "typescript": "3.9",
-    "@types/lodash": "^4.14.168"
+    "typescript": "3.9"
   },
   "scripts": {
     "build": "tsc -p .",

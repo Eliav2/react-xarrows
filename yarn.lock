@@ -33,6 +33,11 @@
   resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.168.tgz#fe24632e79b7ade3f132891afff86caa5e5ce008"
   integrity sha512-oVfRvqHV/V6D1yifJbVRU3TMp8OT6o6BG+U9MkwuJ3U8/CsDHvalRpsxBqivn71ztOFZBTfJMvETbqHiaNSj7Q==
 
+"@types/node@^15.0.1":
+  version "15.0.1"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-15.0.1.tgz#ef34dea0881028d11398be5bf4e856743e3dc35a"
+  integrity sha512-TMkXt0Ck1y0KKsGr9gJtWGjttxlZnnvDtphxUOSd0bfaR6Q1jle+sPvrzNR1urqYTWMinoKvjKfXUGsumaO1PA==
+
 "@types/prop-types@*", "@types/prop-types@^15.7.3":
   version "15.7.3"
   resolved "https://registry.yarnpkg.com/@types/prop-types/-/prop-types-15.7.3.tgz#2ab0d5da2e5815f94b0b9d4b95d1e5f243ab2ca7"
@@ -738,10 +743,10 @@ react-is@^16.8.1:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
   integrity sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==
 
-react-use-call-onnext-render@^0.1.2:
-  version "0.1.2"
-  resolved "https://registry.yarnpkg.com/react-use-call-onnext-render/-/react-use-call-onnext-render-0.1.2.tgz#1b64beb0a35d20dbf4dee798b09873c382e6dc82"
-  integrity sha512-KCdMfkcdm4l6Ji5liJ/qAZuMVJWZHH6rOKRAK6S7sIXW3OlEC70Ly20rbrjt18CE2qldo+seo+3EMxiX6jMS/g==
+react-use-call-onnext-render@^0.5.0:
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/react-use-call-onnext-render/-/react-use-call-onnext-render-0.5.0.tgz#1b774520281123c133cf86f4d5bc0df6555d9871"
+  integrity sha512-GVyeJO+6OCtRl6aZLMuWQh48UyvPCwd3JeA9lA0jwycDLBjdGmgIkOCO3kq9keNIh3dQUOvci5T2k+CxRv2Kig==
   dependencies:
     react ">=16.8.0"
 
