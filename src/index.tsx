@@ -52,45 +52,45 @@ export const tArrowShapes = Object.keys(arrowShapes) as Array<keyof typeof arrow
 
 const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
   let {
-    startAnchor,
-    endAnchor,
-    label,
-    color,
-    lineColor,
-    headColor,
-    strokeWidth,
-    showHead,
-    headSize,
-    showTail,
-    tailColor,
-    tailSize,
-    path,
-    showXarrow,
-    curveness,
-    gridBreak,
-    gridRadius,
-    dashness,
-    headShape,
-    tailShape,
-    animateDrawing,
-    passProps,
-    SVGcanvasProps,
-    arrowBodyProps,
-    arrowHeadProps,
-    arrowTailProps,
-    divContainerProps,
-    SVGcanvasStyle,
-    divContainerStyle,
-    _extendSVGcanvas,
-    _debug,
-    _cpx1Offset,
-    _cpy1Offset,
-    _cpx2Offset,
-    _cpy2Offset,
+    startAnchor = 'auto',
+    endAnchor = 'auto',
+    label = null,
+    color = 'CornflowerBlue',
+    lineColor = null,
+    headColor = null,
+    tailColor = null,
+    strokeWidth = 4,
+    showHead = true,
+    headSize = 6,
+    showTail = false,
+    tailSize = 6,
+    path = 'smooth',
+    curveness = 0.8,
+    gridBreak = 0.5,
+    gridRadius = strokeWidth * 2,
+    dashness = false,
+    headShape = 'arrow1',
+    tailShape = 'arrow1',
+    showXarrow = true,
+    animateDrawing = false,
+    passProps = {},
+    arrowBodyProps = {},
+    arrowHeadProps = {},
+    arrowTailProps = {},
+    SVGcanvasProps = {},
+    divContainerProps = {},
+    divContainerStyle = {},
+    SVGcanvasStyle = {},
+    _extendSVGcanvas = 0,
+    _debug = false,
+    _cpx1Offset = 0,
+    _cpy1Offset = 0,
+    _cpx2Offset = 0,
+    _cpy2Offset = 0,
     ...extraProps
   } = props;
 
-  const mainDivRef = useRef(null);
+  const svgRef = useRef(null);
   const lineRef = useRef(null);
   const headRef = useRef(null);
   const tailRef = useRef(null);
@@ -107,8 +107,8 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
   // const [headBox, setHeadBox] = useState({ x: 0, y: 0, width: 1, height: 1 });
   // const [tailBox, setTailBox] = useState({ x: 0, y: 0, width: 1, height: 1 });
 
-  const headBox = useRef({ x: 0, y: 0, width: 1, height: 1 });
-  const tailBox = useRef({ x: 0, y: 0, width: 1, height: 1 });
+  // const headBox = useRef({ x: 0, y: 0, width: 1, height: 1 });
+  // const tailBox = useRef({ x: 0, y: 0, width: 1, height: 1 });
 
   const [drawAnimEnded, setDrawAnimEnded] = useState(!animateDrawing);
 
@@ -287,10 +287,10 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
   // fHeadSize /= _headBox.height;
   // // console.log(fHeadSize);
 
-  const getSelfPos = () => {
+  const getMainDivPos = () => {
     // if (!mainDivRef.current) return { x: 0, y: 0 };
-    let { left: xarrowElemX, top: xarrowElemY } = mainDivRef.current.getBoundingClientRect();
-    let xarrowStyle = getComputedStyle(mainDivRef.current);
+    let { left: xarrowElemX, top: xarrowElemY } = svgRef.current.getBoundingClientRect();
+    let xarrowStyle = getComputedStyle(svgRef.current);
     let xarrowStyleLeft = Number(xarrowStyle.left.slice(0, -2));
     let xarrowStyleTop = Number(xarrowStyle.top.slice(0, -2));
     return {
@@ -340,7 +340,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     headShape = headShape as svgCustomEdgeType;
     tailShape = tailShape as svgCustomEdgeType;
 
-    let mainDivPos = getSelfPos();
+    let mainDivPos = getMainDivPos();
     let cx0 = Math.min(startPoint.x, endPoint.x) - mainDivPos.x;
     let cy0 = Math.min(startPoint.y, endPoint.y) - mainDivPos.y;
     let dx = endPoint.x - startPoint.x;
@@ -353,16 +353,16 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     let fHeadSize = headSize * strokeWidth; //factored head size
     let fTailSize = tailSize * strokeWidth; //factored head size
 
-    const { current: _headBox } = headBox;
+    // const { current: _headBox } = headBox;
     let xHeadOffset = 0;
     let yHeadOffset = 0;
     let xTailOffset = 0;
     let yTailOffset = 0;
 
-    let svgFactor = Math.max(_headBox.width, _headBox.height);
-    headOffset *= Math.min(_headBox.width, _headBox.height);
+    // let svgFactor = Math.max(_headBox.width, _headBox.height);
+    // headOffset *= Math.min(_headBox.width, _headBox.height);
 
-    fHeadSize /= svgFactor;
+    // fHeadSize /= svgFactor;
 
     let _headOffset = fHeadSize * headOffset;
     let _tailOffset = fTailSize * tailOffset;
@@ -745,32 +745,6 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     animEndValue = 0;
   }
 
-  // let arrowPath = st.arrowPath;
-  // let arrowPath = `M ${st.x1} ${st.y1} C ${st.cpx1} ${st.cpy1}, ${st.cpx2} ${st.cpy2}, ${st.x2} ${st.y2} `;
-  // if (path === 'straight') arrowPath = `M ${st.x1} ${st.y1}  ${st.x2} ${st.y2}`;
-  // if (path === 'grid') {
-  //   // arrowPath = `M ${st.x1} ${st.y1} L  ${st.cpx1 - 10} ${st.cpy1} a10,10 0 0 1 10,10
-  //   //  L ${st.cpx2} ${st.cpy2 - 10} a10,10 0 0 0 10,10 L  ${st.x2} ${st.y2}`;
-  //   arrowPath = `M ${st.x1} ${st.y1} L  ${st.cpx1} ${st.cpy1} L ${st.cpx2} ${st.cpy2} ${st.x2} ${st.y2}`;
-  // }
-
-  // arrowPath = createRoundedPathString([
-  //   { x: st.x1, y: st.y1 },
-  //   { x: st.cpx1, y: st.cpy1 },
-  //   { x: st.cpx2, y: st.cpy2 },
-  //   { x: st.x2, y: st.y2 },
-  // ]);
-
-  // console.log(
-  //   'createRoundedPathString',
-  //   createRoundedPathString([
-  //     { x: st.x1, y: st.y1 },
-  //     { x: st.cpx1, y: st.cpy1 },
-  //     { x: st.cpx2, y: st.cpy2 },
-  //     { x: st.x2, y: st.y2 },
-  //   ])
-  // );
-
   const initXarrow = () => {
     initProps();
     initAnchorsRefs();
@@ -798,13 +772,13 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     if (lineRef.current) setSt((prevSt) => ({ ...prevSt, lineLength: lineRef.current.getTotalLength() }));
   }, [lineRef.current]);
 
-  // for adjustments of custom svg shapes
-  useLayoutEffect(() => {
-    headBox.current = headRef.current?.getBBox({ stroke: true }) ?? { x: 0, y: 0, width: 1, height: 1 };
-  }, [props.headShape]);
-  useLayoutEffect(() => {
-    tailBox.current = tailRef.current?.getBBox({ stroke: true }) ?? { x: 0, y: 0, width: 1, height: 1 };
-  }, [props.tailShape]);
+  // // for adjustments of custom svg shapes
+  // useLayoutEffect(() => {
+  //   headBox.current = headRef.current?.getBBox({ stroke: true }) ?? { x: 0, y: 0, width: 1, height: 1 };
+  // }, [props.headShape]);
+  // useLayoutEffect(() => {
+  //   tailBox.current = tailRef.current?.getBBox({ stroke: true }) ?? { x: 0, y: 0, width: 1, height: 1 };
+  // }, [props.tailShape]);
 
   // set all props on first render
   useEffect(() => {
@@ -824,14 +798,21 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
   // avoid typescript conflicts
   // so todo- fix all the `passProps as any` assertions
 
+  // console.log(svgRef.current?.getBBox()+svg);
+  // console.log(svgRef.current ? getComputedStyle(lineRef.current).width : null);
+
   return (
     <div {...divContainerProps} style={{ position: 'absolute', ...divContainerStyle }} {...extraProps}>
       {showXarrow ? (
         <>
           <svg
-            ref={mainDivRef}
+            ref={svgRef}
             width={st.cw}
             height={st.ch}
+            // width="100%"
+            // height="100%"
+            // preserveAspectRatio="none"
+            // viewBox={'auto'}
             style={{
               position: 'absolute',
               left: st.cx0,
@@ -994,41 +975,41 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
   );
 };
 
-Xarrow.defaultProps = {
-  startAnchor: 'auto',
-  endAnchor: 'auto',
-  label: null,
-  color: 'CornflowerBlue',
-  lineColor: null,
-  headColor: null,
-  tailColor: null,
-  strokeWidth: 4,
-  showHead: true,
-  headSize: 6,
-  showTail: false,
-  tailSize: 6,
-  path: 'smooth',
-  curveness: 0.8,
-  gridBreak: 0.5,
-  gridRadius: 10,
-  dashness: false,
-  headShape: 'arrow1',
-  tailShape: 'arrow1',
-  showXarrow: true,
-  animateDrawing: false,
-  passProps: {},
-  arrowBodyProps: {},
-  arrowHeadProps: {},
-  arrowTailProps: {},
-  SVGcanvasProps: {},
-  divContainerProps: {},
-  _extendSVGcanvas: 0,
-  _debug: false,
-  _cpx1Offset: 0,
-  _cpy1Offset: 0,
-  _cpx2Offset: 0,
-  _cpy2Offset: 0,
-};
+// Xarrow.defaultProps = {
+//   startAnchor: 'auto',
+//   endAnchor: 'auto',
+//   label: null,
+//   color: 'CornflowerBlue',
+//   lineColor: null,
+//   headColor: null,
+//   tailColor: null,
+//   strokeWidth: 4,
+//   showHead: true,
+//   headSize: 6,
+//   showTail: false,
+//   tailSize: 6,
+//   path: 'smooth',
+//   curveness: 0.8,
+//   gridBreak: 0.5,
+//   gridRadius: 10,
+//   dashness: false,
+//   headShape: 'arrow1',
+//   tailShape: 'arrow1',
+//   showXarrow: true,
+//   animateDrawing: false,
+//   passProps: {},
+//   arrowBodyProps: {},
+//   arrowHeadProps: {},
+//   arrowTailProps: {},
+//   SVGcanvasProps: {},
+//   divContainerProps: {},
+//   _extendSVGcanvas: 0,
+//   _debug: false,
+//   _cpx1Offset: 0,
+//   _cpy1Offset: 0,
+//   _cpx2Offset: 0,
+//   _cpy2Offset: 0,
+// };
 
 //////////////////////////////
 // propTypes

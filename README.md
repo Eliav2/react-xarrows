@@ -501,7 +501,7 @@ examples:
 - `arrowHead = {onClick: () => console.log("head clicked!")}` - now only the head will console log a message when
   clicked.
 
-##### SVGcanvasStyle divContainerStyle
+##### SVGcanvasStyle, divContainerStyle
 
 if you wish to pass style to divContainer or SVGcanvas use `SVGcanvasStyle`,`divContainerStyle` and not `SVGcanvasProps`
 ,`divContainerProps` to not override existing style.
