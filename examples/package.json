@@ -2,6 +2,9 @@
   "author": "Eliav Louski",
   "main": "src/index.jsx",
   "dependencies": {
+    "@types/node": "^15.0.2",
+    "@types/react": "^17.0.5",
+    "@types/react-dom": "^17.0.3",
     "react": "^16.12.0",
     "react-collapsible": "^2.8.3",
     "react-dom": "^16.12.0",
@@ -11,7 +14,8 @@
     "react-scripts": "^4.0.1",
     "react-xarrows": "latest",
     "react-zoom-pan-pinch": "^1.6.1",
-    "reactjs-popup": "^1.5.0"
+    "reactjs-popup": "^1.5.0",
+    "typescript": "^3.9"
   },
   "scripts": {
     "start": "react-scripts start",

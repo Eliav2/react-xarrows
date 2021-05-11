@@ -278,7 +278,7 @@ const CustomizeArrow = () => {
   // const [headOffset, setHeadOffset] = useState(0.25);
   // const [tailOffset, setTailOffset] = useState(0.25);
 
-  // const svgHead = { ...arrowShapes[headShape], ...{ offsetForward: headOffset } };
+  // const headShape = { ...arrowShapes[headShape], ...{ offsetForward: headOffset } };
   // console.log(headOffset);
   const props = {
     // this is the important part of the example! play with the props to understand better the API options
@@ -295,8 +295,8 @@ const CustomizeArrow = () => {
     showHead: showHead,
     headColor: headColor,
     headSize: Number(headSize),
-    svgHead: headShape,
-    svgTail: tailShape,
+    headShape: headShape,
+    tailShape: tailShape,
     showTail,
     tailColor,
     tailSize: Number(tailSize),

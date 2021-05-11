@@ -19,6 +19,7 @@ export type xarrowPropsType = {
   showTail?: boolean;
   tailSize?: number;
   path?: pathType;
+  showXarrow?: boolean;
   curveness?: number;
   dashness?:
     | boolean
@@ -27,8 +28,8 @@ export type xarrowPropsType = {
         nonStrokeLen?: number;
         animation?: boolean | number;
       };
-  svgHead?: svgEdgeShapeType | svgCustomEdgeType;
-  svgTail?: svgEdgeShapeType | svgCustomEdgeType;
+  headShape?: svgEdgeShapeType | svgCustomEdgeType;
+  tailShape?: svgEdgeShapeType | svgCustomEdgeType;
   animateDrawing?: boolean | number;
   passProps?: JSX.IntrinsicElements[svgElemType];
   SVGcanvasProps?: React.SVGAttributes<SVGSVGElement>;

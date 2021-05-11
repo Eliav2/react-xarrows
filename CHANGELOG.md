@@ -1,7 +1,12 @@
 ## v1.7.0:
+big update!
+
+**performance improvements**:
+- much faster and optimized render cycle.
+
 **feature update**:
-- creation animation added (see `animateDrawing`)
-- custom svg now supported,added `circle` and `heart` shapes just for examples. 
+- creation animation added (see `animateDrawing`,`showXarrow`)
+- custom svg now supported,added `circle` and `heart` shapes just for examples.
 
 ## v1.6.0: 
 - proptypes - typescript types issues fixed.
@@ -56,4 +61,3 @@ props added:`label`, `dashness` and `advanced`.
 
 ## 1.0.0
 initial release.
-

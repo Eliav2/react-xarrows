@@ -1,4 +1,3 @@
-
 # react-xarrows
 
 ## introduction
@@ -95,7 +94,8 @@ this means that any code changes in src/index.tsx will immediately be reflected 
 (add console.log("test") line and see!)\
 to reproduce this dev env on your local machine git clone and follow same commands as in [gitpod.yml](./.gitpod.yml).
 
-if you made an improvement that is relevant for most users, you can quickly submit a pull request using the right toolbar. 
+if you made an improvement that is relevant for most users, you can quickly submit a pull request using the right
+toolbar.
 
 ### react-xarrows v2
 
@@ -184,6 +184,7 @@ examples:
 - `start={myRef}` -  `myRef` is a react ref.
 
 #### 'startAnchor' and 'endAnchor'
+
 _optional, default: "auto"_ \
 
 each anchor can be: `"auto" | "middle" | "left" | "right" | "top" | "bottom"`.
@@ -259,7 +260,6 @@ then default values are chosen except what passed. examples:
 
 #### animateDrawing
 
-[//]: # (todo: fix animateDrawing docs!)
 _optional, default: false_ \
 can animate the drawing of the arrow using svg animation. type: boolean|number. if true animation duration is 1s. if
 number is passed then animation duration is number's value in seconds. examples:
@@ -267,6 +267,13 @@ number is passed then animation duration is number's value in seconds. examples:
 - `animateDrawing` will animate the drawing of the arrow in 1 second.
 - `animateDrawing={5}` will animate the drawing of the arrow in 5 seconds.
 - `animateDrawing={0.1}` will animate the drawing of the arrow in 100 milliseconds.
+
+#### showXarrow
+
+_optional, default: true_ \
+show or not show Xarrow? (can be used to restart the drawing animation)
+
+- `showXarrow={false}` will hide (unmount) Xarrow and his labels.
 
 ### custom svg arrows - svgHead and svgTail
 
@@ -340,9 +347,9 @@ if you wish to pass style to divContainer or SVGcanvas use `SVGcanvasStyle`,`div
 ##### _extendSVGcanvas
 
 _optional, default: 0_ \
-will extend the svg canvas at all sides. can be useful if for some reason the arrow is cut though to small
-svg canvas(should be used in advanced custom arrows). example: `_extendSVGcanvas = {30}` - will extend svg canvas in all
-sides by 30 pixels.
+will extend the svg canvas at all sides. can be useful if for some reason the arrow is cut though to small svg canvas(
+should be used in advanced custom arrows). example: `_extendSVGcanvas = {30}` - will extend svg canvas in all sides by
+30 pixels.
 
 ##### _cpx1Offset,_cpy1Offset,_cpx2Offset,_cpy2Offset
 

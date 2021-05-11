@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import Xarrow from 'react-xarrows';
 import Draggable from 'react-draggable';
-import { boxContainerStyle, canvasStyle } from '../ExamplePage';
+import { boxContainerStyle, boxStyle, canvasStyle } from '../ExamplePage';
 
 const FewArrows = () => {
   const [, setRender] = useState({});

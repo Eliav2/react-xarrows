@@ -2,4 +2,6 @@
 - add option to render custom svg
 
 for V2:
-- rename `rightness`,`bottomness` to `x`,`y`
+
+- in anchors advanced custom: rename `rightness`,`bottomness` to `x`,`y`, and add `rightness`,`forward` from the arrow
+  point of view.

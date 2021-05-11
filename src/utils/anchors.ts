@@ -4,6 +4,7 @@
 
 import { anchorCustomPositionType, anchorPositionType, anchorType } from '../types';
 import { typeOf } from './index';
+import { tAnchorEdge } from '../index';
 
 const getAnchorsDefaultOffsets = (width: number, height: number) => {
   return {
@@ -25,6 +26,7 @@ export const prepareAnchorLines = (anchor, anchorPos) => {
   //now map each item in the array to relevant object
   let anchorChoiceMapped = anchorChoice.map((anchorChoice) => {
     if (typeOf(anchorChoice) === 'string') {
+      if (!tAnchorEdge.includes(anchorChoice)) anchorChoice = 'auto';
       anchorChoice = anchorChoice as anchorPositionType;
       return {
         position: anchorChoice,
