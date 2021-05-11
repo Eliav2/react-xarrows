@@ -152,6 +152,7 @@ CustomSvgHead.args = {
 export const gridBreak = CustomSvgHead.bind({});
 gridBreak.args = {
   path: 'grid',
+  endAnchor: 'right',
   gridBreak: 0.5,
   arrowBodyProps: {},
 };
