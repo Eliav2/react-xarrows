@@ -67,7 +67,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     path = 'smooth',
     curveness = 0.8,
     gridBreak = 0.5,
-    gridRadius = strokeWidth * 2,
+    // gridRadius = strokeWidth * 2, //todo
     dashness = false,
     headShape = 'arrow1',
     tailShape = 'arrow1',
@@ -279,14 +279,6 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
   headShape = defaultEdge(headShape);
   tailShape = defaultEdge(tailShape);
 
-  // let fHeadSize = headSize * strokeWidth; //factored head size
-  // let fTailSize = tailSize * strokeWidth; //factored head size
-  //
-  // const { current: _headBox } = headBox;
-  // // console.log(fHeadSize);
-  // fHeadSize /= _headBox.height;
-  // // console.log(fHeadSize);
-
   const getMainDivPos = () => {
     // if (!mainDivRef.current) return { x: 0, y: 0 };
     let { left: xarrowElemX, top: xarrowElemY } = svgRef.current.getBoundingClientRect();
@@ -375,12 +367,9 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     //   height: 0,
     // };
 
-    // console.log(headRef.current?.getBBox({ stroke: true }));
-    // const headBox = { x: 0, y: 0, width: 1, height: 1 };
-
     let cu = Number(curveness);
     gridBreak = Number(gridBreak);
-    gridRadius = Number(gridRadius);
+    // gridRadius = Number(gridRadius);
     if (!tPaths.includes(path)) path = 'smooth';
     if (path === 'straight') {
       cu = 0;
@@ -457,11 +446,6 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
           // ...
 
           // const headBox = headRef.current.getBBox({ stroke: true });
-          // console.log(_headBox);
-          // console.log(fHeadSize);
-          // // fHeadSize /= _headBox.height;
-          // console.log(fHeadSize);
-          // xHeadOffset += fHeadSize * _headBox.x;
 
           xHeadOffset += _headOffset * xSign;
           // x2 -= fHeadSize * xSign - xHeadOffset;
@@ -492,7 +476,6 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
             headOrient = 90;
             if (ySign < 0) headOrient += 180;
           }
-          // console.log(_headBox);
           // const xm = 1 - _headBox.width - _headBox.x;
           // yHeadOffset = yHeadOffset - xm * strokeWidth * yHeadOffset;
         }
@@ -798,9 +781,6 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
   // avoid typescript conflicts
   // so todo- fix all the `passProps as any` assertions
 
-  // console.log(svgRef.current?.getBBox()+svg);
-  // console.log(svgRef.current ? getComputedStyle(lineRef.current).width : null);
-
   return (
     <div {...divContainerProps} style={{ position: 'absolute', ...divContainerStyle }} {...extraProps}>
       {showXarrow ? (
@@ -992,42 +972,6 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     </div>
   );
 };
-
-// Xarrow.defaultProps = {
-//   startAnchor: 'auto',
-//   endAnchor: 'auto',
-//   label: null,
-//   color: 'CornflowerBlue',
-//   lineColor: null,
-//   headColor: null,
-//   tailColor: null,
-//   strokeWidth: 4,
-//   showHead: true,
-//   headSize: 6,
-//   showTail: false,
-//   tailSize: 6,
-//   path: 'smooth',
-//   curveness: 0.8,
-//   gridBreak: 0.5,
-//   gridRadius: 10,
-//   dashness: false,
-//   headShape: 'arrow1',
-//   tailShape: 'arrow1',
-//   showXarrow: true,
-//   animateDrawing: false,
-//   passProps: {},
-//   arrowBodyProps: {},
-//   arrowHeadProps: {},
-//   arrowTailProps: {},
-//   SVGcanvasProps: {},
-//   divContainerProps: {},
-//   _extendSVGcanvas: 0,
-//   _debug: false,
-//   _cpx1Offset: 0,
-//   _cpy1Offset: 0,
-//   _cpx2Offset: 0,
-//   _cpy2Offset: 0,
-// };
 
 //////////////////////////////
 // propTypes

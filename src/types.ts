@@ -22,7 +22,7 @@ export type xarrowPropsType = {
   showXarrow?: boolean;
   curveness?: number;
   gridBreak?: number;
-  gridRadius?: number;
+  // gridRadius?: number;
   dashness?:
     | boolean
     | {
