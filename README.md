@@ -95,8 +95,9 @@ this means that any code changes in src/index.tsx will immediately be reflected 
 (add console.log("test") line and see!)\
 to reproduce this dev env on your local machine git clone and follow same commands as in [gitpod.yml](./.gitpod.yml).
 
-if you made an improvement that is relevant for most users, you can quickly submit a pull request using the right
-toolbar.
+if you made an improvement that is relevant for most users, you can quickly submit a pull request.  
+Please always pull request from and into dev branch -
+here's [Gitpod](https://gitpod.io/#https://github.com/Eliav2/react-xarrows/blob/dev/src/index.tsx)
 
 ### react-xarrows v2
 
@@ -255,7 +256,7 @@ you can place up to 3 labels. see examples
 - ```label=<div style={{ fontSize: "1.3em", fontFamily: "fantasy", fontStyle: "italic" }}>styled middle label</div>``` -
   custom middle label
 - ```label={{ start:"I'm start label",middle: "middleLabel",end:<div style={{ fontSize: "1.3em", fontFamily: "fantasy", fontStyle: "italic" }}>big end label</div> }}```
-   start and middle label and custom end label
+  start and middle label and custom end label
 
 </details>
 

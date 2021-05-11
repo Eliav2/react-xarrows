@@ -1,6 +1,7 @@
 {
   "author": "Eliav Louski",
   "main": "src/index.jsx",
+  "private": true,
   "dependencies": {
     "@types/node": "^15.0.2",
     "@types/react": "^17.0.5",
