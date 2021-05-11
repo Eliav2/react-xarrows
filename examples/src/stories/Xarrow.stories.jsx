@@ -64,11 +64,10 @@ ToggleEnd.args = {
 
 const canvasStyle = {
   width: '100%',
-  height: '60vh',
+  height: '100vh',
   background: 'white',
   overflow: 'auto',
   display: 'flex',
-  position: 'relative',
   color: 'black',
 };
 
@@ -112,12 +111,13 @@ CustomSimple.args = {
   showTail: false,
   tailSize: 6,
   path: 'smooth',
-  showXarrow: true,
   curveness: 0.8,
+  gridBreak: 0.5,
   dashness: false,
   headShape: 'arrow1',
   tailShape: 'arrow1',
   animateDrawing: false,
+  showXarrow: true,
 };
 
 export const CustomAdvanced = CustomSimple.bind({});
@@ -127,10 +127,33 @@ CustomAdvanced.args = {
   label: { start: '', middle: '', center: '' },
   path: 'smooth',
   dashness: { strokeLen: 10, nonStrokeLen: 15, animation: -2 },
+  headSize: 6,
+  tailSize: 6,
   headShape: 'arrow1',
   tailShape: 'arrow1',
-  animateDrawing: false,
   showXarrow: true,
+  animateDrawing: 1,
+  _extendSVGcanvas: 0,
+};
+
+export const CustomSvgHead = CustomSimple.bind({});
+CustomSvgHead.args = {
+  headSize: 6,
+  headShape: 'circle',
+  // headShape: {
+  //   svgElem: 'path',
+  //   svgProps: { d: `M 0 24 l -4.122 -4 8 -8 -8 -8 4.122-4 11.878 12 z` },
+  //   offsetForward: 0,
+  // },
+  arrowHeadProps: { fill: 'transparent', strokeWidth: '0.1', stroke: 'CornflowerBlue' },
+  _extendSVGcanvas: 500,
+};
+
+export const gridBreak = CustomSvgHead.bind({});
+gridBreak.args = {
+  path: 'grid',
+  gridBreak: 0.5,
+  arrowBodyProps: {},
 };
 
 export default {

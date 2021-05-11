@@ -102,63 +102,61 @@ toolbar.
 v2 is on its way. want to contribute and participate in plannig the next react architecture for react-xarrows? see
 discussion [here](https://github.com/Eliav2/react-xarrows/discussions/53)!
 
-### types definitions
+### API
 
-the properties the xarrow component receives is as follows(don't panic,the important ones explained next):
+to see full typescript definition see [types.ts](./src/types.ts) file.
 
-[//]: # (todo: update readme type definitions!)
+here's a summary of the all the available props:
 
-```ts
-export type xarrowPropsType = {
-    start: refType;
-    end: refType;
-    startAnchor?: anchorType | anchorType[];
-    endAnchor?: anchorType | anchorType[];
-    label?: labelType | labelsType;
-    color?: string;
-    lineColor?: string | null;
-    headColor?: string | null;
-    tailColor?: string | null;
-    strokeWidth?: number;
-    showHead?: boolean;
-    headSize?: number;
-    showTail?: boolean;
-    tailSize?: number;
-    path?: "smooth" | "grid" | "straight";
-    curveness?: number;
-    dashness?: | boolean | { strokeLen?: number; nonStrokeLen?: number; animation?: boolean | number; };
-    passProps?: React.SVGProps<SVGPathElement>;
-    SVGcanvasProps?: React.SVGAttributes<SVGSVGElement>;
-    arrowBodyProps?: React.SVGProps<SVGPathElement>;
-    arrowHeadProps?: React.SVGProps<SVGPathElement>;
-    arrowTailProps?: React.SVGProps<SVGPathElement>;
-    divContainerProps?: React.HTMLProps<HTMLDivElement>;
-    SVGcanvasStyle?: React.CSSProperties;
-    divContainerStyle?: React.CSSProperties;
-    _extendSVGcanvas?: number;
-    _debug: boolean;
-    _cpx1Offset: number;
-    _cpy1Offset: number;
-    _cpx2Offset: number;
-    _cpy2Offset: number;
-};
+**Properties**|**Description**|**default value**|**type**
+:-----:|:-----:|:-----:|:-----:
+[start](#refs)|ref to start element|none(Required!)|string/ReactRef
+[end](#refs)|ref to end element|none(Required!)|string/ReactRef
+[startAnchor](#anchors)|from which side the arrow should start from start element| 'auto'|string/object/array
+[endAnchor](#anchors)|at which side the arrow should end at end element| 'auto'|string/object/array
+[label](#label)|optional labels| null|string/array
+[color](#colors)|color of Xarrow(all parts)| 'CornflowerBlue'|string
+[lineColor](#colors)|color of the line| null|string
+[headColor](#colors)|color of the head| null|string
+[tailColor](#colors)|color of the tail| null|string
+[strokeWidth](#widths)|thickness of Xarrow(all parts)|4|number
+[headSize](#widths)|thickness of head(relative to strokeWidth)|6|number
+[tailSize](#widths)|thickness of tail(relative to strokeWidth)|6|number
+[path](#path)|path drawing style| 'smooth'|string
+[curveness](#curveness)|how much the line curveness when path='smooth'| 0.8|number
+[gridBreak](#gridBreak)|where the line breaks in path='grid'| 0.5|number
+[dashness](#dashness)|should the line be dashed| false|boolean/object
+[showHead](#shows)|show the arrow head?| true|boolean
+[showTail](#shows)|show the arrow tail?| false|boolean
+[showXarrow](#shows)|show Xarrow?| true|boolean
+[animateDrawing](#animateDrawing)|animate drawing when arrow mounts?| false|boolean/object
+[headShape](#customsvgs)|shape of the arrow head| 'arrow1'|string/object
+[tailShape](#customsvgs)|shape of the arrow tail|'arrow1'|string/object
 
-export type anchorType = anchorPositionType | anchorCustomPositionType;
-export type anchorPositionType = | "middle" | "left" | "right" | "top" | "bottom" | "auto";
+<details>
 
-export type anchorCustomPositionType = {
-    position: anchorPositionType;
-    offset: { rightness?: number; bottomness?: number };
-};
-export type refType = React.MutableRefObject<any> | string;
-export type labelsType = {
-    start?: labelType;
-    middle?: labelType;
-    end?: labelType;
-};
-export type labelType = JSX.Element | string;
-export type domEventType = keyof GlobalEventHandlersEventMap;
-```
+<summary>Advanced Props</summary>
+
+[see details](#advancedCustom)
+
+**Properties**|**Description**|**default value**|**type**
+:-----:|:-----:|:-----:|:-----:
+passProps|properties which will be pased to arrowBody,arrowHead,arrowTail| {}|object
+SVGcanvasProps|properties which will be passed to svgCanvas| {}|object
+arrowBodyProps|properties which will be passed to arrowBody| {}|object
+arrowHeadProps|properties which will be passed to arrowHead| {}|object
+arrowTailProps|properties which will be passed to arrowTail| {}|object
+divContainerProps|properties which will be passed to divContainer| {}|object
+SVGcanvasStyle|style properties which will be passed svgCanvas|0|object
+divContainerStyle|style properties which will be passed divContainer| false|object
+_extendSVGcanvas|extend svgCanas at all sides|0|number
+_debug|show debug elements|0|boolean
+_cpx1Offset|offset control point 1 x|0|number
+_cpy1Offset|offset control point 1 y|0|number
+_cpx2Offset|offset control point 2 x|0|number
+_cpy2Offset|offset control point 2 x|0|number
+
+</details>
 
 ##### API flexibility
 
@@ -173,7 +171,11 @@ see typescript types above for detailed descriptions of what type excepts every 
 This documentation is examples driven.\
 The examples is sorted from the most common use case to the most custom one.
 
-#### 'start' and 'end'
+<a name="refs"></a>
+
+<details>
+
+<summary> 'start' and 'end' </summary>
 
 _required_\
 can be a reference to a react ref to html element or string - an id of a DOM element.
@@ -183,9 +185,14 @@ examples:
 - `start="myid"` - `myid` is id of a dom element.
 - `start={myRef}` -  `myRef` is a react ref.
 
-#### 'startAnchor' and 'endAnchor'
+</details>
 
-_optional, default: "auto"_ \
+<a name="anchors"></a>
+
+<details>
+
+<summary> 'startAnchor' and 'endAnchor' </summary>
+
 
 each anchor can be: `"auto" | "middle" | "left" | "right" | "top" | "bottom"`.
 `auto` will choose automatically the path with the smallest length. can also be a list of possible anchors. if list is
@@ -198,9 +205,14 @@ examples:
 - `endAnchor= ["right", {position: "left", offset: {bottomness: -10}}]` only right and left anchors will be allowed for
   endAnchor, and if the left side connected then it will be offset 10 pixels up.
 
-#### label
+</details>
 
-_optional, default: null_ \
+<a name="label"></a>
+
+<details>
+
+<summary> label </summary>
+
 you can place up to 3 labels. see examples
 
 - `label="middleLabel"` - middle label
@@ -209,9 +221,15 @@ you can place up to 3 labels. see examples
 - `label={{ start:"I'm start label",middle: "middleLabel",end:<div style={{ fontSize: "1.3em", fontFamily: "fantasy", fontStyle: "italic" }}>big end label</div> }}`
     - start and middle label and custom end label
 
-#### color,lineColor and headColor and tailColor
+</details>
 
-_optional, default: "CornflowerBlue"_ \
+<a name="colors"></a>
+
+<details>
+
+<summary> color,lineColor and headColor and tailColor </summary>
+
+
 `color` defines color to the entire arrow. lineColor,headColor and tailColor will override color specifically for
 line,tail or head. examples:
 
@@ -220,9 +238,14 @@ line,tail or head. examples:
 - `tailColor="red"` will change only the color of the tail to red.
 - `lineColor="red"` will change only the color of the body to red.
 
-#### strokeWidth and headSize and tailSize
+</details>
 
-_optional, default: 6_ \
+<a name="widths"></a>
+
+<details>
+
+<summary>strokeWidth and headSize and tailSize</summary>
+
 strokeWidth defines the thickness of the entire arrow. headSize and tailSize defines how big will be the head or tail
 relative to the strokeWidth. examples:
 
@@ -230,37 +253,88 @@ relative to the strokeWidth. examples:
 - `headSize={15}` will make the head of the arrow more thick(relative to strokeWidth as well).
 - `tailSize={15}` will make arrow's tail thicker.
 
-#### path
+</details>
 
-_optional, default: "smooth"_ \
+<a name="path"></a>
+
+<details>
+
+<summary>path</summary>
+
 `path` can be one of: `"smooth" | "grid" | "straight"`, and it controls the path arrow is drawn, exactly how their name
 suggest. examples:
 
 - `path={"grid"}` will draw the line in sharp curves(90 degrees) like grid.
 
-#### curveness
+</details>
 
-_optional, default: 0.8_ \
-defines how much the lines curve. examples:
+<a name="curveness"></a>
+
+<details>
+
+<summary>curveness</summary>
+
+defines how much the lines curve. makes a difference only in `path='smooth'`. examples:
 
 - `curveness={false}` will make the line straight without curves(exactly like path='straight').
 - `curveness={true}` will choose default values of curveness.
 - `curveness={2}` will make Xarrow extra curved.
 
-#### dashness
+</details>
 
-_optional, default: false_ \
+<a name="gridBreak"></a>
+
+<details>
+
+<summary>gridBreak</summary>
+
+defines where the line will break when `path='grid'`. value should be a number from 0 to 1.
+
+examples:
+
+- `gridBreak={0.2}` will make the line straight without curves(exactly like path='straight').
+- `curveness={true}` will choose default values of curveness.
+- `curveness={2}` will make Xarrow extra curved.
+
+</details>
+
+<a name="dashness"></a>
+
+<details>
+
+<summary>dashness</summary>
+
+
 can make the arrow dashed and can even animate. if true default values(for dashness) are chosen. if object is passed
 then default values are chosen except what passed. examples:
 
 - `dashness={true}` will make the line of the arrow to be dashed.
 - `dashness={{ strokeLen: 10, nonStrokeLen: 15, animation: -2 }}` will make a custom looking dashness.
 
-[//]: # (todo: add svg custom shapes docs!)
+</details>
 
-#### animateDrawing
+<a name="shows"></a>
 
-_optional, default: false_ \
+<details>
+
+<summary>showHead, showTail and showXarrow</summary>
+
+`showXarrow`: show or not show Xarrow? (can be used to restart the drawing animation)
+`showHead`: show or not the arrow head?
+`showTail`: show or not the arrow tail?
+
+- `showXarrow={false}` - will hide (unmount) Xarrow and his labels.
+- `showHead={false}` - will hide the arrow head.
+
+</details>
+
+<a name="animateDrawing"></a>
+
+<details>
+
+<summary>animateDrawing</summary>
+
+
 can animate the drawing of the arrow using svg animation. type: boolean|number. if true animation duration is 1s. if
 number is passed then animation duration is number's value in seconds. examples:
 
@@ -268,31 +342,124 @@ number is passed then animation duration is number's value in seconds. examples:
 - `animateDrawing={5}` will animate the drawing of the arrow in 5 seconds.
 - `animateDrawing={0.1}` will animate the drawing of the arrow in 100 milliseconds.
 
-#### showXarrow
+</details>
 
-_optional, default: true_ \
-show or not show Xarrow? (can be used to restart the drawing animation)
+<a name="customsvgs"></a>
 
-- `showXarrow={false}` will hide (unmount) Xarrow and his labels.
+<details>
 
-### custom svg arrows - svgHead and svgTail
+<summary> custom svg arrows - headShape and tailShape</summary>
 
-_optional, default: "arrow1"_ \
-_type_: `tSvgElems=  `  
-new feature! you can customize the svg edges (head or tail) of the arrow.  
-you can use predefined svg by passing string,one of `"arrow1" | "circle"`. if you really want to get fancy you can
-pass _your own_ svg shapes.  
+
+[//]: # (todo: add svg custom shapes docs!)
+
+new feature! you can customize the svg edges (head or tail) of the arrow. you can use predefined svg by passing
+string,one of `"arrow1" | "circle" | "arrow1"`
+
+#### simple usage:
+
+_headShape type:string_
+
+
+<table>
+  <tr>
+    <th>Code</th>
+    <th>Result</th>
+  </tr> 
+  <tr>
+  <td>
+
+```jsx
+<xarrow headShape='circle'/>
+```
+
+  </td>
+  <td> 
+
+![img_1.png](images/fillCircle.png)
+  </td>
+  </tr>
+  <tr>
+  <td>
+
+```jsx
+<xarrow headShape='circle'
+        arrowHeadProps={"fill": "transparent",
+            "strokeWidth": "0.1",
+            "stroke": "CornflowerBlue"}
+/>
+```
+
+  </td>
+  <td> 
+
+![img_1.png](images/emptyCircle.png)
+  </td>
+  </tr>
+  <tr>
+  <td>
+
+```jsx
+<xarrow headShape='heart'/>
+```
+
+  </td>
+  <td> 
+
+![img.png](images/heart.png)
+  </td>
+  </tr>
+</table>
+
+you can import `arrowShapes` which is object contains all predefined svg shapes.
+
+<details>
+
+<summary>custom usage</summary> 
+
+you can also pass _your own_ svg shapes:
+
+```typescript
+headShapeType = {
+    svgElem: T
+:
+'circle' | 'ellipse' | 'line' | 'path' | 'polygon' | 'polyline' | 'rect';
+svgProps ? : JSX.IntrinsicElements[T];
+offsetForward ? : number;
+}
+;
+```
+
 for example, you can pass the following object, and it will be exactly equivalent to passing `'arrow1'`:
 
 ```js
-svgHead = {
+headShape = {
     svgElem: 'path',
     svgProps: {d: `M 0 0 L 1 0.5 L 0 1 L 0.25 0.5 z`},
     offsetForward: 0.25
 }
 ```
 
-you can import `arrowShapes` which is object contains all predefined svg shapes.
+`svgElem` - an svg element like `path` or `circle`.  
+`svgProps` - props that will be passed to the svg element.
+`offsetForward` - how much to offset tht line into the svg element(from 0 to 1). normally the line will connect to the
+start of the svgElem. for example in case of the default arrow you want the line to enter 25% into the svgElem.
+
+don't forget about `arrowHeadProps` and `arrowTailProps` in case you want to use default shape but custom svg props.
+
+**in case you pass a custom svg element:** currently you have to adjust the path to start from 0,0 and to be at size box
+1x1 in order to make the custom shape look like the default shapes in size, in later versions it is planned to support
+automatic adjustment using getBBox() function.
+
+</details>
+
+</details>
+
+### advanced customization
+
+<a name="advancedCustom"></a>
+
+<details>
 
 ### passing props
 
@@ -301,7 +468,6 @@ passed to xarrow so by default it'll be passed down to `divContainer`.
 
 #### passProps
 
-_optional, default: {}_ \
 you can pass properties to visible parts(body and head) of the arrow (such event handlers and much more). this supposed
 to be enough for most cases. examples:
 
@@ -315,8 +481,6 @@ to be enough for most cases. examples:
 The properties below can be used to customize the arrow even farther:
 
 #### arrowBodyProps, arrowHeadProps, SVGcanvasProps, divContainerProps
-
-_optional, default: {}_ \
 
 ![image](https://user-images.githubusercontent.com/47307889/95031511-09ed5100-06bf-11eb-95a3-4cdc8d0be0ad.png)
 
@@ -346,48 +510,28 @@ if you wish to pass style to divContainer or SVGcanvas use `SVGcanvasStyle`,`div
 
 ##### _extendSVGcanvas
 
-_optional, default: 0_ \
 will extend the svg canvas at all sides. can be useful if for some reason the arrow is cut though to small svg canvas(
 should be used in advanced custom arrows). example: `_extendSVGcanvas = {30}` - will extend svg canvas in all sides by
 30 pixels.
 
 ##### _cpx1Offset,_cpy1Offset,_cpx2Offset,_cpy2Offset
 
-_optional, default: 0_ \
 now you can manipulate and offset the control points of the arrow. this way you can control how the line curves. check
 out the interactive codesandbox, set _debug to true and play with these properties.
 
-### default props
-
-default props is as follows:
-
-```jsx
-Xarrow.defaultProps = {
-    startAnchor: "auto",
-    endAnchor: "auto",
-    label: null,
-    color: "CornflowerBlue",
-    lineColor: null,
-    headColor: null,
-    strokeWidth: 4,
-    headSize: 6,
-    path: "smooth",
-    curveness: 0.8,
-    dashness: false,
-    passProps: {},
-    arrowBodyProps: {},
-    arrowHeadProps: {},
-    SVGcanvasProps: {},
-    divContainerProps: {},
-    _extendSVGcanvas: 0,
-    _debug: false,
-    _cpx1Offset: 0,
-    _cpy1Offset: 0,
-    _cpx2Offset: 0,
-    _cpy2Offset: 0,
-};
-```
+</details>
 
 ## Versions
 
 See [CHANGELOG.md](./CHANGELOG.md) in this repo.
+
+
+
+<style>
+details {
+    border: 1px solid #aaa;
+    border-radius: 4px;
+    padding: .5em .5em 0;
+    margin: 1em 0;
+}
+</style>

@@ -21,6 +21,8 @@ export type xarrowPropsType = {
   path?: pathType;
   showXarrow?: boolean;
   curveness?: number;
+  gridBreak?: number;
+  gridRadius?: number;
   dashness?:
     | boolean
     | {
@@ -36,7 +38,6 @@ export type xarrowPropsType = {
   arrowBodyProps?: React.SVGProps<SVGPathElement>;
   arrowHeadProps?: JSX.IntrinsicElements[svgElemType];
   arrowTailProps?: JSX.IntrinsicElements[svgElemType];
-  // arrowTailProps?: React.SVGProps<SVGElement>;
   divContainerProps?: React.HTMLProps<HTMLDivElement>;
   SVGcanvasStyle?: React.CSSProperties;
   divContainerStyle?: React.CSSProperties;
