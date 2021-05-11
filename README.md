@@ -13,10 +13,8 @@ Draw arrows between components in React!
 
 - Connect between elements by passing a ref or an id for startElement and endElement.
 - Automatic anchoring based on smallest path.
-- can add customizable labels
-- relatively fast algorithm to find path and to adjust canvas.
-- Easily customize the look and behavior of the arrow.
-- Written in typescript so you get nice props suggestions(but support js also of course).
+- Fast algorithm to find path and to adjust canvas.
+- Customization is easy but flexible
 
 found a problem? not a problem! post a new issue([here](https://github.com/Eliav2/react-xarrows/issues)).
 
@@ -37,7 +35,10 @@ codebox of few examples(in this repo at [/examples](./examples)).
 ![react-xarrow-picture-1 4 2](https://user-images.githubusercontent.com/47307889/87698325-facfc480-c79b-11ea-976a-dbad0ecd9b48.png)
 
 see this interactive example: <https://lwwwp.csb.app/CustomizeArrow>
-![react-xarrows-v1 6](https://user-images.githubusercontent.com/47307889/113949468-070f1c80-9818-11eb-90e6-ddc6d814b912.gif)
+
+[comment]: <> (![react-xarrows-v1 6]&#40;https://user-images.githubusercontent.com/47307889/113949468-070f1c80-9818-11eb-90e6-ddc6d814b912.gif&#41;)
+
+<img src="https://user-images.githubusercontent.com/47307889/113949468-070f1c80-9818-11eb-90e6-ddc6d814b912.gif" width="650px"/>
 
 ### simple example:
 
@@ -161,7 +162,7 @@ _cpy2Offset|offset control point 2 x|0|number
 ##### API flexibility
 
 This API is built in such way that most props can accept different types. you can keep things simple or provide more
-detailed props for more custom behavior - the API except both(see [`startAnchor`](#startAnchor-and-endAnchor) or `label`
+custom props for more custom behavior - the API except both(see [`startAnchor`](#anchors) or `label`
 properties for good examples)
 .<br/>
 see typescript types above for detailed descriptions of what type excepts every prop.
@@ -193,15 +194,50 @@ examples:
 
 <summary> 'startAnchor' and 'endAnchor' </summary>
 
+specify what anchors are allowed. can be a string/object/array.
 
-each anchor can be: `"auto" | "middle" | "left" | "right" | "top" | "bottom"`.
-`auto` will choose automatically the path with the smallest length. can also be a list of possible anchors. if list is
-provided - the minimal length anchors will be choose from the list. you can also offset each anchor passing `offset`.
-examples:
+type:
+
+```typescript
+export type anchorType = anchorPositionType | anchorCustomPositionType;
+```
+
+#### simple usage:
+
+type:
+
+```typescript
+export const tAnchorEdge = ['middle', 'left', 'right', 'top', 'bottom', 'auto'] as const;
+export type anchorPositionType = typeof tAnchorEdge[number];
+```
+
+one of `"auto" | "middle" | "left" | "right" | "top" | "bottom"`
+`auto` will choose automatically the path with the smallest length.
+
+example:
 
 - `endAnchor="middle"` will set the anchor of the end of the line to the middle of the end element.
+
+#### custom usage:
+
+type:
+
+```typescript
+export type anchorCustomPositionType = {
+    position: anchorPositionType;
+    offset: { rightness?: number; bottomness?: number };
+};
+```
+
+you can offset the anchor from normal positioning. NOTE: breaking changes in naming in v2.
+
+example:
+
 - `endAnchor= { position: "auto", offset: { rightness: 20 } }` will choose automatic anchoring for end anchor but will
   offset it 20 pixels to the right after normal positioning.
+
+if list is provided - the minimal length anchors will be chosen from the list. example:
+
 - `endAnchor= ["right", {position: "left", offset: {bottomness: -10}}]` only right and left anchors will be allowed for
   endAnchor, and if the left side connected then it will be offset 10 pixels up.
 
@@ -215,11 +251,11 @@ examples:
 
 you can place up to 3 labels. see examples
 
-- `label="middleLabel"` - middle label
-- `label=<div style={{ fontSize: "1.3em", fontFamily: "fantasy", fontStyle: "italic" }}>styled middle label</div>` -
+- ```label="middleLabel"``` - middle label
+- ```label=<div style={{ fontSize: "1.3em", fontFamily: "fantasy", fontStyle: "italic" }}>styled middle label</div>``` -
   custom middle label
-- `label={{ start:"I'm start label",middle: "middleLabel",end:<div style={{ fontSize: "1.3em", fontFamily: "fantasy", fontStyle: "italic" }}>big end label</div> }}`
-    - start and middle label and custom end label
+- ```label={{ start:"I'm start label",middle: "middleLabel",end:<div style={{ fontSize: "1.3em", fontFamily: "fantasy", fontStyle: "italic" }}>big end label</div> }}```
+   start and middle label and custom end label
 
 </details>
 
@@ -293,8 +329,6 @@ defines where the line will break when `path='grid'`. value should be a number f
 examples:
 
 - `gridBreak={0.2}` will make the line straight without curves(exactly like path='straight').
-- `curveness={true}` will choose default values of curveness.
-- `curveness={2}` will make Xarrow extra curved.
 
 </details>
 

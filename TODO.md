@@ -1,6 +1,6 @@
 - change calculation style from `left right up down` style to `forward backward left right` style
 - add option to render custom svg - improve automatic scaling
-- add `gridBreak` prop
+- add `gridRadius` prop
 
 for V2:
 
@@ -8,4 +8,5 @@ for V2:
   point of view.
 - should replace all svg animations with react-spring animations.
 - `curveness` and `gridBreak` will be combined to `path`. 
+- change `anchorCustomPositionType`
 - should change architecture
