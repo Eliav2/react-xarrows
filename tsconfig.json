@@ -22,7 +22,6 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "declaration": true,
-    // todo: .ts.map files really required?
     "declarationMap": true,
     "sourceMap": true,
     "outDir": "lib",

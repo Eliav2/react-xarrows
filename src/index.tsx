@@ -907,6 +907,24 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
                 ) : null
               </headShape.svgElem>
             ) : null}
+            {/* debug elements */}
+            {_debug ? (
+              <>
+                {/* control points circles */}
+                <circle r="5" cx={st.cpx1} cy={st.cpy1} fill="green" />
+                <circle r="5" cx={st.cpx2} cy={st.cpy2} fill="blue" />
+                {/* start to end rectangle wrapper */}
+                <rect
+                  x={st.excLeft}
+                  y={st.excUp}
+                  width={st.absDx}
+                  height={st.absDy}
+                  fill="none"
+                  stroke="pink"
+                  strokeWidth="2px"
+                />
+              </>
+            ) : null}
           </svg>
 
           {labelStart ? (
