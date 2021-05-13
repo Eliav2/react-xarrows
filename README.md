@@ -137,7 +137,7 @@ here's a summary of the all the available props:
 
 <details>
 
-<summary>Advanced Props</summary>
+<summary markdown='span'>Advanced Props</summary>
 
 [see details](#advancedCustom)
 
@@ -177,7 +177,7 @@ The examples is sorted from the most common use case to the most custom one.
 
 <details>
 
-<summary> 'start' and 'end' </summary>
+<summary markdown='span'> 'start' and 'end' </summary>
 
 _required_\
 can be a reference to a react ref to html element or string - an id of a DOM element.
@@ -193,7 +193,7 @@ examples:
 
 <details>
 
-<summary> 'startAnchor' and 'endAnchor' </summary>
+<summary markdown='span'> 'startAnchor' and 'endAnchor' </summary>
 
 specify what anchors are allowed. can be a string/object/array.
 
@@ -248,7 +248,7 @@ if list is provided - the minimal length anchors will be chosen from the list. e
 
 <details>
 
-<summary> label </summary>
+<summary markdown='span'> label </summary>
 
 you can place up to 3 labels. see examples
 
@@ -264,7 +264,7 @@ you can place up to 3 labels. see examples
 
 <details>
 
-<summary> color,lineColor and headColor and tailColor </summary>
+<summary markdown='span'> color,lineColor and headColor and tailColor </summary>
 
 
 `color` defines color to the entire arrow. lineColor,headColor and tailColor will override color specifically for
@@ -281,7 +281,7 @@ line,tail or head. examples:
 
 <details>
 
-<summary>strokeWidth and headSize and tailSize</summary>
+<summary markdown='span'>strokeWidth and headSize and tailSize</summary>
 
 strokeWidth defines the thickness of the entire arrow. headSize and tailSize defines how big will be the head or tail
 relative to the strokeWidth. examples:
@@ -296,7 +296,7 @@ relative to the strokeWidth. examples:
 
 <details>
 
-<summary>path</summary>
+<summary markdown='span'>path</summary>
 
 `path` can be one of: `"smooth" | "grid" | "straight"`, and it controls the path arrow is drawn, exactly how their name
 suggest. examples:
@@ -309,7 +309,7 @@ suggest. examples:
 
 <details>
 
-<summary>curveness</summary>
+<summary markdown='span'>curveness</summary>
 
 defines how much the lines curve. makes a difference only in `path='smooth'`. examples:
 
@@ -323,13 +323,13 @@ defines how much the lines curve. makes a difference only in `path='smooth'`. ex
 
 <details>
 
-<summary>gridBreak</summary>
+<summary markdown='span'>gridBreak</summary>
 
 defines where the line will break when `path='grid'`. value should be a number from 0 to 1.
 
 examples:
 
-- `gridBreak={0.2}` will make the line straight without curves(exactly like path='straight').
+- `gridBreak={0.2}` the line would break closer to start element(20% of the path instead of 50%).
 
 </details>
 
@@ -337,7 +337,7 @@ examples:
 
 <details>
 
-<summary>dashness</summary>
+<summary markdown='span'>dashness</summary>
 
 
 can make the arrow dashed and can even animate. if true default values(for dashness) are chosen. if object is passed
@@ -352,7 +352,7 @@ then default values are chosen except what passed. examples:
 
 <details>
 
-<summary>showHead, showTail and showXarrow</summary>
+<summary markdown='span'>showHead, showTail and showXarrow</summary>
 
 `showXarrow`: show or not show Xarrow? (can be used to restart the drawing animation)
 `showHead`: show or not the arrow head?
@@ -367,7 +367,7 @@ then default values are chosen except what passed. examples:
 
 <details>
 
-<summary>animateDrawing</summary>
+<summary markdown='span'>animateDrawing</summary>
 
 
 can animate the drawing of the arrow using svg animation. type: boolean|number. if true animation duration is 1s. if
@@ -383,13 +383,13 @@ number is passed then animation duration is number's value in seconds. examples:
 
 <details>
 
-<summary> custom svg arrows - headShape and tailShape</summary>
+<summary markdown='span'> custom svg arrows - headShape and tailShape</summary>
 
 
 [//]: # (todo: add svg custom shapes docs!)
 
 new feature! you can customize the svg edges (head or tail) of the arrow. you can use predefined svg by passing
-string,one of `"arrow1" | "circle" | "arrow1"`
+string,one of `"arrow1" | "circle" | "heart"`
 
 #### simple usage:
 
@@ -450,7 +450,7 @@ you can import `arrowShapes` which is object contains all predefined svg shapes.
 
 <details>
 
-<summary>custom usage</summary> 
+<summary markdown='span'>custom usage</summary> 
 
 you can also pass _your own_ svg shapes:
 
