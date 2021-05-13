@@ -1,6 +1,7 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import isEqual from 'lodash.isequal';
 import pick from 'lodash.pick';
+import omit from 'lodash.omit';
 import { getElementByPropGiven } from './utils';
 import PT from 'prop-types';
 import { buzzierMinSols, bzFunction } from './utils/buzzier';
@@ -89,6 +90,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     _cpy2Offset = 0,
     ...extraProps
   } = props;
+  const varProps = omit(props, ['start', 'end']);
 
   const svgRef = useRef(null);
   const lineRef = useRef(null);
@@ -114,76 +116,6 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
 
   const [_, setRerender] = useState({});
   const dumyRenderer = () => setRerender({});
-
-  if (process.env.NODE_ENV === 'development') {
-    // debug
-    var _render = useRef(0);
-    var _call = useRef(-1);
-    _call.current += 1;
-    var consoleState = () => `{call:${_call.current},render:${_render.current}}`;
-    var log = (...args) => console.log(...args, consoleState());
-  }
-
-  /**
-   * determine if an update is needed and update if so.
-   * update is needed if one of the connected elements position was changed since last render,
-   * or if the ref to one of the elements has changed(it points to a different element)
-   * or if one of the given props has changed
-   */
-  const updateIfNeeded = () => {
-    // in case one of the elements does not mounted skip any update
-    if (startRef == null || endRef == null || showXarrow == false) return;
-
-    if (!isEqual(props, prevProps.current)) {
-      //first check if any properties changed
-      if (prevProps.current) {
-        initProps();
-        prevPosState.current = getElemsPos();
-        updatePosition();
-      }
-    } else {
-      //if the properties did not changed - update position if needed
-      let posState = getElemsPos();
-      if (!isEqual(prevPosState.current, posState)) {
-        prevPosState.current = posState;
-        updatePosition();
-      }
-    }
-  };
-
-  const initAnchorsRefs = () => {
-    startRef.current = getElementByPropGiven(props.start);
-    endRef.current = getElementByPropGiven(props.end);
-  };
-
-  const initProps = () => {
-    prevProps.current = props;
-  };
-
-  const monitorDOMchanges = () => {
-    window.addEventListener('resize', updateIfNeeded);
-
-    const handleDrawAmimEnd = () => {
-      setDrawAnimEnded(true);
-      // @ts-ignore
-      headOpacityAnimRef.current.beginElement();
-      lineDashAnimRef.current?.beginElement();
-    };
-    const handleDrawAmimBegin = () => (headRef.current.style.opacity = '0');
-    if (lineDrawAnimRef.current && headRef.current) {
-      lineDrawAnimRef.current.addEventListener('endEvent', handleDrawAmimEnd);
-      lineDrawAnimRef.current.addEventListener('beginEvent', handleDrawAmimBegin);
-    }
-    return () => {
-      window.removeEventListener('resize', updateIfNeeded);
-      if (lineDrawAnimRef.current) {
-        lineDrawAnimRef.current.removeEventListener('endEvent', handleDrawAmimEnd);
-        if (headRef.current) lineDrawAnimRef.current.removeEventListener('beginEvent', handleDrawAmimBegin);
-      }
-    };
-  };
-
-  // const headBox = headRef.current?.getBBox({ stroke: true }) ?? { x: 0, y: 0, width: 1, height: 1 };
 
   const [st, setSt] = useState({
     //initial state
@@ -226,6 +158,44 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     fTailSize: 1,
     arrowPath: ``,
   });
+
+  // // debug
+  // if (process.env.NODE_ENV === 'development') {
+  //   var _render = useRef(0);
+  //   var _call = useRef(-1);
+  //   _call.current += 1;
+  //   var consoleState = () => `{call:${_call.current},render:${_render.current}}`;
+  //   var log = (...args) => console.log(...args, consoleState());
+  // }
+
+  /**
+   * determine if an update is needed and update if so.
+   * update is needed if one of the connected elements position was changed since last render,
+   * or if the ref to one of the elements has changed(it points to a different element)
+   * or if one of the given props has changed
+   */
+  const updateIfNeeded = () => {
+    // in case one of the elements does not mounted skip any update
+    if (startRef == null || endRef == null || showXarrow == false) return;
+
+    if (!isEqual(varProps, prevProps.current)) {
+      //first check if any properties changed
+      if (prevProps.current) {
+        prevProps.current = varProps;
+        prevPosState.current = getElemsPos();
+        updatePosition();
+      }
+    } else {
+      //if the properties did not changed - update position if needed
+      let posState = getElemsPos();
+      if (!isEqual(prevPosState.current, posState)) {
+        prevPosState.current = posState;
+        updatePosition();
+      }
+    }
+  };
+
+  // const headBox = headRef.current?.getBBox({ stroke: true }) ?? { x: 0, y: 0, width: 1, height: 1 };
 
   headSize = Number(headSize);
   strokeWidth = Number(strokeWidth);
@@ -728,18 +698,16 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     animEndValue = 0;
   }
 
-  const initXarrow = () => {
-    initProps();
-    initAnchorsRefs();
-  };
+  const initXarrow = () => {};
 
   useLayoutEffect(() => {
     updateIfNeeded();
 
-    if (process.env.NODE_ENV === 'development') {
-      // log('xarrow has rendered!');
-      _render.current += 1;
-    }
+    // // debug
+    // if (process.env.NODE_ENV === 'development') {
+    //   // log('xarrow has rendered!');
+    //   _render.current += 1;
+    // }
   });
 
   // update refs to elements if needed
@@ -766,9 +734,35 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
   // set all props on first render
   useEffect(() => {
     if (showXarrow) {
-      initXarrow();
+      prevProps.current = varProps;
+      startRef.current = getElementByPropGiven(props.start);
+      endRef.current = getElementByPropGiven(props.end);
       updateIfNeeded();
     }
+
+    const monitorDOMchanges = () => {
+      window.addEventListener('resize', updateIfNeeded);
+
+      const handleDrawAmimEnd = () => {
+        setDrawAnimEnded(true);
+        // @ts-ignore
+        headOpacityAnimRef.current.beginElement();
+        lineDashAnimRef.current?.beginElement();
+      };
+      const handleDrawAmimBegin = () => (headRef.current.style.opacity = '0');
+      if (lineDrawAnimRef.current && headRef.current) {
+        lineDrawAnimRef.current.addEventListener('endEvent', handleDrawAmimEnd);
+        lineDrawAnimRef.current.addEventListener('beginEvent', handleDrawAmimBegin);
+      }
+      return () => {
+        window.removeEventListener('resize', updateIfNeeded);
+        if (lineDrawAnimRef.current) {
+          lineDrawAnimRef.current.removeEventListener('endEvent', handleDrawAmimEnd);
+          if (headRef.current) lineDrawAnimRef.current.removeEventListener('beginEvent', handleDrawAmimBegin);
+        }
+      };
+    };
+
     const cleanMonitorDOMchanges = monitorDOMchanges();
     return () => {
       setDrawAnimEnded(false);
