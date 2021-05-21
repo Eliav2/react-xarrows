@@ -565,11 +565,8 @@ See [CHANGELOG.md](./CHANGELOG.md) in this repo.
 If you/your company are using this project, and you want to contribute to his development, please consider donating.  
 Any donation will help me to devote more time to the development of this project.
 
-<form action="https://www.paypal.com/donate" method="post" target="_top">
-<input type="hidden" name="hosted_button_id" value="CRQ343F9VTRS8" />
-<input type="image" src="https://www.paypalobjects.com/en_US/IL/i/btn/btn_donateCC_LG.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
-<img alt="" border="0" src="https://www.paypal.com/en_IL/i/scr/pixel.gif" width="1" height="1" />
-</form>
+[![paypal](https://www.paypalobjects.com/en_US/IL/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/donate?hosted_button_id=CRQ343F9VTRS8)
+
 
 
 <style>
