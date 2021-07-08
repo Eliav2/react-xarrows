@@ -161,3 +161,42 @@ export default {
   title: 'Xarrow',
   component: Xarrow,
 };
+
+const Component77 = () => {
+  const nodes = new Array(5).map((_, i) => {
+    return {
+      id: `node-${i}`,
+      start: `node-${i}`,
+      end: `node-${i + 1}`,
+    };
+  });
+
+  return (
+    <>
+      {nodes.map(({ id, start, end }) => {
+        // document.getElementById(start) === null
+        // document.getElementById(end) === null
+
+        return (
+          <>
+            {/* this div is a node to draw an xarrow between */}
+            <div id={id} />
+
+            <Xarrow key={id} start={start} end={end} />
+          </>
+        );
+      })}
+    </>
+  );
+};
+
+const Issue77Template = (props) => {
+  return (
+    <div style={canvasStyle} id="canvas">
+      hello world!
+      <Component77 />
+    </div>
+  );
+};
+
+export const Issue77 = (args) => <Issue77Template {...args} />;

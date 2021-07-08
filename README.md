@@ -556,10 +556,17 @@ out the interactive codesandbox, set _debug to true and play with these properti
 
 </details>
 
+## Donation
+
+If you/your company are using this project, and you want to contribute to his development, please consider donating.  
+Any donation will help me to devote more time to the development of this project.
+
+[![paypal](https://www.paypalobjects.com/en_US/IL/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/donate?hosted_button_id=CRQ343F9VTRS8)
+
+
 ## Versions
 
 See [CHANGELOG.md](./CHANGELOG.md) in this repo.
-
 
 
 <style>
