@@ -1,3 +1,11 @@
+## v1.7.1:
+
+- various checks related to the presence of the connected element has been added. now if the elements are not present
+  the arrow will not be drawn, but the app will be not crush, and a prop-type error will be raised.  
+  related to #77, #72.
+- one proptype was wrong and was fixed #79
+  
+
 ## v1.7.0:
 
 big update!

@@ -689,7 +689,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
 
   // handle draw animation
   useLayoutEffect(() => {
-    if (lineRef.current) setSt((prevSt) => ({ ...prevSt, lineLength: lineRef.current.getTotalLength() }));
+    if (lineRef.current) setSt((prevSt) => ({ ...prevSt, lineLength: lineRef.current?.getTotalLength() ?? 0 }));
   }, [lineRef.current]);
 
   // // for adjustments of custom svg shapes
@@ -953,7 +953,7 @@ const _pAnchorType = PT.oneOfType([pAnchorPositionType, pAnchorCustomPositionTyp
 
 const pAnchorType = PT.oneOfType([_pAnchorType, PT.arrayOf(_pAnchorType)]);
 
-const pRefType = PT.oneOfType([PT.string, PT.exact({ current: PT.instanceOf(Element) })]);
+const pRefType = PT.oneOfType([PT.string, PT.exact({ current: PT.element })]);
 
 const _pLabelType = PT.oneOfType([PT.element, PT.string]);
 

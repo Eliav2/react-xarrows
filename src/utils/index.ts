@@ -5,7 +5,7 @@ export const getElementByPropGiven = (ref: refType): HTMLElement => {
   if (typeof ref === 'string') {
     // myRef = document.getElementById(ref);
     myRef = document.getElementById(ref);
-  } else myRef = ref.current;
+  } else myRef = ref?.current;
   return myRef;
 };
 
