@@ -1,6 +1,8 @@
 {
+  "parser": "@typescript-eslint/parser",
   "plugins": [
-    "import"
+    "import",
+    "@typescript-eslint"
   ],
   "rules": {
     // turn on errors for missing imports
@@ -22,5 +24,16 @@
         "extensions": [".js", ".jsx", ".ts", ".tsx"]
       }
     }
-  }
+  },
+  "parserOptions": {
+    "ecmaVersion": 2021
+  },
+  "env": {
+    "es6": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended"
+  ]
 }
