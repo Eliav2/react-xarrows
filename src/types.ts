@@ -1,13 +1,53 @@
 ///////////////
 // public types
 
-import React from 'react';
-import { tAnchorEdge, tPaths, tSvgElems, tArrowShapes } from '.';
+// constants used for typescript and proptypes definitions
+export const tAnchorEdge = ['middle', 'left', 'right', 'top', 'bottom', 'auto'] as const;
+export const tPaths = ['smooth', 'grid', 'straight'] as const;
+export const tSvgElems = ['circle', 'ellipse', 'line', 'path', 'polygon', 'polyline', 'rect'] as const;
+export const tFacingDir = ['auto', 'inwards', 'outwards', 'left', 'right', 'up', 'down'] as const;
+
+//default arrows svgs
+export const arrowShapes = {
+  arrow1: { svgElem: 'path', svgProps: { d: `M 0 0 L 1 0.5 L 0 1 L 0.25 0.5 z` }, offsetForward: 0.25 },
+  heart: {
+    svgElem: 'path',
+    svgProps: {
+      d: `M 0,0.25 A 0.125,0.125 0,0,1 0.5,0.25 A 0.125,0.125 0,0,1 1,0.25 Q 1,0.625 0.5,1 Q 0,0.625 0,0.25 z`,
+    },
+    offsetForward: 0.1,
+  },
+  circle: {
+    svgElem: 'circle',
+    svgProps: {
+      r: 0.5,
+      cx: 0.5,
+      cy: 0.5,
+      // children: <animate attributeName="r" values={'0.25;0.5;0.25'} dur="1s" repeatCount={'indefinite'} />,
+    },
+    offsetForward: 0,
+  },
+  // todo: add support for automatic svg adjustments with getBBbox()
+  // arrow2: {
+  //   svgElem: 'path',
+  //   svgProps: {
+  //     //// handle automatic resize of the svg
+  //     // d: `M 0.5 1 l -0.171749 -0.16666 0.3333 -0.3333 -0.3333 -0.3333 0.171749 -0.16666 0.494916 0.5 z`,
+  //     // d: `M 0 1 l -0.171749 -0.16666 0.3333 -0.3333 -0.3333 -0.3333 0.171749 -0.16666 0.494916 0.5 z`,
+  //     d: `M 0 24 l -4.122     -4      8      -8      -8      -8       4.122    -4 11.878 12 z`,
+  //   },
+  //   // offsetForward: -0.65,
+  // },
+  // todo: add more default shapes
+} as const;
+
+export const tArrowShapes = Object.keys(arrowShapes) as Array<keyof typeof arrowShapes>;
+
 export type xarrowPropsType = {
   start: refType;
   end: refType;
-  startAnchor?: anchorType | anchorType[];
-  endAnchor?: anchorType | anchorType[];
+  startAnchor?: anchorType;
+  endAnchor?: anchorType;
   label?: labelType | labelsType;
   color?: string;
   lineColor?: string | null;
@@ -50,11 +90,12 @@ export type xarrowPropsType = {
 };
 
 export type pathType = typeof tPaths[number];
-export type anchorType = anchorPositionType | anchorCustomPositionType;
-export type anchorPositionType = typeof tAnchorEdge[number];
+export type _anchorType = anchorNamedType | anchorCustomPositionType;
+export type anchorType = _anchorType | _anchorType[];
+export type anchorNamedType = typeof tAnchorEdge[number];
 
 export type anchorCustomPositionType = {
-  position: anchorPositionType;
+  position: anchorNamedType;
   offset: { rightness?: number; bottomness?: number };
 };
 export type refType = React.MutableRefObject<any> | string;
@@ -78,20 +119,18 @@ export type svgElemType = typeof tSvgElems[number];
 ////////////////
 // private types
 
-export type _prevPosType = {
-  start: {
-    x: number;
-    y: number;
-    right: number;
-    bottom: number;
-  };
-  end: {
-    x: number;
-    y: number;
-    right: number;
-    bottom: number;
-  };
+export type dimensionType = {
+  x: number;
+  y: number;
+  right: number;
+  bottom: number;
 };
+export type _prevPosType = {
+  start: dimensionType;
+  end: dimensionType;
+};
+
+export type anchorEdgeType = 'left' | 'right' | 'top' | 'bottom';
 
 // pick the common props between 2 objects
 type Common<A, B> = {

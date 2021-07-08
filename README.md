@@ -78,7 +78,7 @@ export default SimpleExample;
 react-xarrows does not renders automatically if one of the connected elements is rendered. You have to manually trigger
 an update on the arrows whenever one of the connected elements renders(possibaly by trigger update on the parent of the
 arrows) ,this is because the Xarrow component does not have any control or awareness of the connected elements. in
-addition, make sure to render Xarrows later in the DOM then the connected elements else the app will crash.
+addition.
 **this is planned to be changed in react-xarrows v2.**
 
 ### Contributing
@@ -91,7 +91,7 @@ here's a ready to use development environment with a click of a button(patience,
 
 this will set up environment that will clone react-xarrow master,and will link the code from the src to the examples,
 and will start examples,with typescript watch process that will recompile when any change is made.\
-this means that any code changes in src/index.tsx will immediately be reflected to the running example at port 3000!
+this means that any code changes in src/Xarrow.tsx will immediately be reflected to the running example at port 3000!
 (add console.log("test") line and see!)\
 to reproduce this dev env on your local machine git clone and follow same commands as in [gitpod.yml](./.gitpod.yml).
 

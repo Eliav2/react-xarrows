@@ -6,7 +6,7 @@
     "strict": true,
     "lib": [
       "dom",
-      "es2017"
+      "esnext"
     ],
     "jsx": "react",
     "noImplicitAny": false,
