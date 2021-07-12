@@ -1,9 +1,5 @@
-//@ts-nocheck
-
 import React, { useState } from 'react';
 import Draggable from 'react-draggable';
-// import MaterialIcon from "material-icons-react";
-import Popup from 'reactjs-popup';
 import './MenuWindow.css';
 
 export default ({ setLines, line: { props: lineProp } }) => {

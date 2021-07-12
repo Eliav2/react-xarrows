@@ -25,7 +25,7 @@
     "declarationMap": true,
     "sourceMap": true,
     "outDir": "lib",
-    "noEmit": false
+//    "noEmit": false
   },
   "compileOnSave": true
 }
