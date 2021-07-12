@@ -1,4 +1,10 @@
 const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+
+const htmlWebpackPlugin = new HtmlWebpackPlugin({
+  template: path.join(__dirname, 'index.html'),
+  filename: './index.html',
+});
 
 module.exports = (env) => {
   const mode = process.env.NODE_ENV || (env['production'] ? 'production' : null) || 'development';
@@ -13,7 +19,10 @@ module.exports = (env) => {
     ],
     entry: './src/index.tsx',
     devServer: {
+      hot: true,
       contentBase: './dist',
+      port: 8080,
+      writeToDisk: true,
     },
     output: {
       filename: 'index.js',

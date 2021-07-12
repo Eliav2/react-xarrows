@@ -37,6 +37,7 @@ const titleStyle = {
 };
 
 const ExamplePage = () => {
+  console.log('test examplsssesss!!');
   return (
     <div>
       <header style={titleStyle}>react-xarrows</header>
