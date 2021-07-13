@@ -7,9 +7,11 @@
   "module": "lib/index.js",
   "types": "lib",
   "scripts": {
-    "build": "webpack --env production",
+    "build": "webpack  --mode production --config-name lib",
+    "build:dev": "webpack --mode development --config-name lib",
     "start": "yarn --cwd .\\examples\\ start",
-    "watch": "webpack --watch --progress"
+    "watch": "webpack --watch --progress --mode development --config-name lib",
+    "prepublishOnly": "npm build"
   },
   "homepage": "https://eliav2.github.io/react-xarrows/",
   "repository": {
@@ -42,18 +44,21 @@
     "babel-eslint": "^10.1.0",
     "babel-jest": "^27.0.5",
     "babel-loader": "^8.2.2",
+    "css-loader": "^5.2.6",
     "eslint": "^7.29.0",
     "eslint-import-resolver-typescript": "^2.4.0",
     "eslint-plugin-import": "^2.22.1",
     "file-loader": "^6.2.0",
     "html-webpack-plugin": "^5.3.2",
     "jest": "^27.0.5",
+    "style-loader": "^3.0.0",
     "ts-loader": "^9.2.3",
     "ts-node": "^9.1.1",
     "typescript": "^4.3.4",
     "webpack": "^5.44.0",
     "webpack-cli": "^4.7.2",
-    "webpack-dev-server": "^3.11.2"
+    "webpack-dev-server": "^3.11.2",
+    "webpack-node-externals": "^3.0.0"
   },
   "browserslist": [
     ">0.2%",

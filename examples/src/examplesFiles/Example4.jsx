@@ -1,37 +1,37 @@
-import React, { useState, useRef, useEffect } from "react";
-import Xarrow from "react-xarrows";
+import React, { useState, useRef, useEffect } from 'react';
+import Xarrow from 'react-xarrows';
 
 const canvasStyle = {
-  width: "100%",
-  height: "40vh",
-  background: "white",
-  overflow: "auto",
-  display: "flex",
-  position: "relative",
+  width: '100%',
+  height: '40vh',
+  background: 'white',
+  overflow: 'auto',
+  display: 'flex',
+  position: 'relative',
   // overflowY: "scroll",
   // overflowX: "hidden"
 };
 
 const boxContainerStyle = {
-  position: "relative",
-  overflow: "scroll",
-  width: "120%",
-  height: "140%",
-  background: "white",
-  color: "black",
-  border: "black solid 1px",
+  position: 'relative',
+  overflow: 'scroll',
+  width: '120%',
+  height: '140%',
+  background: 'white',
+  color: 'black',
+  border: 'black solid 1px',
 };
 
 const boxStyle = {
-  position: "absolute",
-  border: "1px #999 solid",
-  borderRadius: "10px",
-  textAlign: "center",
-  width: "40px",
-  height: "100px",
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
+  position: 'absolute',
+  border: '1px #999 solid',
+  borderRadius: '10px',
+  textAlign: 'center',
+  width: '40px',
+  height: '100px',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
 };
 
 const Box = (props) => {
@@ -59,8 +59,7 @@ const Box = (props) => {
       onDragStart={(e) => handlDragStart(e)}
       onDragEnd={(e) => handleDragEnd(e, props.box.id)}
       id={props.box.id}
-      draggable
-    >
+      draggable>
       {props.box.id}
     </div>
   );
@@ -69,17 +68,17 @@ const Box = (props) => {
 const Example4 = () => {
   const [boxes, setBoxes] = useState([
     //this initiazid values are precentage - next it will be pixels
-    { id: "box1", x: 20, y: 20, ref: useRef(null) },
-    { id: "box2", x: 20, y: 80, ref: useRef(null) },
+    { id: 'box1', x: 20, y: 20, ref: useRef(null) },
+    { id: 'box2', x: 20, y: 80, ref: useRef(null) },
   ]);
 
   const [boxes2, setBoxes2] = useState([
-    { id: "box3", x: 20, y: 20, ref: useRef(null) },
-    { id: "box4", x: 20, y: 80, ref: useRef(null) },
+    { id: 'box3', x: 20, y: 20, ref: useRef(null) },
+    { id: 'box4', x: 20, y: 80, ref: useRef(null) },
   ]);
 
   const [lines] = useState([
-    { from: "box1", to: "box4" },
+    { from: 'box1', to: 'box4' },
     // { from: "box3", to: "box2" }
   ]);
   const boxContainerRef = useRef(null); //boxContainerRef
@@ -118,11 +117,7 @@ const Example4 = () => {
         <u>Example4:</u>
       </h3>
 
-      <p>
-        {" "}
-        works perfectly no matter the parent-child relationship between the
-        Xarrow and the source and target.
-      </p>
+      <p> works perfectly no matter the parent-child relationship between the Xarrow and the source and target.</p>
       <div style={canvasStyle} id="canvas">
         <div ref={boxContainerRef} style={boxContainerStyle} id="boxContainer1">
           {boxes.map((box, i) => (
@@ -130,33 +125,22 @@ const Example4 = () => {
           ))}
         </div>
         {lines.map((line, i) => (
-          <Xarrow
-            key={i}
-            start={getRefById(line.from)}
-            end={getRefById(line.to)}
-            monitorDOMchanges={true}
-          />
+          <Xarrow key={i} start={getRefById(line.from)} end={getRefById(line.to)} monitorDOMchanges={true} />
         ))}
 
-        <div
-          ref={boxContainer2Ref}
-          style={boxContainerStyle}
-          id="boxContainer2"
-        >
+        <div ref={boxContainer2Ref} style={boxContainerStyle} id="boxContainer2">
           {boxes2.map((box, i) => (
             <Box key={i} box={box} boxes={boxes2} setBoxes={setBoxes2} />
           ))}
         </div>
       </div>
       <p>
-        {" "}
+        {' '}
         set <code>monitorDOMchanges </code>
-        property to <code>true</code> to enable this behavior - this will add
-        eventListeners to the DOM and will trigger update when
-        needed(expereintial).
-        <br /> however - make sure you put the Xarrow component as son of the
-        common ancestor of 'start' component and 'end' component{" "}
-        <b>so the Xarrow will not rerender when not needed</b>.{" "}
+        property to <code>true</code> to enable this behavior - this will add eventListeners to the DOM and will trigger
+        update when needed(expereintial).
+        <br /> however - make sure you put the Xarrow component as son of the common ancestor of 'start' component and
+        'end' component <b>so the Xarrow will not rerender when not needed</b>.{' '}
       </p>
     </React.Fragment>
   );

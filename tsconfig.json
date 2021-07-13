@@ -1,3 +1,21 @@
+//{
+//  "include": [
+//    "./src/*"
+//  ],
+//  "compilerOptions": {
+//    "jsx": "react",
+//    "esModuleInterop": true,
+//    "module": "commonjs",
+//    "target": "es5",
+//    "lib": [ "esnext", "dom" ],
+//    "outDir": "lib",
+//    "sourceMap": true,
+//    "declaration": true,
+//    "removeComments": true,
+//    "emitDeclarationOnly": true
+//  },
+//  "compileOnSave": true
+//}
 {
   "include": [
     "./src/*"
@@ -22,10 +40,8 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true,
     "outDir": "lib",
-//    "noEmit": false
+    "noEmit": false
   },
   "compileOnSave": true
 }

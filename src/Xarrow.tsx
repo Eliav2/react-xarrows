@@ -21,7 +21,6 @@ import {
 } from './types';
 
 const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
-  console.log('222');
   let {
     startAnchor = 'auto',
     endAnchor = 'auto',
