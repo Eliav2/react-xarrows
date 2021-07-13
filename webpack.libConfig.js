@@ -11,9 +11,7 @@ module.exports = (env, argv) => {
     externals: [
       {
         react: 'react',
-        'lodash.isequal': 'lodash.isequal',
-        'lodash.omit': 'lodash.omit',
-        'lodash.pick': 'lodash.pick',
+        lodash: 'lodash',
         'prop-types': 'prop-types',
       },
       // nodeExternals(),
@@ -21,25 +19,14 @@ module.exports = (env, argv) => {
     // externalsPresets: { node: true },
     devtool: false,
     entry: path.resolve(__dirname, './src/index.tsx'),
-    // optimization: { splitChunks: { cacheGroups: { default: false } }, chunkIds: 'named' },
-    // optimization: {
-    //   //   minimize: true,
-    //   //   removeAvailableModules: true,
-    //   //   flagIncludedChunks: true,
-    //   //   usedExports: true,
-    //   //   concatenateModules: true,
-    //   sideEffects: true,
-    // },
 
     output: {
       filename: 'index.js',
       path: path.resolve(__dirname, `lib`),
       clean: true,
       // library
-      library: 'reactXarrow',
-      libraryTarget: 'umd',
+      library: { name: 'reactXarrow', type: 'umd', umdNamedDefine: true },
       globalObject: 'this',
-      umdNamedDefine: true,
     },
     resolve: {
       extensions: ['.tsx', '.ts', '.js', 'jsx'],
