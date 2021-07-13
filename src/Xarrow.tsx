@@ -1,8 +1,6 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import isEqual from 'lodash.isequal';
-import pick from 'lodash.pick';
-import omit from 'lodash.omit';
 import { getElementByPropGiven } from './utils';
+import _ from 'lodash';
 import PT from 'prop-types';
 import { buzzierMinSols, bzFunction } from './utils/buzzier';
 import { getShortestLine, prepareAnchor } from './utils/anchors';
@@ -18,9 +16,11 @@ import {
   tPaths,
   tSvgElems,
   xarrowPropsType,
+  _xarrowVarPropsType,
 } from './types';
 
 const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
+  const varProps = _.omit(props, ['start', 'end']) as _xarrowVarPropsType;
   let {
     startAnchor = 'auto',
     endAnchor = 'auto',
@@ -58,8 +58,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     _cpx2Offset = 0,
     _cpy2Offset = 0,
     ...extraProps
-  } = props;
-  const varProps = omit(props, ['start', 'end']);
+  } = varProps;
 
   const svgRef = useRef(null);
   const lineRef = useRef(null);
@@ -73,7 +72,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
   const endRef = useRef(null);
 
   const prevPosState = useRef<_prevPosType>(null);
-  const prevProps = useRef<xarrowPropsType>(null);
+  const prevProps = useRef<_xarrowVarPropsType>(null);
 
   // const [headBox, setHeadBox] = useState({ x: 0, y: 0, width: 1, height: 1 });
   // const [tailBox, setTailBox] = useState({ x: 0, y: 0, width: 1, height: 1 });
@@ -83,7 +82,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
 
   const [drawAnimEnded, setDrawAnimEnded] = useState(!animateDrawing);
 
-  const [_, setRerender] = useState({});
+  const [, setRerender] = useState({});
   const dumyRenderer = () => setRerender({});
 
   const [st, setSt] = useState({
@@ -147,7 +146,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     // in case one of the elements does not mounted skip any update
     if (startRef.current == null || endRef.current == null || showXarrow == false) return;
 
-    if (!isEqual(varProps, prevProps.current)) {
+    if (!_.isEqual(varProps, prevProps.current)) {
       //first check if any properties changed
       if (prevProps.current) {
         prevProps.current = varProps;
@@ -157,7 +156,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     } else {
       //if the properties did not changed - update position if needed
       let posState = getElemsPos();
-      if (!isEqual(prevPosState.current, posState)) {
+      if (!_.isEqual(prevPosState.current, posState)) {
         prevPosState.current = posState;
         updatePosition();
       }
@@ -265,8 +264,8 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
 
     let startAnchorPosition = chosenStart.anchor.position,
       endAnchorPosition = chosenEnd.anchor.position;
-    let startPoint = pick(chosenStart, ['x', 'y']),
-      endPoint = pick(chosenEnd, ['x', 'y']);
+    let startPoint = _.pick(chosenStart, ['x', 'y']),
+      endPoint = _.pick(chosenEnd, ['x', 'y']);
 
     headShape = headShape as svgCustomEdgeType;
     tailShape = tailShape as svgCustomEdgeType;

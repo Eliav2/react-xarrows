@@ -131,6 +131,7 @@ export type _prevPosType = {
 };
 
 export type anchorEdgeType = 'left' | 'right' | 'top' | 'bottom';
+export type _xarrowVarPropsType = Omit<xarrowPropsType, 'start' | 'end'>;
 
 // pick the common props between 2 objects
 type Common<A, B> = {
