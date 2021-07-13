@@ -1,6 +1,6 @@
 {
   "name": "react-xarrows",
-  "version": "1.7.1",
+  "version": "1.7.2",
   "author": "Eliav Louski",
   "description": "Draw arrows (or lines) between components in React!",
   "main": "lib/index.js",
@@ -14,7 +14,8 @@
     "start": "yarn --cwd .\\examples\\ start",
     "watch": "npm run watch:ts",
     "watch:webpack": "webpack --watch --progress --mode development --config-name lib",
-    "watch:ts": "rmdir /s /q lib && tsc -w",
+    "watch:ts": "npm run clear:lib && tsc -w",
+    "clear:lib": "del /q lib && for /d %x in (lib\\*) do @rd /s /q \"%x\"",
     "prepublishOnly": "npm run build"
   },
   "homepage": "https://eliav2.github.io/react-xarrows/",

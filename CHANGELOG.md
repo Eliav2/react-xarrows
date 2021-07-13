@@ -1,3 +1,6 @@
+## v1.7.2:
+bundler is now webpack, optimized and smaller bundle size.
+
 ## v1.7.1:
 
 - various checks related to the presence of the connected element has been added. now if the elements are not present
