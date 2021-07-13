@@ -952,7 +952,7 @@ const _pAnchorType = PT.oneOfType([pAnchorPositionType, pAnchorCustomPositionTyp
 
 const pAnchorType = PT.oneOfType([_pAnchorType, PT.arrayOf(_pAnchorType)]);
 
-const pRefType = PT.oneOfType([PT.string, PT.exact({ current: PT.element })]);
+const pRefType = PT.oneOfType([PT.string, PT.exact({ current: PT.any })]);
 
 const _pLabelType = PT.oneOfType([PT.element, PT.string]);
 
