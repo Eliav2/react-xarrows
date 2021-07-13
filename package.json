@@ -14,7 +14,7 @@
     "start": "yarn --cwd .\\examples\\ start",
     "watch": "npm run watch:ts",
     "watch:webpack": "webpack --watch --progress --mode development --config-name lib",
-    "watch:ts": "tsc -w",
+    "watch:ts": "rmdir /s /q lib && tsc -w",
     "prepublishOnly": "npm run build"
   },
   "homepage": "https://eliav2.github.io/react-xarrows/",
