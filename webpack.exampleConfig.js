@@ -2,7 +2,7 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const htmlWebpackPlugin = new HtmlWebpackPlugin({
-  template: path.join(__dirname, 'src/index.html'),
+  template: path.join(__dirname, './examples/public/index.html'),
   filename: './index.html',
 });
 
@@ -10,13 +10,12 @@ module.exports = (env) => {
   return {
     name: 'example',
     mode: 'development',
-    target: ['web'],
     externals: [
       {
         react: 'react',
       },
     ],
-    entry: './src/examples/src/index.jsx',
+    entry: path.join(__dirname, './examples/src/index.tsx'),
     devServer: {
       hot: true,
       port: 3000,
@@ -35,7 +34,7 @@ module.exports = (env) => {
         {
           test: /\.(ts|tsx)$/,
           exclude: /node_modules/,
-          use: ['ts-loader'],
+          use: { loader: 'ts-loader', options: { compilerOptions: { noEmit: false } } },
         },
         {
           test: /\.(jpg|jpeg|png|gif|mp3|svg)$/,
