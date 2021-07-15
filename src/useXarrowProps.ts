@@ -181,10 +181,7 @@ const parsePropsFuncs: { [key in keyof xarrowPropsType]: Function } = {
   endAnchor: (userProp, _, updatePos) => withUpdate(parseAnchor(userProp), updatePos),
   label: (userProp) => parseLabel(userProp),
   color: noParse,
-  lineColor: (userProp, propsRefs) => {
-    console.log(propsRefs);
-    return userProp || propsRefs.color;
-  },
+  lineColor: (userProp, propsRefs) => userProp || propsRefs.color,
   headColor: (userProp, propsRefs) => userProp || propsRefs.color,
   tailColor: (userProp, propsRefs) => userProp || propsRefs.color,
   strokeWidth: parseNumWithUpdatePos,
@@ -265,7 +262,7 @@ const useXarrowProps = (userProps: xarrowPropsType, updatePosition) => {
     useLayoutEffect(
       () => {
         propsRefs[propName] = parsePropsFuncs?.[propName]?.(curProps[propName], propsRefs, shouldUpdatePosition);
-        console.log('update because ', propName, ' with value ', propsRefs[propName]);
+        // console.log('update because ', propName, ' with value ', propsRefs[propName]);
         setPropsRefs({ ...propsRefs });
         // if (propName == lastDefaultPropName && shouldUpdatePosition.current) updatePosition();
       },

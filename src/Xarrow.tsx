@@ -429,45 +429,6 @@ const _updatePos = (
 };
 
 const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
-  // const varProps = _.omit(props, ['start', 'end']) as _xarrowVarPropsType;
-  // let {
-  //   // startAnchor = 'auto',
-  //   // endAnchor = 'auto',
-  //   // label = null,
-  //   // color = 'CornflowerBlue',
-  //   // lineColor = null,
-  //   // headColor = null,
-  //   // tailColor = null,
-  //   // strokeWidth = 4,
-  //   // showHead = true,
-  //   // headSize = 6,
-  //   // showTail = false,
-  //   // tailSize = 6,
-  //   // path = 'smooth',
-  //   // curveness = 0.8,
-  //   // gridBreak = 0.5,
-  //   // gridRadius = strokeWidth * 2, //todo
-  //   // dashness = false,
-  //   // headShape = 'arrow1',
-  //   // tailShape = 'arrow1',
-  //   showXarrow = true,
-  //   animateDrawing = false,
-  //   passProps = {},
-  //   arrowBodyProps = {},
-  //   arrowHeadProps = {},
-  //   arrowTailProps = {},
-  //   SVGcanvasProps = {},
-  //   divContainerProps = {},
-  //   divContainerStyle = {},
-  //   SVGcanvasStyle = {},
-  //   _extendSVGcanvas = 0,
-  //   _debug = false,
-  //   _cpx1Offset = 0,
-  //   _cpy1Offset = 0,
-  //   _cpx2Offset = 0,
-  //   _cpy2Offset = 0,
-  //   ...extraProps
-  // } = varProps;
   const svgRef = useRef(null);
   const lineRef = useRef(null);
   const headRef = useRef(null);
@@ -476,11 +437,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
   const lineDashAnimRef = useRef(null);
   const headOpacityAnimRef = useRef<SVGAnimationElement>(null);
 
-  // const startRef = useRef(null);
-  // const endRef = useRef(null);
-
   const prevPosState = useRef<_prevPosType>(null);
-  // const prevProps = useRef<_xarrowVarPropsType>(null);
 
   const getMainDivPos = () => {
     // if (!mainDivRef.current) return { x: 0, y: 0 };
@@ -606,11 +563,12 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     shouldUpdatePosition,
   } = useXarrowProps(props, updatePosition);
   if (shouldUpdatePosition.current) {
-    if (shouldUpdatePosition.current) console.log('updatePosition');
+    // update position if one of the relevant props changed
     updatePosition();
     shouldUpdatePosition.current = false;
   }
 
+  animateDrawing = props.animateDrawing as number;
   const [drawAnimEnded, setDrawAnimEnded] = useState(!animateDrawing);
 
   const [, setRerender] = useState({});
