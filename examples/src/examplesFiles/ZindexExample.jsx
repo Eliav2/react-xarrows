@@ -1,26 +1,26 @@
-import React, { useRef } from "react";
-import Xarrow from "react-xarrows";
-import Draggable from "react-draggable";
-// import Xarrow from "./../../src/Xarrow";
+import React, { useRef } from 'react';
+import Xarrow from 'react-xarrows';
+import Draggable from 'react-draggable';
+// import Index from "./../../src/Index";
 
 const canvasStyle = {
-  position: "relative",
-  height: "20vh",
-  background: "white",
-  display: "flex",
-  justifyContent: "space-evenly",
-  alignItems: "center",
+  position: 'relative',
+  height: '20vh',
+  background: 'white',
+  display: 'flex',
+  justifyContent: 'space-evenly',
+  alignItems: 'center',
 };
 
 const boxStyle = {
-  position: "relative",
-  border: "1px #999 solid",
-  background: "white",
-  borderRadius: "10px",
-  textAlign: "center",
-  width: "100px",
-  height: "30px",
-  color: "black",
+  position: 'relative',
+  border: '1px #999 solid',
+  background: 'white',
+  borderRadius: '10px',
+  textAlign: 'center',
+  width: '100px',
+  height: '30px',
+  color: 'black',
   zIndex: 2,
 };
 
@@ -41,15 +41,11 @@ export default () => {
         <u>Simple Example:</u>
       </h3>
       <div style={canvasStyle} id="canvas">
-        <Box id={"box1"} />
-        <Box id={"box2"} />
-        <Box id={"box3"} />
-        {/*<Xarrow start="box1" end={"box2"} />*/}
-        <Xarrow
-          start="box1"
-          end={"box3"}
-          advanced={{ passProps: { divContainer: { style: { zindex: 10 } } } }}
-        />
+        <Box id={'box1'} />
+        <Box id={'box2'} />
+        <Box id={'box3'} />
+        {/*<Index start="box1" end={"box2"} />*/}
+        <Xarrow start="box1" end={'box3'} advanced={{ passProps: { divContainer: { style: { zindex: 10 } } } }} />
       </div>
     </React.Fragment>
   );

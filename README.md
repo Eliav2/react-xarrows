@@ -44,7 +44,7 @@ see this interactive example: <https://lwwwp.csb.app/CustomizeArrow>
 
 ```jsx
 import React, {useRef} from "react";
-import Xarrow from "react-xarrows";
+import Index from "react-xarrows";
 
 const boxStyle = {
     border: "grey solid 2px",
@@ -62,7 +62,7 @@ function SimpleExample() {
             <p id="elem2" style={boxStyle}>
                 hey2
             </p>
-            <Xarrow
+            <Index
                 start={box1Ref} //can be react ref
                 end="elem2" //or an id
             />
@@ -77,7 +77,7 @@ export default SimpleExample;
 
 react-xarrows does not renders automatically if one of the connected elements is rendered. You have to manually trigger
 an update on the arrows whenever one of the connected elements renders(possibaly by trigger update on the parent of the
-arrows) ,this is because the Xarrow component does not have any control or awareness of the connected elements. in
+arrows) ,this is because the Index component does not have any control or awareness of the connected elements. in
 addition.
 **this is planned to be changed in react-xarrows v2.**
 
@@ -91,7 +91,7 @@ here's a ready to use development environment with a click of a button(patience,
 
 this will set up environment that will clone react-xarrow master,and will link the code from the src to the examples,
 and will start examples,with typescript watch process that will recompile when any change is made.\
-this means that any code changes in src/Xarrow.tsx will immediately be reflected to the running example at port 3000!
+this means that any code changes in src/index.tsx will immediately be reflected to the running example at port 3000!
 (add console.log("test") line and see!)\
 to reproduce this dev env on your local machine git clone and follow same commands as in [gitpod.yml](./.gitpod.yml).
 
@@ -117,11 +117,11 @@ here's a summary of the all the available props:
 [startAnchor](#anchors)|from which side the arrow should start from start element| 'auto'|string/object/array
 [endAnchor](#anchors)|at which side the arrow should end at end element| 'auto'|string/object/array
 [label](#label)|optional labels| null|string/array
-[color](#colors)|color of Xarrow(all parts)| 'CornflowerBlue'|string
+[color](#colors)|color of Index(all parts)| 'CornflowerBlue'|string
 [lineColor](#colors)|color of the line| null|string
 [headColor](#colors)|color of the head| null|string
 [tailColor](#colors)|color of the tail| null|string
-[strokeWidth](#widths)|thickness of Xarrow(all parts)|4|number
+[strokeWidth](#widths)|thickness of Index(all parts)|4|number
 [headSize](#widths)|thickness of head(relative to strokeWidth)|6|number
 [tailSize](#widths)|thickness of tail(relative to strokeWidth)|6|number
 [path](#path)|path drawing style| 'smooth'|string
@@ -130,7 +130,7 @@ here's a summary of the all the available props:
 [dashness](#dashness)|should the line be dashed| false|boolean/object
 [showHead](#shows)|show the arrow head?| true|boolean
 [showTail](#shows)|show the arrow tail?| false|boolean
-[showXarrow](#shows)|show Xarrow?| true|boolean
+[showXarrow](#shows)|show Index?| true|boolean
 [animateDrawing](#animateDrawing)|animate drawing when arrow mounts?| false|boolean/object
 [headShape](#customsvgs)|shape of the arrow head| 'arrow1'|string/object
 [tailShape](#customsvgs)|shape of the arrow tail|'arrow1'|string/object
@@ -315,7 +315,7 @@ defines how much the lines curve. makes a difference only in `path='smooth'`. ex
 
 - `curveness={false}` will make the line straight without curves(exactly like path='straight').
 - `curveness={true}` will choose default values of curveness.
-- `curveness={2}` will make Xarrow extra curved.
+- `curveness={2}` will make Index extra curved.
 
 </details>
 
@@ -354,11 +354,11 @@ then default values are chosen except what passed. examples:
 
 <summary markdown='span'>showHead, showTail and showXarrow</summary>
 
-`showXarrow`: show or not show Xarrow? (can be used to restart the drawing animation)
+`showXarrow`: show or not show Index? (can be used to restart the drawing animation)
 `showHead`: show or not the arrow head?
 `showTail`: show or not the arrow tail?
 
-- `showXarrow={false}` - will hide (unmount) Xarrow and his labels.
+- `showXarrow={false}` - will hide (unmount) Index and his labels.
 - `showHead={false}` - will hide the arrow head.
 
 </details>
@@ -508,8 +508,8 @@ to be enough for most cases. examples:
 
 - `passProps= {{onClick: () => console.log("xarrow clicked!")}}` - now the arrow will console log a message when
   clicked.
-- `passProps= {{cursor: "pointer"}}` - now the cursor will change to pointer style when hovering over Xarrow.
-- `passProps= {{pointerEvents: "none"}}` - now the user cannot interact with Xarrow via mouse events.
+- `passProps= {{cursor: "pointer"}}` - now the cursor will change to pointer style when hovering over Index.
+- `passProps= {{pointerEvents: "none"}}` - now the user cannot interact with Index via mouse events.
 
 ### advanced customization
 

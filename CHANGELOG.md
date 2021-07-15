@@ -69,7 +69,7 @@ improved documentation:
 - now `startAnchor` and `endAnchor` can be offset from normal position. see `anchorCustomPositionType` type in types
   declaration to see how to offset anchors.
 - a new powerful feature: `passProps` - now its possible to pass methods (such event handlers) or attributes to the
-  inner components of Xarrow.
+  inner components of Index.
 - `consoleWarning` default prop changed to `false`.
 - bug fixes and inner optimizations(arrow head implemnted now purly using path element without marker elements).## 1.2.0
   added support for javascript projects that imported the lib locally. many changes to the repo folders structure.

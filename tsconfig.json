@@ -41,7 +41,10 @@
     "isolatedModules": true,
     "declaration": true,
     "outDir": "lib",
-    "noEmit": false
+    "noEmit": false,
+    "declarationMap": true,
+//    "inlineSourceMap": true,
+    "sourceMap": true
   },
   "compileOnSave": true
 }

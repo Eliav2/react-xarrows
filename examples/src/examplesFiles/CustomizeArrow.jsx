@@ -504,7 +504,7 @@ const CustomizeArrow = () => {
           </div>
           {/*/!* todo: add generated code preview *!/ */}
           {/*<pre>*/}
-          {/*  <code className="jsx">&lt;Xarrow {}/&gt;</code>*/}
+          {/*  <code className="jsx">&lt;Index {}/&gt;</code>*/}
           {/*</pre>*/}
         </div>
       ) : null}

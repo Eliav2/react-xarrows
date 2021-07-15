@@ -1,4 +1,4 @@
-import { refType } from '../types';
+import { _prevPosType, anchorCustomPositionType, refType } from '../types';
 
 export const getElementByPropGiven = (ref: refType): HTMLElement => {
   let myRef;
@@ -28,14 +28,43 @@ export const measureFunc = (callbackFunc: Function, name = '') => {
   return returnVal;
 };
 
-// export const measureFunc = (func: Function, name = '') => (...args) => {
-//   const t = performance.now();
-//
-//   console.log(this, func.name, ...args);
-//   const returnVal = func(...args);
-//   console.log('time ', func.name || name, ':', performance.now() - t);
-//   return returnVal;
-// };
-//// example
-// instead: myFunc(arg1,arg2)
-// call: measureFunc(myFunc)(arg1,arg2)
+const dist = (p1, p2) => {
+  //length of line
+  return Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2);
+};
+
+type t1 = { x: number; y: number; anchor: anchorCustomPositionType };
+
+export const getShortestLine = (sPoints: t1[], ePoints: t1[]) => {
+  // closes tPair Of Points which feet to the specified anchors
+  let minDist = Infinity,
+    d = Infinity;
+  let closestPair: { chosenStart: t1; chosenEnd: t1 };
+  sPoints.forEach((sp) => {
+    ePoints.forEach((ep) => {
+      d = dist(sp, ep);
+      if (d < minDist) {
+        minDist = d;
+        closestPair = { chosenStart: sp, chosenEnd: ep };
+      }
+    });
+  });
+  return closestPair;
+};
+
+export const getElemPos = (elem: HTMLElement) => {
+  if (!elem) return { x: 0, y: 0, right: 0, bottom: 0 };
+  const pos = elem.getBoundingClientRect();
+  return {
+    x: pos.left,
+    y: pos.top,
+    right: pos.right,
+    bottom: pos.bottom,
+  };
+};
+
+export const getElemsPos = (startRef, endRef): _prevPosType => {
+  let start = getElemPos(startRef);
+  let end = getElemPos(endRef);
+  return { start, end };
+};
