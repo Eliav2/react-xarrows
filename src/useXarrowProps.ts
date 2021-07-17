@@ -4,6 +4,7 @@ import {
   anchorEdgeType,
   anchorType,
   arrowShapes,
+  dimensionType,
   labelsType,
   pathType,
   svgCustomEdgeType,
@@ -13,47 +14,8 @@ import {
   tArrowShapes,
   xarrowPropsType,
 } from './types';
-import { getElementByPropGiven } from './utils';
-
-const defaultProps: Required<xarrowPropsType> = {
-  start: null,
-  end: null,
-  startAnchor: 'auto',
-  endAnchor: 'auto',
-  label: null,
-  color: 'CornflowerBlue',
-  lineColor: null,
-  headColor: null,
-  tailColor: null,
-  strokeWidth: 4,
-  showHead: true,
-  headSize: 6,
-  showTail: false,
-  tailSize: 6,
-  path: 'smooth',
-  curveness: 0.8,
-  gridBreak: 0.5,
-  // gridRadius : strokeWidth * 2, //todo
-  dashness: false,
-  headShape: 'arrow1',
-  tailShape: 'arrow1',
-  showXarrow: true,
-  animateDrawing: false,
-  passProps: {},
-  arrowBodyProps: {},
-  arrowHeadProps: {},
-  arrowTailProps: {},
-  SVGcanvasProps: {},
-  divContainerProps: {},
-  divContainerStyle: {},
-  SVGcanvasStyle: {},
-  _extendSVGcanvas: 0,
-  _debug: false,
-  _cpx1Offset: 0,
-  _cpy1Offset: 0,
-  _cpx2Offset: 0,
-  _cpy2Offset: 0,
-} as const;
+import { getElementByPropGiven, getElemPos } from './utils';
+import _ from 'lodash';
 
 const parseLabel = (label: xarrowPropsType['label']): labelsType => {
   let parsedLabel = { start: null, middle: null, end: null };
@@ -230,10 +192,120 @@ const parseGivenProps = (props: xarrowPropsType, propsRef) => {
   return propsRef;
 };
 
-let initialParsedProps = {};
+const defaultProps: Required<xarrowPropsType> = {
+  start: null,
+  end: null,
+  startAnchor: 'auto',
+  endAnchor: 'auto',
+  label: null,
+  color: 'CornflowerBlue',
+  lineColor: null,
+  headColor: null,
+  tailColor: null,
+  strokeWidth: 4,
+  showHead: true,
+  headSize: 6,
+  showTail: false,
+  tailSize: 6,
+  path: 'smooth',
+  curveness: 0.8,
+  gridBreak: 0.5,
+  // gridRadius : strokeWidth * 2, //todo
+  dashness: false,
+  headShape: 'arrow1',
+  tailShape: 'arrow1',
+  showXarrow: true,
+  animateDrawing: false,
+  passProps: {},
+  arrowBodyProps: {},
+  arrowHeadProps: {},
+  arrowTailProps: {},
+  SVGcanvasProps: {},
+  divContainerProps: {},
+  divContainerStyle: {},
+  SVGcanvasStyle: {},
+  _extendSVGcanvas: 0,
+  _debug: false,
+  _cpx1Offset: 0,
+  _cpy1Offset: 0,
+  _cpx2Offset: 0,
+  _cpy2Offset: 0,
+} as const;
+
+type parsedXarrowProps = {
+  shouldUpdatePosition: React.MutableRefObject<boolean>;
+  start: HTMLElement;
+  end: HTMLElement;
+  startAnchor: anchorCustomPositionType[];
+  endAnchor: anchorCustomPositionType[];
+  label: Required<labelsType>;
+  color: string;
+  lineColor: string;
+  headColor: string;
+  tailColor: string;
+  strokeWidth: number;
+  showHead: boolean;
+  headSize: number;
+  showTail: boolean;
+  tailSize: number;
+  path: pathType;
+  showXarrow: boolean;
+  curveness: number;
+  gridBreak: number;
+  // gridRadius: number;
+  dashness: {
+    strokeLen: number;
+    nonStrokeLen: number;
+    animation: number;
+  };
+  headShape: svgCustomEdgeType;
+  tailShape: svgCustomEdgeType;
+  animateDrawing: number;
+  passProps: JSX.IntrinsicElements[svgElemType];
+  SVGcanvasProps: React.SVGAttributes<SVGSVGElement>;
+  arrowBodyProps: React.SVGProps<SVGPathElement>;
+  arrowHeadProps: JSX.IntrinsicElements[svgElemType];
+  arrowTailProps: JSX.IntrinsicElements[svgElemType];
+  divContainerProps: React.HTMLProps<HTMLDivElement>;
+  SVGcanvasStyle: React.CSSProperties;
+  divContainerStyle: React.CSSProperties;
+  _extendSVGcanvas: number;
+  _debug: boolean;
+  _cpx1Offset: number;
+  _cpy1Offset: number;
+  _cpx2Offset: number;
+  _cpy2Offset: number;
+};
+
+let initialParsedProps = {} as parsedXarrowProps;
 initialParsedProps = parseGivenProps(defaultProps, initialParsedProps);
 
+const initialValVars = {
+  startPos: { x: 0, y: 0, right: 0, bottom: 0 } as dimensionType,
+  endPos: { x: 0, y: 0, right: 0, bottom: 0 } as dimensionType,
+};
+
 // const parseAllProps = () => parseGivenProps(defaultProps, initialParsedProps);
+
+function deepCompareEquals(a, b) {
+  return _.isEqual(a, b);
+}
+
+function useDeepCompareMemoize(value) {
+  const ref = useRef();
+  // it can be done by using useMemo as well
+  // but useRef is rather cleaner and easier
+
+  if (!deepCompareEquals(value, ref.current)) {
+    ref.current = value;
+  }
+
+  return ref.current;
+}
+
+function useDeepCompareEffect(callback, dependencies) {
+  useLayoutEffect(callback, dependencies.map(useDeepCompareMemoize));
+}
 
 /**
  * smart hook that provides parsed props to Xarrow and will trigger rerender whenever given prop is changed.
@@ -265,50 +337,23 @@ const useXarrowProps = (userProps: xarrowPropsType) => {
     );
   }
 
-  return propsRefs as {
-    shouldUpdatePosition: React.MutableRefObject<boolean>;
-    start: HTMLElement;
-    end: HTMLElement;
-    startAnchor: anchorCustomPositionType[];
-    endAnchor: anchorCustomPositionType[];
-    label: Required<labelsType>;
-    color: string;
-    lineColor: string;
-    headColor: string;
-    tailColor: string;
-    strokeWidth: number;
-    showHead: boolean;
-    headSize: number;
-    showTail: boolean;
-    tailSize: number;
-    path: pathType;
-    showXarrow: boolean;
-    curveness: number;
-    gridBreak: number;
-    // gridRadius: number;
-    dashness: {
-      strokeLen: number;
-      nonStrokeLen: number;
-      animation: number;
-    };
-    headShape: svgCustomEdgeType;
-    tailShape: svgCustomEdgeType;
-    animateDrawing: number;
-    passProps: JSX.IntrinsicElements[svgElemType];
-    SVGcanvasProps: React.SVGAttributes<SVGSVGElement>;
-    arrowBodyProps: React.SVGProps<SVGPathElement>;
-    arrowHeadProps: JSX.IntrinsicElements[svgElemType];
-    arrowTailProps: JSX.IntrinsicElements[svgElemType];
-    divContainerProps: React.HTMLProps<HTMLDivElement>;
-    SVGcanvasStyle: React.CSSProperties;
-    divContainerStyle: React.CSSProperties;
-    _extendSVGcanvas: number;
-    _debug: boolean;
-    _cpx1Offset: number;
-    _cpy1Offset: number;
-    _cpx2Offset: number;
-    _cpy2Offset: number;
-  };
+  const [valVars, setValVars] = useState(initialValVars);
+  const startPos = getElemPos(propsRefs.start);
+  useDeepCompareEffect(() => {
+    // console.log('start update pos');
+    valVars.startPos = startPos;
+    shouldUpdatePosition.current = true;
+    setValVars({ ...valVars });
+  }, [startPos]);
+  const endPos = getElemPos(propsRefs.end);
+  useDeepCompareEffect(() => {
+    // console.log('end update pos');
+    valVars.endPos = endPos;
+    shouldUpdatePosition.current = true;
+    setValVars({ ...valVars });
+  }, [endPos]);
+
+  return [propsRefs, valVars] as const;
 };
 
 export default useXarrowProps;

@@ -1,5 +1,5 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { getElemPos, getElemsPos, getShortestLine } from './utils';
+import { getShortestLine } from './utils';
 import _ from 'lodash';
 import PT from 'prop-types';
 import { buzzierMinSols, bzFunction } from './utils/buzzier';
@@ -8,6 +8,7 @@ import { _prevPosType, arrowShapes, svgCustomEdgeType, tAnchorEdge, tPaths, tSvg
 import useXarrowProps from './useXarrowProps';
 
 const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
+  const [propsRefs, valVars] = useXarrowProps(props);
   let {
     start,
     end,
@@ -46,7 +47,8 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     _cpx2Offset,
     _cpy2Offset,
     shouldUpdatePosition,
-  } = useXarrowProps(props);
+  } = propsRefs;
+  const { startPos, endPos } = valVars;
 
   const svgRef = useRef(null);
   const lineRef = useRef(null);
@@ -121,8 +123,8 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     let tailOrient: number = 0;
 
     // convert startAnchor and endAnchor to list of objects represents allowed anchors.
-    let startPoints = calcAnchors(startAnchor, start);
-    let endPoints = calcAnchors(endAnchor, end);
+    let startPoints = calcAnchors(startAnchor, startPos);
+    let endPoints = calcAnchors(endAnchor, endPos);
 
     // choose the smallest path for 2 ponts from these possibilities.
     let { chosenStart, chosenEnd } = getShortestLine(startPoints, endPoints);
@@ -494,36 +496,15 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     animEndValue = 0;
   }
 
-  /**
-   * determine if an update is needed and update if so.
-   * update is needed if one of the connected elements position was changed since last render
-   * (props changes will cause rerender via the useXarrowProps hook)
-   */
-  const updateIfNeeded = () => {
-    // in case one of the elements does not mounted skip any update
-    if (start == null || end == null || showXarrow == false) return;
-
-    //if the properties did not changed - update position if needed
-    let posState = getElemsPos(start, end);
-    if (!_.isEqual(prevPosState.current, posState)) {
-      prevPosState.current = posState;
-      updatePosition();
-    }
-  };
-
   // handle draw animation
   useLayoutEffect(() => {
     if (lineRef.current) setSt((prevSt) => ({ ...prevSt, lineLength: lineRef.current?.getTotalLength() ?? 0 }));
   }, [lineRef.current]);
 
-  useLayoutEffect(() => {
-    updateIfNeeded();
-  });
-
   // set all props on first render
   useEffect(() => {
     const monitorDOMchanges = () => {
-      window.addEventListener('resize', updateIfNeeded);
+      window.addEventListener('resize', updatePosition);
 
       const handleDrawAmimEnd = () => {
         setDrawAnimEnded(true);
@@ -537,7 +518,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
         lineDrawAnimRef.current.addEventListener('beginEvent', handleDrawAmimBegin);
       }
       return () => {
-        window.removeEventListener('resize', updateIfNeeded);
+        window.removeEventListener('resize', updatePosition);
         if (lineDrawAnimRef.current) {
           lineDrawAnimRef.current.removeEventListener('endEvent', handleDrawAmimEnd);
           if (headRef.current) lineDrawAnimRef.current.removeEventListener('beginEvent', handleDrawAmimBegin);
