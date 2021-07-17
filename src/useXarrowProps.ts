@@ -330,7 +330,7 @@ const useXarrowProps = (userProps: xarrowPropsType) => {
     useLayoutEffect(
       () => {
         propsRefs[propName] = parsePropsFuncs?.[propName]?.(curProps[propName], propsRefs, shouldUpdatePosition);
-        // console.log('update because ', propName, ' with value ', propsRefs[propName]);
+        // console.log('update because', propName, 'with value', propsRefs[propName]);
         setPropsRefs({ ...propsRefs });
       },
       propsDeps[propName].map((name) => userProps[name])

@@ -1,4 +1,5 @@
 import { _prevPosType, anchorCustomPositionType, refType } from '../types';
+import React from 'react';
 
 export const getElementByPropGiven = (ref: refType): HTMLElement => {
   let myRef;
@@ -67,4 +68,16 @@ export const getElemsPos = (startRef, endRef): _prevPosType => {
   let start = getElemPos(startRef);
   let end = getElemPos(endRef);
   return { start, end };
+};
+
+export const getMainDivPos = (svgRef: React.MutableRefObject<any>) => {
+  // if (!mainDivRef.current) return { x: 0, y: 0 };
+  let { left: xarrowElemX, top: xarrowElemY } = svgRef.current.getBoundingClientRect();
+  let xarrowStyle = getComputedStyle(svgRef.current);
+  let xarrowStyleLeft = Number(xarrowStyle.left.slice(0, -2));
+  let xarrowStyleTop = Number(xarrowStyle.top.slice(0, -2));
+  return {
+    x: xarrowElemX - xarrowStyleLeft,
+    y: xarrowElemY - xarrowStyleTop,
+  };
 };
