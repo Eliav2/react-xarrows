@@ -1,5 +1,4 @@
 import { anchorCustomPositionType, dimensionType } from '../types';
-import { getElemPos } from '../utils';
 
 const getAnchorsDefaultOffsets = (width: number, height: number) => {
   return {

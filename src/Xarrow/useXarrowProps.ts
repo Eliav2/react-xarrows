@@ -13,8 +13,8 @@ import {
   tAnchorEdge,
   tArrowShapes,
   xarrowPropsType,
-} from './types';
-import { getElementByPropGiven, getElemPos } from './utils';
+} from '../types';
+import { getElementByPropGiven, getElemPos } from '../utils';
 import _ from 'lodash';
 
 const parseLabel = (label: xarrowPropsType['label']): labelsType => {

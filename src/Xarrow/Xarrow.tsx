@@ -1,10 +1,18 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { getShortestLine } from './utils';
+import { getMainDivPos, getShortestLine } from '../utils';
 import _ from 'lodash';
 import PT from 'prop-types';
-import { buzzierMinSols, bzFunction } from './utils/buzzier';
-import { calcAnchors } from './Xarrow/anchors';
-import { _prevPosType, arrowShapes, svgCustomEdgeType, tAnchorEdge, tPaths, tSvgElems, xarrowPropsType } from './types';
+import { buzzierMinSols, bzFunction } from '../utils/buzzier';
+import { calcAnchors } from './anchors';
+import {
+  _prevPosType,
+  arrowShapes,
+  svgCustomEdgeType,
+  tAnchorEdge,
+  tPaths,
+  tSvgElems,
+  xarrowPropsType,
+} from '../types';
 import useXarrowProps from './useXarrowProps';
 
 const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
@@ -62,18 +70,6 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
   const forceRerender = () => setRender({});
 
   const prevPosState = useRef<_prevPosType>(null);
-
-  const getMainDivPos = (svgRef: React.MutableRefObject<any>) => {
-    // if (!mainDivRef.current) return { x: 0, y: 0 };
-    let { left: xarrowElemX, top: xarrowElemY } = svgRef.current.getBoundingClientRect();
-    let xarrowStyle = getComputedStyle(svgRef.current);
-    let xarrowStyleLeft = Number(xarrowStyle.left.slice(0, -2));
-    let xarrowStyleTop = Number(xarrowStyle.top.slice(0, -2));
-    return {
-      x: xarrowElemX - xarrowStyleLeft,
-      y: xarrowElemY - xarrowStyleTop,
-    };
-  };
 
   const [st, setSt] = useState({
     //initial state
