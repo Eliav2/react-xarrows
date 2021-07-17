@@ -8,6 +8,46 @@ import { _prevPosType, arrowShapes, svgCustomEdgeType, tAnchorEdge, tPaths, tSvg
 import useXarrowProps from './useXarrowProps';
 
 const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
+  let {
+    start,
+    end,
+    startAnchor,
+    endAnchor,
+    label,
+    color,
+    lineColor,
+    headColor,
+    tailColor,
+    strokeWidth,
+    showHead,
+    headSize,
+    showTail,
+    tailSize,
+    path,
+    curveness,
+    gridBreak,
+    dashness,
+    headShape,
+    tailShape,
+    showXarrow,
+    animateDrawing,
+    passProps,
+    arrowBodyProps,
+    arrowHeadProps,
+    arrowTailProps,
+    SVGcanvasProps,
+    divContainerProps,
+    divContainerStyle,
+    SVGcanvasStyle,
+    _extendSVGcanvas,
+    _debug,
+    _cpx1Offset,
+    _cpy1Offset,
+    _cpx2Offset,
+    _cpy2Offset,
+    shouldUpdatePosition,
+  } = useXarrowProps(props);
+
   const svgRef = useRef(null);
   const lineRef = useRef(null);
   const headRef = useRef(null);
@@ -18,7 +58,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
 
   const prevPosState = useRef<_prevPosType>(null);
 
-  const getMainDivPos = () => {
+  const getMainDivPos = (svgRef: React.MutableRefObject<any>) => {
     // if (!mainDivRef.current) return { x: 0, y: 0 };
     let { left: xarrowElemX, top: xarrowElemY } = svgRef.current.getBoundingClientRect();
     let xarrowStyle = getComputedStyle(svgRef.current);
@@ -76,7 +116,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
    * The Main logic of path calculation for the arrow.
    * calculate new path, adjusting canvas, and set state based on given properties.
    * */
-  const updatePosition = (positions: _prevPosType = prevPosState.current): void => {
+  const updatePosition = (): void => {
     let headOrient: number = 0;
     let tailOrient: number = 0;
 
@@ -95,7 +135,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     headShape = headShape as svgCustomEdgeType;
     tailShape = tailShape as svgCustomEdgeType;
 
-    let mainDivPos = getMainDivPos();
+    let mainDivPos = getMainDivPos(svgRef);
     let cx0 = Math.min(startPoint.x, endPoint.x) - mainDivPos.x;
     let cy0 = Math.min(startPoint.y, endPoint.y) - mainDivPos.y;
     let dx = endPoint.x - startPoint.x;
@@ -305,7 +345,6 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
         },
       };
     }
-    console.log('test');
     // smart select best curve for the current anchors
     let selectedCurviness = '';
     if (['left', 'right'].includes(startAnchorPosition)) selectedCurviness += 'h';
@@ -411,45 +450,6 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     });
   };
 
-  let {
-    start,
-    end,
-    startAnchor,
-    endAnchor,
-    label,
-    color,
-    lineColor,
-    headColor,
-    tailColor,
-    strokeWidth,
-    showHead,
-    headSize,
-    showTail,
-    tailSize,
-    path,
-    curveness,
-    gridBreak,
-    dashness,
-    headShape,
-    tailShape,
-    showXarrow,
-    animateDrawing,
-    passProps,
-    arrowBodyProps,
-    arrowHeadProps,
-    arrowTailProps,
-    SVGcanvasProps,
-    divContainerProps,
-    divContainerStyle,
-    SVGcanvasStyle,
-    _extendSVGcanvas,
-    _debug,
-    _cpx1Offset,
-    _cpy1Offset,
-    _cpx2Offset,
-    _cpy2Offset,
-    shouldUpdatePosition,
-  } = useXarrowProps(props, updatePosition);
   if (shouldUpdatePosition.current) {
     // update position if one of the relevant props changed
     updatePosition();
@@ -496,7 +496,8 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
 
   /**
    * determine if an update is needed and update if so.
-   * update is needed if one of the connected elements position was changed since last render,
+   * update is needed if one of the connected elements position was changed since last render
+   * (props changes will cause rerender via the useXarrowProps hook)
    */
   const updateIfNeeded = () => {
     // in case one of the elements does not mounted skip any update
@@ -508,7 +509,6 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
       prevPosState.current = posState;
       updatePosition();
     }
-    // }
   };
 
   // handle draw animation

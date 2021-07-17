@@ -54,8 +54,6 @@ const defaultProps: Required<xarrowPropsType> = {
   _cpx2Offset: 0,
   _cpy2Offset: 0,
 } as const;
-const defaultPropsKeys = Object.keys(defaultProps);
-const lastDefaultPropName = defaultPropsKeys[defaultPropsKeys.length - 1];
 
 const parseLabel = (label: xarrowPropsType['label']): labelsType => {
   let parsedLabel = { start: null, middle: null, end: null };
@@ -240,7 +238,7 @@ initialParsedProps = parseGivenProps(defaultProps, initialParsedProps);
 /**
  * smart hook that provides parsed props to Xarrow and will trigger rerender whenever given prop is changed.
  */
-const useXarrowProps = (userProps: xarrowPropsType, updatePosition) => {
+const useXarrowProps = (userProps: xarrowPropsType) => {
   const [propsRefs, setPropsRefs] = useState(initialParsedProps);
   const shouldUpdatePosition = useRef(false);
   // const _propsRefs = useRef(initialParsedProps);
@@ -262,7 +260,6 @@ const useXarrowProps = (userProps: xarrowPropsType, updatePosition) => {
         propsRefs[propName] = parsePropsFuncs?.[propName]?.(curProps[propName], propsRefs, shouldUpdatePosition);
         // console.log('update because ', propName, ' with value ', propsRefs[propName]);
         setPropsRefs({ ...propsRefs });
-        // if (propName == lastDefaultPropName && shouldUpdatePosition.current) updatePosition();
       },
       propsDeps[propName].map((name) => userProps[name])
     );
