@@ -337,6 +337,7 @@ const useXarrowProps = (userProps: xarrowPropsType) => {
     );
   }
 
+  // rerender whenever position of start element or end element changes
   const [valVars, setValVars] = useState(initialValVars);
   const startPos = getElemPos(propsRefs.start);
   useDeepCompareEffect(() => {

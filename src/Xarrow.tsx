@@ -58,6 +58,9 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
   const lineDashAnimRef = useRef(null);
   const headOpacityAnimRef = useRef<SVGAnimationElement>(null);
 
+  const [render, setRender] = useState({});
+  const forceRerender = () => setRender({});
+
   const prevPosState = useRef<_prevPosType>(null);
 
   const getMainDivPos = (svgRef: React.MutableRefObject<any>) => {
@@ -504,7 +507,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
   // set all props on first render
   useEffect(() => {
     const monitorDOMchanges = () => {
-      window.addEventListener('resize', updatePosition);
+      window.addEventListener('resize', forceRerender);
 
       const handleDrawAmimEnd = () => {
         setDrawAnimEnded(true);
