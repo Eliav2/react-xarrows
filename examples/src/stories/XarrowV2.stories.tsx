@@ -49,12 +49,12 @@ const TestComponent = () => {
 };
 
 const SimpleTemplate = (xarrowProps: xarrowPropsType) => {
-  const [, setRender] = useState({});
-  const box2Ref = useRef();
   const box = { id: 'box1', x: 20, y: 20 };
   const box2 = { id: 'box2', x: 320, y: 120 };
   const box3 = { id: 'box3', x: 50, y: 150 };
   const box4 = { id: 'box4', x: 320, y: 220 };
+  const box5 = { id: 'box5', x: 50, y: 250 };
+  const box6 = { id: 'box6', x: 320, y: 280 };
 
   return (
     <div style={canvasStyle} id="canvas">
@@ -63,6 +63,11 @@ const SimpleTemplate = (xarrowProps: xarrowPropsType) => {
         <DraggableBox box={box} />
         <DraggableBox box={box2} />
         <Xarrow start={'box1'} end={'box2'} {...xarrowProps} />
+        <Xwrapper>
+          <DraggableBox box={box5} />
+          <DraggableBox box={box6} />
+          <Xarrow start={'box5'} end={'box6'} {...xarrowProps} />
+        </Xwrapper>
       </Xwrapper>
       <Xwrapper>
         <DraggableBox box={box3} />

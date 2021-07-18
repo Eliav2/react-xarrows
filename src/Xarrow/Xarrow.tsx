@@ -27,6 +27,8 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
   const headOpacityAnimRef = useRef<SVGAnimationElement>(null);
   const [propsRefs, valVars] = useXarrowProps(props, { headRef, tailRef });
 
+  // console.log('xarrow');
+
   let {
     start,
     end,
