@@ -739,8 +739,8 @@ const pAnchorPositionType = PT.oneOf(tAnchorEdge);
 const pAnchorCustomPositionType = PT.exact({
   position: pAnchorPositionType.isRequired,
   offset: PT.exact({
-    rightness: PT.number,
-    bottomness: PT.number,
+    x: PT.number,
+    y: PT.number,
   }).isRequired,
 });
 

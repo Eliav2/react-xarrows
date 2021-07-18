@@ -51,7 +51,7 @@ const FewArrows = () => {
       end: 'box1',
       color: 'green',
       path: 'grid',
-      // endAnchor: ["right", {position: "left", offset: {bottomness: -10}}],
+      // endAnchor: ["right", {position: "left", offset: {y: -10}}],
       dashness: { animation: 1 },
     },
   ]);

@@ -140,11 +140,11 @@ export const CustomAdvanced = CustomSimple.bind({});
 CustomAdvanced.args = {
   startAnchor: {
     position: 'right',
-    offset: { rightness: 0, bottomness: 0 },
+    offset: { x: 0, y: 0 },
   },
   endAnchor: {
     position: 'left',
-    offset: { rightness: 0, bottomness: 0 },
+    offset: { x: 0, y: 0 },
     // facingDir: ['outwards', 'inwards'],
   },
   label: { start: '', middle: '', end: '' },

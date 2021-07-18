@@ -96,7 +96,7 @@ export type anchorNamedType = typeof tAnchorEdge[number];
 
 export type anchorCustomPositionType = {
   position: anchorNamedType;
-  offset: { rightness?: number; bottomness?: number };
+  offset: { x?: number; y?: number };
 };
 export type refType = React.MutableRefObject<any> | string;
 export type labelsType = {

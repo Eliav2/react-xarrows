@@ -296,7 +296,7 @@ type:
 ```typescript
 export type anchorCustomPositionType = {
     position: anchorPositionType;
-    offset: { rightness?: number; bottomness?: number };
+    offset: { x?: number; y?: number };
 };
 ```
 
@@ -304,12 +304,12 @@ you can offset the anchor from normal positioning. NOTE: breaking changes in nam
 
 example:
 
-- `endAnchor= { position: "auto", offset: { rightness: 20 } }` will choose automatic anchoring for end anchor but will
+- `endAnchor= { position: "auto", offset: { x: 20 } }` will choose automatic anchoring for end anchor but will
   offset it 20 pixels to the right after normal positioning.
 
 if list is provided - the minimal length anchors will be chosen from the list. example:
 
-- `endAnchor= ["right", {position: "left", offset: {bottomness: -10}}]` only right and left anchors will be allowed for
+- `endAnchor= ["right", {position: "left", offset: {y: -10}}]` only right and left anchors will be allowed for
   endAnchor, and if the left side connected then it will be offset 10 pixels up.
 
 </details>

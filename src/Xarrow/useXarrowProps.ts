@@ -68,9 +68,9 @@ const parseAnchor = (anchor: anchorType) => {
     if (typeof anchorChoice === 'object') {
       let anchorChoiceCustom = anchorChoice as anchorCustomPositionType;
       if (!anchorChoiceCustom.position) anchorChoiceCustom.position = 'auto';
-      if (!anchorChoiceCustom.offset) anchorChoiceCustom.offset = { rightness: 0, bottomness: 0 };
-      if (!anchorChoiceCustom.offset.bottomness) anchorChoiceCustom.offset.bottomness = 0;
-      if (!anchorChoiceCustom.offset.rightness) anchorChoiceCustom.offset.rightness = 0;
+      if (!anchorChoiceCustom.offset) anchorChoiceCustom.offset = { x: 0, y: 0 };
+      if (!anchorChoiceCustom.offset.y) anchorChoiceCustom.offset.y = 0;
+      if (!anchorChoiceCustom.offset.x) anchorChoiceCustom.offset.x = 0;
       anchorChoiceCustom = anchorChoiceCustom as Required<anchorCustomPositionType>;
       return anchorChoiceCustom;
     } else return anchorChoice;
