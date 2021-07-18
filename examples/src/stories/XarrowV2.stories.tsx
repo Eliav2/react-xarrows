@@ -17,9 +17,9 @@ const boxStyle = {
 
 const canvasStyle = {
   width: '100%',
-  height: '100vh',
+  height: '50vh',
   background: 'white',
-  overflow: 'auto',
+  // overflow: 'auto',
   display: 'flex',
   color: 'black',
 } as const;
@@ -61,18 +61,29 @@ const SimpleTemplate = () => {
 const SimpleTemplateStory: Story<xarrowPropsType> = (args) => <SimpleTemplate />;
 export const V2 = SimpleTemplateStory.bind({});
 
+const ScrolledDiv = ({ children, style }) => {
+  const updateXarrow = useXarrow();
+  return (
+    <div
+      style={{ height: '150%', width: 300, overflow: 'auto', position: 'relative', ...style }}
+      onScroll={updateXarrow}>
+      {children}
+    </div>
+  );
+};
+
 const ScrollTemplate = () => {
   const box = { id: 'box1', x: 20, y: 20 };
   const box2 = { id: 'box2', x: 320, y: 120 };
   return (
     <div style={{ ...canvasStyle, background: '#e0ffd2' }} id="canvas">
       <Xwrapper>
-        <div style={{ height: '150%', width: 300, background: '#d2f6ff', overflow: 'scroll', position: 'relative' }}>
+        <ScrolledDiv style={{ background: '#d2f6ff' }}>
           <DraggableBox box={box} />
-        </div>
-        <div style={{ height: '150%', width: 300, background: '#f8d2ff', overflow: 'scroll', position: 'relative' }}>
+        </ScrolledDiv>
+        <ScrolledDiv style={{ background: '#f8d2ff' }}>
           <DraggableBox box={box2} />
-        </div>
+        </ScrolledDiv>
         <Xarrow start={'box1'} end={'box2'} />
       </Xwrapper>
     </div>
