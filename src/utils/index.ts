@@ -70,7 +70,7 @@ export const getElemsPos = (startRef, endRef): _prevPosType => {
   return { start, end };
 };
 
-export const getMainDivPos = (svgRef: React.MutableRefObject<any>) => {
+export const getSvgPos = (svgRef: React.MutableRefObject<any>) => {
   // if (!mainDivRef.current) return { x: 0, y: 0 };
   let { left: xarrowElemX, top: xarrowElemY } = svgRef.current.getBoundingClientRect();
   let xarrowStyle = getComputedStyle(svgRef.current);

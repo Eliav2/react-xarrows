@@ -23,9 +23,7 @@ const parseLabel = (label: xarrowPropsType['label']): labelsType => {
     if (typeof label === 'string' || React.isValidElement(label)) parsedLabel.middle = label;
     else {
       for (let key in label) {
-        if (key in parsedLabel) {
-          parsedLabel[key] = label[key];
-        }
+        parsedLabel[key] = label[key];
       }
     }
   }
@@ -134,7 +132,7 @@ const noParse = (userProp) => userProp;
 const noParseWithUpdatePos = (userProp, _, updatePos) => withUpdate(userProp, updatePos);
 const parseNumWithUpdatePos = (userProp, _, updatePos) => withUpdate(Number(userProp), updatePos);
 
-const parsePropsFuncs: { [key in keyof xarrowPropsType]: Function } = {
+const parsePropsFuncs: Required<{ [key in keyof xarrowPropsType]: Function }> = {
   start: (userProp) => getElementByPropGiven(userProp),
   end: (userProp) => getElementByPropGiven(userProp),
   startAnchor: (userProp, _, updatePos) => withUpdate(parseAnchor(userProp), updatePos),
@@ -310,7 +308,10 @@ function useDeepCompareEffect(callback, dependencies) {
 /**
  * smart hook that provides parsed props to Xarrow and will trigger rerender whenever given prop is changed.
  */
-const useXarrowProps = (userProps: xarrowPropsType) => {
+const useXarrowProps = (
+  userProps: xarrowPropsType,
+  refs: { headRef: React.MutableRefObject<any>; tailRef: React.MutableRefObject<any> }
+) => {
   const [propsRefs, setPropsRefs] = useState(initialParsedProps);
   const shouldUpdatePosition = useRef(false);
   // const _propsRefs = useRef(initialParsedProps);

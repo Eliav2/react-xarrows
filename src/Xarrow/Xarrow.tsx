@@ -1,5 +1,5 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { getMainDivPos, getShortestLine } from '../utils';
+import { getSvgPos, getShortestLine } from '../utils';
 import _ from 'lodash';
 import PT from 'prop-types';
 import { buzzierMinSols, bzFunction } from '../utils/buzzier';
@@ -16,7 +16,15 @@ import {
 import useXarrowProps from './useXarrowProps';
 
 const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
-  const [propsRefs, valVars] = useXarrowProps(props);
+  const svgRef = useRef(null);
+  const lineRef = useRef(null);
+  const headRef = useRef(null);
+  const tailRef = useRef(null);
+  const lineDrawAnimRef = useRef(null);
+  const lineDashAnimRef = useRef(null);
+  const headOpacityAnimRef = useRef<SVGAnimationElement>(null);
+  const [propsRefs, valVars] = useXarrowProps(props, { headRef, tailRef });
+
   let {
     start,
     end,
@@ -58,18 +66,11 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
   } = propsRefs;
   const { startPos, endPos } = valVars;
 
-  const svgRef = useRef(null);
-  const lineRef = useRef(null);
-  const headRef = useRef(null);
-  const tailRef = useRef(null);
-  const lineDrawAnimRef = useRef(null);
-  const lineDashAnimRef = useRef(null);
-  const headOpacityAnimRef = useRef<SVGAnimationElement>(null);
+  animateDrawing = props.animateDrawing as number;
+  const [drawAnimEnded, setDrawAnimEnded] = useState(!animateDrawing);
 
   const [render, setRender] = useState({});
   const forceRerender = () => setRender({});
-
-  const prevPosState = useRef<_prevPosType>(null);
 
   const [st, setSt] = useState({
     //initial state
@@ -91,9 +92,6 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     cpy2: 0,
     headOrient: 0, // determines to what side the arrowhead will point
     tailOrient: 0, // determines to what side the arrow tail will point
-    labelStartPos: { x: 0, y: 0 },
-    labelMiddlePos: { x: 0, y: 0 },
-    labelEndPos: { x: 0, y: 0 },
     arrowEnd: { x: 0, y: 0 },
     arrowHeadOffset: { x: 0, y: 0 },
     arrowTailOffset: { x: 0, y: 0 },
@@ -111,6 +109,9 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     fHeadSize: 1,
     fTailSize: 1,
     arrowPath: ``,
+    labelStartPos: { x: 0, y: 0 },
+    labelMiddlePos: { x: 0, y: 0 },
+    labelEndPos: { x: 0, y: 0 },
   });
 
   /**
@@ -136,7 +137,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     headShape = headShape as svgCustomEdgeType;
     tailShape = tailShape as svgCustomEdgeType;
 
-    let mainDivPos = getMainDivPos(svgRef);
+    let mainDivPos = getSvgPos(svgRef);
     let cx0 = Math.min(startPoint.x, endPoint.x) - mainDivPos.x;
     let cy0 = Math.min(startPoint.y, endPoint.y) - mainDivPos.y;
     let dx = endPoint.x - startPoint.x;
@@ -457,9 +458,6 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     shouldUpdatePosition.current = false;
   }
 
-  animateDrawing = props.animateDrawing as number;
-  const [drawAnimEnded, setDrawAnimEnded] = useState(!animateDrawing);
-
   const xOffsetHead = st.x2 - st.arrowHeadOffset.x;
   const yOffsetHead = st.y2 - st.arrowHeadOffset.y;
   const xOffsetTail = st.x1 - st.arrowTailOffset.x;
@@ -508,7 +506,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
       const handleDrawAmimEnd = () => {
         setDrawAnimEnded(true);
         // @ts-ignore
-        headOpacityAnimRef.current.beginElement();
+        headOpacityAnimRef.current?.beginElement();
         lineDashAnimRef.current?.beginElement();
       };
       const handleDrawAmimBegin = () => (headRef.current.style.opacity = '0');
@@ -517,7 +515,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
         lineDrawAnimRef.current.addEventListener('beginEvent', handleDrawAmimBegin);
       }
       return () => {
-        window.removeEventListener('resize', updatePosition);
+        window.removeEventListener('resize', forceRerender);
         if (lineDrawAnimRef.current) {
           lineDrawAnimRef.current.removeEventListener('endEvent', handleDrawAmimEnd);
           if (headRef.current) lineDrawAnimRef.current.removeEventListener('beginEvent', handleDrawAmimBegin);
