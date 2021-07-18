@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { getSvgPos, getShortestLine } from '../utils';
 import _ from 'lodash';
 import PT from 'prop-types';
@@ -14,8 +14,10 @@ import {
   xarrowPropsType,
 } from '../types';
 import useXarrowProps from './useXarrowProps';
+import { XarrowContext } from '../Xwrapper';
 
 const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
+  useContext(XarrowContext);
   const svgRef = useRef(null);
   const lineRef = useRef(null);
   const headRef = useRef(null);
