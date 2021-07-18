@@ -44,25 +44,17 @@ see this interactive example: <https://lwwwp.csb.app/CustomizeArrow>
 
 ```jsx
 import React, {useRef} from "react";
-import Index from "react-xarrows";
+import Xarrow from "react-xarrows";
 
-const boxStyle = {
-    border: "grey solid 2px",
-    borderRadius: "10px",
-    padding: "5px",
-};
+const boxStyle = {border: "grey solid 2px", borderRadius: "10px", padding: "5px"};
 
 function SimpleExample() {
     const box1Ref = useRef(null);
     return (
         <div style={{display: "flex", justifyContent: "space-evenly", width: "100%"}}>
-            <div ref={box1Ref} style={boxStyle}>
-                hey
-            </div>
-            <p id="elem2" style={boxStyle}>
-                hey2
-            </p>
-            <Index
+            <div ref={box1Ref} style={boxStyle}>hey</div>
+            <p id="elem2" style={boxStyle}>hey2</p>
+            <Xarrow
                 start={box1Ref} //can be react ref
                 end="elem2" //or an id
             />
@@ -73,13 +65,96 @@ function SimpleExample() {
 export default SimpleExample;
 ```
 
+### V2 example
+
+<details>
+
+```jsx
+import React from 'react';
+import Xarrow, { useXarrow, xarrowPropsType, Xwrapper } from 'react-xarrows';
+import Draggable from 'react-draggable';
+
+const boxStyle = {
+  border: '1px #999 solid',
+  borderRadius: '10px',
+  textAlign: 'center',
+  width: '100px',
+  height: '30px',
+  color: 'black',
+  alignItems: 'center',
+  display: 'flex',
+  justifyContent: 'center',
+} as const;
+
+const canvasStyle = {
+  width: '100%',
+  height: '100vh',
+  background: 'white',
+  overflow: 'auto',
+  display: 'flex',
+  color: 'black',
+} as const;
+
+const DraggableBox = ({ box }) => {
+  const updateXarrow = useXarrow();
+  return (
+    <Draggable onDrag={updateXarrow} onStop={updateXarrow}>
+      <div id={box.id} style={{ ...boxStyle, position: 'absolute', left: box.x, top: box.y }}>
+        {box.id}
+      </div>
+    </Draggable>
+  );
+};
+
+const SimpleTemplate = () => {
+  const box = { id: 'box1', x: 20, y: 20 };
+  const box2 = { id: 'box2', x: 320, y: 120 };
+  const box3 = { id: 'box3', x: 50, y: 150 };
+  const box4 = { id: 'box4', x: 320, y: 220 };
+  return (
+    <div style={canvasStyle} id="canvas">
+      <Xwrapper>
+        <DraggableBox box={box} />
+        <DraggableBox box={box2} />
+        <Xarrow start={'box1'} end={'box2'} />
+        <Xarrow start={'box1'} end={'box2'} endAnchor={'top'} />
+        <Xarrow start={'box1'} end={'box2'} startAnchor={'bottom'} />
+      </Xwrapper>
+      <Xwrapper>
+        <DraggableBox box={box3} />
+        <DraggableBox box={box4} />
+        <Xarrow start={'box3'} end={'box4'} />
+      </Xwrapper>
+    </div>
+  );
+};
+```
+(will render this)
+
+<img src="https://user-images.githubusercontent.com/47307889/126083727-1c15f86f-9921-4d9b-933a-5e237d8e1916.png" width="450px"/>
+
+</details>
+
 ## Usage
 
-react-xarrows does not renders automatically if one of the connected elements is rendered. You have to manually trigger
-an update on the arrows whenever one of the connected elements renders(possibaly by trigger update on the parent of the
-arrows) ,this is because the Index component does not have any control or awareness of the connected elements. in
-addition.
-**this is planned to be changed in react-xarrows v2.**
+react-xarrow v2.0 released! no need to trigger render on parents anymore!  
+react-xarrows will smartly trigger updates on relevant elements! use `Xwrapper` and `useXarrow` hook to achieve selective rendering!
+
+react-xarrow v2 supports V1 code, Xwrapper is optional but recommended.
+
+#### useXarrow
+
+```jsx
+const YourComponent = () =>{
+  const updateXarrow = useXarrow()
+  ...
+  return <>...</>
+  
+}
+```
+each time component calling useXarrow hook renders also the xarrows inside the wrapping Xwrapper wrapper will render.
+receiving `updateXarrow` is optional. use this function only if you want to trigger a render different phase from rendering(like click or drag event). 
+
 
 ### Contributing
 
@@ -98,11 +173,6 @@ to reproduce this dev env on your local machine git clone and follow same comman
 if you made an improvement that is relevant for most users, you can quickly submit a pull request.  
 Please always pull request from and into dev branch -
 here's [Gitpod](https://gitpod.io/#https://github.com/Eliav2/react-xarrows/blob/dev/src/index.tsx)
-
-### react-xarrows v2
-
-v2 is on its way. want to contribute and participate in plannig the next react architecture for react-xarrows? see
-discussion [here](https://github.com/Eliav2/react-xarrows/discussions/53)!
 
 ### API
 
@@ -126,7 +196,7 @@ here's a summary of the all the available props:
 [tailSize](#widths)|thickness of tail(relative to strokeWidth)|6|number
 [path](#path)|path drawing style| 'smooth'|string
 [curveness](#curveness)|how much the line curveness when path='smooth'| 0.8|number
-[gridBreak](#gridBreak)|where the line breaks in path='grid'| 0.5|number
+[gridBreak](#gridBreak)|where the line breaks in path='grid'| 0.5 |number
 [dashness](#dashness)|should the line be dashed| false|boolean/object
 [showHead](#shows)|show the arrow head?| true|boolean
 [showTail](#shows)|show the arrow tail?| false|boolean
@@ -562,7 +632,6 @@ If you/your company are using this project, and you want to contribute to his de
 Any donation will help me to devote more time to the development of this project.
 
 [![paypal](https://www.paypalobjects.com/en_US/IL/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/donate?hosted_button_id=CRQ343F9VTRS8)
-
 
 ## Versions
 

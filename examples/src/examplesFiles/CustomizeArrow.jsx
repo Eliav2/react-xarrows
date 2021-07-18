@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import Xarrow, { arrowShapes } from 'react-xarrows';
+import Xarrow, { arrowShapes, useXarrow, Xwrapper } from 'react-xarrows';
 import Draggable from 'react-draggable';
 import NumericInput from 'react-numeric-input';
 import Collapsible from 'react-collapsible';
@@ -91,8 +91,9 @@ const CollapsibleDiv = ({ children, style = {}, title = 'title', ...props }) => 
 };
 
 const Box = (props) => {
+  const updateXarrow = useXarrow();
   return (
-    <Draggable onDrag={props.forceRerender} onStop={props.forceRerender}>
+    <Draggable onDrag={updateXarrow} onStop={updateXarrow}>
       <div ref={props.box.ref} id={props.box.id} style={{ ...boxStyle, left: props.box.x, top: props.box.y }}>
         {props.box.id}
       </div>
@@ -226,9 +227,6 @@ const ArrowLabel = ({ labelName, label, setLabel }) => {
 };
 
 const CustomizeArrow = () => {
-  const [, setRender] = useState({});
-  const forceRerender = () => setRender({});
-
   const [showMe, setShowMe] = useState(true);
 
   const box = {
@@ -498,9 +496,11 @@ const CustomizeArrow = () => {
           </MyCollapsible>
           <br />
           <div style={canvasStyle} id="canvas">
-            <Box box={box} forceRerender={forceRerender} />
-            <Box box={box2} forceRerender={forceRerender} />
-            {showArrow ? <Xarrow {...props} /> : null}
+            <Xwrapper>
+              <Box box={box} />
+              <Box box={box2} />
+              {showArrow ? <Xarrow {...props} /> : null}
+            </Xwrapper>
           </div>
           {/*/!* todo: add generated code preview *!/ */}
           {/*<pre>*/}

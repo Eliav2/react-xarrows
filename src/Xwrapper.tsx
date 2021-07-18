@@ -20,7 +20,12 @@ const XarrowProvider = ({ children }) => {
 };
 
 const XelemProvider = ({ children }) => {
-  updateRefCount++;
+  const first = useRef(true);
+  if (first.current) {
+    updateRefCount++;
+    first.current = false;
+  }
+
   // console.log('XelemProvider', updateRefCount - 1);
   return <XelemContext.Provider value={updateRef[updateRefCount - 1]}>{children}</XelemContext.Provider>;
 };

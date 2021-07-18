@@ -1,8 +1,7 @@
-import React, { useRef, useState } from 'react';
-import Xarrow, { xarrowPropsType } from 'react-xarrows';
+import React from 'react';
+import Xarrow, { useXarrow, xarrowPropsType, Xwrapper } from 'react-xarrows';
 import Draggable from 'react-draggable';
 import { Meta, Story } from '@storybook/react';
-import { Xwrapper, useXarrow } from 'react-xarrows';
 
 const boxStyle = {
   border: '1px #999 solid',
@@ -26,16 +25,9 @@ const canvasStyle = {
 } as const;
 
 const DraggableBox = ({ box }) => {
-  const [, setRender] = useState({});
-  const reRender = () => setRender({});
-
-  console.log('DraggableBox render', box.id);
-  const handleDrag = () => {
-    updateXarrow();
-  };
   const updateXarrow = useXarrow();
   return (
-    <Draggable onDrag={reRender} onStop={reRender}>
+    <Draggable onDrag={updateXarrow} onStop={updateXarrow}>
       <div id={box.id} style={{ ...boxStyle, position: 'absolute', left: box.x, top: box.y }}>
         {box.id}
       </div>
@@ -43,42 +35,30 @@ const DraggableBox = ({ box }) => {
   );
 };
 
-const TestComponent = () => {
-  console.log('testComponent renders!');
-  return <div />;
-};
-
-const SimpleTemplate = (xarrowProps: xarrowPropsType) => {
+const SimpleTemplate = () => {
   const box = { id: 'box1', x: 20, y: 20 };
   const box2 = { id: 'box2', x: 320, y: 120 };
   const box3 = { id: 'box3', x: 50, y: 150 };
   const box4 = { id: 'box4', x: 320, y: 220 };
-  const box5 = { id: 'box5', x: 50, y: 250 };
-  const box6 = { id: 'box6', x: 320, y: 280 };
-
   return (
     <div style={canvasStyle} id="canvas">
-      <TestComponent />
       <Xwrapper>
         <DraggableBox box={box} />
         <DraggableBox box={box2} />
-        <Xarrow start={'box1'} end={'box2'} {...xarrowProps} />
-        <Xwrapper>
-          <DraggableBox box={box5} />
-          <DraggableBox box={box6} />
-          <Xarrow start={'box5'} end={'box6'} {...xarrowProps} />
-        </Xwrapper>
+        <Xarrow start={'box1'} end={'box2'} />
+        <Xarrow start={'box1'} end={'box2'} endAnchor={'top'} />
+        <Xarrow start={'box1'} end={'box2'} startAnchor={'bottom'} />
       </Xwrapper>
       <Xwrapper>
         <DraggableBox box={box3} />
         <DraggableBox box={box4} />
-        <Xarrow start={'box3'} end={'box4'} {...xarrowProps} />
+        <Xarrow start={'box3'} end={'box4'} />
       </Xwrapper>
     </div>
   );
 };
 
-const SimpleTemplateStory: Story<xarrowPropsType> = (args) => <SimpleTemplate {...args} />;
+const SimpleTemplateStory: Story<xarrowPropsType> = (args) => <SimpleTemplate />;
 export const V2 = SimpleTemplateStory.bind({});
 
 export default {

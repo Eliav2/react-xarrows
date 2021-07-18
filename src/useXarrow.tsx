@@ -6,6 +6,10 @@ const useXarrow = () => {
   const reRender = () => setRender({});
 
   const updateXarrow = useContext(XelemContext);
+  if (!updateXarrow)
+    throw new Error(
+      "'Xwrapper' is required around element using 'useXarrow' hook! wrap your xarrows and connected elements with Xwrapper! "
+    );
 
   useLayoutEffect(() => {
     updateXarrow();

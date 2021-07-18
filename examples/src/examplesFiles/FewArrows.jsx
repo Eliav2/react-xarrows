@@ -1,12 +1,21 @@
 import React, { useState, useRef } from 'react';
-import Xarrow from 'react-xarrows';
+import Xarrow, { useXarrow, Xwrapper } from 'react-xarrows';
 import Draggable from 'react-draggable';
 import { boxContainerStyle, boxStyle, canvasStyle } from '../ExamplePage';
 
-const FewArrows = () => {
-  const [, setRender] = useState({});
-  const forceRerender = () => setRender({});
+const DraggableBox = ({ box }) => {
+  const updateXarrow = useXarrow();
+  console.log(box.id, 'render');
+  return (
+    <Draggable onDrag={updateXarrow} onStop={updateXarrow}>
+      <div id={box.id} style={{ ...boxStyle, position: 'absolute', left: box.x, top: box.y }}>
+        {box.id}
+      </div>
+    </Draggable>
+  );
+};
 
+const FewArrows = () => {
   const boxes = [
     { id: 'box1', x: 50, y: 20, ref: useRef(null) },
     { id: 'box2', x: 20, y: 250, ref: useRef(null) },
@@ -58,18 +67,16 @@ const FewArrows = () => {
       </p>
       <div style={canvasStyle} id="canvas">
         <div style={boxContainerStyle} id="boxContainerConatinerStyle">
-          <div style={boxContainerStyle} id="boxContainerStyle">
-            {boxes.map((box, i) => (
-              <Draggable onStop={forceRerender} onDrag={forceRerender} key={i}>
-                <div id={box.id} style={{ ...boxStyle, left: box.x, top: box.y }}>
-                  {box.id}
-                </div>
-              </Draggable>
-            ))}
-            {lines.map((line, i) => (
-              <Xarrow key={i} {...line} />
-            ))}
-          </div>
+          <Xwrapper>
+            <div style={boxContainerStyle} id="boxContainerStyle">
+              {boxes.map((box, i) => (
+                <DraggableBox box={box} key={i} />
+              ))}
+              {lines.map((line, i) => (
+                <Xarrow key={i} {...line} />
+              ))}
+            </div>
+          </Xwrapper>
         </div>
       </div>
       <br />
