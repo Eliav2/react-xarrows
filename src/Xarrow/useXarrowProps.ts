@@ -131,6 +131,7 @@ const withUpdate = (propVal, updateRef) => {
 const noParse = (userProp) => userProp;
 const noParseWithUpdatePos = (userProp, _, updatePos) => withUpdate(userProp, updatePos);
 const parseNumWithUpdatePos = (userProp, _, updatePos) => withUpdate(Number(userProp), updatePos);
+const parseNum = (userProp) => Number(userProp);
 
 const parsePropsFuncs: Required<{ [key in keyof xarrowPropsType]: Function }> = {
   start: (userProp) => getElementByPropGiven(userProp),
@@ -156,6 +157,7 @@ const parsePropsFuncs: Required<{ [key in keyof xarrowPropsType]: Function }> = 
   tailShape: (userProp) => parseEdge(userProp),
   showXarrow: noParse,
   animateDrawing: noParse,
+  zIndex: parseNum,
   passProps: noParse,
   arrowBodyProps: noParseWithUpdatePos,
   arrowHeadProps: noParseWithUpdatePos,
@@ -214,6 +216,7 @@ const defaultProps: Required<xarrowPropsType> = {
   tailShape: 'arrow1',
   showXarrow: true,
   animateDrawing: false,
+  zIndex: 0,
   passProps: {},
   arrowBodyProps: {},
   arrowHeadProps: {},
@@ -259,6 +262,7 @@ type parsedXarrowProps = {
   headShape: svgCustomEdgeType;
   tailShape: svgCustomEdgeType;
   animateDrawing: number;
+  zIndex: number;
   passProps: JSX.IntrinsicElements[svgElemType];
   SVGcanvasProps: React.SVGAttributes<SVGSVGElement>;
   arrowBodyProps: React.SVGProps<SVGPathElement>;

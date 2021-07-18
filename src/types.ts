@@ -73,6 +73,7 @@ export type xarrowPropsType = {
   headShape?: svgEdgeShapeType | svgCustomEdgeType;
   tailShape?: svgEdgeShapeType | svgCustomEdgeType;
   animateDrawing?: boolean | number;
+  zIndex?: number;
   passProps?: JSX.IntrinsicElements[svgElemType];
   SVGcanvasProps?: React.SVGAttributes<SVGSVGElement>;
   arrowBodyProps?: React.SVGProps<SVGPathElement>;

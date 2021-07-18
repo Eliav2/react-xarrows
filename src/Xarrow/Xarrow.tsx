@@ -1,18 +1,10 @@
 import React, { useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { getSvgPos, getShortestLine } from '../utils';
+import { getShortestLine, getSvgPos } from '../utils';
 import _ from 'lodash';
 import PT from 'prop-types';
 import { buzzierMinSols, bzFunction } from '../utils/buzzier';
 import { calcAnchors } from './anchors';
-import {
-  _prevPosType,
-  arrowShapes,
-  svgCustomEdgeType,
-  tAnchorEdge,
-  tPaths,
-  tSvgElems,
-  xarrowPropsType,
-} from '../types';
+import { arrowShapes, svgCustomEdgeType, tAnchorEdge, tPaths, tSvgElems, xarrowPropsType } from '../types';
 import useXarrowProps from './useXarrowProps';
 import { XarrowContext } from '../Xwrapper';
 
@@ -52,6 +44,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     tailShape,
     showXarrow,
     animateDrawing,
+    zIndex,
     passProps,
     arrowBodyProps,
     arrowHeadProps,
@@ -69,6 +62,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     shouldUpdatePosition,
   } = propsRefs;
   const { startPos, endPos } = valVars;
+  console.log(zIndex);
 
   animateDrawing = props.animateDrawing as number;
   const [drawAnimEnded, setDrawAnimEnded] = useState(!animateDrawing);
@@ -540,7 +534,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
   // so todo- fix all the `passProps as any` assertions
 
   return (
-    <div {...divContainerProps} style={{ position: 'absolute', ...divContainerStyle }}>
+    <div {...divContainerProps} style={{ position: 'absolute', zIndex, ...divContainerStyle }}>
       {showXarrow ? (
         <>
           <svg
@@ -792,6 +786,7 @@ Xarrow.propTypes = {
   headShape: pSvgEdgeType,
   tailShape: pSvgEdgeType,
   animateDrawing: PT.oneOfType([PT.bool, PT.number]),
+  zIndex: PT.number,
   passProps: PT.object,
   arrowBodyProps: PT.object,
   arrowHeadProps: PT.object,

@@ -204,6 +204,7 @@ here's a summary of the all the available props:
 [animateDrawing](#animateDrawing)|animate drawing when arrow mounts?| false|boolean/object
 [headShape](#customsvgs)|shape of the arrow head| 'arrow1'|string/object
 [tailShape](#customsvgs)|shape of the arrow tail|'arrow1'|string/object
+zIndex|[zIndex](https://developer.mozilla.org/en-US/docs/Web/CSS/z-index) - Overlapping elements with a larger z-index cover those with a smaller one|0|number
 
 <details>
 
@@ -628,7 +629,9 @@ out the interactive codesandbox, set _debug to true and play with these properti
 
 ## Donation
 
-If you/your company are using this project, and you want to contribute to his development, please consider donating.  
+It takes many hours to develop and maintain this library, and it is not funded by any company or commercial organization.
+
+If you/your company are using this project, please consider donating.  
 Any donation will help me to devote more time to the development of this project.
 
 [![paypal](https://www.paypalobjects.com/en_US/IL/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/donate?hosted_button_id=CRQ343F9VTRS8)

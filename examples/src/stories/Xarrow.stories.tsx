@@ -4,6 +4,7 @@ import React, { useRef, useState } from 'react';
 import Xarrow, { xarrowPropsType } from 'react-xarrows';
 import Draggable from 'react-draggable';
 import { Meta, Story } from '@storybook/react';
+import zIndex from '@material-ui/core/styles/zIndex';
 
 const flexBox = {
   display: 'flex',
@@ -109,8 +110,9 @@ const SimpleTemplateStory: Story<typeCustomSimpleTemplate> = (args) => <SimpleTe
 export const CustomSimple = SimpleTemplateStory.bind({});
 
 CustomSimple.args = {
-  box1: { height: 150, width: 60 },
-  box2: { height: 90, width: 80 },
+  box1: { height: 150, width: 60, zIndex: 13, background: 'white' },
+  box2: { height: 90, width: 80, zIndex: 10, background: 'white' },
+  zIndex: 2,
   startAnchor: 'right',
   endAnchor: 'left',
   label: { start: 'start', middle: 'middle', end: 'end' },
