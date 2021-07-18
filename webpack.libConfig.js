@@ -4,6 +4,7 @@ const path = require('path');
 module.exports = (env, argv) => {
   const { mode } = argv;
   const isDev = mode === 'development';
+  const isProd = mode === 'production';
   return {
     name: 'lib',
     mode: mode,
@@ -45,7 +46,7 @@ module.exports = (env, argv) => {
             {
               loader: 'ts-loader',
               options: {
-                compilerOptions: isDev ? { sourceMap: true, declarationMap: true } : {},
+                compilerOptions: isProd ? { sourceMap: false, declarationMap: false } : {},
               },
             },
           ],

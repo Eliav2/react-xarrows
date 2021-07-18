@@ -125,7 +125,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     let startPoints = calcAnchors(startAnchor, startPos);
     let endPoints = calcAnchors(endAnchor, endPos);
 
-    // choose the smallest path for 2 ponts from these possibilities.
+    // choose the smallest path for 2 points from these possibilities.
     let { chosenStart, chosenEnd } = getShortestLine(startPoints, endPoints);
 
     let startAnchorPosition = chosenStart.anchor.position,
