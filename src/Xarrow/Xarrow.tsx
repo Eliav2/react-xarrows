@@ -62,7 +62,6 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     shouldUpdatePosition,
   } = propsRefs;
   const { startPos, endPos } = valVars;
-  console.log(zIndex);
 
   animateDrawing = props.animateDrawing as number;
   const [drawAnimEnded, setDrawAnimEnded] = useState(!animateDrawing);

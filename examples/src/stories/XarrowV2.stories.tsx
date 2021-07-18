@@ -64,21 +64,16 @@ export const V2 = SimpleTemplateStory.bind({});
 const ScrollTemplate = () => {
   const box = { id: 'box1', x: 20, y: 20 };
   const box2 = { id: 'box2', x: 320, y: 120 };
-  const box3 = { id: 'box3', x: 50, y: 150 };
-  const box4 = { id: 'box4', x: 320, y: 220 };
   return (
-    <div style={canvasStyle} id="canvas">
+    <div style={{ ...canvasStyle, background: '#e0ffd2' }} id="canvas">
       <Xwrapper>
-        <DraggableBox box={box} />
-        <DraggableBox box={box2} />
+        <div style={{ height: '150%', width: 300, background: '#d2f6ff', overflow: 'scroll', position: 'relative' }}>
+          <DraggableBox box={box} />
+        </div>
+        <div style={{ height: '150%', width: 300, background: '#f8d2ff', overflow: 'scroll', position: 'relative' }}>
+          <DraggableBox box={box2} />
+        </div>
         <Xarrow start={'box1'} end={'box2'} />
-        <Xarrow start={'box1'} end={'box2'} endAnchor={'top'} />
-        <Xarrow start={'box1'} end={'box2'} startAnchor={'bottom'} />
-      </Xwrapper>
-      <Xwrapper>
-        <DraggableBox box={box3} />
-        <DraggableBox box={box4} />
-        <Xarrow start={'box3'} end={'box4'} />
       </Xwrapper>
     </div>
   );

@@ -9,16 +9,18 @@ Draw arrows between components in React!
 [![issues](https://img.shields.io/github/issues/Eliav2/react-xarrows)](https://github.com/Eliav2/react-xarrows/issues)
 [![licence](https://img.shields.io/npm/l/react-xarrows)](https://github.com/Eliav2/react-xarrows/blob/master/LICENSE)
 
-#### main features
+### main features
 
-- Connect between elements by passing a ref or an id for startElement and endElement.
-- Automatic anchoring based on smallest path.
-- Fast algorithm to find path and to adjust canvas.
-- Customization is easy but flexible
+V2 released!
 
-found a problem? not a problem! post a new issue([here](https://github.com/Eliav2/react-xarrows/issues)).
+- Super simple yet fully customizable API!
+- Smart and efficient!
+- Intuitive look and feel!
+- Smart React lifecycle for efficiency!
 
-liked my work? please star [this repo](https://github.com/Eliav2/react-xarrows).
+liked my work? star [this repo](https://github.com/Eliav2/react-xarrows).
+
+reallyyy liked my work? [buy me a coffee](https://www.paypal.com/donate?hosted_button_id=CRQ343F9VTRS8)!
 
 ## installation
 
