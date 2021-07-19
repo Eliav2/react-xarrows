@@ -29,6 +29,10 @@
     "lodash": "^4.17.21",
     "prop-types": "^15.7.2"
   },
+  "funding": {
+    "type": "individual",
+    "url": "https://www.paypal.com/donate?hosted_button_id=CRQ343F9VTRS8"
+  },
   "peerDependencies": {
     "react": ">=16.8.0"
   },
