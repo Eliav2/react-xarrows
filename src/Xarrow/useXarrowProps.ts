@@ -11,7 +11,7 @@ import {
 } from '../types';
 import { getElementByPropGiven, getElemPos, xStr2absRelative } from '../utils';
 import _ from 'lodash';
-import { arrowShapes, tAnchorEdge, tArrowShapes } from '../constants';
+import { arrowShapes, cAnchorEdge, cArrowShapes } from '../constants';
 import { anchorEdgeType, dimensionType } from '../privateTypes';
 
 const parseLabel = (label: xarrowPropsType['label']): labelsType => {
@@ -29,7 +29,7 @@ const parseLabel = (label: xarrowPropsType['label']): labelsType => {
 
 // remove 'auto' as possible anchor from anchorCustomPositionType.position
 interface anchorCustomPositionType2 extends Omit<Required<anchorCustomPositionType>, 'position'> {
-  position: Exclude<typeof tAnchorEdge[number], 'auto'>;
+  position: Exclude<typeof cAnchorEdge[number], 'auto'>;
 }
 
 const parseAnchor = (anchor: anchorType) => {
@@ -44,7 +44,7 @@ const parseAnchor = (anchor: anchorType) => {
   });
 
   //remove any invalid anchor names
-  anchorChoice2 = anchorChoice2.filter((an) => tAnchorEdge.includes(an.position));
+  anchorChoice2 = anchorChoice2.filter((an) => cAnchorEdge.includes(an.position));
   if (anchorChoice2.length == 0) anchorChoice2 = [{ position: 'auto' }];
 
   //replace any 'auto' with ['left','right','bottom','top']
@@ -102,7 +102,7 @@ const parseEdge = (svgEdge): svgCustomEdgeType => {
     if (svgEdge in arrowShapes) svgEdge = arrowShapes[svgEdge as svgEdgeShapeType];
     else {
       console.warn(
-        `'${svgEdge}' is not supported arrow shape. the supported arrow shapes is one of ${tArrowShapes}.
+        `'${svgEdge}' is not supported arrow shape. the supported arrow shapes is one of ${cArrowShapes}.
            reverting to default shape.`
       );
       svgEdge = arrowShapes['arrow1'];

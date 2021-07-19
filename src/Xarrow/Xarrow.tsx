@@ -7,7 +7,7 @@ import { xarrowPropsType } from '../types';
 import useXarrowProps from './useXarrowProps';
 import { XarrowContext } from '../Xwrapper';
 import XarrowPropTypes from './propTypes';
-import { tPaths } from '../constants';
+import { cPaths } from '../constants';
 
 const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
   useContext(XarrowContext);
@@ -155,7 +155,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
 
     let cu = Number(curveness);
     // gridRadius = Number(gridRadius);
-    if (!tPaths.includes(path)) path = 'smooth';
+    if (!cPaths.includes(path)) path = 'smooth';
     if (path === 'straight') {
       cu = 0;
       path = 'smooth';

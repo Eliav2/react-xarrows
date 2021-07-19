@@ -319,7 +319,7 @@ const CustomizeArrow = () => {
     _cpy1Offset: _cpy1Offset,
     _cpx2Offset: _cpx2Offset,
     _cpy2Offset: _cpy2Offset,
-    animateDrawing: _animateDrawing,
+    animateDrawing: true,
   };
 
   return (

@@ -1,7 +1,7 @@
 import PT from 'prop-types';
-import { arrowShapes, tAnchorEdge, tPaths, tSvgElems } from '../constants';
+import { arrowShapes, cAnchorEdge, cPaths, cSvgElems } from '../constants';
 
-const pAnchorPositionType = PT.oneOf(tAnchorEdge);
+const pAnchorPositionType = PT.oneOf(cAnchorEdge);
 
 const pAnchorCustomPositionType = PT.exact({
   position: pAnchorPositionType.isRequired,
@@ -26,7 +26,7 @@ const pLabelsType = PT.exact({
 });
 
 const pSvgEdgeShapeType = PT.oneOf(Object.keys(arrowShapes) as Array<keyof typeof arrowShapes>);
-const pSvgElemType = PT.oneOf(tSvgElems);
+const pSvgElemType = PT.oneOf(cSvgElems);
 const pSvgEdgeType = PT.oneOfType([
   pSvgEdgeShapeType,
   PT.exact({
@@ -51,7 +51,7 @@ const XarrowPropTypes = {
   tailColor: PT.string,
   strokeWidth: PT.number,
   showTail: PT.bool,
-  path: PT.oneOf(tPaths),
+  path: PT.oneOf(cPaths),
   showXarrow: PT.bool,
   curveness: PT.number,
   gridBreak: PT.string,

@@ -1,5 +1,5 @@
 import React from 'react';
-import { tAnchorEdge, tArrowShapes, tPaths, tSvgElems } from './constants';
+import { cAnchorEdge, cArrowShapes, cPaths, cSvgElems } from './constants';
 
 export type xarrowPropsType = {
   start: refType;
@@ -48,10 +48,10 @@ export type xarrowPropsType = {
   _cpy2Offset?: number;
 };
 
-export type pathType = typeof tPaths[number];
+export type pathType = typeof cPaths[number];
 export type _anchorType = anchorNamedType | anchorCustomPositionType;
 export type anchorType = _anchorType | _anchorType[];
-export type anchorNamedType = typeof tAnchorEdge[number];
+export type anchorNamedType = typeof cAnchorEdge[number];
 
 export type anchorCustomPositionType = {
   position: anchorNamedType;
@@ -71,6 +71,6 @@ export type svgCustomTypeGeneric<T extends svgElemType> = {
   offsetForward?: number;
 };
 export type svgCustomEdgeType = { [K in svgElemType]: svgCustomTypeGeneric<K> }[svgElemType];
-export type svgEdgeShapeType = typeof tArrowShapes[number];
+export type svgEdgeShapeType = typeof cArrowShapes[number];
 export type svgEdgeType = svgEdgeShapeType | svgCustomEdgeType;
-export type svgElemType = typeof tSvgElems[number];
+export type svgElemType = typeof cSvgElems[number];

@@ -1,7 +1,7 @@
 // constants used for typescript and proptypes definitions
-export const tAnchorEdge = ['middle', 'left', 'right', 'top', 'bottom', 'auto'] as const;
-export const tPaths = ['smooth', 'grid', 'straight'] as const;
-export const tSvgElems = ['circle', 'ellipse', 'line', 'path', 'polygon', 'polyline', 'rect'] as const;
+export const cAnchorEdge = ['middle', 'left', 'right', 'top', 'bottom', 'auto'] as const;
+export const cPaths = ['smooth', 'grid', 'straight'] as const;
+export const cSvgElems = ['circle', 'ellipse', 'line', 'path', 'polygon', 'polyline', 'rect'] as const;
 
 //default arrows svgs
 export const arrowShapes = {
@@ -26,4 +26,4 @@ export const arrowShapes = {
   },
 } as const;
 
-export const tArrowShapes = Object.keys(arrowShapes) as Array<keyof typeof arrowShapes>;
+export const cArrowShapes = Object.keys(arrowShapes) as Array<keyof typeof arrowShapes>;
