@@ -97,7 +97,7 @@ const parseDashness = (dashness, props) => {
   };
 };
 
-const parseEdge = (svgEdge): svgCustomEdgeType => {
+const parseEdgeShape = (svgEdge): svgCustomEdgeType => {
   if (typeof svgEdge == 'string') {
     if (svgEdge in arrowShapes) svgEdge = arrowShapes[svgEdge as svgEdgeShapeType];
     else {
@@ -111,7 +111,7 @@ const parseEdge = (svgEdge): svgCustomEdgeType => {
   svgEdge = svgEdge as svgCustomEdgeType;
   if (svgEdge?.offsetForward === undefined) svgEdge.offsetForward = 0.25;
   if (svgEdge?.svgElem === undefined) svgEdge.svgElem = 'path';
-  if (svgEdge?.svgProps === undefined) svgEdge.svgProps = arrowShapes.arrow1.svgProps;
+  // if (svgEdge?.svgProps === undefined) svgEdge.svgProps = arrowShapes.arrow1.svgProps;
   return svgEdge;
 };
 
@@ -156,8 +156,8 @@ const parsePropsFuncs: Required<{ [key in keyof xarrowPropsType]: Function }> = 
   gridBreak: (userProp, _, updatePos) => withUpdate(parseGridBreak(userProp), updatePos),
   // // gridRadius = strokeWidth * 2, //todo
   dashness: (userProp, propsRefs) => parseDashness(userProp, propsRefs),
-  headShape: (userProp) => parseEdge(userProp),
-  tailShape: (userProp) => parseEdge(userProp),
+  headShape: (userProp) => parseEdgeShape(userProp),
+  tailShape: (userProp) => parseEdgeShape(userProp),
   showXarrow: noParse,
   animateDrawing: noParse,
   zIndex: parseNum,
