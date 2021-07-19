@@ -176,7 +176,7 @@ here's [Gitpod](https://gitpod.io/#https://github.com/Eliav2/react-xarrows/blob/
 
 ### API
 
-to see full typescript definition see [types.ts](./src/types.ts) file.
+to see full typescript definition see [types.ts](src/types.ts) file.
 
 here's a summary of the all the available props:
 

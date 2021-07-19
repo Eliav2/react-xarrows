@@ -1,12 +1,13 @@
 import React, { useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { getShortestLine, getSvgPos } from '../utils';
 import _ from 'lodash';
-import PT from 'prop-types';
 import { buzzierMinSols, bzFunction } from '../utils/buzzier';
 import { calcAnchors } from './anchors';
-import { arrowShapes, svgCustomEdgeType, tAnchorEdge, tPaths, tSvgElems, xarrowPropsType } from '../types';
+import { xarrowPropsType } from '../types';
 import useXarrowProps from './useXarrowProps';
 import { XarrowContext } from '../Xwrapper';
+import XarrowPropTypes from './propTypes';
+import { tPaths } from '../constants';
 
 const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
   useContext(XarrowContext);
@@ -89,7 +90,6 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     cpy2: 0,
     headOrient: 0, // determines to what side the arrowhead will point
     tailOrient: 0, // determines to what side the arrow tail will point
-    arrowEnd: { x: 0, y: 0 },
     arrowHeadOffset: { x: 0, y: 0 },
     arrowTailOffset: { x: 0, y: 0 },
     headOffset: 0,
@@ -130,9 +130,6 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
       endAnchorPosition = chosenEnd.anchor.position;
     let startPoint = _.pick(chosenStart, ['x', 'y']),
       endPoint = _.pick(chosenEnd, ['x', 'y']);
-
-    headShape = headShape as svgCustomEdgeType;
-    tailShape = tailShape as svgCustomEdgeType;
 
     let mainDivPos = getSvgPos(svgRef);
     let cx0 = Math.min(startPoint.x, endPoint.x) - mainDivPos.x;
@@ -397,7 +394,6 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     const labelStartPos = { x: bzx(0.01), y: bzy(0.01) };
     const labelMiddlePos = { x: bzx(0.5), y: bzy(0.5) };
     const labelEndPos = { x: bzx(0.99), y: bzy(0.99) };
-    const arrowEnd = { x: bzx(1), y: bzy(1) };
 
     let arrowPath;
     if (path === 'grid') {
@@ -428,7 +424,6 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
       labelStartPos,
       labelMiddlePos,
       labelEndPos,
-      arrowEnd,
       excLeft,
       excRight,
       excUp,
@@ -441,7 +436,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
       mainDivPos,
       xSign,
       ySign,
-      lineLength: lineRef.current.getTotalLength(),
+      lineLength: lineRef.current?.getTotalLength() ?? 0,
       fHeadSize,
       fTailSize,
       arrowPath,
@@ -539,10 +534,6 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
             ref={svgRef}
             width={st.cw}
             height={st.ch}
-            // width="100%"
-            // height="100%"
-            // preserveAspectRatio="none"
-            // viewBox={'auto'}
             style={{
               position: 'absolute',
               left: st.cx0,
@@ -550,7 +541,6 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
               pointerEvents: 'none',
               border: _debug ? '1px dashed yellow' : null,
               ...SVGcanvasStyle,
-              // overflow: "hidden",
             }}
             overflow="auto"
             {...SVGcanvasProps}>
@@ -726,77 +716,6 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
 //////////////////////////////
 // propTypes
 
-const pAnchorPositionType = PT.oneOf(tAnchorEdge);
-
-const pAnchorCustomPositionType = PT.exact({
-  position: pAnchorPositionType.isRequired,
-  offset: PT.exact({
-    x: PT.number,
-    y: PT.number,
-  }).isRequired,
-});
-
-const _pAnchorType = PT.oneOfType([pAnchorPositionType, pAnchorCustomPositionType]);
-
-const pAnchorType = PT.oneOfType([_pAnchorType, PT.arrayOf(_pAnchorType)]);
-
-const pRefType = PT.oneOfType([PT.string, PT.exact({ current: PT.any })]);
-
-const _pLabelType = PT.oneOfType([PT.element, PT.string]);
-
-const pLabelsType = PT.exact({
-  start: _pLabelType,
-  middle: _pLabelType,
-  end: _pLabelType,
-});
-
-const pSvgEdgeShapeType = PT.oneOf(Object.keys(arrowShapes) as Array<keyof typeof arrowShapes>);
-const pSvgElemType = PT.oneOf(tSvgElems);
-const pSvgEdgeType = PT.oneOfType([
-  pSvgEdgeShapeType,
-  PT.exact({
-    svgElem: pSvgElemType,
-    svgProps: PT.any,
-    offsetForward: PT.number,
-  }).isRequired,
-]);
-
-Xarrow.propTypes = {
-  start: pRefType.isRequired,
-  end: pRefType.isRequired,
-  startAnchor: pAnchorType,
-  endAnchor: pAnchorType,
-  label: PT.oneOfType([_pLabelType, pLabelsType]),
-  color: PT.string,
-  lineColor: PT.string,
-  showHead: PT.bool,
-  headColor: PT.string,
-  headSize: PT.number,
-  tailSize: PT.number,
-  tailColor: PT.string,
-  strokeWidth: PT.number,
-  showTail: PT.bool,
-  path: PT.oneOf(tPaths),
-  showXarrow: PT.bool,
-  curveness: PT.number,
-  gridBreak: PT.string,
-  dashness: PT.oneOfType([PT.bool, PT.object]),
-  headShape: pSvgEdgeType,
-  tailShape: pSvgEdgeType,
-  animateDrawing: PT.oneOfType([PT.bool, PT.number]),
-  zIndex: PT.number,
-  passProps: PT.object,
-  arrowBodyProps: PT.object,
-  arrowHeadProps: PT.object,
-  arrowTailProps: PT.object,
-  SVGcanvasProps: PT.object,
-  divContainerProps: PT.object,
-  _extendSVGcanvas: PT.number,
-  _debug: PT.bool,
-  _cpx1Offset: PT.number,
-  _cpy1Offset: PT.number,
-  _cpx2Offset: PT.number,
-  _cpy2Offset: PT.number,
-};
+Xarrow.propTypes = XarrowPropTypes;
 
 export default Xarrow;

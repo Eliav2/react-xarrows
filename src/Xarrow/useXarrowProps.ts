@@ -1,21 +1,18 @@
 import React, { useLayoutEffect, useRef, useState } from 'react';
 import {
   anchorCustomPositionType,
-  anchorEdgeType,
   anchorType,
-  arrowShapes,
-  dimensionType,
   labelsType,
   pathType,
   svgCustomEdgeType,
   svgEdgeShapeType,
   svgElemType,
-  tAnchorEdge,
-  tArrowShapes,
   xarrowPropsType,
 } from '../types';
 import { getElementByPropGiven, getElemPos, xStr2absRelative } from '../utils';
 import _ from 'lodash';
+import { arrowShapes, tAnchorEdge, tArrowShapes } from '../constants';
+import { anchorEdgeType, dimensionType } from '../privateTypes';
 
 const parseLabel = (label: xarrowPropsType['label']): labelsType => {
   let parsedLabel = { start: null, middle: null, end: null };

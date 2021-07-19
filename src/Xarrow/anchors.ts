@@ -1,4 +1,5 @@
-import { anchorCustomPositionType, dimensionType } from '../types';
+import { anchorCustomPositionType } from '../types';
+import { dimensionType } from '../privateTypes';
 
 const getAnchorsDefaultOffsets = (width: number, height: number) => {
   return {

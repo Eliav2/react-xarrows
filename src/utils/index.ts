@@ -1,4 +1,4 @@
-import { _prevPosType, anchorCustomPositionType, refType } from '../types';
+import { anchorCustomPositionType, refType } from '../types';
 import React from 'react';
 
 export const getElementByPropGiven = (ref: refType): HTMLElement => {
@@ -73,12 +73,6 @@ export const getElemPos = (elem: HTMLElement) => {
     right: pos.right,
     bottom: pos.bottom,
   };
-};
-
-export const getElemsPos = (startRef, endRef): _prevPosType => {
-  let start = getElemPos(startRef);
-  let end = getElemPos(endRef);
-  return { start, end };
 };
 
 export const getSvgPos = (svgRef: React.MutableRefObject<any>) => {
