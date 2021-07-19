@@ -157,7 +157,6 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     let _tailOffset = fTailSize * tailOffset;
 
     let cu = Number(curveness);
-    gridBreak = Number(gridBreak);
     // gridRadius = Number(gridRadius);
     if (!tPaths.includes(path)) path = 'smooth';
     if (path === 'straight') {
@@ -313,8 +312,8 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     else if (path === 'grid') {
       curvesPossibilities = {
         hh: () => {
-          cpx1 += absDx * gridBreak * xSign;
-          cpx2 -= absDx * (1 - gridBreak) * xSign;
+          cpx1 += (absDx * gridBreak.relative + gridBreak.abs) * xSign;
+          cpx2 -= (absDx * (1 - gridBreak.relative) - gridBreak.abs) * xSign;
           if (showHead) {
             cpx1 -= ((fHeadSize * (1 - headOffset)) / 2) * xSign;
             cpx2 += ((fHeadSize * (1 - headOffset)) / 2) * xSign;
@@ -325,8 +324,8 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
           }
         },
         vv: () => {
-          cpy1 += absDy * gridBreak * ySign;
-          cpy2 -= absDy * (1 - gridBreak) * ySign;
+          cpy1 += (absDy * gridBreak.relative + gridBreak.abs) * ySign;
+          cpy2 -= (absDy * (1 - gridBreak.relative) - gridBreak.abs) * ySign;
           if (showHead) {
             cpy1 -= ((fHeadSize * (1 - headOffset)) / 2) * ySign;
             cpy2 += ((fHeadSize * (1 - headOffset)) / 2) * ySign;
@@ -780,7 +779,7 @@ Xarrow.propTypes = {
   path: PT.oneOf(tPaths),
   showXarrow: PT.bool,
   curveness: PT.number,
-  gridBreak: PT.number,
+  gridBreak: PT.string,
   dashness: PT.oneOfType([PT.bool, PT.object]),
   headShape: pSvgEdgeType,
   tailShape: pSvgEdgeType,

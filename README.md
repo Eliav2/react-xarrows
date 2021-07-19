@@ -11,8 +11,6 @@ Draw arrows between components in React!
 
 ### main features
 
-V2 released!
-
 - Super simple yet fully customizable API!
 - Smart and efficient!
 - Intuitive look and feel!
@@ -198,7 +196,7 @@ here's a summary of the all the available props:
 [tailSize](#widths)|thickness of tail(relative to strokeWidth)|6|number
 [path](#path)|path drawing style| 'smooth'|string
 [curveness](#curveness)|how much the line curveness when path='smooth'| 0.8|number
-[gridBreak](#gridBreak)|where the line breaks in path='grid'| 0.5 |number
+[gridBreak](#gridBreak)|where the line breaks in path='grid'| "50%" | string
 [dashness](#dashness)|should the line be dashed| false|boolean/object
 [showHead](#shows)|show the arrow head?| true|boolean
 [showTail](#shows)|show the arrow tail?| false|boolean
@@ -303,8 +301,6 @@ export type anchorCustomPositionType = {
 };
 ```
 
-you can offset the anchor from normal positioning. NOTE: breaking changes in naming in v2.
-
 example:
 
 - `endAnchor= { position: "auto", offset: { x: 20 } }` will choose automatic anchoring for end anchor but will
@@ -402,7 +398,10 @@ defines where the line will break when `path='grid'`. value should be a number f
 
 examples:
 
-- `gridBreak={0.2}` the line would break closer to start element(20% of the path instead of 50%).
+- `gridBreak='20%'` the line would break closer to start element(20% of the path instead of 50%).
+- `gridBreak='50'` the line would break 50 pixel from start element.
+- `gridBreak='20%50'` the line would break 50 pixel after 20% from start element.
+- `gridBreak='100%-50'` the line would break 50 pixel before end element.
 
 </details>
 

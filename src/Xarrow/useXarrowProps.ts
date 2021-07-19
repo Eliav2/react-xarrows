@@ -14,7 +14,7 @@ import {
   tArrowShapes,
   xarrowPropsType,
 } from '../types';
-import { getElementByPropGiven, getElemPos } from '../utils';
+import { getElementByPropGiven, getElemPos, xStr2absRelative } from '../utils';
 import _ from 'lodash';
 
 const parseLabel = (label: xarrowPropsType['label']): labelsType => {
@@ -118,6 +118,12 @@ const parseEdge = (svgEdge): svgCustomEdgeType => {
   return svgEdge;
 };
 
+const parseGridBreak = (gridBreak: string): { relative: number; abs: number } => {
+  let resGridBreak = xStr2absRelative(gridBreak);
+  if (!resGridBreak) resGridBreak = { relative: 0.5, abs: 0 };
+  return resGridBreak;
+};
+
 /**
  * should be wrapped with any changed prop that is affecting the points path positioning
  * @param propVal
@@ -150,7 +156,7 @@ const parsePropsFuncs: Required<{ [key in keyof xarrowPropsType]: Function }> = 
   tailSize: parseNumWithUpdatePos,
   path: noParseWithUpdatePos,
   curveness: parseNumWithUpdatePos,
-  gridBreak: parseNumWithUpdatePos,
+  gridBreak: (userProp, _, updatePos) => withUpdate(parseGridBreak(userProp), updatePos),
   // // gridRadius = strokeWidth * 2, //todo
   dashness: (userProp, propsRefs) => parseDashness(userProp, propsRefs),
   headShape: (userProp) => parseEdge(userProp),
@@ -209,7 +215,7 @@ const defaultProps: Required<xarrowPropsType> = {
   tailSize: 6,
   path: 'smooth',
   curveness: 0.8,
-  gridBreak: 0.5,
+  gridBreak: '50%',
   // gridRadius : strokeWidth * 2, //todo
   dashness: false,
   headShape: 'arrow1',
@@ -252,7 +258,7 @@ type parsedXarrowProps = {
   path: pathType;
   showXarrow: boolean;
   curveness: number;
-  gridBreak: number;
+  gridBreak: { relative: number; abs: number };
   // gridRadius: number;
   dashness: {
     strokeLen: number;

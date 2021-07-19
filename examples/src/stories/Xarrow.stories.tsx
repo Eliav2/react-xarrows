@@ -127,7 +127,7 @@ CustomSimple.args = {
   tailSize: 6,
   path: 'smooth',
   curveness: 0.8,
-  gridBreak: 0.5,
+  gridBreak: '50%',
   dashness: false,
   headShape: 'arrow1',
   tailShape: 'arrow1',
@@ -180,7 +180,7 @@ export const gridBreak = CustomSvgHead.bind({});
 gridBreak.args = {
   path: 'grid',
   endAnchor: 'right',
-  gridBreak: 0.5,
+  gridBreak: '50%',
   arrowBodyProps: {},
   _extendSVGcanvas: 100,
 };
@@ -254,7 +254,7 @@ AllStates.args = {
   tailSize: 6,
   path: 'smooth',
   curveness: 0.8,
-  gridBreak: 0.5,
+  gridBreak: '50%',
   dashness: false,
   headShape: 'arrow1',
   tailShape: 'arrow1',

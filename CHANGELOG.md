@@ -1,3 +1,14 @@
+# V2
+
+top level `Xwrapper` context and `useXarrow` hook added!
+
+### breaking changes
+
+- `startAnchor.offset.rightness` renamed to `startAnchor.offset.x`.
+- `startAnchor.offset.bottomness` renamed to `startAnchor.offset.y`.  
+  same for `endAnchor`.
+- `gridBreak` type changed from number to string. API changed!  
+
 ## v1.7.2:
 bundler is now webpack, optimized and smaller bundle size.
 
