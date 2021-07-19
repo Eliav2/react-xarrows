@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
+import React from 'react';
 import './Box.css';
 import Draggable from 'react-draggable';
-import MenuWindow from './MenuWindow';
+import { useXarrow } from 'react-xarrows';
 
 const Box = (props) => {
-  const handleDrag = () => props.setBoxes([...props.boxes]);
+  const updateXarrow = useXarrow();
+  // const handleDrag = () => props.setBoxes([...props.boxes]);
   const handleClick = (e) => {
-    e.stopPropagation(); //so only the click event on the box will fire on not on the conainer itself
+    e.stopPropagation(); //so only the click event on the box will fire on not on the container itself
     if (props.actionState === 'Normal') {
       props.handleSelect(e);
     } else if (props.actionState === 'Add Connections' && props.selected.id !== props.box.id) {
@@ -39,10 +40,7 @@ const Box = (props) => {
 
   return (
     <React.Fragment>
-      <Draggable
-        onStart={() => props.position !== 'static'}
-        bounds="parent"
-        onDrag={(e) => handleDrag(e, props.box.id)}>
+      <Draggable onStart={() => props.position !== 'static'} bounds="parent" onDrag={updateXarrow}>
         <div
           ref={props.box.ref}
           className={`${props.box.shape} ${props.position} hoverMarker`}

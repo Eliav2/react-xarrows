@@ -3,6 +3,7 @@ import './Playground.css';
 import Box from './components/Box';
 import TopBar from './components/TopBar';
 import Xarrow from './components/Xarrow';
+import { Xwrapper } from 'react-xarrows';
 import MenuWindow from './components/MenuWindow';
 
 const shapes = ['wideBox', 'tallBox', 'interfaceBox'];
@@ -107,75 +108,77 @@ const PlayGround = () => {
         </strong>
       </p>
 
-      <div className="canvasStyle" id="canvas" onClick={() => handleSelect(null)}>
-        <div className="toolboxMenu">
-          <div className="toolboxTitle">Drag & drop me!</div>
-          <hr />
-          <div className="toolboxContainer">
-            {shapes.map((shapeName) => (
-              <div
-                key={shapeName}
-                className={shapeName}
-                onDragStart={(e) => e.dataTransfer.setData('shape', shapeName)}
-                draggable>
-                {shapeName}
-                {/* <div style={{ textAlign: "center" }}> {shapeName}</div>
+      <Xwrapper>
+        <div className="canvasStyle" id="canvas" onClick={() => handleSelect(null)}>
+          <div className="toolboxMenu">
+            <div className="toolboxTitle">Drag & drop me!</div>
+            <hr />
+            <div className="toolboxContainer">
+              {shapes.map((shapeName) => (
+                <div
+                  key={shapeName}
+                  className={shapeName}
+                  onDragStart={(e) => e.dataTransfer.setData('shape', shapeName)}
+                  draggable>
+                  {shapeName}
+                  {/* <div style={{ textAlign: "center" }}> {shapeName}</div>
                   <img src={shapeName2Icon[shapeName]} alt="SwitchIcon" className={"switchIcon"} /> */}
-              </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div
+            className="interfacesBarStyle"
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={handleDropStatic}
+            id="interfacesInputsBar">
+            <u className="interfaceTitleStyle">inputs</u>
+            {interfaces
+              .filter((itr) => itr.type === 'input')
+              .map((itr) => (
+                <Box {...boxProps} key={itr.id} box={{ ...itr, id: itr.id }} position="static" sidePos="left" />
+              ))}
+          </div>
+          <div
+            id="boxesContainer"
+            className="boxesContainer"
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={handleDropDynamic}>
+            <TopBar {...props} />
+
+            {boxes.map((box) => (
+              <Box {...boxProps} key={box.id} box={box} position="absolute" sidePos="middle" />
             ))}
           </div>
-        </div>
-        <div
-          className="interfacesBarStyle"
-          onDragOver={(e) => e.preventDefault()}
-          onDrop={handleDropStatic}
-          id="interfacesInputsBar">
-          <u className="interfaceTitleStyle">inputs</u>
-          {interfaces
-            .filter((itr) => itr.type === 'input')
-            .map((itr) => (
-              <Box {...boxProps} key={itr.id} box={{ ...itr, id: itr.id }} position="static" sidePos="left" />
-            ))}
-        </div>
-        <div
-          id="boxesContainer"
-          className="boxesContainer"
-          onDragOver={(e) => e.preventDefault()}
-          onDrop={handleDropDynamic}>
-          <TopBar {...props} />
-
-          {boxes.map((box) => (
-            <Box {...boxProps} key={box.id} box={box} position="absolute" sidePos="middle" />
+          <div
+            className="interfacesBarStyle"
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={handleDropStatic}
+            id="interfacesOutputsBar">
+            <u className="interfaceTitleStyle">outputs</u>
+            {interfaces
+              .filter((itr) => itr.type === 'output')
+              .map((itr) => (
+                <Box {...boxProps} key={itr.id} box={{ ...itr, id: itr.id }} position="static" sidePos="right" />
+              ))}
+          </div>
+          {/* xarrow connections*/}
+          {lines.map((line, i) => (
+            <Xarrow
+              key={line.props.root + '-' + line.props.end + i}
+              line={line}
+              selected={selected}
+              setSelected={setSelected}
+            />
           ))}
+          {/* boxes menu that may be opened */}
+          {lines.map((line, i) =>
+            line.menuWindowOpened ? (
+              <MenuWindow key={line.props.root + '-' + line.props.end + i} setLines={setLines} line={line} />
+            ) : null
+          )}
         </div>
-        <div
-          className="interfacesBarStyle"
-          onDragOver={(e) => e.preventDefault()}
-          onDrop={handleDropStatic}
-          id="interfacesOutputsBar">
-          <u className="interfaceTitleStyle">outputs</u>
-          {interfaces
-            .filter((itr) => itr.type === 'output')
-            .map((itr) => (
-              <Box {...boxProps} key={itr.id} box={{ ...itr, id: itr.id }} position="static" sidePos="right" />
-            ))}
-        </div>
-        {/* xarrow connections*/}
-        {lines.map((line, i) => (
-          <Xarrow
-            key={line.props.root + '-' + line.props.end + i}
-            line={line}
-            selected={selected}
-            setSelected={setSelected}
-          />
-        ))}
-        {/* boxes menu that may be opened */}
-        {lines.map((line, i) =>
-          line.menuWindowOpened ? (
-            <MenuWindow key={line.props.root + '-' + line.props.end + i} setLines={setLines} line={line} />
-          ) : null
-        )}
-      </div>
+      </Xwrapper>
     </div>
   );
 };
