@@ -1,6 +1,4 @@
 // constants used for typescript and proptypes definitions
-import { xarrowPropsType } from './types';
-
 export const tAnchorEdge = ['middle', 'left', 'right', 'top', 'bottom', 'auto'] as const;
 export const tPaths = ['smooth', 'grid', 'straight'] as const;
 export const tSvgElems = ['circle', 'ellipse', 'line', 'path', 'polygon', 'polyline', 'rect'] as const;
