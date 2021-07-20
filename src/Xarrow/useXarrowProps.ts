@@ -9,7 +9,7 @@ import {
   svgElemType,
   xarrowPropsType,
 } from '../types';
-import { getElementByPropGiven, getElemPos, xStr2absRelative } from '../utils';
+import { getElementByPropGiven, getElemPos, xStr2absRelative } from './utils';
 import _ from 'lodash';
 import { arrowShapes, cAnchorEdge, cArrowShapes } from '../constants';
 import { anchorEdgeType, dimensionType } from '../privateTypes';
@@ -371,4 +371,5 @@ const useXarrowProps = (
   return [propsRefs, valVars] as const;
 };
 
+export type useXarrowPropsResType = ReturnType<typeof useXarrowProps>;
 export default useXarrowProps;
