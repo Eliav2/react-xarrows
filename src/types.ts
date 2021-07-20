@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { FunctionComponent, ReactSVG } from 'react';
 import { cAnchorEdge, cArrowShapes, cPaths, cSvgElems } from './constants';
 
 export type xarrowPropsType = {
@@ -65,11 +65,11 @@ export type labelsType = {
 };
 export type labelType = JSX.Element | string;
 
-export type svgCustomTypeGeneric<T extends svgElemType> = {
-  svgElem: SVGElementTagNameMap[T];
+export type svgCustomEdgeType = {
+  svgElem: JSX.IntrinsicElements[keyof ReactSVG];
   offsetForward?: number;
 };
-export type svgCustomEdgeType = { [K in svgElemType]: svgCustomTypeGeneric<K> }[svgElemType];
+
 export type svgEdgeShapeType = typeof cArrowShapes[number];
 export type svgEdgeType = svgEdgeShapeType | svgCustomEdgeType;
 export type svgElemType = typeof cSvgElems[number];

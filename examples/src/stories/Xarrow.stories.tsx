@@ -166,12 +166,8 @@ CustomAdvanced.args = {
 export const CustomSvgHead = CustomSimple.bind({});
 CustomSvgHead.args = {
   headSize: 6,
-  headShape: 'circle',
-  // headShape: {
-  //   svgElem: 'path',
-  //   svgProps: { d: `M 0 24 l -4.122 -4 8 -8 -8 -8 4.122-4 11.878 12 z` },
-  //   offsetForward: 0,
-  // },
+  // headShape: 'circle',
+  headShape: { svgElem: <path d="M 0 0 L 1 0.5 L 0 1 L 0.25 0.5 z" />, offsetForward: 0.25 },
   arrowHeadProps: { fill: 'transparent', strokeWidth: '0.1', stroke: 'CornflowerBlue' },
   _extendSVGcanvas: 500,
 };
@@ -242,7 +238,7 @@ const AllStatesTemplate = ({ box: boxStyle, ...xarrowProps }) => {
 export const AllStates: Story<{ box: typeDim } & xarrowPropsType> = (ar) => <AllStatesTemplate {...ar} />;
 AllStates.args = {
   box: { height: 30, width: 50 },
-  label: null,
+  labels: null,
   color: 'CornflowerBlue',
   lineColor: null,
   headColor: null,
