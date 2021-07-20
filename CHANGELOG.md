@@ -4,10 +4,15 @@ top level `Xwrapper` context and `useXarrow` hook added!
 
 ### breaking changes
 
-- `startAnchor.offset.rightness` renamed to `startAnchor.offset.x`.
-- `startAnchor.offset.bottomness` renamed to `startAnchor.offset.y`.  
+- **`startAnchor.offset.rightness` renamed to `startAnchor.offset.x`.**
+- **`startAnchor.offset.bottomness` renamed to `startAnchor.offset.y`.**  
   same for `endAnchor`.
-- `gridBreak` type changed from number to string. API changed!  
+- **`gridBreak`** type changed from number to string. API changed(see readme)!  
+- **`headShape` and `tailShape`** breaking change: custom svg is now supported using jsx only. 
+  headShape.svgElem is now jsx element and not a string. headShape.svgProps removed!
+  example: `headShape={ svgElem: <path d="M 0 0 L 1 0.5 L 0 1 L 0.25 0.5 z" />, offsetForward: 0.25 }`  
+  same for tailShape.
+  
 
 ## v1.7.2:
 bundler is now webpack, optimized and smaller bundle size.

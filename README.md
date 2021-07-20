@@ -18,7 +18,8 @@ Draw arrows between components in React!
 
 liked my work? star [this repo](https://github.com/Eliav2/react-xarrows).
 
-reallyyy liked my work? [buy me a coffee](https://www.paypal.com/donate?hosted_button_id=CRQ343F9VTRS8)!
+reallyy liked my work? [buy me a coffee](https://www.paypal.com/donate?hosted_button_id=CRQ343F9VTRS8)!  
+this project needs funding to stay open source and free.
 
 ## installation
 
@@ -67,68 +68,105 @@ export default SimpleExample;
 
 ### V2 example
 
-<details>
+in order to invoke updates on xarrows wrap your arrows and connceted elements with `Xwrapper`, and consume `useXarrow`
+on connected elements.
 
 ```jsx
 import React from 'react';
-import Xarrow, { useXarrow, xarrowPropsType, Xwrapper } from 'react-xarrows';
+import Xarrow, {useXarrow, Xwrapper} from 'react-xarrows';
+import Draggable from 'react-draggable';
+
+const boxStyle = {border: 'grey solid 2px', borderRadius: '10px', padding: '5px'};
+
+const DraggableBox = ({id}) => {
+    const updateXarrow = useXarrow();
+    return (
+        <Draggable onDrag={updateXarrow} onStop={updateXarrow}>
+            <div id={id} style={boxStyle}>
+                {id}
+            </div>
+        </Draggable>
+    );
+};
+
+export function V2Example() {
+    return (
+        <div style={{display: 'flex', justifyContent: 'space-evenly', width: '100%'}}>
+            <Xwrapper>
+                <DraggableBox id={'elem1'}/>
+                <DraggableBox id={'elem2'}/>
+                <Xarrow start={'elem1'} end="elem2"/>
+            </Xwrapper>
+        </div>
+    );
+}
+```
+
+<details>
+
+<summary markdown='span'>another example</summary>
+
+```tsx
+import React from 'react';
+import Xarrow, {useXarrow, xarrowPropsType, Xwrapper} from 'react-xarrows';
 import Draggable from 'react-draggable';
 
 const boxStyle = {
-  border: '1px #999 solid',
-  borderRadius: '10px',
-  textAlign: 'center',
-  width: '100px',
-  height: '30px',
-  color: 'black',
-  alignItems: 'center',
-  display: 'flex',
-  justifyContent: 'center',
+    border: '1px #999 solid',
+    borderRadius: '10px',
+    textAlign: 'center',
+    width: '100px',
+    height: '30px',
+    color: 'black',
+    alignItems: 'center',
+    display: 'flex',
+    justifyContent: 'center',
 } as const;
 
 const canvasStyle = {
-  width: '100%',
-  height: '100vh',
-  background: 'white',
-  overflow: 'auto',
-  display: 'flex',
-  color: 'black',
+    width: '100%',
+    height: '100vh',
+    background: 'white',
+    overflow: 'auto',
+    display: 'flex',
+    color: 'black',
 } as const;
 
-const DraggableBox = ({ box }) => {
-  const updateXarrow = useXarrow();
-  return (
-    <Draggable onDrag={updateXarrow} onStop={updateXarrow}>
-      <div id={box.id} style={{ ...boxStyle, position: 'absolute', left: box.x, top: box.y }}>
-        {box.id}
-      </div>
-    </Draggable>
-  );
+const DraggableBox = ({box}) => {
+    const updateXarrow = useXarrow();
+    return (
+        <Draggable onDrag={updateXarrow} onStop={updateXarrow}>
+            <div id={box.id} style={{...boxStyle, position: 'absolute', left: box.x, top: box.y}}>
+                {box.id}
+            </div>
+        </Draggable>
+    );
 };
 
 const SimpleTemplate = () => {
-  const box = { id: 'box1', x: 20, y: 20 };
-  const box2 = { id: 'box2', x: 320, y: 120 };
-  const box3 = { id: 'box3', x: 50, y: 150 };
-  const box4 = { id: 'box4', x: 320, y: 220 };
-  return (
-    <div style={canvasStyle} id="canvas">
-      <Xwrapper>
-        <DraggableBox box={box} />
-        <DraggableBox box={box2} />
-        <Xarrow start={'box1'} end={'box2'} />
-        <Xarrow start={'box1'} end={'box2'} endAnchor={'top'} />
-        <Xarrow start={'box1'} end={'box2'} startAnchor={'bottom'} />
-      </Xwrapper>
-      <Xwrapper>
-        <DraggableBox box={box3} />
-        <DraggableBox box={box4} />
-        <Xarrow start={'box3'} end={'box4'} />
-      </Xwrapper>
-    </div>
-  );
+    const box = {id: 'box1', x: 20, y: 20};
+    const box2 = {id: 'box2', x: 320, y: 120};
+    const box3 = {id: 'box3', x: 50, y: 150};
+    const box4 = {id: 'box4', x: 320, y: 220};
+    return (
+        <div style={canvasStyle} id="canvas">
+            <Xwrapper>
+                <DraggableBox box={box}/>
+                <DraggableBox box={box2}/>
+                <Xarrow start={'box1'} end={'box2'}/>
+                <Xarrow start={'box1'} end={'box2'} endAnchor={'top'}/>
+                <Xarrow start={'box1'} end={'box2'} startAnchor={'bottom'}/>
+            </Xwrapper>
+            <Xwrapper>
+                <DraggableBox box={box3}/>
+                <DraggableBox box={box4}/>
+                <Xarrow start={'box3'} end={'box4'}/>
+            </Xwrapper>
+        </div>
+    );
 };
 ```
+
 (will render this)
 
 <img src="https://user-images.githubusercontent.com/47307889/126083727-1c15f86f-9921-4d9b-933a-5e237d8e1916.png" width="450px"/>
@@ -138,41 +176,25 @@ const SimpleTemplate = () => {
 ## Usage
 
 react-xarrow v2.0 released! no need to trigger render on parents anymore!  
-react-xarrows will smartly trigger updates on relevant elements! use `Xwrapper` and `useXarrow` hook to achieve selective rendering!
+react-xarrows will smartly trigger updates on relevant elements! use `Xwrapper` and `useXarrow` hook to achieve
+selective rendering!
 
 react-xarrow v2 supports V1 code, Xwrapper is optional but recommended.
 
 #### useXarrow
 
 ```jsx
-const YourComponent = () =>{
-  const updateXarrow = useXarrow()
-  ...
-  return <>...</>
-  
+const YourComponent = () => {
+    const updateXarrow = useXarrow()
+...
+    return <>...</>
+
 }
 ```
+
 each time component calling useXarrow hook renders also the xarrows inside the wrapping Xwrapper wrapper will render.
-receiving `updateXarrow` is optional. use this function only if you want to trigger a render different phase from rendering(like click or drag event). 
-
-
-### Contributing
-
-Want a feature that is not supported? found a bug?\
-no need to clone the repo and set up the dev environment anymore!\
-here's a ready to use development environment with a click of a button(patience, it takes about a minute to setup):
-
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/Eliav2/react-xarrows/blob/master/src/index.tsx)
-
-this will set up environment that will clone react-xarrow master,and will link the code from the src to the examples,
-and will start examples,with typescript watch process that will recompile when any change is made.\
-this means that any code changes in src/index.tsx will immediately be reflected to the running example at port 3000!
-(add console.log("test") line and see!)\
-to reproduce this dev env on your local machine git clone and follow same commands as in [gitpod.yml](./.gitpod.yml).
-
-if you made an improvement that is relevant for most users, you can quickly submit a pull request.  
-Please always pull request from and into dev branch -
-here's [Gitpod](https://gitpod.io/#https://github.com/Eliav2/react-xarrows/blob/dev/src/index.tsx)
+receiving `updateXarrow` is optional. use this function only if you want to trigger a render different phase from
+rendering(like click or drag event).
 
 ### API
 
@@ -303,8 +325,8 @@ export type anchorCustomPositionType = {
 
 example:
 
-- `endAnchor= { position: "auto", offset: { x: 20 } }` will choose automatic anchoring for end anchor but will
-  offset it 20 pixels to the right after normal positioning.
+- `endAnchor= { position: "auto", offset: { x: 20 } }` will choose automatic anchoring for end anchor but will offset it
+  20 pixels to the right after normal positioning.
 
 if list is provided - the minimal length anchors will be chosen from the list. example:
 
@@ -526,25 +548,20 @@ you can import `arrowShapes` which is object contains all predefined svg shapes.
 
 you can also pass _your own_ svg shapes:
 
-```typescript
-headShapeType = {
-    svgElem: T
-:
-'circle' | 'ellipse' | 'line' | 'path' | 'polygon' | 'polyline' | 'rect';
-svgProps ? : JSX.IntrinsicElements[T];
-offsetForward ? : number;
-}
-;
+```tsx
+type headShapeType = {
+    svgElem: T:'circle' | 'ellipse' | 'line' | 'path' | 'polygon' | 'polyline' | 'rect';
+    svgProps?: JSX.IntrinsicElements[T];
+    offsetForward?: number;
+};
 ```
 
 for example, you can pass the following object, and it will be exactly equivalent to passing `'arrow1'`:
 
-```js
-headShape = {
-    svgElem: 'path',
-    svgProps: {d: `M 0 0 L 1 0.5 L 0 1 L 0.25 0.5 z`},
-    offsetForward: 0.25
-}
+```tsx
+const headShapeArrow1 = {svgElem: <path d="M 0 0 L 1 0.5 L 0 1 L 0.25 0.5 z"/>, offsetForward: 0.25}
+// then pass it Xarrow
+<Xarrow headShape={headShapeArrow1}/>
 ```
 
 `svgElem` - an svg element like `path` or `circle`.  
@@ -630,12 +647,32 @@ out the interactive codesandbox, set _debug to true and play with these properti
 
 ## Donation
 
-It takes many hours to develop and maintain this library, and it is not funded by any company or commercial organization.
+It takes many hours to develop and maintain this library, and it is not funded by any company or commercial
+organization.
 
 If you/your company are using this project, please consider donating.  
 Any donation will help me to devote more time to the development of this project.
 
 [![paypal](https://www.paypalobjects.com/en_US/IL/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/donate?hosted_button_id=CRQ343F9VTRS8)
+
+### Contributing
+
+Want a feature that is not supported? found a bug?\
+no need to clone the repo and set up the dev environment anymore!\
+here's a ready to use development environment with a click of a button(patience, it takes about a minute to setup):
+
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/Eliav2/react-xarrows/blob/master/src/index.tsx)
+
+this will set up environment that will clone react-xarrow master,and will link the code from the src to the examples,
+and will start examples,with typescript watch process that will recompile when any change is made.\
+this means that any code changes in src/index.tsx will immediately be reflected to the running example at port 3000!
+(add console.log("test") line and see!)\
+to reproduce this dev env on your local machine git clone and follow same commands as in [gitpod.yml](./.gitpod.yml).
+
+if you made an improvement that is relevant for most users, you can quickly submit a pull request.  
+Please always pull request from and into dev branch -
+here's [Gitpod](https://gitpod.io/#https://github.com/Eliav2/react-xarrows/blob/dev/src/index.tsx)
+
 
 ## Versions
 
