@@ -83,7 +83,12 @@ const Example4 = () => {
       </h3>
 
       <p> works perfectly no matter the parent-child relationship between the Xarrow and the source and target.</p>
-      <p> the xarrows are updated on the left window scroll and does not updated on the right window scroll</p>
+      <p>
+        the xarrows are updated on the left window scroll and{' '}
+        <strong>does not updated on the right window scroll.</strong>
+        <br />
+        Edit the code so the right side would update on scroll too.
+      </p>
       <p>hook is required on scrollables only if xarrow is placed outside the scrollable window in the DOM tree.</p>
       <Xwrapper>
         <div style={{ display: 'flex' }}>

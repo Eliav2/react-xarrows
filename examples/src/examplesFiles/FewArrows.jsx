@@ -1,7 +1,7 @@
-import React, { useState, useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import Xarrow, { useXarrow, Xwrapper } from 'react-xarrows';
 import Draggable from 'react-draggable';
-import { boxContainerStyle, boxStyle, canvasStyle } from '../ExamplePage';
+import { boxStyle, canvasStyle } from '../ExamplePage';
 
 const DraggableBox = ({ box }) => {
   const updateXarrow = useXarrow();
@@ -65,19 +65,15 @@ const FewArrows = () => {
         automatic anchoring to the minimal length. works also when inside scrollable window. drag the boxes to play
         around.
       </p>
-      <div style={canvasStyle} id="canvas">
-        <div style={boxContainerStyle} id="boxContainerConatinerStyle">
-          <Xwrapper>
-            <div style={boxContainerStyle} id="boxContainerStyle">
-              {boxes.map((box, i) => (
-                <DraggableBox box={box} key={i} />
-              ))}
-              {lines.map((line, i) => (
-                <Xarrow key={i} {...line} />
-              ))}
-            </div>
-          </Xwrapper>
-        </div>
+      <div style={{ ...canvasStyle, position: 'relative', color: 'black' }} id="canvas">
+        <Xwrapper>
+          {boxes.map((box, i) => (
+            <DraggableBox box={box} key={i} />
+          ))}
+          {lines.map((line, i) => (
+            <Xarrow key={i} {...line} />
+          ))}
+        </Xwrapper>
       </div>
       <br />
     </React.Fragment>
