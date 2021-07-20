@@ -139,6 +139,29 @@ export const ReactSpring = () => {
   );
 };
 
+const DraggableBox2 = ({ id }: { id: string }) => {
+  const updateXarrow = useXarrow();
+  return (
+    <Draggable onDrag={updateXarrow} onStop={updateXarrow}>
+      <div id={id} style={boxStyle}>
+        {id}
+      </div>
+    </Draggable>
+  );
+};
+
+export function V2Example() {
+  return (
+    <div style={{ display: 'flex', justifyContent: 'space-evenly', width: '100%' }}>
+      <Xwrapper>
+        <DraggableBox2 id={'elem1'} />
+        <DraggableBox2 id={'elem2'} />
+        <Xarrow start={'elem1'} end="elem2" />
+      </Xwrapper>
+    </div>
+  );
+}
+
 export default {
   title: 'XarrowV2',
   component: Xarrow,
