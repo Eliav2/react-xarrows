@@ -185,11 +185,33 @@ details.
 #### useXarrow
 
 ```jsx
-const YourComponent = () => {
-    const updateXarrow = useXarrow()
-...
-    return <>...</>
+import {useXarrow} from "react-xarrow"
 
+const YourComponent = ({id, ...props}) => {
+    const updateXarrow = useXarrow()
+    //...
+    return (
+        <div id={id}>
+            ...
+        </div>
+    )
+
+}
+```
+
+#### Xwrapper
+
+```jsx
+const YourApp = () => {
+    return (
+        // ...
+        <Xwrapper>
+            <YourComponent id={'comp1'}/>
+            <YourComponent id={'comp2'}/>
+            <Xarrow start={'comp1'} end={'comp2'}/>
+        </Xwrapper>
+        // ...
+    )
 }
 ```
 
