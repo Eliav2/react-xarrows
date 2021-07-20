@@ -376,7 +376,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
   const [propsRefs] = xProps;
 
   let {
-    label,
+    labels,
     lineColor,
     headColor,
     tailColor,
@@ -654,7 +654,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
             ) : null}
           </svg>
 
-          {label.start ? (
+          {labels.start ? (
             <div
               style={{
                 transform: st.dx < 0 ? 'translate(-100% , -50%)' : 'translate(-0% , -50%)',
@@ -663,10 +663,10 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
                 left: st.cx0 + st.labelStartPos.x,
                 top: st.cy0 + st.labelStartPos.y - strokeWidth - 5,
               }}>
-              {label.start}
+              {labels.start}
             </div>
           ) : null}
-          {label.middle ? (
+          {labels.middle ? (
             <div
               style={{
                 display: 'table',
@@ -676,10 +676,10 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
                 left: st.cx0 + st.labelMiddlePos.x,
                 top: st.cy0 + st.labelMiddlePos.y,
               }}>
-              {label.middle}
+              {labels.middle}
             </div>
           ) : null}
-          {label.end ? (
+          {labels.end ? (
             <div
               style={{
                 transform: st.dx > 0 ? 'translate(-100% , -50%)' : 'translate(-0% , -50%)',
@@ -688,7 +688,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
                 left: st.cx0 + st.labelEndPos.x,
                 top: st.cy0 + st.labelEndPos.y + strokeWidth + 5,
               }}>
-              {label.end}
+              {labels.end}
             </div>
           ) : null}
           {_debug ? (

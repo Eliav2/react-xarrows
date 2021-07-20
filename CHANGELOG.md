@@ -1,9 +1,14 @@
-# V2
+# V2.0
 
 top level `Xwrapper` context and `useXarrow` hook added!
 
+### new features
+- top level API components added: `Xwrapper` wrapper and `useXarrow` hook.
+- `zIndex` prop added to `Xarrow`
+
 ### breaking changes
 
+- `label` prop renamed to `labels`
 - **`startAnchor.offset.rightness` renamed to `startAnchor.offset.x`.**
 - **`startAnchor.offset.bottomness` renamed to `startAnchor.offset.y`.**  
   same for `endAnchor`.

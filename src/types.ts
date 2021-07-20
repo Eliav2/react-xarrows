@@ -6,7 +6,7 @@ export type xarrowPropsType = {
   end: refType;
   startAnchor?: anchorType;
   endAnchor?: anchorType;
-  label?: labelType | labelsType;
+  labels?: labelType | labelsType;
   color?: string;
   lineColor?: string | null;
   headColor?: string | null;

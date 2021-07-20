@@ -27,13 +27,13 @@ const FewArrows = () => {
       start: 'box1',
       end: 'box2',
       headSize: 14,
-      label: { end: 'endLabel' },
+      labels: { end: 'endLabel' },
     },
     {
       start: 'box2',
       end: 'box3',
       color: 'red',
-      label: {
+      labels: {
         middle: (
           <div
             contentEditable

@@ -298,7 +298,7 @@ const CustomizeArrow = () => {
     showTail,
     tailColor,
     tailSize: Number(tailSize),
-    label: {
+    labels: {
       start: startLabel,
       middle: middleLabel,
       end: (

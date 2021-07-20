@@ -181,6 +181,9 @@ selective rendering!
 
 react-xarrow v2 supports V1 code, Xwrapper is optional but recommended.
 
+V2.0 introduced some breaking changes, mainly related to properties naming. see [CHANGELOG.md](./CHANGELOG.md) for
+details.
+
 #### useXarrow
 
 ```jsx
@@ -208,12 +211,12 @@ here's a summary of the all the available props:
 [end](#refs)|ref to end element|none(Required!)|string/ReactRef
 [startAnchor](#anchors)|from which side the arrow should start from start element| 'auto'|string/object/array
 [endAnchor](#anchors)|at which side the arrow should end at end element| 'auto'|string/object/array
-[label](#label)|optional labels| null|string/array
-[color](#colors)|color of Index(all parts)| 'CornflowerBlue'|string
+[labels](#labels)|optional labels| null|string/array
+[color](#colors)|color of Xarrow(all parts)| 'CornflowerBlue'|string
 [lineColor](#colors)|color of the line| null|string
 [headColor](#colors)|color of the head| null|string
 [tailColor](#colors)|color of the tail| null|string
-[strokeWidth](#widths)|thickness of Index(all parts)|4|number
+[strokeWidth](#widths)|thickness of Xarrow(all parts)|4|number
 [headSize](#widths)|thickness of head(relative to strokeWidth)|6|number
 [tailSize](#widths)|thickness of tail(relative to strokeWidth)|6|number
 [path](#path)|path drawing style| 'smooth'|string
@@ -222,7 +225,7 @@ here's a summary of the all the available props:
 [dashness](#dashness)|should the line be dashed| false|boolean/object
 [showHead](#shows)|show the arrow head?| true|boolean
 [showTail](#shows)|show the arrow tail?| false|boolean
-[showXarrow](#shows)|show Index?| true|boolean
+[showXarrow](#shows)|show Xarrow?| true|boolean
 [animateDrawing](#animateDrawing)|animate drawing when arrow mounts?| false|boolean/object
 [headShape](#customsvgs)|shape of the arrow head| 'arrow1'|string/object
 [tailShape](#customsvgs)|shape of the arrow tail|'arrow1'|string/object
@@ -255,16 +258,14 @@ _cpy2Offset|offset control point 2 x|0|number
 
 ##### API flexibility
 
-This API is built in such way that most props can accept different types. you can keep things simple or provide more
-custom props for more custom behavior - the API except both(see [`startAnchor`](#anchors) or `label`
-properties for good examples)
-.<br/>
-see typescript types above for detailed descriptions of what type excepts every prop.
+This API built in such way that most props can accept different types. you can keep things simple or provide more custom
+props for more custom behavior(see [`startAnchor`](#anchors) good example). <br/>
+explore typescript for detailed descriptions of what type excepts every prop.
 
 ## Properties
 
 This documentation is examples driven.\
-The examples is sorted from the most common use case to the most custom one.
+The examples sorted from the most common use case to the most custom one.
 
 <a name="refs"></a>
 
@@ -311,6 +312,8 @@ one of `"auto" | "middle" | "left" | "right" | "top" | "bottom"`
 example:
 
 - `endAnchor="middle"` will set the anchor of the end of the line to the middle of the end element.
+- `endAnchor="auto"` choose the closest anchor.
+- `endAnchor="left"` connect to the left.
 
 #### custom usage:
 
@@ -335,18 +338,18 @@ if list is provided - the minimal length anchors will be chosen from the list. e
 
 </details>
 
-<a name="label"></a>
+<a name="labels"></a>
 
 <details>
 
-<summary markdown='span'> label </summary>
+<summary markdown='span'> labels </summary>
 
 you can place up to 3 labels. see examples
 
-- ```label="middleLabel"``` - middle label
-- ```label=<div style={{ fontSize: "1.3em", fontFamily: "fantasy", fontStyle: "italic" }}>styled middle label</div>``` -
-  custom middle label
-- ```label={{ start:"I'm start label",middle: "middleLabel",end:<div style={{ fontSize: "1.3em", fontFamily: "fantasy", fontStyle: "italic" }}>big end label</div> }}```
+- ```labels="middleLabel"``` - middle label
+- ```labels=<div style={{ fontSize: "1.3em", fontFamily: "fantasy", fontStyle: "italic" }}>styled middle label</div>```
+    - custom middle label
+- ```labels={{ start:"I'm start label",middle: "middleLabel",end:<div style={{ fontSize: "1.3em", fontFamily: "fantasy", fontStyle: "italic" }}>big end label</div> }}```
   start and middle label and custom end label
 
 </details>
@@ -406,7 +409,7 @@ defines how much the lines curve. makes a difference only in `path='smooth'`. ex
 
 - `curveness={false}` will make the line straight without curves(exactly like path='straight').
 - `curveness={true}` will choose default values of curveness.
-- `curveness={2}` will make Index extra curved.
+- `curveness={2}` will make Xarrow extra curved.
 
 </details>
 
@@ -416,7 +419,7 @@ defines how much the lines curve. makes a difference only in `path='smooth'`. ex
 
 <summary markdown='span'>gridBreak</summary>
 
-defines where the line will break when `path='grid'`. value should be a number from 0 to 1.
+defines where the line will break when `path='grid'`.
 
 examples:
 
@@ -448,11 +451,11 @@ then default values are chosen except what passed. examples:
 
 <summary markdown='span'>showHead, showTail and showXarrow</summary>
 
-`showXarrow`: show or not show Index? (can be used to restart the drawing animation)
+`showXarrow`: show or not show Xarrow? (can be used to restart the drawing animation)
 `showHead`: show or not the arrow head?
 `showTail`: show or not the arrow tail?
 
-- `showXarrow={false}` - will hide (unmount) Index and his labels.
+- `showXarrow={false}` - will hide (unmount) Xarrow and his labels.
 - `showHead={false}` - will hide the arrow head.
 
 </details>
@@ -597,8 +600,8 @@ to be enough for most cases. examples:
 
 - `passProps= {{onClick: () => console.log("xarrow clicked!")}}` - now the arrow will console log a message when
   clicked.
-- `passProps= {{cursor: "pointer"}}` - now the cursor will change to pointer style when hovering over Index.
-- `passProps= {{pointerEvents: "none"}}` - now the user cannot interact with Index via mouse events.
+- `passProps= {{cursor: "pointer"}}` - now the cursor will change to pointer style when hovering over Xarrow.
+- `passProps= {{pointerEvents: "none"}}` - now the user cannot interact with Xarrow via mouse events.
 
 ### advanced customization
 
@@ -665,14 +668,13 @@ here's a ready to use development environment with a click of a button(patience,
 
 this will set up environment that will clone react-xarrow master,and will link the code from the src to the examples,
 and will start examples,with typescript watch process that will recompile when any change is made.\
-this means that any code changes in src/index.tsx will immediately be reflected to the running example at port 3000!
+this means that any code changes in src/* will immediately be reflected to the running example at port 3000!
 (add console.log("test") line and see!)\
 to reproduce this dev env on your local machine git clone and follow same commands as in [gitpod.yml](./.gitpod.yml).
 
 if you made an improvement that is relevant for most users, you can quickly submit a pull request.  
 Please always pull request from and into dev branch -
 here's [Gitpod](https://gitpod.io/#https://github.com/Eliav2/react-xarrows/blob/dev/src/index.tsx)
-
 
 ## Versions
 

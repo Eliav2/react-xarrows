@@ -14,7 +14,7 @@ import _ from 'lodash';
 import { arrowShapes, cAnchorEdge, cArrowShapes } from '../constants';
 import { anchorEdgeType, dimensionType } from '../privateTypes';
 
-const parseLabel = (label: xarrowPropsType['label']): labelsType => {
+const parseLabels = (label: xarrowPropsType['labels']): labelsType => {
   let parsedLabel = { start: null, middle: null, end: null };
   if (label) {
     if (typeof label === 'string' || React.isValidElement(label)) parsedLabel.middle = label;
@@ -141,7 +141,7 @@ const parsePropsFuncs: Required<{ [key in keyof xarrowPropsType]: Function }> = 
   end: (userProp) => getElementByPropGiven(userProp),
   startAnchor: (userProp, _, updatePos) => withUpdate(parseAnchor(userProp), updatePos),
   endAnchor: (userProp, _, updatePos) => withUpdate(parseAnchor(userProp), updatePos),
-  label: (userProp) => parseLabel(userProp),
+  labels: (userProp) => parseLabels(userProp),
   color: noParse,
   lineColor: (userProp, propsRefs) => userProp || propsRefs.color,
   headColor: (userProp, propsRefs) => userProp || propsRefs.color,
@@ -200,7 +200,7 @@ const defaultProps: Required<xarrowPropsType> = {
   end: null,
   startAnchor: 'auto',
   endAnchor: 'auto',
-  label: null,
+  labels: null,
   color: 'CornflowerBlue',
   lineColor: null,
   headColor: null,
@@ -242,7 +242,7 @@ type parsedXarrowProps = {
   end: HTMLElement;
   startAnchor: anchorCustomPositionType[];
   endAnchor: anchorCustomPositionType[];
-  label: Required<labelsType>;
+  labels: Required<labelsType>;
   color: string;
   lineColor: string;
   headColor: string;

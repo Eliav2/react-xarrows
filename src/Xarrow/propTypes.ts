@@ -41,7 +41,7 @@ const XarrowPropTypes = {
   end: pRefType.isRequired,
   startAnchor: pAnchorType,
   endAnchor: pAnchorType,
-  label: PT.oneOfType([_pLabelType, pLabelsType]),
+  labels: PT.oneOfType([_pLabelType, pLabelsType]),
   color: PT.string,
   lineColor: PT.string,
   showHead: PT.bool,
