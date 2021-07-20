@@ -1,25 +1,40 @@
 import React, { useState, useRef, useEffect } from 'react';
-import Xarrow from 'react-xarrows';
+import Xarrow, { useXarrow, Xwrapper } from 'react-xarrows';
+import Draggable from 'react-draggable';
 
 const canvasStyle = {
   width: '100%',
-  height: '40vh',
+  height: '300px',
   background: 'white',
   overflow: 'auto',
   display: 'flex',
-  position: 'relative',
-  // overflowY: "scroll",
-  // overflowX: "hidden"
+
+  // width: '100%',
+  // height: '300px',
+  // background: 'white',
+  // // overflow: 'auto',
+  // display: 'flex',
+  // position: 'relative',
+  // // overflowY: "scroll",
+  // // overflowX: "hidden"
 };
 
-const boxContainerStyle = {
+const scrolleableDivStyle = {
   position: 'relative',
-  overflow: 'scroll',
+  overflow: 'auto',
   width: '120%',
-  height: '140%',
+  height: '120%',
   background: 'white',
   color: 'black',
   border: 'black solid 1px',
+
+  // position: 'relative',
+  // overflow: 'auto',
+  // width: '120%',
+  // height: '500px',
+  // background: 'white',
+  // color: 'black',
+  // border: 'black solid 1px',
 };
 
 const boxStyle = {
@@ -34,83 +49,49 @@ const boxStyle = {
   alignItems: 'center',
 };
 
-const Box = (props) => {
-  const [lastPoint, setLastPoint] = useState({ x: 0, y: 0 });
-
-  const handlDragStart = (e) => {
-    setLastPoint({ x: e.clientX, y: e.clientY });
-  };
-
-  const handleDragEnd = (e, boxId) => {
-    let i = props.boxes.findIndex((box) => box.id === boxId);
-    let newBoxes = [...props.boxes];
-    let newX = newBoxes[i].x + e.clientX - lastPoint.x,
-      newY = newBoxes[i].y + e.clientY - lastPoint.y;
-    if (newX < 0 || newY < 0) return;
-    newBoxes[i].x = newX;
-    newBoxes[i].y = newY;
-    props.setBoxes(newBoxes);
-  };
-
+const DraggableBox = ({ box }) => {
+  const updateXarrow = useXarrow();
   return (
-    <div
-      ref={props.box.ref}
-      style={{ ...boxStyle, left: props.box.x, top: props.box.y }}
-      onDragStart={(e) => handlDragStart(e)}
-      onDragEnd={(e) => handleDragEnd(e, props.box.id)}
-      id={props.box.id}
-      draggable>
-      {props.box.id}
+    <Draggable onDrag={updateXarrow} onStop={updateXarrow}>
+      <div id={box.id} style={{ ...boxStyle, position: 'absolute', left: box.x, top: box.y }}>
+        {box.id}
+      </div>
+    </Draggable>
+  );
+};
+
+const ScrollableDiv = ({ children }) => {
+  const updateXarrow = useXarrow();
+  return (
+    <div style={canvasStyle} onScroll={updateXarrow}>
+      <div style={scrolleableDivStyle}>{children}</div>
+    </div>
+  );
+};
+const NotScrollableDivDiv = ({ children }) => {
+  // const updateXarrow = useXarrow();  // this is comment out so no update on scroll
+  return (
+    <div style={canvasStyle} onScroll={() => console.log('not implemented')}>
+      <div style={scrolleableDivStyle}>{children}</div>
     </div>
   );
 };
 
 const Example4 = () => {
   const [boxes, setBoxes] = useState([
-    //this initiazid values are precentage - next it will be pixels
-    { id: 'box1', x: 20, y: 20, ref: useRef(null) },
-    { id: 'box2', x: 20, y: 80, ref: useRef(null) },
+    { id: 'box1', x: 20, y: 20 },
+    { id: 'box2', x: 100, y: 80 },
   ]);
 
   const [boxes2, setBoxes2] = useState([
-    { id: 'box3', x: 20, y: 20, ref: useRef(null) },
-    { id: 'box4', x: 20, y: 80, ref: useRef(null) },
+    { id: 'box3', x: 20, y: 20 },
+    { id: 'box4', x: 100, y: 80 },
   ]);
 
   const [lines] = useState([
     { from: 'box1', to: 'box4' },
-    // { from: "box3", to: "box2" }
+    { from: 'box3', to: 'box2' },
   ]);
-  const boxContainerRef = useRef(null); //boxContainerRef
-  const boxContainer2Ref = useRef(null); //boxContainerRef
-
-  const getRefById = (Id) => {
-    var ref;
-    [...boxes, ...boxes2].forEach((box) => {
-      if (box.id === Id) ref = box.ref;
-    });
-    return ref;
-  };
-
-  useEffect(() => {
-    let { scrollHeight: h1, scrollWidth: w1 } = boxContainerRef.current;
-    let { scrollHeight: h2, scrollWidth: w2 } = boxContainer2Ref.current;
-    setBoxes((boxes) =>
-      boxes.map((box) => ({
-        ...box,
-        x: 0.01 * box.x * w1,
-        y: 0.01 * box.y * h1,
-      }))
-    );
-    setBoxes2((boxes) =>
-      boxes.map((box) => ({
-        ...box,
-        x: 0.01 * box.x * w2,
-        y: 0.01 * box.y * h2,
-      }))
-    );
-  }, []);
-
   return (
     <React.Fragment>
       <h3>
@@ -118,30 +99,25 @@ const Example4 = () => {
       </h3>
 
       <p> works perfectly no matter the parent-child relationship between the Xarrow and the source and target.</p>
-      <div style={canvasStyle} id="canvas">
-        <div ref={boxContainerRef} style={boxContainerStyle} id="boxContainer1">
-          {boxes.map((box, i) => (
-            <Box key={i} box={box} boxes={boxes} setBoxes={setBoxes} />
-          ))}
+      <p> the xarrows are updated on the left window scroll and does not updated on the right window scroll</p>
+      <p>hook is required on scrollables only if xarrow is placed outside the scrollable window in the DOM tree.</p>
+      <Xwrapper>
+        <div style={{ display: 'flex' }}>
+          <ScrollableDiv>
+            {boxes.map((box, i) => (
+              <DraggableBox key={i} box={box} />
+            ))}
+          </ScrollableDiv>
+          <NotScrollableDivDiv>
+            {boxes2.map((box, i) => (
+              <DraggableBox key={i} box={box} />
+            ))}
+          </NotScrollableDivDiv>
         </div>
         {lines.map((line, i) => (
-          <Xarrow key={i} start={getRefById(line.from)} end={getRefById(line.to)} monitorDOMchanges={true} />
+          <Xarrow key={i} start={line.from} end={line.to} zIndex={1} />
         ))}
-
-        <div ref={boxContainer2Ref} style={boxContainerStyle} id="boxContainer2">
-          {boxes2.map((box, i) => (
-            <Box key={i} box={box} boxes={boxes2} setBoxes={setBoxes2} />
-          ))}
-        </div>
-      </div>
-      <p>
-        {' '}
-        set <code>monitorDOMchanges </code>
-        property to <code>true</code> to enable this behavior - this will add eventListeners to the DOM and will trigger
-        update when needed(expereintial).
-        <br /> however - make sure you put the Xarrow component as son of the common ancestor of 'start' component and
-        'end' component <b>so the Xarrow will not rerender when not needed</b>.{' '}
-      </p>
+      </Xwrapper>
     </React.Fragment>
   );
 };

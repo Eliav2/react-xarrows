@@ -6,11 +6,11 @@ import SimpleExample from './SimpleExample';
 import Playground from './Playground/Playground';
 
 export default {
-  SimpleExample: { name: 'SimpleExample', component: SimpleExample },
-  FewArrows: { name: 'FewArrows', component: FewArrows },
-  CustomizeArrow: { name: 'CustomizeArrow', component: CustomizeArrow },
-  // test: { name: "test", component: TestExample },
-  // Example4: { name: "Example4", component: Example4 },
-  // ZindexExample: { name: "ZindexExample", component: ZindexExample },
-  Playground: { name: 'Playground', component: Playground },
+  SimpleExample: { component: SimpleExample },
+  FewArrows: { component: FewArrows },
+  CustomizeArrow: { component: CustomizeArrow },
+  // test: {  component: TestExample },
+  differentScrolls: { component: Example4 },
+  // ZindexExample: {  component: ZindexExample },
+  Playground: { component: Playground },
 };
