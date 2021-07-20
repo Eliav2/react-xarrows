@@ -179,6 +179,8 @@ react-xarrow v2.0 released! no need to trigger render on parents anymore!
 react-xarrows will smartly trigger updates on relevant elements! use `Xwrapper` and `useXarrow` hook to achieve
 selective rendering!
 
+##### breaking changes
+
 V2.0 introduced some breaking changes, mainly related to properties naming. see [CHANGELOG.md](./CHANGELOG.md) for
 details.
 
