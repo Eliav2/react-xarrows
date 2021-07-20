@@ -65,14 +65,8 @@ export type labelsType = {
 };
 export type labelType = JSX.Element | string;
 
-// export type svgCustomTypeGeneric<T extends svgElemType> = {
-//   svgElem: T;
-//   svgProps?: JSX.IntrinsicElements[T];
-//   offsetForward?: number;
-// };
 export type svgCustomTypeGeneric<T extends svgElemType> = {
   svgElem: SVGElementTagNameMap[T];
-  // svgProps?: JSX.IntrinsicElements[T];
   offsetForward?: number;
 };
 export type svgCustomEdgeType = { [K in svgElemType]: svgCustomTypeGeneric<K> }[svgElemType];
