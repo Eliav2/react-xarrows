@@ -272,7 +272,7 @@ const CustomizeArrow = () => {
   const [enableAnimateDrawing, setEnableAnimateDrawing] = useState(false);
   const _animateDrawing = enableAnimateDrawing ? animateDrawing : false;
   const [headShape, setHeadShape] = useState(Object.keys(arrowShapes)[0]);
-  const [tailShape, setTailShape] = useState(Object.keys(arrowShapes)[1]);
+  const [tailShape, setTailShape] = useState(Object.keys(arrowShapes)[0]);
   // const [headOffset, setHeadOffset] = useState(0.25);
   // const [tailOffset, setTailOffset] = useState(0.25);
 
@@ -319,7 +319,7 @@ const CustomizeArrow = () => {
     _cpy1Offset: _cpy1Offset,
     _cpx2Offset: _cpx2Offset,
     _cpy2Offset: _cpy2Offset,
-    animateDrawing: true,
+    animateDrawing: _animateDrawing,
   };
 
   return (

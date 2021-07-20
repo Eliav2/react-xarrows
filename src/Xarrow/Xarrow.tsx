@@ -520,7 +520,6 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
       cleanMonitorDOMchanges();
     };
   }, [showXarrow]);
-  console.log('headShape', headShape, animateDrawing && !drawAnimEnded ? 0 : 1);
 
   //todo: could make some advanced generic typescript inferring. for example get type from headShape.elem:T and
   // tailShape.elem:K force the type for passProps,arrowHeadProps,arrowTailProps property. for now `as any` is used to
@@ -589,56 +588,42 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
               </>
             </path>
             {/* arrow tail */}
-            {showTail
-              ? tailShape.svgElem
-              : // <tailShape.svgElem
-                //   // d={normalArrowShape}
-                //   fill={tailColor}
-                //   pointerEvents="auto"
-                //   transform={`translate(${xOffsetTail},${yOffsetTail}) rotate(${st.tailOrient}) scale(${st.fTailSize})`}
-                //   // transform={`translate(${xOffsetTail},${yOffsetTail}) rotate(${st.tailOrient}) scale(${fTailSize})`}
-                //   // transform={`translate(${xOffsetHead},${yOffsetHead}) rotate(${st.headOrient})`}
-                //   {...tailShape.svgProps}
-                //   {...(passProps as any)}
-                //   {...arrowTailProps}
-                // />
-                null}
+            {showTail ? (
+              <g
+                fill={tailColor}
+                pointerEvents="auto"
+                transform={`translate(${xOffsetTail},${yOffsetTail}) rotate(${st.tailOrient}) scale(${st.fTailSize})`}
+                {...(passProps as any)}
+                {...arrowTailProps}>
+                {tailShape.svgElem}
+              </g>
+            ) : null}
 
             {/* head of the arrow */}
             {showHead ? (
               <g
                 ref={headRef as any}
+                // d={normalArrowShape}
                 fill={headColor}
                 pointerEvents="auto"
                 transform={`translate(${xOffsetHead},${yOffsetHead}) rotate(${st.headOrient}) scale(${st.fHeadSize})`}
                 opacity={animateDrawing && !drawAnimEnded ? 0 : 1}
                 {...(passProps as any)}
                 {...arrowHeadProps}>
+                <animate
+                  ref={headOpacityAnimRef}
+                  dur={'0.4'}
+                  attributeName="opacity"
+                  from="0"
+                  to="1"
+                  begin={`indefinite`}
+                  repeatCount="0"
+                  fill="freeze"
+                />
+
                 {headShape.svgElem}
               </g>
-            ) : // <headShape.svgElem
-            //   ref={headRef as any}
-            //   // d={normalArrowShape}
-            //   fill={headColor}
-            //   pointerEvents="auto"
-            //   transform={`translate(${xOffsetHead},${yOffsetHead}) rotate(${st.headOrient}) scale(${st.fHeadSize})`}
-            //   opacity={animateDrawing && !drawAnimEnded ? 0 : 1}
-            //   {...headShape.svgProps}
-            //   {...(passProps as any)}
-            //   {...arrowHeadProps}>
-            //   <animate
-            //     ref={headOpacityAnimRef}
-            //     dur={'0.4'}
-            //     attributeName="opacity"
-            //     from="0"
-            //     to="1"
-            //     begin={`indefinite`}
-            //     repeatCount="0"
-            //     fill="freeze"
-            //   />
-            //   ) : null
-            // </headShape.svgElem>
-            null}
+            ) : null}
             {/* debug elements */}
             {_debug ? (
               <>

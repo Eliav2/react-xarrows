@@ -362,6 +362,12 @@ const useXarrowProps = (
     setValVars({ ...valVars });
   }, [endPos]);
 
+  useLayoutEffect(() => {
+    // console.log('svg shape changed!');
+    shouldUpdatePosition.current = true;
+    setValVars({ ...valVars });
+  }, [propsRefs.headShape.svgElem, propsRefs.tailShape.svgElem]);
+
   return [propsRefs, valVars] as const;
 };
 

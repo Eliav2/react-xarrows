@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
 import Xarrow, { useXarrow, xarrowPropsType, Xwrapper } from 'react-xarrows';
 import Draggable from 'react-draggable';
 import { Meta, Story } from '@storybook/react';
+import { useSpring, animated } from 'react-spring';
 
 const boxStyle = {
   border: '1px #999 solid',
@@ -91,6 +92,52 @@ const ScrollTemplate = () => {
 };
 
 export const V2Scroll = ScrollTemplate.bind({});
+
+const MyComponentDefaultProps = { prop1: 0 };
+type MyComponentPropsType = typeof MyComponentDefaultProps;
+
+const parseVal1 = (val: number): number => val * 2;
+
+const useParseProps = (props: MyComponentPropsType) => {
+  const [parsedVals, setParsedVals] = useState({ parsedProp1: parseVal1(MyComponentDefaultProps.prop1) });
+
+  useLayoutEffect(() => {
+    parsedVals.parsedProp1 = parseVal1(props.prop1);
+    setParsedVals({ ...parsedVals });
+  }, [props.prop1]);
+
+  return parsedVals;
+};
+
+const MyComponent = (props: MyComponentPropsType) => {
+  const parsedProps = useParseProps(props);
+
+  console.log('look it me', parsedProps.parsedProp1);
+  const { myVar } = useSpring({
+    from: { myVar: 0 },
+    to: { myVar: parsedProps.parsedProp1 },
+    loop: true,
+    config: { duration: 3000 },
+  });
+  return (
+    <div>
+      current val: <animated.div>{myVar}</animated.div>
+    </div>
+  );
+};
+
+export const ReactSpring = () => {
+  const [val, setVal] = useState(10);
+  return (
+    <div>
+      app val: {val}
+      <br />
+      <button onClick={() => setVal(val + 1)}>+</button>
+      <button onClick={() => setVal(val - 1)}>-</button>
+      <MyComponent prop1={val} />
+    </div>
+  );
+};
 
 export default {
   title: 'XarrowV2',

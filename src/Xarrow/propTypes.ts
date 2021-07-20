@@ -26,12 +26,12 @@ const pLabelsType = PT.exact({
 });
 
 const pSvgEdgeShapeType = PT.oneOf(Object.keys(arrowShapes) as Array<keyof typeof arrowShapes>);
-const pSvgElemType = PT.oneOf(cSvgElems);
+// const pSvgElemType = PT.oneOf(cSvgElems);
+const pSvgElemType = PT.any;
 const pSvgEdgeType = PT.oneOfType([
   pSvgEdgeShapeType,
   PT.exact({
     svgElem: pSvgElemType,
-    svgProps: PT.any,
     offsetForward: PT.number,
   }).isRequired,
 ]);
