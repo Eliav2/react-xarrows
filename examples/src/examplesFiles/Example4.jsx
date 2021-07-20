@@ -8,15 +8,6 @@ const canvasStyle = {
   background: 'white',
   overflow: 'auto',
   display: 'flex',
-
-  // width: '100%',
-  // height: '300px',
-  // background: 'white',
-  // // overflow: 'auto',
-  // display: 'flex',
-  // position: 'relative',
-  // // overflowY: "scroll",
-  // // overflowX: "hidden"
 };
 
 const scrolleableDivStyle = {
@@ -27,14 +18,6 @@ const scrolleableDivStyle = {
   background: 'white',
   color: 'black',
   border: 'black solid 1px',
-
-  // position: 'relative',
-  // overflow: 'auto',
-  // width: '120%',
-  // height: '500px',
-  // background: 'white',
-  // color: 'black',
-  // border: 'black solid 1px',
 };
 
 const boxStyle = {
@@ -77,21 +60,22 @@ const NotScrollableDivDiv = ({ children }) => {
   );
 };
 
+const boxes = [
+  { id: 'box1', x: 20, y: 20 },
+  { id: 'box2', x: 100, y: 80 },
+];
+
+const boxes2 = [
+  { id: 'box3', x: 20, y: 20 },
+  { id: 'box4', x: 100, y: 80 },
+];
+
+const lines = [
+  { from: 'box1', to: 'box4' },
+  { from: 'box3', to: 'box2' },
+];
+
 const Example4 = () => {
-  const [boxes, setBoxes] = useState([
-    { id: 'box1', x: 20, y: 20 },
-    { id: 'box2', x: 100, y: 80 },
-  ]);
-
-  const [boxes2, setBoxes2] = useState([
-    { id: 'box3', x: 20, y: 20 },
-    { id: 'box4', x: 100, y: 80 },
-  ]);
-
-  const [lines] = useState([
-    { from: 'box1', to: 'box4' },
-    { from: 'box3', to: 'box2' },
-  ]);
   return (
     <React.Fragment>
       <h3>
