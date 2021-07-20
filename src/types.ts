@@ -1,4 +1,4 @@
-import React, { FunctionComponent, ReactSVG } from 'react';
+import React, { ReactSVG } from 'react';
 import { cAnchorEdge, cArrowShapes, cPaths, cSvgElems } from './constants';
 
 export type xarrowPropsType = {
