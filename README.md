@@ -504,11 +504,8 @@ number is passed then animation duration is number's value in seconds. examples:
 
 <summary markdown='span'> custom svg arrows - headShape and tailShape</summary>
 
-
-[//]: # (todo: add svg custom shapes docs!)
-
-new feature! you can customize the svg edges (head or tail) of the arrow. you can use predefined svg by passing
-string,one of `"arrow1" | "circle" | "heart"`
+you can customize the svg edges (head or tail) of the arrow. you can use predefined svg by passing string,one
+of `"arrow1" | "circle" | "heart"`
 
 #### simple usage:
 
@@ -573,10 +570,10 @@ you can import `arrowShapes` which is object contains all predefined svg shapes.
 
 you can also pass _your own_ svg shapes:
 
-```tsx
-type headShapeType = {
-    svgElem: T:'circle' | 'ellipse' | 'line' | 'path' | 'polygon' | 'polyline' | 'rect';
-    svgProps?: JSX.IntrinsicElements[T];
+```ts
+type svgElemType = "circle" | "ellipse" | "line" | "path" | "polygon" | "polyline" | "rect"
+type headShapeType<T extends svgElemType> = {
+    svgElem: SVGElementTagNameMap[T];
     offsetForward?: number;
 };
 ```
@@ -589,16 +586,14 @@ const headShapeArrow1 = {svgElem: <path d="M 0 0 L 1 0.5 L 0 1 L 0.25 0.5 z"/>, 
 <Xarrow headShape={headShapeArrow1}/>
 ```
 
-`svgElem` - an svg element like `path` or `circle`.  
-`svgProps` - props that will be passed to the svg element.
+`svgElem` - a jsx of svg element like `path` or `circle`(can also imported svg element from file).  
 `offsetForward` - how much to offset tht line into the svg element(from 0 to 1). normally the line will connect to the
 start of the svgElem. for example in case of the default arrow you want the line to enter 25% into the svgElem.
 
 don't forget about `arrowHeadProps` and `arrowTailProps` in case you want to use default shape but custom svg props.
 
 **in case you pass a custom svg element:** currently you have to adjust the path to start from 0,0 and to be at size box
-1x1 in order to make the custom shape look like the default shapes in size, in later versions it is planned to support
-automatic adjustment using getBBox() function.
+1x1 in order to make the custom shape look like the default shapes in size.
 
 </details>
 
@@ -654,8 +649,6 @@ examples:
 
 if you wish to pass style to divContainer or SVGcanvas use `SVGcanvasStyle`,`divContainerStyle` and not `SVGcanvasProps`
 ,`divContainerProps` to not override existing style.
-
-[//]: # (todo: check if width and height can't be automatically determined)
 
 ##### _extendSVGcanvas
 

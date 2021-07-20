@@ -14,7 +14,7 @@ const scrolleableDivStyle = {
   position: 'relative',
   overflow: 'auto',
   width: '120%',
-  height: '120%',
+  height: '150%',
   background: 'white',
   color: 'black',
   border: 'black solid 1px',

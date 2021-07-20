@@ -273,7 +273,6 @@ export const getPosition = (xProps: useXarrowPropsResType, mainRef: React.Mutabl
 
   ////////////////////////////////////
   // canvas smart size adjustments
-  // todo: fix: calc edges size and adjust canvas
   const [xSol1, xSol2] = buzzierMinSols(x1, cpx1, cpx2, x2);
   const [ySol1, ySol2] = buzzierMinSols(y1, cpy1, cpy2, y2);
   if (xSol1 < 0) excLeft += -xSol1;
