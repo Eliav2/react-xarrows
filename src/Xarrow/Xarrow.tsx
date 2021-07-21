@@ -6,6 +6,16 @@ import XarrowPropTypes from './propTypes';
 import { getPosition } from './utils/GetPosition';
 
 const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
+  console.log(
+    'isStrict',
+    (function () {
+      // @ts-ignore
+      return !this;
+    })()
+  );
+
+  console.log('xarrow update');
+
   const mainRef = useRef({
     svgRef: useRef<SVGSVGElement>(null),
     lineRef: useRef<SVGPathElement>(null),
@@ -99,6 +109,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
    * */
   if (shouldUpdatePosition.current) {
     // update position if one of the relevant props changed
+    console.log('xarrow getPosition');
     setSt(getPosition(xProps, mainRef));
     shouldUpdatePosition.current = false;
   }

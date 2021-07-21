@@ -30,6 +30,7 @@ const Box = (props) => {
 };
 
 const SimpleExample = ({ ...args }) => {
+  console.log('SimpleExample update');
   const box1 = { id: 'box1', ref: useRef(null) };
   const box2 = { id: 'box2', ref: useRef(null) };
 
