@@ -192,6 +192,8 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
   // avoid typescript conflicts
   // so todo- fix all the `passProps as any` assertions
 
+  console.log(st);
+
   return (
     <div {...divContainerProps} style={{ position: 'absolute', zIndex, ...divContainerStyle }}>
       {showXarrow ? (

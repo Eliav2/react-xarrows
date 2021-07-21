@@ -5,8 +5,9 @@ import './index.css';
 import ExamplePage from './ExamplePage';
 const rootElement = document.getElementById('root');
 render(
-  <React.StrictMode>
-    <ExamplePage />
-  </React.StrictMode>,
+  // <React.StrictMode>
+
+  <ExamplePage />,
+  // </React.StrictMode>
   rootElement
 );
