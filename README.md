@@ -183,7 +183,7 @@ selective rendering!
 
 currently, react-xarrows v2 does not work as expected on react [StrictMode](https://reactjs.org/docs/strict-mode.html).
 means that xarrows inside react-trees wrapped with <React.StrictMode>...</React.StrictMode> would not work as expected.
-this is because react-xarrows implements a manage [off-react global object](https://stackoverflow.com/questions/68432809/react-break-dependency-between-2-related-contexts-with-top-level-constant-objec)
+this is because react-xarrows implements and manage [off-react global object](https://stackoverflow.com/questions/68432809/react-break-dependency-between-2-related-contexts-with-top-level-constant-objec)
 to achieve selective rendering.
 if you using create-react-app, remove the wrapping React.StrictMode around your app.
 Hopefully a patch/new version would be released soon.
