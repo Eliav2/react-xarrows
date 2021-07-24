@@ -1,4 +1,4 @@
-import { useXarrowPropsResType } from '../useXarrowProps';
+import { useXarrowPropsResType } from '../../useXarrowProps';
 import React from 'react';
 import { calcAnchors } from '../anchors';
 import { getShortestLine, getSvgPos } from './index';

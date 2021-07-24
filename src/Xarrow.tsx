@@ -1,9 +1,9 @@
 import React, { useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { xarrowPropsType } from '../types';
+import { xarrowPropsType } from './types';
 import useXarrowProps from './useXarrowProps';
-import { XarrowContext } from '../Xwrapper';
-import XarrowPropTypes from './propTypes';
-import { getPosition } from './utils/GetPosition';
+import { XarrowContext } from './Xwrapper';
+import XarrowPropTypes from './Xarrow/propTypes';
+import { getPosition } from './Xarrow/utils/GetPosition';
 
 // console.log(
 //     'isStrict',
@@ -12,9 +12,10 @@ import { getPosition } from './utils/GetPosition';
 //       return !this;
 //     })()
 // );
+const log = console.log;
 
 const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
-  console.log('xarrow update');
+  log('xarrow update');
 
   const mainRef = useRef({
     svgRef: useRef<SVGSVGElement>(null),
@@ -109,8 +110,10 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
    * */
   if (shouldUpdatePosition.current) {
     // update position if one of the relevant props changed
-    console.log('xarrow getPosition');
-    setSt(getPosition(xProps, mainRef));
+    log('xarrow getPosition');
+    const pos = getPosition(xProps, mainRef);
+    log('pospospospospospospos', pos);
+    setSt(pos);
     shouldUpdatePosition.current = false;
   }
 
@@ -192,7 +195,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
   // avoid typescript conflicts
   // so todo- fix all the `passProps as any` assertions
 
-  console.log(st);
+  log(st);
 
   return (
     <div {...divContainerProps} style={{ position: 'absolute', zIndex, ...divContainerStyle }}>

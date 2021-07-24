@@ -42,7 +42,7 @@ const SimpleExample = ({ ...args }) => {
       <div style={canvasStyle} id="canvas">
         <Box box={box1} />
         <Box box={box2} />
-        <Xarrow start="box1" end={box2.ref} {...args} />
+        <Xarrow start={box1.ref} end={box2.ref} {...args} />
       </div>
     </React.Fragment>
   );
