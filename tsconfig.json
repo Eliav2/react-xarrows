@@ -26,7 +26,8 @@
     "noEmit": false,
     "declarationMap": true,
     //    "inlineSourceMap": true,
-    "sourceMap": true
+    "sourceMap": true,
+    "declarationDir": "./lib/types",
   },
   "compileOnSave": true
 }
