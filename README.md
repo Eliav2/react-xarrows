@@ -179,14 +179,8 @@ react-xarrow v2.0 released! no need to trigger render on parents anymore!
 react-xarrows will smartly trigger updates on relevant elements! use `Xwrapper` and `useXarrow` hook to achieve
 selective rendering!
 
-# Note
-
-currently, react-xarrows v2 does not work as expected on react [StrictMode](https://reactjs.org/docs/strict-mode.html).
-means that xarrows inside react-trees wrapped with <React.StrictMode>...</React.StrictMode> would not work as expected.
-this is because react-xarrows implements and manage [off-react global object](https://stackoverflow.com/questions/68432809/react-break-dependency-between-2-related-contexts-with-top-level-constant-objec)
-to achieve selective rendering.
-if you using create-react-app, remove the wrapping React.StrictMode around your app.
-Hopefully a patch/new version would be released soon.
+please note that v2.0.0 is not working using react [StrictMode](https://reactjs.org/docs/strict-mode.html). to fix
+update to v2.0.1.
 
 ##### breaking changes
 
