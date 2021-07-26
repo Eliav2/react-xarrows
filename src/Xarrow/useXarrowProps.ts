@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useEffect, useRef, useState } from 'react';
+import React, { useLayoutEffect, useRef, useState } from 'react';
 import {
   anchorCustomPositionType,
   anchorType,
@@ -8,11 +8,11 @@ import {
   svgEdgeShapeType,
   svgElemType,
   xarrowPropsType,
-} from './types';
-import { getElementByPropGiven, getElemPos, xStr2absRelative } from './Xarrow/utils';
+} from '../types';
+import { getElementByPropGiven, getElemPos, xStr2absRelative } from './utils';
 import _ from 'lodash';
-import { arrowShapes, cAnchorEdge, cArrowShapes } from './constants';
-import { anchorEdgeType, dimensionType } from './privateTypes';
+import { arrowShapes, cAnchorEdge, cArrowShapes } from '../constants';
+import { anchorEdgeType, dimensionType } from '../privateTypes';
 
 const parseLabels = (label: xarrowPropsType['labels']): labelsType => {
   let parsedLabel = { start: null, middle: null, end: null };
@@ -308,15 +308,6 @@ function useDeepCompareMemoize(value) {
   return ref.current;
 }
 
-/**
- * effect fires if one of the conditions in the dependency array is true
- */
-export const useEffectCompare = (callback: () => void, conditions: boolean[], effect = useLayoutEffect) => {
-  const shouldUpdate = useRef(false);
-  if (conditions.some((cond) => cond)) shouldUpdate.current = !shouldUpdate.current;
-  effect(callback, [shouldUpdate.current]);
-};
-
 function useDeepCompareEffect(callback, dependencies) {
   useLayoutEffect(callback, dependencies.map(useDeepCompareMemoize));
 }
@@ -376,10 +367,6 @@ const useXarrowProps = (
     shouldUpdatePosition.current = true;
     setValVars({ ...valVars });
   }, [propsRefs.headShape.svgElem, propsRefs.tailShape.svgElem]);
-
-  useLayoutEffect(() => {
-    // console.log('\n\nuseXarrowProps useLayoutEffect ended\n\n');
-  });
 
   return [propsRefs, valVars] as const;
 };

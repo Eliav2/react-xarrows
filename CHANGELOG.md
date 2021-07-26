@@ -1,4 +1,8 @@
-# V2.0
+## 2.0.1
+
+- fixed issues with StrictMode [#82](https://github.com/Eliav2/react-xarrows/issues/82)
+
+# V2.0.0
 
 top level `Xwrapper` context and `useXarrow` hook added!
 

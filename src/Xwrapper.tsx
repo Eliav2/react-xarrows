@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 
 export const XelemContext = React.createContext(null as () => void);
 export const XarrowContext = React.createContext(null as () => void);
@@ -8,36 +8,19 @@ let updateRefCount = 0;
 
 const log = console.log;
 
-const XarrowProvider = ({ children, instanceCount }) => {
-  // log('Xwrapper module');
-
-  // const first = useRef(true);
+const XarrowProvider: FC<{ instanceCount: React.MutableRefObject<number> }> = ({ children, instanceCount }) => {
   const [, setRender] = useState({});
   const updateXarrow = () => setRender({});
-  useLayoutEffect(() => {
-    updateRef[instanceCount] = updateXarrow;
-    // if (first.current) {
-    //   log('XarrowProvider first render!', updateRefCount);
-    // first.current = false;
-    // updateXarrow();
-    // }
+  useEffect(() => {
+    instanceCount.current = updateRefCount; // so this instance would know what is id
+    updateRef[instanceCount.current] = updateXarrow;
   }, []);
   // log('XarrowProvider', updateRefCount);
   return <XarrowContext.Provider value={updateXarrow}>{children}</XarrowContext.Provider>;
 };
 
 const XelemProvider = ({ children, instanceCount }) => {
-  // const first = useRef(true);
-  // useLayoutEffect(() => {
-  //   if (first.current) {
-  //     log('XarrowProvider first render!', updateRefCount);
-  //     updateRefCount++;
-  //     first.current = false;
-  //   }
-  // }, []);
-
-  // log('XelemProvider', updateRefCount - 1);
-  return <XelemContext.Provider value={updateRef[instanceCount]}>{children}</XelemContext.Provider>;
+  return <XelemContext.Provider value={updateRef[instanceCount.current]}>{children}</XelemContext.Provider>;
 };
 
 const Xwrapper = ({ children }) => {
@@ -48,7 +31,6 @@ const Xwrapper = ({ children }) => {
     setRender({});
     return () => {
       delete updateRef[instanceCount.current];
-      // updateRefCount--;
     };
   }, []);
 

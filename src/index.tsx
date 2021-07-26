@@ -1,4 +1,4 @@
-export { default } from './Xarrow';
+export { default } from './Xarrow/Xarrow';
 export * from './types';
 export * from './constants';
 export { default as Xwrapper } from './Xwrapper';

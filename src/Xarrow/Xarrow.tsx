@@ -1,21 +1,14 @@
 import React, { useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { xarrowPropsType } from './types';
-import useXarrowProps, { useEffectCompare } from './useXarrowProps';
-import { XarrowContext } from './Xwrapper';
-import XarrowPropTypes from './Xarrow/propTypes';
-import { getPosition } from './Xarrow/utils/GetPosition';
+import { xarrowPropsType } from '../types';
+import useXarrowProps from './useXarrowProps';
+import { XarrowContext } from '../Xwrapper';
+import XarrowPropTypes from './propTypes';
+import { getPosition } from './utils/GetPosition';
 
-// console.log(
-//     'isStrict',
-//     (function () {
-//       // @ts-ignore
-//       return !this;
-//     })()
-// );
 const log = console.log;
 
 const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
-  log('xarrow update');
+  // log('xarrow update');
 
   const mainRef = useRef({
     svgRef: useRef<SVGSVGElement>(null),
