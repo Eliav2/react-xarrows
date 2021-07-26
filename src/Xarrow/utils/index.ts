@@ -76,7 +76,7 @@ export const getElemPos = (elem: HTMLElement) => {
 };
 
 export const getSvgPos = (svgRef: React.MutableRefObject<any>) => {
-  // if (!mainDivRef.current) return { x: 0, y: 0 };
+  if (!svgRef.current) return { x: 0, y: 0 };
   let { left: xarrowElemX, top: xarrowElemY } = svgRef.current.getBoundingClientRect();
   let xarrowStyle = getComputedStyle(svgRef.current);
   let xarrowStyleLeft = Number(xarrowStyle.left.slice(0, -2));

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 
 export const XelemContext = React.createContext(null as () => void);
 export const XarrowContext = React.createContext(null as () => void);
@@ -6,36 +6,38 @@ export const XarrowContext = React.createContext(null as () => void);
 const updateRef = {};
 let updateRefCount = 0;
 
-const XarrowProvider = ({ children }) => {
-  const first = useRef(true);
+const log = console.log;
+
+const XarrowProvider: FC<{ instanceCount: React.MutableRefObject<number> }> = ({ children, instanceCount }) => {
   const [, setRender] = useState({});
   const updateXarrow = () => setRender({});
-  if (first.current) {
-    // console.log('first!', updateRefCount);
-    updateRef[updateRefCount] = updateXarrow;
-    first.current = false;
-  }
-  // console.log('XarrowProvider', updateRefCount);
+  useEffect(() => {
+    instanceCount.current = updateRefCount; // so this instance would know what is id
+    updateRef[instanceCount.current] = updateXarrow;
+  }, []);
+  // log('XarrowProvider', updateRefCount);
   return <XarrowContext.Provider value={updateXarrow}>{children}</XarrowContext.Provider>;
 };
 
-const XelemProvider = ({ children }) => {
-  const first = useRef(true);
-  if (first.current) {
-    updateRefCount++;
-    first.current = false;
-  }
-
-  // console.log('XelemProvider', updateRefCount - 1);
-  return <XelemContext.Provider value={updateRef[updateRefCount - 1]}>{children}</XelemContext.Provider>;
+const XelemProvider = ({ children, instanceCount }) => {
+  return <XelemContext.Provider value={updateRef[instanceCount.current]}>{children}</XelemContext.Provider>;
 };
 
 const Xwrapper = ({ children }) => {
-  // console.log('Xwrapper');
+  const instanceCount = useRef(updateRefCount);
+  const [, setRender] = useState({});
+  useEffect(() => {
+    updateRefCount++;
+    setRender({});
+    return () => {
+      delete updateRef[instanceCount.current];
+    };
+  }, []);
+
   return (
-    <XarrowProvider>
-      <XelemProvider>{children}</XelemProvider>
-    </XarrowProvider>
+    <XelemProvider instanceCount={instanceCount}>
+      <XarrowProvider instanceCount={instanceCount}>{children}</XarrowProvider>
+    </XelemProvider>
   );
 };
 

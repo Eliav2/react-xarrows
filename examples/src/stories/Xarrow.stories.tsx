@@ -1,7 +1,7 @@
 /* eslint-disable */
 import React, { useRef, useState } from 'react';
 
-import Xarrow, { xarrowPropsType } from 'react-xarrows';
+import Xarrow, { xarrowPropsType, useXarrow, Xwrapper } from 'react-xarrows';
 import Draggable from 'react-draggable';
 import { Meta, Story } from '@storybook/react';
 import zIndex from '@material-ui/core/styles/zIndex';
@@ -182,8 +182,9 @@ gridBreak.args = {
 };
 
 const DraggableBox2 = ({ id, forceRerender, style = {} }) => {
+  const updateXarrow = useXarrow();
   return (
-    <Draggable onDrag={forceRerender} onStop={forceRerender}>
+    <Draggable onDrag={updateXarrow} onStop={updateXarrow}>
       <div id={id} style={{ ...boxStyle, position: 'relative', ...style }}>
         {id}
       </div>
@@ -200,37 +201,41 @@ const AllStatesTemplate = ({ box: boxStyle, ...xarrowProps }) => {
   // const states = ['right'];
   return (
     <div style={{ ...canvasStyle, position: 'absolute', flexWrap: 'wrap' }} id="canvas">
-      {states.map((st) =>
-        states.map((st2) => {
-          boxNum += 2;
-          return (
-            <div
-              style={{
-                ...canvasStyle,
-                alignItems: 'center',
-                justifyContent: 'space-evenly',
-                width: 250,
-                height: 100,
-                border: '2px solid black',
-                // position: 'relative', TODO: investigate: why causing infinity loop(when endAnchor='right')??
-              }}
-              key={st + st2}>
-              <div style={{ position: 'absolute', left: 0, top: 0 }}>
-                {st} -{'>'} {st2}
+      <Xwrapper>
+        {states.map((st) =>
+          states.map((st2) => {
+            boxNum += 2;
+            return (
+              <div
+                style={{
+                  ...canvasStyle,
+                  alignItems: 'center',
+                  justifyContent: 'space-evenly',
+                  width: 250,
+                  height: 100,
+                  border: '2px solid black',
+                  // position: 'relative', TODO: investigate: why causing infinity loop(when endAnchor='right')??
+                }}
+                key={st + st2}>
+                <div style={{ position: 'absolute', left: 0, top: 0 }}>
+                  {st} -{'>'} {st2}
+                </div>
+                <Xwrapper>
+                  <DraggableBox2 id={boxNum} forceRerender={forceRerender} style={{ ...boxStyle }} />
+                  <DraggableBox2 id={boxNum + 1} forceRerender={forceRerender} style={{ ...boxStyle }} />
+                  <Xarrow
+                    start={String(boxNum)}
+                    end={String(boxNum + 1)}
+                    {...xarrowProps}
+                    startAnchor={st}
+                    endAnchor={st2}
+                  />
+                </Xwrapper>
               </div>
-              <DraggableBox2 id={boxNum} forceRerender={forceRerender} style={{ ...boxStyle }} />
-              <DraggableBox2 id={boxNum + 1} forceRerender={forceRerender} style={{ ...boxStyle }} />
-              <Xarrow
-                start={String(boxNum)}
-                end={String(boxNum + 1)}
-                {...xarrowProps}
-                startAnchor={st}
-                endAnchor={st2}
-              />
-            </div>
-          );
-        })
-      )}
+            );
+          })
+        )}
+      </Xwrapper>
     </div>
   );
 };

@@ -338,7 +338,7 @@ const useXarrowProps = (
     useLayoutEffect(
       () => {
         propsRefs[propName] = parsePropsFuncs?.[propName]?.(curProps[propName], propsRefs, shouldUpdatePosition);
-        // console.log('update because', propName, 'with value', propsRefs[propName]);
+        // console.log('prop update:', propName, 'with value', propsRefs[propName]);
         setPropsRefs({ ...propsRefs });
       },
       propsDeps[propName].map((name) => userProps[name])
@@ -349,17 +349,17 @@ const useXarrowProps = (
   const [valVars, setValVars] = useState(initialValVars);
   const startPos = getElemPos(propsRefs.start);
   useDeepCompareEffect(() => {
-    // console.log('start update pos');
     valVars.startPos = startPos;
     shouldUpdatePosition.current = true;
     setValVars({ ...valVars });
+    // console.log('start update pos', startPos);
   }, [startPos]);
   const endPos = getElemPos(propsRefs.end);
   useDeepCompareEffect(() => {
-    // console.log('end update pos');
     valVars.endPos = endPos;
     shouldUpdatePosition.current = true;
     setValVars({ ...valVars });
+    // console.log('end update pos', endPos);
   }, [endPos]);
 
   useLayoutEffect(() => {

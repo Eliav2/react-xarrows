@@ -5,7 +5,11 @@ import { XarrowContext } from '../Xwrapper';
 import XarrowPropTypes from './propTypes';
 import { getPosition } from './utils/GetPosition';
 
+const log = console.log;
+
 const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
+  // log('xarrow update');
+
   const mainRef = useRef({
     svgRef: useRef<SVGSVGElement>(null),
     lineRef: useRef<SVGPathElement>(null),
@@ -97,11 +101,31 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
    * The Main logic of path calculation for the arrow.
    * calculate new path, adjusting canvas, and set state based on given properties.
    * */
-  if (shouldUpdatePosition.current) {
-    // update position if one of the relevant props changed
-    setSt(getPosition(xProps, mainRef));
-    shouldUpdatePosition.current = false;
-  }
+  // useLayoutEffect(() => {
+  //   const pos = getPosition(xProps, mainRef);
+  //   // setSt(pos);
+  // });
+
+  // useEffectCompare(() => {
+  //   const pos = getPosition(xProps, mainRef);
+  //   log('pos', pos);
+  //   setSt(pos);
+  //
+  //   shouldUpdatePosition.current = false;
+  // }, [shouldUpdatePosition.current]);
+
+  useLayoutEffect(() => {
+    if (shouldUpdatePosition.current) {
+      // update position if one of the relevant props changed
+      // log('xarrow getPosition');
+      const pos = getPosition(xProps, mainRef);
+      // log('pos', pos);
+      setSt(pos);
+      shouldUpdatePosition.current = false;
+    }
+  });
+
+  // log('st', st);
 
   const xOffsetHead = st.x2 - st.arrowHeadOffset.x;
   const yOffsetHead = st.y2 - st.arrowHeadOffset.y;

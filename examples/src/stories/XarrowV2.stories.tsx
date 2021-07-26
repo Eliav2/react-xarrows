@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import Xarrow, { useXarrow, xarrowPropsType, Xwrapper } from 'react-xarrows';
 import Draggable from 'react-draggable';
 import { Meta, Story } from '@storybook/react';
@@ -138,6 +138,44 @@ export const ReactSpring = () => {
     </div>
   );
 };
+
+const DraggableBox2 = ({ reference, id }: { id: string; reference: React.MutableRefObject<any> }) => {
+  const updateXarrow = useXarrow();
+  return (
+    <Draggable onDrag={updateXarrow} onStop={updateXarrow}>
+      <div ref={reference} style={boxStyle}>
+        {id}
+      </div>
+    </Draggable>
+  );
+};
+
+const TwoBoxesTemplate = () => {
+  const boxRef1 = useRef(null);
+  const boxRef2 = useRef(null);
+  return (
+    <div style={{ display: 'flex', justifyContent: 'space-evenly', width: '100%' }}>
+      <Xwrapper>
+        <DraggableBox2 reference={boxRef1} id={'elem1'} />
+        <DraggableBox2 reference={boxRef2} id={'elem2'} />
+        <Xarrow start={boxRef1} end={boxRef2} />
+      </Xwrapper>
+    </div>
+  );
+};
+
+export function StrictVsNotStrict() {
+  return (
+    <div>
+      <h1>Strict</h1>
+      <React.StrictMode>
+        <TwoBoxesTemplate />
+      </React.StrictMode>
+      <h1>Not Strict</h1>
+      <TwoBoxesTemplate />
+    </div>
+  );
+}
 
 export default {
   title: 'XarrowV2',

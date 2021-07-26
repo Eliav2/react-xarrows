@@ -30,6 +30,7 @@ const Box = (props) => {
 };
 
 const SimpleExample = ({ ...args }) => {
+  console.log('SimpleExample update');
   const box1 = { id: 'box1', ref: useRef(null) };
   const box2 = { id: 'box2', ref: useRef(null) };
 
@@ -41,7 +42,7 @@ const SimpleExample = ({ ...args }) => {
       <div style={canvasStyle} id="canvas">
         <Box box={box1} />
         <Box box={box2} />
-        <Xarrow start="box1" end={box2.ref} {...args} />
+        <Xarrow start={box1.ref} end={box2.ref} {...args} />
       </div>
     </React.Fragment>
   );

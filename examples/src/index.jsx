@@ -1,7 +1,15 @@
-import * as React from "react";
-import { render } from "react-dom";
-import "./index.css";
+import * as React from 'react';
+import './index.css';
+import { render } from 'react-dom';
 
-import ExamplePage from "./ExamplePage";
-const rootElement = document.getElementById("root");
-render(<ExamplePage />, rootElement);
+import ExamplePage from './ExamplePage';
+
+const rootElement = document.getElementById('root');
+render(
+  // <React.StrictMode>
+  //   <ExamplePage />
+  // </React.StrictMode>,
+  <ExamplePage />,
+
+  rootElement
+);
