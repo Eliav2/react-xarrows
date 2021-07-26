@@ -6,6 +6,10 @@ import _ from 'lodash';
 import { cPaths } from '../../constants';
 import { buzzierMinSols, bzFunction } from './buzzier';
 
+/**
+ * The Main logic of path calculation for the arrow.
+ * calculate new path, adjusting canvas, and set state based on given properties.
+ * */
 export const getPosition = (xProps: useXarrowPropsResType, mainRef: React.MutableRefObject<any>) => {
   let [propsRefs, valVars] = xProps;
   let {

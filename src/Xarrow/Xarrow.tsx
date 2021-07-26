@@ -101,22 +101,8 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
    * The Main logic of path calculation for the arrow.
    * calculate new path, adjusting canvas, and set state based on given properties.
    * */
-  // useLayoutEffect(() => {
-  //   const pos = getPosition(xProps, mainRef);
-  //   // setSt(pos);
-  // });
-
-  // useEffectCompare(() => {
-  //   const pos = getPosition(xProps, mainRef);
-  //   log('pos', pos);
-  //   setSt(pos);
-  //
-  //   shouldUpdatePosition.current = false;
-  // }, [shouldUpdatePosition.current]);
-
   useLayoutEffect(() => {
     if (shouldUpdatePosition.current) {
-      // update position if one of the relevant props changed
       // log('xarrow getPosition');
       const pos = getPosition(xProps, mainRef);
       // log('pos', pos);
