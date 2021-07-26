@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 export const XelemContext = React.createContext(null as () => void);
 export const XarrowContext = React.createContext(null as () => void);
@@ -6,39 +6,56 @@ export const XarrowContext = React.createContext(null as () => void);
 const updateRef = {};
 let updateRefCount = 0;
 
-const XarrowProvider = ({ children }) => {
-  console.log('Xwrapper module');
+const log = console.log;
 
-  const first = useRef(true);
+const XarrowProvider = ({ children, instanceCount }) => {
+  // log('Xwrapper module');
+
+  // const first = useRef(true);
   const [, setRender] = useState({});
   const updateXarrow = () => setRender({});
-  if (first.current) {
-    console.log('XarrowProvider first render!', updateRefCount);
-    updateRef[updateRefCount] = updateXarrow;
-    first.current = false;
-  }
-  console.log('XarrowProvider', updateRefCount);
+  useLayoutEffect(() => {
+    updateRef[instanceCount] = updateXarrow;
+    // if (first.current) {
+    //   log('XarrowProvider first render!', updateRefCount);
+    // first.current = false;
+    // updateXarrow();
+    // }
+  }, []);
+  // log('XarrowProvider', updateRefCount);
   return <XarrowContext.Provider value={updateXarrow}>{children}</XarrowContext.Provider>;
 };
 
-const XelemProvider = ({ children }) => {
-  const first = useRef(true);
-  if (first.current) {
-    console.log('XarrowProvider first render!', updateRefCount);
-    updateRefCount++;
-    first.current = false;
-  }
+const XelemProvider = ({ children, instanceCount }) => {
+  // const first = useRef(true);
+  // useLayoutEffect(() => {
+  //   if (first.current) {
+  //     log('XarrowProvider first render!', updateRefCount);
+  //     updateRefCount++;
+  //     first.current = false;
+  //   }
+  // }, []);
 
-  console.log('XelemProvider', updateRefCount - 1);
-  return <XelemContext.Provider value={updateRef[updateRefCount - 1]}>{children}</XelemContext.Provider>;
+  // log('XelemProvider', updateRefCount - 1);
+  return <XelemContext.Provider value={updateRef[instanceCount]}>{children}</XelemContext.Provider>;
 };
 
 const Xwrapper = ({ children }) => {
-  console.log('Xwrapper');
+  const instanceCount = useRef(updateRefCount);
+  const [, setRender] = useState({});
+  useEffect(() => {
+    updateRefCount++;
+    setRender({});
+    return () => {
+      delete updateRef[instanceCount.current];
+      // updateRefCount--;
+    };
+  }, []);
+
   return (
-    <XarrowProvider>
-      <XelemProvider>{children}</XelemProvider>
-    </XarrowProvider>
+    <XelemProvider instanceCount={instanceCount}>
+      <XarrowProvider instanceCount={instanceCount}>{children}</XarrowProvider>
+    </XelemProvider>
   );
 };
 

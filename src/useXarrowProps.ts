@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useRef, useState } from 'react';
+import React, { useLayoutEffect, useEffect, useRef, useState } from 'react';
 import {
   anchorCustomPositionType,
   anchorType,
@@ -308,6 +308,15 @@ function useDeepCompareMemoize(value) {
   return ref.current;
 }
 
+/**
+ * effect fires if one of the conditions in the dependency array is true
+ */
+export const useEffectCompare = (callback: () => void, conditions: boolean[], effect = useLayoutEffect) => {
+  const shouldUpdate = useRef(false);
+  if (conditions.some((cond) => cond)) shouldUpdate.current = !shouldUpdate.current;
+  effect(callback, [shouldUpdate.current]);
+};
+
 function useDeepCompareEffect(callback, dependencies) {
   useLayoutEffect(callback, dependencies.map(useDeepCompareMemoize));
 }
@@ -338,7 +347,7 @@ const useXarrowProps = (
     useLayoutEffect(
       () => {
         propsRefs[propName] = parsePropsFuncs?.[propName]?.(curProps[propName], propsRefs, shouldUpdatePosition);
-        console.log('prop update:', propName, 'with value', propsRefs[propName]);
+        // console.log('prop update:', propName, 'with value', propsRefs[propName]);
         setPropsRefs({ ...propsRefs });
       },
       propsDeps[propName].map((name) => userProps[name])
@@ -352,24 +361,24 @@ const useXarrowProps = (
     valVars.startPos = startPos;
     shouldUpdatePosition.current = true;
     setValVars({ ...valVars });
-    console.log('start update pos', startPos);
+    // console.log('start update pos', startPos);
   }, [startPos]);
   const endPos = getElemPos(propsRefs.end);
   useDeepCompareEffect(() => {
     valVars.endPos = endPos;
     shouldUpdatePosition.current = true;
     setValVars({ ...valVars });
-    console.log('end update pos', endPos);
+    // console.log('end update pos', endPos);
   }, [endPos]);
 
   useLayoutEffect(() => {
-    console.log('svg shape changed!');
+    // console.log('svg shape changed!');
     shouldUpdatePosition.current = true;
     setValVars({ ...valVars });
   }, [propsRefs.headShape.svgElem, propsRefs.tailShape.svgElem]);
 
   useLayoutEffect(() => {
-    console.log('\n\nuseXarrowProps useLayoutEffect ended\n\n');
+    // console.log('\n\nuseXarrowProps useLayoutEffect ended\n\n');
   });
 
   return [propsRefs, valVars] as const;

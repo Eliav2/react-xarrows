@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { xarrowPropsType } from './types';
-import useXarrowProps from './useXarrowProps';
+import useXarrowProps, { useEffectCompare } from './useXarrowProps';
 import { XarrowContext } from './Xwrapper';
 import XarrowPropTypes from './Xarrow/propTypes';
 import { getPosition } from './Xarrow/utils/GetPosition';
@@ -108,14 +108,31 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
    * The Main logic of path calculation for the arrow.
    * calculate new path, adjusting canvas, and set state based on given properties.
    * */
-  if (shouldUpdatePosition.current) {
-    // update position if one of the relevant props changed
-    log('xarrow getPosition');
-    const pos = getPosition(xProps, mainRef);
-    log('pospospospospospospos', pos);
-    setSt(pos);
-    shouldUpdatePosition.current = false;
-  }
+  // useLayoutEffect(() => {
+  //   const pos = getPosition(xProps, mainRef);
+  //   // setSt(pos);
+  // });
+
+  // useEffectCompare(() => {
+  //   const pos = getPosition(xProps, mainRef);
+  //   log('pos', pos);
+  //   setSt(pos);
+  //
+  //   shouldUpdatePosition.current = false;
+  // }, [shouldUpdatePosition.current]);
+
+  useLayoutEffect(() => {
+    if (shouldUpdatePosition.current) {
+      // update position if one of the relevant props changed
+      // log('xarrow getPosition');
+      const pos = getPosition(xProps, mainRef);
+      // log('pos', pos);
+      setSt(pos);
+      shouldUpdatePosition.current = false;
+    }
+  });
+
+  // log('st', st);
 
   const xOffsetHead = st.x2 - st.arrowHeadOffset.x;
   const yOffsetHead = st.y2 - st.arrowHeadOffset.y;
@@ -194,8 +211,6 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
   // tailShape.elem:K force the type for passProps,arrowHeadProps,arrowTailProps property. for now `as any` is used to
   // avoid typescript conflicts
   // so todo- fix all the `passProps as any` assertions
-
-  log(st);
 
   return (
     <div {...divContainerProps} style={{ position: 'absolute', zIndex, ...divContainerStyle }}>
