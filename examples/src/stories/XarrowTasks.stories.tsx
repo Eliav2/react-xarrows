@@ -82,18 +82,3 @@ export const ManyArrows = () => {
     </div>
   );
 };
-
-export const BretSVG = () => {
-  const box = { id: 'box1', initialOffset: { x: 20, y: 20 }, reference: useRef(null) };
-  const box2 = { id: 'box2', initialOffset: { x: 320, y: 120 }, reference: useRef(null) };
-
-  return (
-    <div style={_canvasStyle} id="canvas">
-      <Xwrapper>
-        <DraggableBox {...box} />
-        <DraggableBox {...box2} />
-        <Xarrow start={box.reference} end={box2.reference} path={'grid'} />
-      </Xwrapper>
-    </div>
-  );
-};

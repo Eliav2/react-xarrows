@@ -593,6 +593,8 @@ const headShapeArrow1 = {svgElem: <path d="M 0 0 L 1 0.5 L 0 1 L 0.25 0.5 z"/>, 
 `offsetForward` - how much to offset tht line into the svg element(from 0 to 1). normally the line will connect to the
 start of the svgElem. for example in case of the default arrow you want the line to enter 25% into the svgElem.
 
+[here's](https://codesandbox.io/s/react-xarrows-custom-svgs-dfgsf?file=/src/App.tsx) a custom example using custom svg files.
+
 don't forget about `arrowHeadProps` and `arrowTailProps` in case you want to use default shape but custom svg props.
 
 **in case you pass a custom svg element:** currently you have to adjust the path to start from 0,0 and to be at size box
