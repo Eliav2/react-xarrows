@@ -189,30 +189,19 @@ const ArrowEdge = ({ edgeName, setEdge, edgeSize, setEdgeSize, showEdge, setShow
         ))}
       </select>
 
-      <MyCollapsible title={'advanced'} onOpen={onAdvOpen} onClose={onAdvClose}>
-        {/*<Div>*/}
-        <p>{edgeName}Offset: </p>
-        <NumericInput
-          value={edgeOffset}
-          onChange={(val) => {
-            setEdgeOffset(val);
-            update({ offsetForward: val });
-          }}
-          style={{ input: { width: 70 } }}
-          step={0.01}
-        />
-        <p>shape: </p>
-        <select
-          onChange={({ target: { value } }) => {
-            setSvgElem(value);
-            update({ _svgElem: value });
-          }}>
-          {['circle', 'ellipse', 'line', 'path', 'polygon', 'polyline', 'rect'].map((o, i) => (
-            <option key={i}>{o}</option>
-          ))}
-        </select>
-        {/*</Div>*/}
-      </MyCollapsible>
+      {/*<MyCollapsible title={'advanced'} onOpen={onAdvOpen} onClose={onAdvClose}>*/}
+      {/*  /!*<Div>*!/*/}
+      {/*  <p>{edgeName}Offset: </p>*/}
+      {/*  <NumericInput*/}
+      {/*    value={edgeOffset}*/}
+      {/*    onChange={(val) => {*/}
+      {/*      setEdgeOffset(val);*/}
+      {/*      update({ offsetForward: val });*/}
+      {/*    }}*/}
+      {/*    style={{ input: { width: 70 } }}*/}
+      {/*    step={0.01}*/}
+      {/*  />*/}
+      {/*</MyCollapsible>*/}
     </Div>
   );
 };

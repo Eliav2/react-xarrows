@@ -42,7 +42,7 @@ const Box = (props) => {
     <React.Fragment>
       <Draggable onStart={() => props.position !== 'static'} bounds="parent" onDrag={updateXarrow}>
         <div
-          ref={props.box.ref}
+          ref={props.box.reference}
           className={`${props.box.shape} ${props.position} hoverMarker`}
           style={{
             left: props.box.x,

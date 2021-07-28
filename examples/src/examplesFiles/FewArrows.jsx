@@ -17,9 +17,9 @@ const DraggableBox = ({ box }) => {
 
 const FewArrows = () => {
   const boxes = [
-    { id: 'box1', x: 50, y: 20, ref: useRef(null) },
-    { id: 'box2', x: 20, y: 250, ref: useRef(null) },
-    { id: 'box3', x: 350, y: 80, ref: useRef(null) },
+    { id: 'box1', x: 50, y: 20, reference: useRef(null) },
+    { id: 'box2', x: 20, y: 250, reference: useRef(null) },
+    { id: 'box3', x: 350, y: 80, reference: useRef(null) },
   ];
 
   const [lines] = useState([

@@ -4,7 +4,6 @@ import React, { useRef, useState } from 'react';
 import Xarrow, { xarrowPropsType, useXarrow, Xwrapper } from 'react-xarrows';
 import Draggable from 'react-draggable';
 import { Meta, Story } from '@storybook/react';
-import zIndex from '@material-ui/core/styles/zIndex';
 
 const flexBox = {
   display: 'flex',
@@ -93,14 +92,15 @@ type typeCustomSimpleTemplate = { [key: string]: any } & xarrowPropsType;
 const SimpleTemplate = ({ box1: box1Style, box2: box2Style, ...xarrowProps }: any) => {
   const [, setRender] = useState({});
   const forceRerender = () => setRender({});
+  const boxRef = useRef();
   const box2Ref = useRef();
-  const box = { id: 'box1', x: 20, y: 20 };
+  const box = { id: 'box1', x: 20, y: 20, ref: boxRef };
   const box2 = { id: 'box2', x: 320, y: 120, ref: box2Ref };
   return (
     <div style={canvasStyle} id="canvas">
       <DraggableBox box={box} forceRerender={forceRerender} style={box1Style} />
       <DraggableBox box={box2} forceRerender={forceRerender} style={box2Style} />
-      <Xarrow start={'box1'} end={box2Ref} {...xarrowProps} />
+      <Xarrow start={box.ref} end={box2.id} {...xarrowProps} />
     </div>
   );
 };

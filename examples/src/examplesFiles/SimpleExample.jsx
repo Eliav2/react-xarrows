@@ -1,6 +1,5 @@
 import React, { useRef } from 'react';
 import Xarrow from 'react-xarrows';
-// import Index from "./../../src/Index";
 
 const canvasStyle = {
   position: 'relative',
@@ -42,7 +41,7 @@ const SimpleExample = ({ ...args }) => {
       <div style={canvasStyle} id="canvas">
         <Box box={box1} />
         <Box box={box2} />
-        <Xarrow start={box1.ref} end={box2.ref} {...args} />
+        <Xarrow start={box1.id} end={box2.ref} {...args} />
       </div>
     </React.Fragment>
   );

@@ -1,3 +1,7 @@
+## 2.0.2
+
+- prop suggestions did not appear on IDE's because wrong package.json.types path.
+
 ## 2.0.1
 
 - fixed issues with StrictMode [#82](https://github.com/Eliav2/react-xarrows/issues/82)

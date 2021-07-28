@@ -1,11 +1,11 @@
 {
   "name": "react-xarrows",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "author": "Eliav Louski",
   "description": "Draw arrows (or lines) between components in React!",
-  "main": "lib/index.js",
-  "module": "lib/index.js",
-  "types": "lib",
+  "main": "./lib/index.js",
+  "module": "./lib/index.js",
+  "types": "./lib/index.d.ts",
   "scripts": {
     "build": "webpack --mode development --config-name lib",
     "build:prod": "webpack --mode production --config-name lib",

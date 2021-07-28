@@ -133,3 +133,7 @@ export default {
   title: 'PopoutIssue',
   component: PopoutIssue,
 };
+
+const BretArrows = () => {
+  return <div></div>;
+};
