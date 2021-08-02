@@ -27,7 +27,8 @@
   "dependencies": {
     "@types/prop-types": "^15.7.3",
     "lodash": "^4.17.21",
-    "prop-types": "^15.7.2"
+    "prop-types": "^15.7.2",
+    "react-spring": "^9.2.4"
   },
   "funding": {
     "type": "individual",

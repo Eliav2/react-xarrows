@@ -87,7 +87,7 @@ const useParseProps = (props: MyComponentPropsType) => {
   return parsedVals;
 };
 
-const MyComponent = (props: MyComponentPropsType) => {
+const MySpringComponent = (props: MyComponentPropsType) => {
   const parsedProps = useParseProps(props);
 
   console.log('look it me', parsedProps.parsedProp1);
@@ -112,7 +112,7 @@ export const ReactSpring = () => {
       <br />
       <button onClick={() => setVal(val + 1)}>+</button>
       <button onClick={() => setVal(val - 1)}>-</button>
-      <MyComponent prop1={val} />
+      <MySpringComponent prop1={val} />
     </div>
   );
 };

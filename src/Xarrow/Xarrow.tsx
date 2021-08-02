@@ -4,7 +4,7 @@ import useXarrowProps from './useXarrowProps';
 import { XarrowContext } from '../Xwrapper';
 import XarrowPropTypes from './propTypes';
 import { getPosition } from './utils/GetPosition';
-
+import { useSpring } from 'react-spring';
 const log = console.log;
 
 const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
@@ -51,7 +51,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
   } = propsRefs;
 
   animateDrawing = props.animateDrawing as number;
-  const [drawAnimEnded, setDrawAnimEnded] = useState(!animateDrawing);
+  // const [drawAnimEnded, setDrawAnimEnded] = useState(!animateDrawing);
 
   const [, setRender] = useState({});
   const forceRerender = () => setRender({});
@@ -130,61 +130,69 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     animStartValue,
     animEndValue = 0;
 
-  if (animateDrawing && drawAnimEnded == false) {
-    if (typeof animateDrawing === 'boolean') animateDrawing = 1;
-    animation = animateDrawing + 's';
-    dashArray = st.lineLength;
-    animStartValue = st.lineLength;
-    animRepeatCount = 1;
-    if (animateDrawing < 0) {
-      [animStartValue, animEndValue] = [animEndValue, animStartValue];
-      animation = animateDrawing * -1 + 's';
-    }
-  } else {
-    dashArray = `${dashness.strokeLen} ${dashness.nonStrokeLen}`;
-    animation = `${1 / dashness.animation}s`;
-    animStartValue = dashoffset * animDirection;
-    animRepeatCount = 'indefinite';
-    animEndValue = 0;
-  }
+  // if (animateDrawing && drawAnimEnded == false) {
+  //   if (typeof animateDrawing === 'boolean') animateDrawing = 1;
+  //   animation = animateDrawing + 's';
+  //   dashArray = st.lineLength;
+  //   animStartValue = st.lineLength;
+  //   animRepeatCount = 1;
+  //   if (animateDrawing < 0) {
+  //     [animStartValue, animEndValue] = [animEndValue, animStartValue];
+  //     animation = animateDrawing * -1 + 's';
+  //   }
+  // } else {
+  //   dashArray = `${dashness.strokeLen} ${dashness.nonStrokeLen}`;
+  //   animation = `${1 / dashness.animation}s`;
+  //   animStartValue = dashoffset * animDirection;
+  //   animRepeatCount = 'indefinite';
+  //   animEndValue = 0;
+  // }
 
   // handle draw animation
   useLayoutEffect(() => {
     if (lineRef.current) setSt((prevSt) => ({ ...prevSt, lineLength: lineRef.current?.getTotalLength() ?? 0 }));
   }, [lineRef.current]);
 
+  log('xarrow updatess');
   // set all props on first render
   useEffect(() => {
+    window.requestAnimationFrame(() => {
+      forceRerender();
+      console.log('requestAnimationFrame effect');
+    });
+    log('mount effect');
     const monitorDOMchanges = () => {
       window.addEventListener('resize', forceRerender);
 
-      const handleDrawAmimEnd = () => {
-        setDrawAnimEnded(true);
-        // @ts-ignore
-        headOpacityAnimRef.current?.beginElement();
-        // @ts-ignore
-        lineDashAnimRef.current?.beginElement();
-      };
-      const handleDrawAmimBegin = () => (headRef.current.style.opacity = '0');
-      if (lineDrawAnimRef.current && headRef.current) {
-        lineDrawAnimRef.current.addEventListener('endEvent', handleDrawAmimEnd);
-        lineDrawAnimRef.current.addEventListener('beginEvent', handleDrawAmimBegin);
-      }
+      // const handleDrawAmimEnd = () => {
+      //   setDrawAnimEnded(true);
+      //   // @ts-ignore
+      //   headOpacityAnimRef.current?.beginElement();
+      //   // @ts-ignore
+      //   lineDashAnimRef.current?.beginElement();
+      // };
+      // const handleDrawAmimBegin = () => (headRef.current.style.opacity = '0');
+      // if (lineDrawAnimRef.current && headRef.current) {
+      //   lineDrawAnimRef.current.addEventListener('endEvent', handleDrawAmimEnd);
+      //   lineDrawAnimRef.current.addEventListener('beginEvent', handleDrawAmimBegin);
+      // }
       return () => {
         window.removeEventListener('resize', forceRerender);
-        if (lineDrawAnimRef.current) {
-          lineDrawAnimRef.current.removeEventListener('endEvent', handleDrawAmimEnd);
-          if (headRef.current) lineDrawAnimRef.current.removeEventListener('beginEvent', handleDrawAmimBegin);
-        }
+        // if (lineDrawAnimRef.current) {
+        //   lineDrawAnimRef.current.removeEventListener('endEvent', handleDrawAmimEnd);
+        //   if (headRef.current) lineDrawAnimRef.current.removeEventListener('beginEvent', handleDrawAmimBegin);
+        // }
       };
     };
 
     const cleanMonitorDOMchanges = monitorDOMchanges();
     return () => {
-      setDrawAnimEnded(false);
+      // setDrawAnimEnded(false);
       cleanMonitorDOMchanges();
     };
   }, [showXarrow]);
+
+  // useSpring({from:{}});
 
   //todo: could make some advanced generic typescript inferring. for example get type from headShape.elem:T and
   // tailShape.elem:K force the type for passProps,arrowHeadProps,arrowTailProps property. for now `as any` is used to
@@ -221,36 +229,36 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
               pointerEvents="visibleStroke"
               {...(passProps as any)}
               {...arrowBodyProps}>
-              <>
-                {drawAnimEnded ? (
-                  <>
-                    {/* moving dashed line animation */}
-                    {dashness.animation ? (
-                      <animate
-                        ref={lineDashAnimRef}
-                        attributeName="stroke-dashoffset"
-                        values={`${dashoffset * animDirection};0`}
-                        dur={`${1 / dashness.animation}s`}
-                        repeatCount="indefinite"
-                      />
-                    ) : null}
-                  </>
-                ) : (
-                  <>
-                    {/* the creation of the line animation */}
-                    {animateDrawing ? (
-                      <animate
-                        ref={lineDrawAnimRef}
-                        id={`svgEndAnimate`}
-                        attributeName="stroke-dashoffset"
-                        values={`${animStartValue};${animEndValue}`}
-                        dur={animation}
-                        repeatCount={animRepeatCount}
-                      />
-                    ) : null}
-                  </>
-                )}
-              </>
+              {/*<>*/}
+              {/*  {drawAnimEnded ? (*/}
+              {/*    <>*/}
+              {/*      /!* moving dashed line animation *!/*/}
+              {/*      {dashness.animation ? (*/}
+              {/*        <animate*/}
+              {/*          ref={lineDashAnimRef}*/}
+              {/*          attributeName="stroke-dashoffset"*/}
+              {/*          values={`${dashoffset * animDirection};0`}*/}
+              {/*          dur={`${1 / dashness.animation}s`}*/}
+              {/*          repeatCount="indefinite"*/}
+              {/*        />*/}
+              {/*      ) : null}*/}
+              {/*    </>*/}
+              {/*  ) : (*/}
+              {/*    <>*/}
+              {/*      /!* the creation of the line animation *!/*/}
+              {/*      {animateDrawing ? (*/}
+              {/*        <animate*/}
+              {/*          ref={lineDrawAnimRef}*/}
+              {/*          id={`svgEndAnimate`}*/}
+              {/*          attributeName="stroke-dashoffset"*/}
+              {/*          values={`${animStartValue};${animEndValue}`}*/}
+              {/*          dur={animation}*/}
+              {/*          repeatCount={animRepeatCount}*/}
+              {/*        />*/}
+              {/*      ) : null}*/}
+              {/*    </>*/}
+              {/*  )}*/}
+              {/*</>*/}
             </path>
             {/* arrow tail */}
             {showTail ? (
@@ -272,7 +280,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
                 fill={headColor}
                 pointerEvents="auto"
                 transform={`translate(${xOffsetHead},${yOffsetHead}) rotate(${st.headOrient}) scale(${st.fHeadSize})`}
-                opacity={animateDrawing && !drawAnimEnded ? 0 : 1}
+                // opacity={animateDrawing && !drawAnimEnded ? 0 : 1}
                 {...(passProps as any)}
                 {...arrowHeadProps}>
                 <animate
