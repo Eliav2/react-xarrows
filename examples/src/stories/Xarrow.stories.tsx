@@ -1,7 +1,8 @@
 /* eslint-disable */
 import React, { useRef, useState } from 'react';
 
-import Xarrow, { xarrowPropsType, useXarrow, Xwrapper } from 'react-xarrows';
+// import Xarrow, { xarrowPropsType, useXarrow, Xwrapper } from 'react-xarrows';
+import Xarrow, { xarrowPropsType, useXarrow, Xwrapper } from '../../../src';
 import Draggable from 'react-draggable';
 import { Meta, Story } from '@storybook/react';
 
