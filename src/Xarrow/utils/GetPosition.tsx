@@ -1,7 +1,7 @@
 import { useXarrowPropsResType } from '../useXarrowProps';
 import React from 'react';
 import { calcAnchors } from '../anchors';
-import { getShortestLine, getSvgPos } from './index';
+import { calculateRadiusOffset, getShortestLine, getSvgPos } from './index';
 import _ from 'lodash';
 import { cPaths } from '../../constants';
 import { buzzierMinSols, bzFunction } from './buzzier';
@@ -44,8 +44,17 @@ export const getPosition = (xProps: useXarrowPropsResType, mainRef: React.Mutabl
   // choose the smallest path for 2 points from these possibilities.
   let { chosenStart, chosenEnd } = getShortestLine(startPoints, endPoints);
 
+  // Calculate the radius if exists
+  if(chosenStart.anchor.offset.radius && chosenStart.anchor.offset.radius >= 0) {
+    chosenStart.anchor.offset = calculateRadiusOffset(chosenEnd, chosenStart);
+  }
+  if(chosenEnd.anchor.offset.radius && chosenEnd.anchor.offset.radius >= 0) {
+    chosenEnd.anchor.offset = calculateRadiusOffset(chosenStart, chosenEnd);
+  }
+
   let startAnchorPosition = chosenStart.anchor.position,
     endAnchorPosition = chosenEnd.anchor.position;
+
   let startPoint = _.pick(chosenStart, ['x', 'y']),
     endPoint = _.pick(chosenEnd, ['x', 'y']);
 

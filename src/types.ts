@@ -55,7 +55,7 @@ export type anchorNamedType = typeof cAnchorEdge[number];
 
 export type anchorCustomPositionType = {
   position: anchorNamedType;
-  offset: { x?: number; y?: number };
+  offset: { x?: number; y?: number; radius?: number };
 };
 export type refType = React.MutableRefObject<any> | string;
 export type labelsType = {

@@ -76,8 +76,8 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     cpy2: 0,
     headOrient: 0, // determines to what side the arrowhead will point
     tailOrient: 0, // determines to what side the arrow tail will point
-    arrowHeadOffset: { x: 0, y: 0 },
-    arrowTailOffset: { x: 0, y: 0 },
+    arrowHeadOffset: { x: 0, y: 0, radius: 0 },
+    arrowTailOffset: { x: 0, y: 0, radius: 0 },
     headOffset: 0,
     excRight: 0, //expand canvas to the right
     excLeft: 0, //expand canvas to the left

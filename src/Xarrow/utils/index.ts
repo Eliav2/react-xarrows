@@ -48,7 +48,7 @@ const dist = (p1, p2) => {
 type t1 = { x: number; y: number; anchor: anchorCustomPositionType };
 
 export const getShortestLine = (sPoints: t1[], ePoints: t1[]) => {
-  // closes tPair Of Points which feet to the specified anchors
+  // closes tPair Of Points which feed to the specified anchors
   let minDist = Infinity,
     d = Infinity;
   let closestPair: { chosenStart: t1; chosenEnd: t1 };
@@ -63,6 +63,19 @@ export const getShortestLine = (sPoints: t1[], ePoints: t1[]) => {
   });
   return closestPair;
 };
+
+export const calculateRadiusOffset = (start: t1, end: t1) => {
+  let radius = end.anchor.offset.radius;
+  let directionMagnitude = dist(start, end);
+  let directionNormalized = { 
+    x: (start.x - end.x) / directionMagnitude, 
+    y: (start.y - end.y) / directionMagnitude 
+  };
+  return { 
+    x: end.x + (directionNormalized.x * radius), 
+    y: end.y + (directionNormalized.y * radius) 
+  };
+}
 
 export const getElemPos = (elem: HTMLElement) => {
   if (!elem) return { x: 0, y: 0, right: 0, bottom: 0 };
