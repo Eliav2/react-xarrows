@@ -1,7 +1,8 @@
 import React, { useRef } from 'react';
 import { Meta } from '@storybook/react';
 
-import Xarrow, { Xwrapper } from 'react-xarrows';
+// import Xarrow, { Xwrapper } from 'react-xarrows';
+import Xarrow, { Xwrapper } from '../../../src';
 import { DraggableBox } from '../components/DraggableBox';
 import Draggable from 'react-draggable';
 import { boxStyle } from '../ExamplePage';
@@ -42,7 +43,7 @@ export const ManyArrows = () => {
         <Xwrapper>
           <DraggableBox {...box3} />
           <DraggableBox {...box4} />
-          <Xarrow start={box3.reference} end={box4.reference} />
+          <Xarrow start={box3.id} end={box4.id} />
         </Xwrapper>
       </div>
       <h1>{ManyArrowsNum} arrows</h1>

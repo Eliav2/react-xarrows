@@ -3,6 +3,7 @@ import './index.css';
 import { render } from 'react-dom';
 
 import ExamplePage from './ExamplePage';
+import TestExample from './examplesFiles/TestExample';
 
 const rootElement = document.getElementById('root');
 render(
@@ -10,6 +11,7 @@ render(
   //   <ExamplePage />
   // </React.StrictMode>,
   <ExamplePage />,
+  // <TestExample />,
 
   rootElement
 );

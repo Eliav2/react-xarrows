@@ -182,7 +182,7 @@ gridBreak.args = {
   _extendSVGcanvas: 100,
 };
 
-const DraggableBox2 = ({ id, forceRerender, style = {} }) => {
+const DraggableBox2 = ({ id, style = {} }) => {
   const updateXarrow = useXarrow();
   return (
     <Draggable onDrag={updateXarrow} onStop={updateXarrow}>
@@ -222,8 +222,8 @@ const AllStatesTemplate = ({ box: boxStyle, ...xarrowProps }) => {
                   {st} -{'>'} {st2}
                 </div>
                 <Xwrapper>
-                  <DraggableBox2 id={boxNum} forceRerender={forceRerender} style={{ ...boxStyle }} />
-                  <DraggableBox2 id={boxNum + 1} forceRerender={forceRerender} style={{ ...boxStyle }} />
+                  <DraggableBox2 id={boxNum} style={{ ...boxStyle }} />
+                  <DraggableBox2 id={boxNum + 1} style={{ ...boxStyle }} />
                   <Xarrow
                     start={String(boxNum)}
                     end={String(boxNum + 1)}

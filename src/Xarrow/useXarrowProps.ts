@@ -13,6 +13,7 @@ import { getElementByPropGiven, getElemPos, xStr2absRelative } from './utils';
 import _ from 'lodash';
 import { arrowShapes, cAnchorEdge, cArrowShapes } from '../constants';
 import { anchorEdgeType, dimensionType } from '../privateTypes';
+import { useDeepCompareEffect } from '../hooks/useDeepCompareEffect';
 
 const parseLabels = (label: xarrowPropsType['labels']): labelsType => {
   let parsedLabel = { start: null, middle: null, end: null };
@@ -291,26 +292,6 @@ const initialValVars = {
 };
 
 // const parseAllProps = () => parseGivenProps(defaultProps, initialParsedProps);
-
-function deepCompareEquals(a, b) {
-  return _.isEqual(a, b);
-}
-
-function useDeepCompareMemoize(value) {
-  const ref = useRef();
-  // it can be done by using useMemo as well
-  // but useRef is rather cleaner and easier
-
-  if (!deepCompareEquals(value, ref.current)) {
-    ref.current = value;
-  }
-
-  return ref.current;
-}
-
-function useDeepCompareEffect(callback, dependencies) {
-  useLayoutEffect(callback, dependencies.map(useDeepCompareMemoize));
-}
 
 /**
  * smart hook that provides parsed props to Xarrow and will trigger rerender whenever given prop is changed.
