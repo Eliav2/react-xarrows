@@ -12,7 +12,7 @@ import {
 import { getElementByPropGiven, getElemPos, xStr2absRelative } from './utils';
 import _ from 'lodash';
 import { arrowShapes, cAnchorEdge, cArrowShapes } from '../constants';
-import { anchorEdgeType, dimensionType } from '../privateTypes';
+import { anchorEdgeType, posType } from '../privateTypes';
 import { useDeepCompareEffect } from '../hooks/useDeepCompareEffect';
 
 const parseLabels = (label: xarrowPropsType['labels']): labelsType => {
@@ -287,8 +287,8 @@ let initialParsedProps = {} as parsedXarrowProps;
 initialParsedProps = parseGivenProps(defaultProps, initialParsedProps);
 
 const initialValVars = {
-  startPos: { x: 0, y: 0, right: 0, bottom: 0 } as dimensionType,
-  endPos: { x: 0, y: 0, right: 0, bottom: 0 } as dimensionType,
+  startPos: { x: 0, y: 0, right: 0, bottom: 0 } as posType,
+  endPos: { x: 0, y: 0, right: 0, bottom: 0 } as posType,
 };
 
 // const parseAllProps = () => parseGivenProps(defaultProps, initialParsedProps);

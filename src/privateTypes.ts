@@ -1,4 +1,4 @@
-export type dimensionType = {
+export type posType = {
   x: number;
   y: number;
   right: number;

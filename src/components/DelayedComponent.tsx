@@ -2,10 +2,12 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useHookTruetyCompare } from '../hooks/useHookTruetyCompare';
 
 // will render {delay} dumy memorized renders before actually rendering the given {componentCB} for each render
+// used to delay component that relay on DOM properties of other component
 export const DelayedComponent: React.FC<{ delay: number; componentCB: () => JSX.Element }> = ({
   delay = 1,
   componentCB,
 }) => {
+  // console.log('DelayedXComponent');
   const count = useRef(0);
 
   const c = count.current;

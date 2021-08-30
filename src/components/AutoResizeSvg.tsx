@@ -2,7 +2,7 @@
 import React, { SVGProps, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import _ from 'lodash';
 import { useHookTruetyCompare } from '../hooks/useHookTruetyCompare';
-import { useMultipleRenders } from '../hooks/useMultipleRenders';
+import { useCallOnNextRender, useMultipleRenders } from '../hooks/useMultipleRenders';
 
 export const AutoResizeSvg: React.FC<SVGProps<SVGSVGElement> & { effectPhase?: typeof useEffect; padding?: number }> =
   ({ children, effectPhase = useLayoutEffect, padding = 1, style, ...props }) => {
@@ -17,6 +17,7 @@ export const AutoResizeSvg: React.FC<SVGProps<SVGSVGElement> & { effectPhase?: t
       width: 0,
       height: 0,
     };
+
     if (!_.isNil(curSvgSize.height)) curSvgSize.height += padding;
     if (!_.isNil(curSvgSize.width)) curSvgSize.width += padding;
     useHookTruetyCompare(
@@ -28,11 +29,11 @@ export const AutoResizeSvg: React.FC<SVGProps<SVGSVGElement> & { effectPhase?: t
       effectPhase
     );
 
-    effectPhase(() => {
-      if (_.isEqual(svgGSize, curSvgSize)) setSVGSize(curSvgSize);
-    });
+    effectPhase(() => {});
 
-    useMultipleRenders(2, effectPhase);
+    useCallOnNextRender(() => {
+      if (_.isEqual(svgGSize, curSvgSize)) setSVGSize(curSvgSize);
+    }, 4);
 
     return (
       <svg

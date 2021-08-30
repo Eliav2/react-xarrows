@@ -14,6 +14,8 @@ import _ from 'lodash';
 import { XarrowContext } from '../Xwrapper';
 import { AutoResizeSvg } from '../components/AutoResizeSvg';
 import { DelayedComponent } from '../components/DelayedComponent';
+import { posType } from '../privateTypes';
+import { useDeepCompareEffect } from '../hooks/useDeepCompareEffect';
 
 export const log = console.log;
 // console.log = () => {};
@@ -24,31 +26,54 @@ export const log = console.log;
  *
  */
 
-const useUpdatedVal = (
-  getVal: () => any,
-  effect: (effect: React.EffectCallback, deps?: React.DependencyList, ...rest) => void = useLayoutEffect,
-  ...effectRest
-) => {
-  const [val, setVal] = useState(getVal());
-  let curVal = getVal();
-  // trigger render with new value as it may have UI meaning
-  effect(
-    () => {
-      setVal(curVal);
-    },
-    [curVal],
-    ...effectRest
-  );
-  return [curVal, setVal];
+interface XSimpleArrowPropsType {
+  start: refType;
+  end: refType;
+  SVGcanvasProps?: SVGProps<SVGSVGElement>;
+  SVGcanvasStyle?: React.CSSProperties;
+  SVGChildren?: ReactNode | undefined;
+  arrowBodyProps?: SVGProps<SVGPathElement>;
+  divContainerProps?: React.HTMLProps<HTMLDivElement>;
+
+  // the phase that xarrow will sample the DOM. can be useEffect or useLayoutEffect
+  _updatePhase?: (effect: EffectCallback, deps?: DependencyList) => void;
+
+  // the number of idle renders (cached result is returned) before running the actual expensive render that sample the DOM.
+  // can be used to sample the DOM after other components updated, that your xarrow maybe depends on.
+  idleRenders?: number;
+}
+
+type XElementType = { position: posType; element: HTMLElement };
+
+const useElement = (elemProp: refType): XElementType => {
+  const [elem, setElem] = useState(() => getElementByPropGiven(elemProp));
+  const [pos, setPos] = useState<posType>({ x: 0, y: 0, right: 0, bottom: 0 });
+  useLayoutEffect(() => {
+    setElem(getElementByPropGiven(elemProp));
+    // console.log('elemProp changed!');
+  }, [elemProp]);
+  useLayoutEffect(() => {
+    // console.log('elem changed!');
+    setPos(getElemPos(elem));
+  }, [elem]);
+
+  useLayoutEffect(() => {
+    const newPos = getElemPos(elem);
+    if (!_.isEqual(newPos, pos)) {
+      setPos(newPos);
+    }
+  });
+  return {
+    position: pos,
+    element: elem,
+  };
 };
 
-const getPosition = (start: refType, end: refType, root: HTMLDivElement) => {
-  const startElem = getElementByPropGiven(start);
-  const endElem = getElementByPropGiven(end);
-  const rootPos = getElemPos(root);
-  const { x: xr, y: yr } = rootPos;
-  const startPos = getElemPos(startElem);
-  const endPos = getElemPos(endElem);
+const getPosition = (startElem: XElementType, endElem: XElementType, rootElem: XElementType) => {
+  // console.log('getPosition');
+  const { x: xr, y: yr } = rootElem.position;
+  const startPos = startElem.position;
+  const endPos = endElem.position;
   let xs = (startPos.x + startPos.right) / 2;
   let ys = (startPos.y + startPos.bottom) / 2;
   let xe = (endPos.x + endPos.right) / 2;
@@ -67,32 +92,19 @@ const getPosition = (start: refType, end: refType, root: HTMLDivElement) => {
   return { path, cw, ch, cx0, cy0 };
 };
 
-interface XSimpleArrowPropsType {
-  start: refType;
-  end: refType;
-  SVGcanvasProps?: SVGProps<SVGSVGElement>;
-  SVGcanvasStyle?: React.CSSProperties;
-  SVGChildren?: ReactNode | undefined;
-  arrowBodyProps?: SVGProps<SVGPathElement>;
-  divContainerProps?: React.HTMLProps<HTMLDivElement>;
-  // the phase that xarrow will sample the DOM. can be useEffect or useLayoutEffect
-  _updatePhase?: (effect: EffectCallback, deps?: DependencyList) => void;
-  // the number of idle renders (cached result is returned) before running the actual expensive render that sample the DOM.
-  // can be used to sample the DOM after other components updated, that your xarrow maybe depends on.
-  idleRenders?: number;
-}
-
 const XSimpleArrow: React.FC<XSimpleArrowPropsType> = (props) => {
-  // console.log('XSimpleArrow');
+  console.log('XSimpleArrow');
   const rootDivRef = useRef<HTMLDivElement>(null);
-  const { _updatePhase: effect, start, end } = props;
+  const { _updatePhase: effect = useLayoutEffect, start, end } = props;
 
-  const [st, setSt] = useState(getPosition(start, end, rootDivRef.current));
+  const startElem = useElement(start);
+  const endElem = useElement(end);
+  const rootElem = useElement(rootDivRef);
+  const [st, setSt] = useState(() => getPosition(startElem, endElem, rootElem));
 
-  effect(() => {
-    let curSt = getPosition(start, end, rootDivRef.current);
-    if (!_.isEqual(curSt, st)) setSt(curSt);
-  });
+  useDeepCompareEffect(() => {
+    setSt(getPosition(startElem, endElem, rootElem));
+  }, [startElem, endElem]);
 
   return (
     <div ref={rootDivRef} style={{ position: 'absolute', pointerEvents: 'none' }} {...props.divContainerProps}>
@@ -119,25 +131,27 @@ const XSimpleArrow: React.FC<XSimpleArrowPropsType> = (props) => {
 XSimpleArrow.defaultProps = {
   _updatePhase: useLayoutEffect,
 };
+// XSimpleArrow.whyDidYouRender = true;
 
 const DelayedXArrow: React.FC<XSimpleArrowPropsType> = (props) => {
   const { idleRenders = 1 } = props;
+  // console.log('DelayedXArrow');
   useContext(XarrowContext);
   return <DelayedComponent delay={idleRenders} componentCB={() => <XSimpleArrow {...props} />} />;
 };
 
-interface XSimpleArrowWithOptionsPropsType extends XSimpleArrowPropsType {
-  lineColor?: string;
-  strokeWidth?: number;
-  arrowBodyProps?: SVGProps<SVGPathElement>;
-}
-
-const XSimpleArrowWithOptions: React.FC<XSimpleArrowWithOptionsPropsType> = (
-  props,
-  { lineColor, strokeWidth, arrowBodyProps }
-) => {
-  return <XSimpleArrow {...props} arrowBodyProps={{ stroke: lineColor, strokeWidth, ...arrowBodyProps }} />;
-};
+// interface XSimpleArrowWithOptionsPropsType extends XSimpleArrowPropsType {
+//   lineColor?: string;
+//   strokeWidth?: number;
+//   arrowBodyProps?: SVGProps<SVGPathElement>;
+// }
+//
+// const XSimpleArrowWithOptions: React.FC<XSimpleArrowWithOptionsPropsType> = (
+//   props,
+//   { lineColor, strokeWidth, arrowBodyProps }
+// ) => {
+//   return <XSimpleArrow {...props} arrowBodyProps={{ stroke: lineColor, strokeWidth, ...arrowBodyProps }} />;
+// };
 
 const CustomXarrow: React.FC = (props, children) => {
   return <div>{/*<XSimpleArrowWithOptions start={} end={} />*/}</div>;

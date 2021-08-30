@@ -1,5 +1,6 @@
 import { anchorCustomPositionType, refType } from '../../types';
 import React from 'react';
+import _ from 'lodash';
 
 export const getElementByPropGiven = (ref: refType): HTMLElement => {
   let myRef;
@@ -63,15 +64,23 @@ export const getShortestLine = (sPoints: t1[], ePoints: t1[]) => {
   return closestPair;
 };
 
+const memorizedPositions = new Map();
 export const getElemPos = (elem: HTMLElement) => {
-  if (!elem) return { x: 0, y: 0, right: 0, bottom: 0 };
-  const pos = elem.getBoundingClientRect();
-  return {
-    x: pos.left,
-    y: pos.top,
-    right: pos.right,
-    bottom: pos.bottom,
-  };
+  // console.log(memorizedPositions);
+  if (!elem) {
+    return { x: 0, y: 0, right: 0, bottom: 0 };
+  }
+  // const pos = elem.getBoundingClientRect();
+  // console.log(_.pick(elem.getBoundingClientRect(), 'left', 'top', 'right', 'bottom'));
+  // return {
+  //   x: pos.left,
+  //   y: pos.top,
+  //   right: pos.right,
+  //   bottom: pos.bottom,
+  // };
+  const pos = _.pick(elem.getBoundingClientRect(), 'x', 'y', 'right', 'bottom');
+  // if (!memorizedPositions.has(elem)) memorizedPositions.set(elem, pos);
+  return pos;
 };
 
 export const getSvgPos = (svgRef: React.MutableRefObject<any>) => {

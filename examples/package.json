@@ -1,6 +1,6 @@
 {
   "author": "Eliav Louski",
-  "main": "src/index.jsx",
+  "main": "src/index.tsx",
   "private": true,
   "dependencies": {
     "@material-ui/core": "^4.11.4",
@@ -47,7 +47,7 @@
     "@storybook/node-logger": "^6.3.6",
     "@storybook/preset-create-react-app": "^3.2.0",
     "@storybook/react": "^6.3.6",
-    "@welldone-software/why-did-you-render": "^6.2.0"
+    "@welldone-software/why-did-you-render": "^6.2.1"
   },
   "eslintConfig": {
     "overrides": [

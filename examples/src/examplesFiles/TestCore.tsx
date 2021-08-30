@@ -1,16 +1,10 @@
-import '../../wdyr';
-import React, { useEffect, useRef, useState } from 'react';
-import { Meta, Story } from '@storybook/react';
-import CustomXarrow from '../../../src/Xarrow/XarrowCore';
-import Xarrow, { useMultipleRenders, xarrowPropsType, Xwrapper, arrowShapes } from '../../../src';
+import React, { useState } from 'react';
+import { Xwrapper } from 'react-xarrows';
+import CustomXarrow from 'react-xarrows/src/Xarrow/XarrowCore';
 import { DraggableBox } from '../components/DraggableBox';
+// import { Xwrapper } from '../../../src';
 
-export default {
-  title: 'XarrowCore',
-  component: CustomXarrow,
-} as Meta;
-
-const XarrowCoreTestTemplate = (args) => {
+const XarrowCoreTest = () => {
   const [showBox1, setShowBox1] = useState(true);
   const [showBox2, setShowBox2] = useState(true);
 
@@ -24,18 +18,9 @@ const XarrowCoreTestTemplate = (args) => {
           {showBox2 ? <DraggableBox id={'box2'} grid={[20, 20]} /> : null}
           {/*<DelayedComponent comp={<CustomXarrow start={'box1'} end={'box2'} />} />*/}
           <CustomXarrow start={'box1'} end={'box2'} idleRenders={1} />
-          {/*<svg*/}
-          {/*  style={{*/}
-          {/*    border: 'solid yellow 1px',*/}
-          {/*  }}>*/}
-          {/*  <g>*/}
-          {/*    <path height={'auto'} width={'auto'} d={'M0,0 L1000,0'} stroke="black" />*/}
-          {/*  </g>*/}
-          {/*</svg>*/}
         </Xwrapper>
       </div>
     </div>
   );
 };
-
-export const XarrowCoreStory: Story<xarrowPropsType> = (args) => <XarrowCoreTestTemplate {...args} />;
+export default XarrowCoreTest;
