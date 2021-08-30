@@ -46,21 +46,23 @@ interface XSimpleArrowPropsType {
 type XElementType = { position: posType; element: HTMLElement };
 
 const useElement = (elemProp: refType): XElementType => {
+  // console.log('useElement');
   const [elem, setElem] = useState(() => getElementByPropGiven(elemProp));
   const [pos, setPos] = useState<posType>({ x: 0, y: 0, right: 0, bottom: 0 });
+  const elemRef = getElementByPropGiven(elemProp);
   useLayoutEffect(() => {
-    setElem(getElementByPropGiven(elemProp));
     // console.log('elemProp changed!');
-  }, [elemProp]);
-  useLayoutEffect(() => {
-    // console.log('elem changed!');
-    setPos(getElemPos(elem));
-  }, [elem]);
+    setElem(getElementByPropGiven(elemProp));
+  }, [elemProp, elemRef]);
 
   useLayoutEffect(() => {
-    const newPos = getElemPos(elem);
-    if (!_.isEqual(newPos, pos)) {
-      setPos(newPos);
+    // console.log('elem', elem);
+    if (elemRef) {
+      const newPos = getElemPos(elem);
+      if (!_.isEqual(newPos, pos)) {
+        // console.log('elem update pos!', newPos);
+        setPos(newPos);
+      }
     }
   });
   return {
