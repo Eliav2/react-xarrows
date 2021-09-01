@@ -22,9 +22,9 @@ export const log = console.log;
 export interface XarrowCoreProps {
   start: refType;
   end: refType;
+  // SVGChildren?: ReactNode | undefined;
   SVGcanvasProps?: AutoResizeSvgProps;
   SVGcanvasStyle?: React.CSSProperties;
-  SVGChildren?: ReactNode | undefined;
   arrowBodyProps?: SVGProps<SVGPathElement>;
   divContainerProps?: React.HTMLProps<HTMLDivElement>;
 
@@ -62,12 +62,6 @@ const XarrowCore: React.FC<XarrowCoreProps> = (props) => {
   const endElem = useElement(props.end);
   const rootElem = useElement(rootDivRef);
 
-  const [st, setSt] = useState(() => _getPosition(startElem, endElem, rootElem));
-
-  useDeepCompareEffect(() => {
-    setSt(_getPosition(startElem, endElem, rootElem));
-  }, [startElem, endElem]);
-
   // on mount
   useEffect(() => {
     // set all props on first render
@@ -84,23 +78,22 @@ const XarrowCore: React.FC<XarrowCoreProps> = (props) => {
     };
   }, []);
 
+  // const [st, setSt] = useState(() => _getPosition(startElem, endElem, rootElem));
+  //
+  // useDeepCompareEffect(() => {
+  //   setSt(_getPosition(startElem, endElem, rootElem));
+  // }, [startElem, endElem]);
+
+  const st = { startElem, endElem, rootElem };
+
   return (
     <div ref={rootDivRef} style={{ position: 'absolute', pointerEvents: 'none' }} {...props.divContainerProps}>
-      <AutoResizeSvg
-        effectPhase={effect}
-        style={{
-          border: 'solid yellow 1px',
-          position: 'absolute',
-          left: st.cx0,
-          top: st.cy0,
-          ...props.SVGcanvasStyle,
-        }}
-        overflow="auto"
-        {...props.SVGcanvasProps}>
+      <AutoResizeSvg>
+        {props.children(st)}
         {/* body of the arrow */}
-        <path d={st.path} {...props.arrowBodyProps} stroke="black" />
+        {/*<path d={st.path} {...props.arrowBodyProps} stroke="black" />*/}
         {/* other optional possibilities */}
-        {props.SVGChildren}
+        {/*{props.SVGChildren}*/}
       </AutoResizeSvg>
     </div>
   );

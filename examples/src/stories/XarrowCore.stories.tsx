@@ -6,6 +6,8 @@ import Xarrow, { useMultipleRenders, xarrowPropsType, Xwrapper, arrowShapes } fr
 import { DraggableBox } from '../components/DraggableBox';
 import XarrowBasic from '../../../src/components/XarrowBasic';
 import XarrowAnchors from '../../../src/components/XarrowAnchors';
+import AutoResizeSvg from '../../../src/components/AutoResizeSvg';
+import Draggable from 'react-draggable';
 
 export default {
   title: 'XarrowCore',
@@ -40,3 +42,53 @@ const XarrowCoreTestTemplate = ({ XComp = XarrowBasic }) => {
 
 export const XarrowBasicStory: Story = (args) => <XarrowCoreTestTemplate XComp={XarrowBasic} />;
 export const XarrowAnchorsStory: Story = (args) => <XarrowCoreTestTemplate XComp={XarrowAnchors} />;
+
+const TestComponent = () => {
+  console.log('TestComponent');
+  return <div> testing rendering </div>;
+};
+
+export const TestAutoResizeSvg = () => {
+  const [, setRender] = useState({});
+  const forceRerender = () => setRender({});
+
+  return (
+    <div>
+      <button onClick={forceRerender}>reRender</button>
+      <div style={{ display: 'flex', justifyContent: 'space-evenly', width: '100%' }}>
+        <div>
+          <h1>Auto resize svg</h1>
+          <div style={{ height: 100 }}>
+            <AutoResizeSvg>
+              {/*<Draggable>*/}
+              {/*  <circle cx="50" cy="50" r="40" stroke="black" strokeWidth="3" fill="red" />*/}
+              {/*</Draggable>*/}
+
+              {(updateSvg) => (
+                <Draggable onDrag={updateSvg}>
+                  <circle cx="50" cy="50" r="40" stroke="black" strokeWidth="3" fill="red" />
+                </Draggable>
+              )}
+            </AutoResizeSvg>
+          </div>
+        </div>
+        <div>
+          <h1>normal svg</h1>
+          <div style={{ height: 100 }}>
+            <svg
+              style={{
+                border: 'solid yellow 1px',
+                position: 'absolute',
+                height: 100,
+                width: 100,
+              }}>
+              <Draggable>
+                <circle cx="50" cy="50" r="40" stroke="black" strokeWidth="3" fill="red" />
+              </Draggable>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
