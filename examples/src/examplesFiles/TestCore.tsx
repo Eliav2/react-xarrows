@@ -16,8 +16,8 @@ const XarrowCoreTest = () => {
         <Xwrapper>
           {showBox1 ? <DraggableBox id={'box1'} grid={[20, 20]} /> : null}
           {showBox2 ? <DraggableBox id={'box2'} grid={[20, 20]} /> : null}
-          {/*<DelayedComponent comp={<CustomXarrow start={'box1'} end={'box2'} />} />*/}
-          <CustomXarrow start={'box1'} end={'box2'} idleRenders={1} />
+          {/*<DelayedComponent comp={<XarrowCore start={'box1'} end={'box2'} />} />*/}
+          <CustomXarrow start={'box1'} end={'box2'} _delayRenders={1} />
         </Xwrapper>
       </div>
     </div>

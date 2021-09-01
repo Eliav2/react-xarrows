@@ -13,3 +13,4 @@ export type Common<A, B> = {
 };
 
 export type Contains<T extends object> = T & { [key in string | number]: any };
+export type XElementType = { position: posType; element: HTMLElement };

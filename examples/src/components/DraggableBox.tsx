@@ -32,8 +32,6 @@ export const DraggableBox = ({
   style = {},
   ...rest
 }: DraggableBoxProps) => {
-  const [render, setRender] = useState({});
-  const reRender = () => setRender({});
   const nodeRef = useRef(null);
   let curRef = reference ? reference : nodeRef;
 
