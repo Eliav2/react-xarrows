@@ -78,23 +78,36 @@ const XarrowCore: React.FC<XarrowCoreProps> = (props) => {
     };
   }, []);
 
-  // const [st, setSt] = useState(() => _getPosition(startElem, endElem, rootElem));
-  //
-  // useDeepCompareEffect(() => {
-  //   setSt(_getPosition(startElem, endElem, rootElem));
-  // }, [startElem, endElem]);
+  const [st, setSt] = useState(() => _getPosition(startElem, endElem, rootElem));
 
-  const st = { startElem, endElem, rootElem };
+  useDeepCompareEffect(() => {
+    setSt(_getPosition(startElem, endElem, rootElem));
+  }, [startElem, endElem]);
+
+  // const st = { startElem, endElem, rootElem };
 
   return (
     <div ref={rootDivRef} style={{ position: 'absolute', pointerEvents: 'none' }} {...props.divContainerProps}>
-      <AutoResizeSvg>
-        {props.children(st)}
-        {/* body of the arrow */}
-        {/*<path d={st.path} {...props.arrowBodyProps} stroke="black" />*/}
-        {/* other optional possibilities */}
+      <svg
+        style={{
+          position: 'absolute',
+          left: st.cx0,
+          top: st.cy0,
+          ...props.SVGcanvasStyle,
+        }}
+        overflow="visible">
+        {/*body of the arrow */}
+        <path d={st.path} {...props.arrowBodyProps} stroke="black" />
+        {/*other optional possibilities */}
         {/*{props.SVGChildren}*/}
-      </AutoResizeSvg>
+      </svg>
+      {/*<AutoResizeSvg>*/}
+      {/*  {props.children(st)}*/}
+      {/*  /!* body of the arrow *!/*/}
+      {/*  /!*<path d={st.path} {...props.arrowBodyProps} stroke="black" />*!/*/}
+      {/*  /!* other optional possibilities *!/*/}
+      {/*  /!*{props.SVGChildren}*!/*/}
+      {/*</AutoResizeSvg>*/}
     </div>
   );
 };

@@ -40,6 +40,7 @@ const XarrowCoreTestTemplate = ({ XComp = XarrowBasic }) => {
   );
 };
 
+export const XarrowCoreStory: Story = (args) => <XarrowCoreTestTemplate XComp={XarrowCore} />;
 export const XarrowBasicStory: Story = (args) => <XarrowCoreTestTemplate XComp={XarrowBasic} />;
 export const XarrowAnchorsStory: Story = (args) => <XarrowCoreTestTemplate XComp={XarrowAnchors} />;
 
