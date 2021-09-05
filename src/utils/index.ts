@@ -64,7 +64,6 @@ export const getShortestLine = (sPoints: t1[], ePoints: t1[]) => {
   return closestPair;
 };
 
-const memorizedPositions = new Map();
 export const getElemPos = (elem: HTMLElement) => {
   // console.log(memorizedPositions);
   if (!elem) {

@@ -4,6 +4,7 @@
   ],
   "compilerOptions": {
     "strict": true,
+//    "strictFunctionTypes": true,
     "lib": [
       "dom",
       "esnext"

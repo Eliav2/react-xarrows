@@ -17,6 +17,7 @@ import { XElementType } from '../privateTypes';
 import { useDeepCompareEffect } from '../hooks/useDeepCompareEffect';
 import { useElement } from '../hooks/useElement';
 import { appendPropsToChildren } from '../utils/reactUtils';
+import PT from 'prop-types';
 
 export const log = console.log;
 
@@ -41,9 +42,9 @@ export interface XarrowCoreProps {
 /**
  * this basic arrow component that responsible holding state for start and end element.
  * used as extensible component for extra features.
- * also delay (using memorization) the actual render so the DOM would be updated.
+ * also delay (using memorization) the actual render so the DOM would be updated on the sample.
  */
-const XarrowCore: React.FC<XarrowCoreProps> = (props) => {
+export const XarrowCore: React.FC<XarrowCoreProps> = (props) => {
   // console.log('XarrowCore');
   const { _updatePhase: effect = useLayoutEffect } = props;
 
@@ -86,18 +87,18 @@ const XarrowCore: React.FC<XarrowCoreProps> = (props) => {
   );
 };
 
+const pRefType = PT.oneOfType([PT.string, PT.exact({ current: PT.any })]);
+
+XarrowCore.propTypes = {
+  start: pRefType.isRequired,
+  end: pRefType.isRequired,
+};
+
 XarrowCore.defaultProps = {
   children: () => <div />,
 };
 
 // XarrowCore.whyDidYouRender = true;
-
-const DelayedXArrow: React.FC<XarrowCoreProps> = (props) => {
-  const { _delayRenders = 1 } = props;
-  // console.log('DelayedXArrow');
-  useContext(XarrowContext);
-  return <DelayedComponent delay={_delayRenders} componentCB={() => <XarrowCore {...props} />} />;
-};
 
 // interface XSimpleArrowWithOptionsPropsType extends XarrowCoreProps {
 //   lineColor?: string;
@@ -113,4 +114,4 @@ const DelayedXArrow: React.FC<XarrowCoreProps> = (props) => {
 // };
 
 // export default XarrowCore;
-export default DelayedXArrow;
+export default XarrowCore;

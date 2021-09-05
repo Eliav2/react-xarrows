@@ -14,3 +14,10 @@ export type Common<A, B> = {
 
 export type Contains<T extends object> = T & { [key in string | number]: any };
 export type XElementType = { position: posType; element: HTMLElement };
+
+export type ToArray<Type> = [Type] extends [any] ? Type[] : never;
+export type OneOrMore<T> = T | ToArray<T>;
+
+const toArray = <T>(arg: T | T[]): T[] => {
+  return Array.isArray(arg) ? arg : [arg];
+};

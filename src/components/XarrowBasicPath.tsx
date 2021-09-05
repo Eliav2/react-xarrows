@@ -1,8 +1,11 @@
 import React, { SVGProps } from 'react';
 import XarrowCore, { XarrowCoreProps } from './XarrowCore';
 import { XElementType } from '../privateTypes';
+import { string } from 'prop-types';
 
 type basicPos = { ys: number; xs: number; ye: number; xe: number };
+type extendPosType = ((pos: basicPos) => basicPos) | undefined;
+type getPathType = (extendPos?: extendPosType, pos?: basicPos) => getPathType | string;
 
 export const getPosition = (startElem: XElementType, endElem: XElementType, rootElem: XElementType) => {
   const { x: xr, y: yr } = rootElem.position;
@@ -13,17 +16,22 @@ export const getPosition = (startElem: XElementType, endElem: XElementType, root
   let xe = (endPos.x + endPos.right) / 2 - xr;
   let ye = (endPos.y + endPos.bottom) / 2 - yr;
   const posSt = { xs, ys, xe, ye };
-  const getPath = (extendPos?: (pos: basicPos) => basicPos) => {
-    let pos = posSt;
-    if (extendPos) pos = extendPos(pos);
-    return `M ${pos.xs} ${pos.ys} L ${pos.xe} ${pos.ye}`;
+  const getPath: getPathType = (extendPos?: extendPosType, pos = posSt) => {
+    if (extendPos) {
+      let newPos = extendPos(pos);
+      return (newExtendPos?) => getPath(newExtendPos, newPos);
+    } else return `M ${pos.xs} ${pos.ys} L ${pos.xe} ${pos.ye}`;
   };
   return getPath;
 };
 
 export interface XarrowBasicProps extends Omit<XarrowCoreProps, 'children'> {
   extendPath?: (pos: basicPos) => basicPos;
-  arrowBodyProps?: SVGProps<SVGPathElement>;
+  // arrowBodyProps?: SVGProps<SVGPathElement>;
+
+  // children: (path: extendPos?: (pos: basicPos) => basicPos) => string;
+  // children:  (extendPos?: basicPos) => string
+  children: (state: (extendPos?: (pos: basicPos) => basicPos) => string | getPathType) => React.ReactElement;
 }
 
 const XarrowBasicPath: React.FC<XarrowBasicProps> = (props) => {
@@ -32,8 +40,10 @@ const XarrowBasicPath: React.FC<XarrowBasicProps> = (props) => {
       {(elemsSt) => {
         const elems = Object.values(elemsSt) as [XElementType, XElementType, XElementType];
         const getPath = getPosition(...elems);
-        const path = getPath(props.extendPath);
-        return <path d={path} {...props.arrowBodyProps} stroke="black" />;
+        let newGetPath = getPath(props.extendPath);
+        if (!props.children) return <path d={(newGetPath as CallableFunction)()} stroke="black" />;
+        return props.children(newGetPath as getPathType);
+        // const path = getPath(props.extendPath);
       }}
     </XarrowCore>
   );

@@ -8,6 +8,7 @@ import XarrowBasicPath from '../../../src/components/XarrowBasicPath';
 import XarrowAnchors from '../../../src/components/XarrowAnchors';
 import AutoResizeSvg from '../../../src/components/AutoResizeSvg';
 import Draggable from 'react-draggable';
+import XarrowMain from '../../../src/components/XarrowMain';
 
 export default {
   title: 'XarrowCore',
@@ -34,7 +35,6 @@ const XarrowCoreTestTemplate = ({ XComp = XarrowBasicPath }) => {
             start={'box1'}
             end={target}
             extendPath={(pos) => {
-              pos.ye += 10;
               return pos;
             }}
           />
@@ -50,6 +50,7 @@ const XarrowCoreTestTemplate = ({ XComp = XarrowBasicPath }) => {
 // export const XarrowCoreStory: Story = (args) => <XarrowCoreTestTemplate XComp={XarrowCore} />;
 export const XarrowBasicStory: Story = (args) => <XarrowCoreTestTemplate XComp={XarrowBasicPath} />;
 export const XarrowAnchorsStory: Story = (args) => <XarrowCoreTestTemplate XComp={XarrowAnchors} />;
+export const XarrowMainStory: Story = (args) => <XarrowCoreTestTemplate XComp={XarrowMain} />;
 
 // const TestComponent = () => {
 //   console.log('TestComponent');
