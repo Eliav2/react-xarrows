@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { SVGProps } from 'react';
 import XarrowCore, { XarrowCoreProps } from './XarrowCore';
 import { XElementType } from '../privateTypes';
 
+type basicPos = { ys: number; xs: number; ye: number; xe: number };
+
 export const getPosition = (startElem: XElementType, endElem: XElementType, rootElem: XElementType) => {
-  // console.log('getPosition');
   const { x: xr, y: yr } = rootElem.position;
   const startPos = startElem.position;
   const endPos = endElem.position;
@@ -11,24 +12,34 @@ export const getPosition = (startElem: XElementType, endElem: XElementType, root
   let ys = (startPos.y + startPos.bottom) / 2 - yr;
   let xe = (endPos.x + endPos.right) / 2 - xr;
   let ye = (endPos.y + endPos.bottom) / 2 - yr;
-  return `M ${xs} ${ys} L ${xe} ${ye}`;
+  const posSt = { xs, ys, xe, ye };
+  const getPath = (extendPos?: (pos: basicPos) => basicPos) => {
+    let pos = posSt;
+    if (extendPos) pos = extendPos(pos);
+    return `M ${pos.xs} ${pos.ys} L ${pos.xe} ${pos.ye}`;
+  };
+  return getPath;
 };
 
-export interface XarrowBasicProps extends Omit<XarrowCoreProps, '_getPosition'> {
-  _getPosition?: typeof getPosition;
+export interface XarrowBasicProps extends Omit<XarrowCoreProps, 'children'> {
+  extendPath?: (pos: basicPos) => basicPos;
+  arrowBodyProps?: SVGProps<SVGPathElement>;
 }
 
-const XarrowBasic: React.FC<XarrowBasicProps> = (props) => {
-  // return <XarrowCore _getPosition={getPosition} {...props} />;
+const XarrowBasicPath: React.FC<XarrowBasicProps> = (props) => {
   return (
     <XarrowCore {...props}>
-      {(elemsSt) => <path d={getPosition(...Object.values(elemsSt))} {...props.arrowBodyProps} stroke="black" />}
-      {/*{(elemsSt) => console.log(Object.values(elemsSt))}*/}
+      {(elemsSt) => {
+        const elems = Object.values(elemsSt) as [XElementType, XElementType, XElementType];
+        const getPath = getPosition(...elems);
+        const path = getPath(props.extendPath);
+        return <path d={path} {...props.arrowBodyProps} stroke="black" />;
+      }}
     </XarrowCore>
   );
 };
 
-export default XarrowBasic;
+export default XarrowBasicPath;
 
 // Properties	Description	default value	type                                                               //
 //     start	ref to start element	none(Required!)	string/ReactRef                                        //

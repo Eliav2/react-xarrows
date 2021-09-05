@@ -26,16 +26,9 @@ export interface XarrowCoreProps {
   // SVGChildren?: ReactNode | undefined;
   SVGcanvasProps?: AutoResizeSvgProps;
   SVGcanvasStyle?: React.CSSProperties;
-  arrowBodyProps?: SVGProps<SVGPathElement>;
   divContainerProps?: React.HTMLProps<HTMLDivElement>;
 
   children: (state: { startElem: XElementType; endElem: XElementType; rootElem: XElementType }) => React.ReactElement;
-
-  // _getPosition: (
-  //   startElem: XElementType,
-  //   endElem: XElementType,
-  //   rootElem: XElementType
-  // ) => { path: string; cw: number; ch: number; cx0: number; cy0: number };
 
   // the phase that xarrow will sample the DOM. can be useEffect or useLayoutEffect
   _updatePhase?: (effect: EffectCallback, deps?: DependencyList) => void;
@@ -51,11 +44,8 @@ export interface XarrowCoreProps {
  * also delay (using memorization) the actual render so the DOM would be updated.
  */
 const XarrowCore: React.FC<XarrowCoreProps> = (props) => {
-  console.log('XarrowCore');
+  // console.log('XarrowCore');
   const { _updatePhase: effect = useLayoutEffect } = props;
-
-  const [, setRender] = useState({});
-  const forceRerender = () => setRender({});
 
   const rootDivRef = useRef<HTMLDivElement>(null);
 
@@ -64,6 +54,8 @@ const XarrowCore: React.FC<XarrowCoreProps> = (props) => {
   const rootElem = useElement(rootDivRef);
 
   // on mount
+  const [, setRender] = useState({});
+  const forceRerender = () => setRender({});
   useEffect(() => {
     // set all props on first render
     const monitorDOMchanges = () => {
@@ -79,35 +71,16 @@ const XarrowCore: React.FC<XarrowCoreProps> = (props) => {
     };
   }, []);
 
-  // const [st, setSt] = useState(() => _getPosition(startElem, endElem, rootElem));
-  //
-  // useDeepCompareEffect(() => {
-  //   setSt(_getPosition(startElem, endElem, rootElem));
-  // }, [startElem, endElem]);
-
-  // let cx0 = Math.min(startElem.position.x, endElem.position.x);
-  // let cy0 = Math.min(startElem.position.y, endElem.position.y);
-
   const elemsSt = { startElem, endElem, rootElem };
-  // const newChildren = appendPropsToChildren(props.children, { elemsSt });
   return (
     <div ref={rootDivRef} style={{ position: 'absolute', pointerEvents: 'none' }} {...props.divContainerProps}>
       <svg
         style={{
           position: 'absolute',
-          // left: cx0,
-          // top: cy0,
           ...props.SVGcanvasStyle,
         }}
         overflow="visible">
         {props.children(elemsSt)}
-        {/*{newChildren}*/}
-
-        {/* old */}
-        {/*body of the arrow */}
-        {/*<path d={st.path} {...props.arrowBodyProps} stroke="black" />*/}
-        {/*other optional possibilities */}
-        {/*{props.SVGChildren}*/}
       </svg>
     </div>
   );

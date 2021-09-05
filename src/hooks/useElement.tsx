@@ -3,6 +3,7 @@ import { useLayoutEffect, useState } from 'react';
 import { getElementByPropGiven, getElemPos } from '../utils';
 import { posType, XElementType } from '../privateTypes';
 import _ from 'lodash';
+import { useDeepCompareEffect } from './useDeepCompareEffect';
 
 /**
  * would return current position and reference of a given element.
@@ -19,6 +20,17 @@ export const useElement = (elemProp: refType): XElementType => {
     setElem(getElementByPropGiven(elemProp));
   }, [elemProp, elemRef]);
 
+  // // sample DOM while render(it's ok if the sample is being delayed upper in the tree)
+  // const newPos = getElemPos(elem);
+  // useDeepCompareEffect(
+  //   () => {
+  //     setPos(newPos);
+  //   },
+  //   [newPos],
+  //   useLayoutEffect
+  // );
+  // or
+  // sample dom at effects stage (triggers another render but takes more updated DOM sample)
   useLayoutEffect(() => {
     // console.log('elem', elem);
     if (elemRef) {

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import XarrowBasic, { XarrowBasicProps } from './XarrowBasic';
+import XarrowBasicPath, { XarrowBasicProps } from './XarrowBasicPath';
 
 interface XarrowAnchors extends XarrowBasicProps {}
 
 const XarrowAnchors: React.FC<XarrowAnchors> = (props) => {
-  return <XarrowBasic SVGcanvasProps={{}} {...props} />;
+  return <XarrowBasicPath SVGcanvasProps={{}} {...props} />;
 };
 
 export default XarrowAnchors;
