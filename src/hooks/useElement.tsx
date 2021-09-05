@@ -1,6 +1,6 @@
 import { refType } from '../types';
 import { useLayoutEffect, useState } from 'react';
-import { getElementByPropGiven, getElemPos } from '../Xarrow/utils';
+import { getElementByPropGiven, getElemPos } from '../utils';
 import { posType, XElementType } from '../privateTypes';
 import _ from 'lodash';
 

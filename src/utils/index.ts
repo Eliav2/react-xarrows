@@ -1,4 +1,4 @@
-import { anchorCustomPositionType, refType } from '../../types';
+import { anchorCustomPositionType, refType } from '../types';
 import React from 'react';
 import _ from 'lodash';
 

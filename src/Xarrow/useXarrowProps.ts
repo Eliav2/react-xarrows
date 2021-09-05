@@ -9,7 +9,7 @@ import {
   svgElemType,
   xarrowPropsType,
 } from '../types';
-import { getElementByPropGiven, getElemPos, xStr2absRelative } from './utils';
+import { getElementByPropGiven, getElemPos, xStr2absRelative } from '../utils';
 import _ from 'lodash';
 import { arrowShapes, cAnchorEdge, cArrowShapes } from '../constants';
 import { anchorEdgeType, posType } from '../privateTypes';

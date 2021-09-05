@@ -1,9 +1,9 @@
-import { useXarrowPropsResType } from '../useXarrowProps';
+import { useXarrowPropsResType } from '../Xarrow/useXarrowProps';
 import React from 'react';
-import { calcAnchors } from '../anchors';
+import { calcAnchors } from '../Xarrow/anchors';
 import { getShortestLine, getSvgPos } from './index';
 import _ from 'lodash';
-import { cPaths } from '../../constants';
+import { cPaths } from '../constants';
 import { buzzierMinSols, bzFunction } from './buzzier';
 
 /**

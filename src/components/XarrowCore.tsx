@@ -16,6 +16,7 @@ import { DelayedComponent } from './DelayedComponent';
 import { XElementType } from '../privateTypes';
 import { useDeepCompareEffect } from '../hooks/useDeepCompareEffect';
 import { useElement } from '../hooks/useElement';
+import { appendPropsToChildren } from '../utils/reactUtils';
 
 export const log = console.log;
 
@@ -78,36 +79,35 @@ const XarrowCore: React.FC<XarrowCoreProps> = (props) => {
     };
   }, []);
 
-  const [st, setSt] = useState(() => _getPosition(startElem, endElem, rootElem));
+  // const [st, setSt] = useState(() => _getPosition(startElem, endElem, rootElem));
+  //
+  // useDeepCompareEffect(() => {
+  //   setSt(_getPosition(startElem, endElem, rootElem));
+  // }, [startElem, endElem]);
 
-  useDeepCompareEffect(() => {
-    setSt(_getPosition(startElem, endElem, rootElem));
-  }, [startElem, endElem]);
+  let cx0 = Math.min(startElem.position.x, endElem.position.x);
+  let cy0 = Math.min(startElem.position.y, endElem.position.y);
 
-  // const st = { startElem, endElem, rootElem };
-
+  const elemsSt = { startElem, endElem, rootElem };
+  const newChildren = appendPropsToChildren(props.children, { elemsSt });
   return (
     <div ref={rootDivRef} style={{ position: 'absolute', pointerEvents: 'none' }} {...props.divContainerProps}>
       <svg
         style={{
           position: 'absolute',
-          left: st.cx0,
-          top: st.cy0,
+          left: cx0,
+          top: cy0,
           ...props.SVGcanvasStyle,
         }}
         overflow="visible">
+        {/*{newChildren}*/}
+
+        {/* old */}
         {/*body of the arrow */}
-        <path d={st.path} {...props.arrowBodyProps} stroke="black" />
+        {/*<path d={st.path} {...props.arrowBodyProps} stroke="black" />*/}
         {/*other optional possibilities */}
         {/*{props.SVGChildren}*/}
       </svg>
-      {/*<AutoResizeSvg>*/}
-      {/*  {props.children(st)}*/}
-      {/*  /!* body of the arrow *!/*/}
-      {/*  /!*<path d={st.path} {...props.arrowBodyProps} stroke="black" />*!/*/}
-      {/*  /!* other optional possibilities *!/*/}
-      {/*  /!*{props.SVGChildren}*!/*/}
-      {/*</AutoResizeSvg>*/}
     </div>
   );
 };

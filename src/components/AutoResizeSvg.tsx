@@ -4,6 +4,7 @@ import _ from 'lodash';
 import { useHookTruetyCompare } from '../hooks/useHookTruetyCompare';
 import { useCallOnNextRender, useMultipleRenders } from '../hooks/useMultipleRenders';
 import { useDoesUpdateIsScheduled } from '../hooks/useDoesUpdateIsScheduled';
+import { appendPropsToChildren } from '../utils/reactUtils';
 export interface AutoResizeSvgProps extends SVGProps<SVGSVGElement> {
   effectPhase?: typeof useEffect;
   padding?: number;
@@ -51,12 +52,13 @@ export const AutoResizeSvg: React.FC<AutoResizeSvgProps> = ({
   if (_.isFunction(children)) {
     newChildren = children(forceRerender);
   } else {
-    newChildren = React.Children.map(children, (child) => {
-      if (React.isValidElement(child)) {
-        return React.cloneElement(child, { updateSvg: forceRerender });
-      }
-      return child;
-    });
+    // newChildren = React.Children.map(children, (child) => {
+    //   if (React.isValidElement(child)) {
+    //     return React.cloneElement(child, { updateSvg: forceRerender });
+    //   }
+    //   return child;
+    // });
+    newChildren = appendPropsToChildren(children, { updateSvg: forceRerender });
   }
   console.log(curSt);
 

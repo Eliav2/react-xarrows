@@ -3,7 +3,7 @@ import { xarrowPropsType } from '../types';
 import useXarrowProps from './useXarrowProps';
 import { XarrowContext } from '../Xwrapper';
 import XarrowPropTypes from './propTypes';
-import { getPosition } from './utils/GetPosition';
+import { getPosition } from '../utils/GetPosition';
 
 const log = console.log;
 
