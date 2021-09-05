@@ -29,11 +29,13 @@ export interface XarrowCoreProps {
   arrowBodyProps?: SVGProps<SVGPathElement>;
   divContainerProps?: React.HTMLProps<HTMLDivElement>;
 
-  _getPosition: (
-    startElem: XElementType,
-    endElem: XElementType,
-    rootElem: XElementType
-  ) => { path: string; cw: number; ch: number; cx0: number; cy0: number };
+  children: (state: { startElem: XElementType; endElem: XElementType; rootElem: XElementType }) => React.ReactElement;
+
+  // _getPosition: (
+  //   startElem: XElementType,
+  //   endElem: XElementType,
+  //   rootElem: XElementType
+  // ) => { path: string; cw: number; ch: number; cx0: number; cy0: number };
 
   // the phase that xarrow will sample the DOM. can be useEffect or useLayoutEffect
   _updatePhase?: (effect: EffectCallback, deps?: DependencyList) => void;
@@ -43,8 +45,6 @@ export interface XarrowCoreProps {
   _delayRenders?: number;
 }
 
-const defaultGetPosition = () => ({ path: '', cw: 0, ch: 0, cx0: 0, cy0: 0 });
-
 /**
  * this basic arrow component that responsible holding state for start and end element.
  * used as extensible component for extra features.
@@ -52,7 +52,7 @@ const defaultGetPosition = () => ({ path: '', cw: 0, ch: 0, cx0: 0, cy0: 0 });
  */
 const XarrowCore: React.FC<XarrowCoreProps> = (props) => {
   console.log('XarrowCore');
-  const { _updatePhase: effect = useLayoutEffect, _getPosition = defaultGetPosition } = props;
+  const { _updatePhase: effect = useLayoutEffect } = props;
 
   const [, setRender] = useState({});
   const forceRerender = () => setRender({});
@@ -85,21 +85,22 @@ const XarrowCore: React.FC<XarrowCoreProps> = (props) => {
   //   setSt(_getPosition(startElem, endElem, rootElem));
   // }, [startElem, endElem]);
 
-  let cx0 = Math.min(startElem.position.x, endElem.position.x);
-  let cy0 = Math.min(startElem.position.y, endElem.position.y);
+  // let cx0 = Math.min(startElem.position.x, endElem.position.x);
+  // let cy0 = Math.min(startElem.position.y, endElem.position.y);
 
   const elemsSt = { startElem, endElem, rootElem };
-  const newChildren = appendPropsToChildren(props.children, { elemsSt });
+  // const newChildren = appendPropsToChildren(props.children, { elemsSt });
   return (
     <div ref={rootDivRef} style={{ position: 'absolute', pointerEvents: 'none' }} {...props.divContainerProps}>
       <svg
         style={{
           position: 'absolute',
-          left: cx0,
-          top: cy0,
+          // left: cx0,
+          // top: cy0,
           ...props.SVGcanvasStyle,
         }}
         overflow="visible">
+        {props.children(elemsSt)}
         {/*{newChildren}*/}
 
         {/* old */}
@@ -110,6 +111,10 @@ const XarrowCore: React.FC<XarrowCoreProps> = (props) => {
       </svg>
     </div>
   );
+};
+
+XarrowCore.defaultProps = {
+  children: () => <div />,
 };
 
 // XarrowCore.whyDidYouRender = true;

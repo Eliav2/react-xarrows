@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import XarrowCore, { XarrowCoreProps } from './XarrowCore';
 import { XElementType } from '../privateTypes';
 
@@ -7,22 +7,11 @@ export const getPosition = (startElem: XElementType, endElem: XElementType, root
   const { x: xr, y: yr } = rootElem.position;
   const startPos = startElem.position;
   const endPos = endElem.position;
-  let xs = (startPos.x + startPos.right) / 2;
-  let ys = (startPos.y + startPos.bottom) / 2;
-  let xe = (endPos.x + endPos.right) / 2;
-  let ye = (endPos.y + endPos.bottom) / 2;
-  const cw = Math.abs(xe - xs);
-  const ch = Math.abs(ye - ys);
-  let cx0 = Math.min(xs, xe);
-  let cy0 = Math.min(ys, ye);
-  xs -= cx0;
-  xe -= cx0;
-  ys -= cy0;
-  ye -= cy0;
-  cx0 -= xr;
-  cy0 -= yr;
-  const path = `M ${xs} ${ys} L ${xe} ${ye}`;
-  return { path, cw, ch, cx0, cy0 };
+  let xs = (startPos.x + startPos.right) / 2 - xr;
+  let ys = (startPos.y + startPos.bottom) / 2 - yr;
+  let xe = (endPos.x + endPos.right) / 2 - xr;
+  let ye = (endPos.y + endPos.bottom) / 2 - yr;
+  return `M ${xs} ${ys} L ${xe} ${ye}`;
 };
 
 export interface XarrowBasicProps extends Omit<XarrowCoreProps, '_getPosition'> {
@@ -30,7 +19,13 @@ export interface XarrowBasicProps extends Omit<XarrowCoreProps, '_getPosition'> 
 }
 
 const XarrowBasic: React.FC<XarrowBasicProps> = (props) => {
-  return <XarrowCore _getPosition={getPosition} {...props} />;
+  // return <XarrowCore _getPosition={getPosition} {...props} />;
+  return (
+    <XarrowCore {...props}>
+      {(elemsSt) => <path d={getPosition(...Object.values(elemsSt))} {...props.arrowBodyProps} stroke="black" />}
+      {/*{(elemsSt) => console.log(Object.values(elemsSt))}*/}
+    </XarrowCore>
+  );
 };
 
 export default XarrowBasic;
