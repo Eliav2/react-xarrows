@@ -115,7 +115,7 @@ const XarrowAnchors: React.FC<XarrowAnchorsProps> = (props) => {
   chosenEnd.x -= props.endElem.position.x;
   chosenEnd.y -= props.endElem.position.y;
 
-  // offset points
+  // offset connection points to the selected anchors
   let newGetPath = props.getPath((posSt) => {
     posSt.xs += chosenStart.x;
     posSt.ys += chosenStart.y;

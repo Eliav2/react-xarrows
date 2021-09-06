@@ -4,7 +4,19 @@ import { XElementType } from '../privateTypes';
 
 type basicPos = { ys: number; xs: number; ye: number; xe: number };
 type extendPosType = ((pos: basicPos) => basicPos) | undefined;
-export type getPathType = (extendPos?: extendPosType, pos?: basicPos) => getPathType | string;
+// export type getPathType = (extendPos?: extendPosType, pos?: basicPos) => getPathType | string;
+
+function getPath(): string;
+function getPath(extendPos?: extendPosType, pos?: basicPos): getPathType;
+function getPath<T extends extendPosType>(extendPos?: T, pos?: basicPos | undefined) {
+  if (extendPos) {
+    let newPos = extendPos(pos);
+    return (newExtendPos?) => getPath(newExtendPos, newPos);
+  } else return `M ${pos.xs} ${pos.ys} L ${pos.xe} ${pos.ye}`;
+}
+export type getPathType = typeof getPath;
+const t1 = getPath;
+const t2 = t1((pos) => pos);
 
 export const getPosition = (startElem: XElementType, endElem: XElementType, rootElem: XElementType) => {
   const { x: xr, y: yr } = rootElem.position;
@@ -15,13 +27,15 @@ export const getPosition = (startElem: XElementType, endElem: XElementType, root
   let xe = (endPos.x + endPos.right) / 2 - xr;
   let ye = (endPos.y + endPos.bottom) / 2 - yr;
   const posSt = { xs, ys, xe, ye };
-  const getPath: getPathType = (extendPos?: extendPosType, pos = posSt) => {
-    if (extendPos) {
-      let newPos = extendPos(pos);
-      return (newExtendPos?) => getPath(newExtendPos, newPos);
-    } else return `M ${pos.xs} ${pos.ys} L ${pos.xe} ${pos.ye}`;
-  };
-  return getPath;
+  const newGetPos = (extendPos: extendPosType) => getPath(extendPos, posSt);
+  // const getPath: getPathType = (extendPos?: extendPosType, pos = posSt) => {
+  //   if (extendPos) {
+  //     let newPos = extendPos(pos);
+  //     return (newExtendPos?) => getPath(newExtendPos, newPos);
+  //   } else return `M ${pos.xs} ${pos.ys} L ${pos.xe} ${pos.ye}`;
+  // };
+  // return getPath;
+  return newGetPos as getPathType;
 };
 
 // export interface XarrowBasicProps extends Omit<XarrowCoreProps, 'children'> {
@@ -31,7 +45,7 @@ export interface XarrowBasicProps {
   rootElem: XElementType;
   // arrowBodyProps?: SVGProps<SVGPathElement>;
 
-  children?: (state: (extendPos?: (pos: basicPos) => basicPos) => string | getPathType) => React.ReactElement;
+  children?: (state: getPathType) => React.ReactElement;
 }
 
 /**
