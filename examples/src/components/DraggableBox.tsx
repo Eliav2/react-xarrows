@@ -2,6 +2,7 @@ import Draggable, { DraggableEventHandler } from 'react-draggable';
 import React, { CSSProperties, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useXarrow } from '../../../src';
 // import { useXarrow } from 'react-xarrows';
+import { Rnd } from 'react-rnd';
 
 export const boxStyle = {
   border: '1px #999 solid',
@@ -13,6 +14,8 @@ export const boxStyle = {
   alignItems: 'center',
   display: 'flex',
   justifyContent: 'center',
+  // resize: 'both',
+  // overflow: 'hidden',
 } as const;
 
 interface DraggableBoxProps {
@@ -40,16 +43,35 @@ export const DraggableBox = ({
   if (initialOffset) moreStyle = { position: 'absolute', left: initialOffset.x, top: initialOffset.y };
 
   return (
-    <Draggable
-      onDrag={(e, d) => {
-        update(e, d);
+    <Rnd
+      {...rest}
+      default={{
+        x: initialOffset?.x ?? 0,
+        // x: 50,
+        y: initialOffset?.y ?? 0,
+        width: 100,
+        height: 30,
       }}
-      onStop={update}
-      {...rest}>
-      <div ref={curRef} id={id} style={{ ...boxStyle, ...style, ...moreStyle }}>
-        {id}
-      </div>
-    </Draggable>
+      ref={curRef}
+      id={id}
+      style={{ ...boxStyle, ...style, ...moreStyle }}
+      onDrag={update}
+      onResize={update}>
+      {/*<div >*/}
+      {id}
+      {/*</div>*/}
+    </Rnd>
+
+    // <Draggable
+    //   onDrag={(e, d) => {
+    //     update(e, d);
+    //   }}
+    //   onStop={update}
+    //   {...rest}>
+    //   <div ref={curRef} id={id} style={{ ...boxStyle, ...style, ...moreStyle }}>
+    //     {id}
+    //   </div>
+    // </Draggable>
   );
 };
 

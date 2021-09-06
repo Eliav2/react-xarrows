@@ -1,6 +1,7 @@
 import { anchorCustomPositionType, refType } from '../types';
 import React from 'react';
 import _ from 'lodash';
+import { posType } from '../privateTypes';
 
 export const getElementByPropGiven = (ref: refType): HTMLElement => {
   let myRef;
@@ -64,11 +65,11 @@ export const getShortestLine = (sPoints: t1[], ePoints: t1[]) => {
   return closestPair;
 };
 
-export const getElemPos = (elem: HTMLElement) => {
+export const getElemPos = (elem: HTMLElement): posType => {
   // console.log(memorizedPositions);
   if (!elem) {
     // return null;
-    return { x: 0, y: 0, right: 0, bottom: 0 };
+    return { x: 0, y: 0, right: 0, bottom: 0, height: 0, width: 0 };
   }
   // const pos = elem.getBoundingClientRect();
   // console.log(_.pick(elem.getBoundingClientRect(), 'left', 'top', 'right', 'bottom'));
@@ -78,7 +79,7 @@ export const getElemPos = (elem: HTMLElement) => {
   //   right: pos.right,
   //   bottom: pos.bottom,
   // };
-  const pos = _.pick(elem.getBoundingClientRect(), 'x', 'y', 'right', 'bottom');
+  const pos = _.pick(elem.getBoundingClientRect(), 'x', 'y', 'right', 'bottom', 'width', 'height');
   // if (!memorizedPositions.has(elem)) memorizedPositions.set(elem, pos);
   return pos;
 };

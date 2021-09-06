@@ -13,7 +13,7 @@ import { useDeepCompareEffect } from './useDeepCompareEffect';
 export const useElement = (elemProp: refType): XElementType => {
   // console.log('useElement');
   const [elem, setElem] = useState(() => getElementByPropGiven(elemProp));
-  const [pos, setPos] = useState<posType>({ x: 0, y: 0, right: 0, bottom: 0 });
+  const [pos, setPos] = useState<posType>({ x: 0, y: 0, right: 0, bottom: 0, width: 0, height: 0 });
   const elemRef = getElementByPropGiven(elemProp);
   useLayoutEffect(() => {
     // console.log('elemProp changed!');

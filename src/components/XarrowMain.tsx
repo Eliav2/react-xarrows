@@ -39,4 +39,24 @@ const XarrowMain: React.FC<XarrowMainProps> = (props) => {
   );
 };
 
+export interface CustomXarrowProps extends XarrowCoreAPIProps, XarrowBasicAPIProps, XarrowAnchorsAPIProps {}
+
+const CustomXarrow: React.FC<CustomXarrowProps> = (props) => {
+  const { start, end, SVGcanvasProps, SVGcanvasStyle, divContainerProps, ...rest } = props;
+  return (
+    <XarrowCore {...{ start, end, SVGcanvasProps, SVGcanvasStyle, divContainerProps }} {...rest}>
+      {(elems) => {
+        return (
+          <XarrowBasicPath {...elems}>
+            {(getPath) => {
+              let { startElem, endElem } = elems;
+              return <XarrowAnchors {...{ startElem, endElem, getPath }} {...rest} />;
+            }}
+          </XarrowBasicPath>
+        );
+      }}
+    </XarrowCore>
+  );
+};
+
 export default XarrowMain;

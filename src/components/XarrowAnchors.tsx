@@ -1,18 +1,20 @@
-import React, { useEffect, useState } from 'react';
-import XarrowBasicPath, { getPathType, XarrowBasicProps } from './XarrowBasicPath';
+import React, { useMemo } from 'react';
+import { getPathType } from './XarrowBasicPath';
 import PT from 'prop-types';
 import { cAnchorEdge } from '../constants';
-import { anchorCustomPositionType, anchorType } from '../types';
 import { anchorEdgeType, posType, XElementType } from '../privateTypes';
 import { getShortestLine } from '../utils';
+import { anchorCustomPositionType, anchorType } from '../types';
 
 const pAnchorPositionType = PT.oneOf(cAnchorEdge);
 const pAnchorCustomPositionType = PT.exact({
-  position: pAnchorPositionType.isRequired,
-  offset: PT.exact({
+  position: pAnchorPositionType,
+  offset: PT.shape({
     x: PT.number,
     y: PT.number,
-  }).isRequired,
+    inwards: PT.number,
+    sidewards: PT.number,
+  }),
 });
 const _pAnchorType = PT.oneOfType([pAnchorPositionType, pAnchorCustomPositionType]);
 const pAnchorType = PT.oneOfType([_pAnchorType, PT.arrayOf(_pAnchorType)]);
@@ -22,6 +24,7 @@ interface anchorCustomPositionType2 extends Omit<Required<anchorCustomPositionTy
   position: Exclude<typeof cAnchorEdge[number], 'auto'>;
 }
 const parseAnchor = (anchor: anchorType) => {
+  console.log('parseAnchor');
   // convert to array
   let anchorChoice = Array.isArray(anchor) ? anchor : [anchor];
 
@@ -29,7 +32,10 @@ const parseAnchor = (anchor: anchorType) => {
   let anchorChoice2 = anchorChoice.map((anchorChoice) => {
     if (typeof anchorChoice === 'string') {
       return { position: anchorChoice };
-    } else return anchorChoice;
+    } else {
+      if (!('position' in anchorChoice)) anchorChoice.position = 'auto';
+      return anchorChoice;
+    }
   });
 
   //remove any invalid anchor names
@@ -53,40 +59,61 @@ const parseAnchor = (anchor: anchorType) => {
   let anchorChoice3 = anchorChoice2.map((anchorChoice) => {
     if (typeof anchorChoice === 'object') {
       let anchorChoiceCustom = anchorChoice as anchorCustomPositionType;
-      if (!anchorChoiceCustom.position) anchorChoiceCustom.position = 'auto';
-      if (!anchorChoiceCustom.offset) anchorChoiceCustom.offset = { x: 0, y: 0 };
-      if (!anchorChoiceCustom.offset.y) anchorChoiceCustom.offset.y = 0;
-      if (!anchorChoiceCustom.offset.x) anchorChoiceCustom.offset.x = 0;
+      anchorChoiceCustom.offset ||= { x: 0, y: 0 };
+      anchorChoiceCustom.offset.y ||= 0;
+      anchorChoiceCustom.offset.x ||= 0;
+      anchorChoiceCustom.offset.inwards ||= 0;
+      anchorChoiceCustom.offset.sidewards ||= 0;
       anchorChoiceCustom = anchorChoiceCustom as Required<anchorCustomPositionType>;
       return anchorChoiceCustom;
     } else return anchorChoice;
   }) as Required<anchorCustomPositionType>[];
 
+  // console.log(anchorChoice3);
+
   return anchorChoice3 as anchorCustomPositionType2[];
 };
 
-const getAnchorsDefaultOffsets = (width: number, height: number) => {
-  return {
-    middle: { x: 0, y: 0 },
-    left: { x: -width * 0.5, y: 0 },
-    right: { x: width * 0.5, y: 0 },
-    top: { x: 0, y: -height * 0.5 },
-    bottom: { x: 0, y: height * 0.5 },
-  };
+const defaultAnchorsOffsets = {
+  middle: { x: 0, y: 0 },
+  left: { x: -0.5, y: 0 },
+  right: { x: 0.5, y: 0 },
+  top: { x: 0, y: -0.5 },
+  bottom: { x: 0, y: 0.5 },
+};
+
+const inwardOffset = {
+  middle: { x: 0, y: 0 },
+  left: { x: 1, y: 0 },
+  right: { x: -1, y: 0 },
+  top: { x: 0, y: 1 },
+  bottom: { x: 0, y: -1 },
+};
+const sidewardsOffset = {
+  middle: { x: 0, y: 0 },
+  left: { x: 0, y: -1 },
+  right: { x: 0, y: 1 },
+  top: { x: 1, y: 0 },
+  bottom: { x: -1, y: 0 },
 };
 
 // calcs the offset per each possible anchor
 const calcAnchors = (anchors: anchorCustomPositionType2[], anchorPos: posType) => {
   // now prepare this list of anchors to object expected by the `getShortestLine` function
-  return anchors.map((anchor) => {
-    let defsOffsets = getAnchorsDefaultOffsets(anchorPos.right - anchorPos.x, anchorPos.bottom - anchorPos.y);
-    let { x, y } = defsOffsets[anchor.position];
+  let newAnchors = anchors.map((anchor) => {
+    let xDef = defaultAnchorsOffsets[anchor.position].x * anchorPos.width;
+    let yDef = defaultAnchorsOffsets[anchor.position].y * anchorPos.height;
+    let xi = inwardOffset[anchor.position].x * anchor.offset.inwards;
+    let yi = inwardOffset[anchor.position].y * anchor.offset.inwards;
+    let xsi = sidewardsOffset[anchor.position].x * anchor.offset.sidewards;
+    let ysi = sidewardsOffset[anchor.position].y * anchor.offset.sidewards;
     return {
-      x: anchorPos.x + x + anchor.offset.x,
-      y: anchorPos.y + y + anchor.offset.y,
+      x: anchorPos.x + xDef + anchor.offset.x + xi + xsi,
+      y: anchorPos.y + yDef + anchor.offset.y + yi + ysi,
       anchor: anchor,
     };
   });
+  return newAnchors;
 };
 
 export interface XarrowAnchorsAPIProps {
@@ -105,9 +132,11 @@ export interface XarrowAnchorsProps extends XarrowAnchorsAPIProps {
  * will smartly chose anchor based on given props and will calculate the offset.
  */
 const XarrowAnchors: React.FC<XarrowAnchorsProps> = (props) => {
-  const startAnchors = parseAnchor(props.startAnchor);
+  const startAnchors = useMemo(() => parseAnchor(props.startAnchor), [props.startAnchor]);
+  // const startAnchors = parseAnchor(props.startAnchor);
   const startPoints = calcAnchors(startAnchors, props.startElem.position);
-  const endAnchors = parseAnchor(props.endAnchor);
+  // const endAnchors = parseAnchor(props.endAnchor);
+  const endAnchors = useMemo(() => parseAnchor(props.endAnchor), [props.endAnchor]);
   const endPoints = calcAnchors(endAnchors, props.endElem.position);
 
   let { chosenStart, chosenEnd } = getShortestLine(startPoints, endPoints);

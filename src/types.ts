@@ -56,8 +56,8 @@ export type anchorType = OneOrMore<_anchorType>;
 export type anchorNamedType = typeof cAnchorEdge[number];
 
 export type anchorCustomPositionType = {
-  position: anchorNamedType;
-  offset?: { x?: number; y?: number };
+  position?: anchorNamedType;
+  offset?: { x?: number; y?: number; inwards?: number; sidewards?: number };
 };
 export type refType = React.MutableRefObject<any> | string;
 export type labelsType = {

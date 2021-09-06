@@ -3,6 +3,8 @@ export type posType = {
   y: number;
   right: number;
   bottom: number;
+  width: number;
+  height: number;
 };
 
 export type anchorEdgeType = 'left' | 'right' | 'top' | 'bottom';
