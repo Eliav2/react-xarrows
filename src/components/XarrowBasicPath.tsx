@@ -1,11 +1,10 @@
-import React, { SVGProps } from 'react';
-import XarrowCore, { XarrowCoreProps } from './XarrowCore';
+import React from 'react';
+import { XarrowCoreProps } from './XarrowCore';
 import { XElementType } from '../privateTypes';
-import { string } from 'prop-types';
 
 type basicPos = { ys: number; xs: number; ye: number; xe: number };
 type extendPosType = ((pos: basicPos) => basicPos) | undefined;
-type getPathType = (extendPos?: extendPosType, pos?: basicPos) => getPathType | string;
+export type getPathType = (extendPos?: extendPosType, pos?: basicPos) => getPathType | string;
 
 export const getPosition = (startElem: XElementType, endElem: XElementType, rootElem: XElementType) => {
   const { x: xr, y: yr } = rootElem.position;
@@ -25,28 +24,39 @@ export const getPosition = (startElem: XElementType, endElem: XElementType, root
   return getPath;
 };
 
-export interface XarrowBasicProps extends Omit<XarrowCoreProps, 'children'> {
-  extendPath?: (pos: basicPos) => basicPos;
+// export interface XarrowBasicProps extends Omit<XarrowCoreProps, 'children'> {
+export interface XarrowBasicProps {
+  startElem: XElementType;
+  endElem: XElementType;
+  rootElem: XElementType;
   // arrowBodyProps?: SVGProps<SVGPathElement>;
 
-  // children: (path: extendPos?: (pos: basicPos) => basicPos) => string;
-  // children:  (extendPos?: basicPos) => string
-  children: (state: (extendPos?: (pos: basicPos) => basicPos) => string | getPathType) => React.ReactElement;
+  children?: (state: (extendPos?: (pos: basicPos) => basicPos) => string | getPathType) => React.ReactElement;
 }
 
+/**
+ * receives the position of the start and end elements, and the root element which is the position of the main div.
+ * will calculate a simple path. if no children is provided will return a <path/> element. else will pass down the
+ * updated path for farther customization.
+ */
 const XarrowBasicPath: React.FC<XarrowBasicProps> = (props) => {
-  return (
-    <XarrowCore {...props}>
-      {(elemsSt) => {
-        const elems = Object.values(elemsSt) as [XElementType, XElementType, XElementType];
-        const getPath = getPosition(...elems);
-        let newGetPath = getPath(props.extendPath);
-        if (!props.children) return <path d={(newGetPath as CallableFunction)()} stroke="black" />;
-        return props.children(newGetPath as getPathType);
-        // const path = getPath(props.extendPath);
-      }}
-    </XarrowCore>
-  );
+  const { startElem, endElem, rootElem } = props;
+  const elems = Object.values({ startElem, endElem, rootElem }) as [XElementType, XElementType, XElementType];
+  const getPath = getPosition(...elems);
+  if (!props.children) return <path d={(getPath as CallableFunction)()} stroke="black" />;
+  return props.children(getPath);
+  // return (
+  //   <XarrowCore {...props}>
+  //     {(elemsSt) => {
+  //       const elems = Object.values(elemsSt) as [XElementType, XElementType, XElementType];
+  //       const getPath = getPosition(...elems);
+  //       let newGetPath = getPath(props.extendPath);
+  //       if (!props.children) return <path d={(newGetPath as CallableFunction)()} stroke="black" />;
+  //       return props.children(newGetPath as getPathType);
+  //       // const path = getPath(props.extendPath);
+  //     }}
+  //   </XarrowCore>
+  // );
 };
 
 export default XarrowBasicPath;

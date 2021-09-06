@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import XarrowBasicPath, { XarrowBasicProps } from './XarrowBasicPath';
+import XarrowBasicPath, { getPathType, XarrowBasicProps } from './XarrowBasicPath';
 import PT from 'prop-types';
 import { cAnchorEdge } from '../constants';
 import { anchorCustomPositionType, anchorType } from '../types';
-import { anchorEdgeType } from '../privateTypes';
+import { anchorEdgeType, posType, XElementType } from '../privateTypes';
+import { getShortestLine } from '../utils';
 
 const pAnchorPositionType = PT.oneOf(cAnchorEdge);
 const pAnchorCustomPositionType = PT.exact({
@@ -64,25 +65,65 @@ const parseAnchor = (anchor: anchorType) => {
   return anchorChoice3 as anchorCustomPositionType2[];
 };
 
-interface XarrowAnchors extends XarrowBasicProps {
+const getAnchorsDefaultOffsets = (width: number, height: number) => {
+  return {
+    middle: { x: 0, y: 0 },
+    left: { x: -width * 0.5, y: 0 },
+    right: { x: width * 0.5, y: 0 },
+    top: { x: 0, y: -height * 0.5 },
+    bottom: { x: 0, y: height * 0.5 },
+  };
+};
+
+// calcs the offset per each possible anchor
+const calcAnchors = (anchors: anchorCustomPositionType2[], anchorPos: posType) => {
+  // now prepare this list of anchors to object expected by the `getShortestLine` function
+  return anchors.map((anchor) => {
+    let defsOffsets = getAnchorsDefaultOffsets(anchorPos.right - anchorPos.x, anchorPos.bottom - anchorPos.y);
+    let { x, y } = defsOffsets[anchor.position];
+    return {
+      x: anchorPos.x + x + anchor.offset.x,
+      y: anchorPos.y + y + anchor.offset.y,
+      anchor: anchor,
+    };
+  });
+};
+
+export interface XarrowAnchorsProps {
+  startElem: XElementType;
+  endElem: XElementType;
+  getPath: getPathType;
+
+  //API
   startAnchor?: anchorType;
   endAnchor?: anchorType;
 }
 
-const XarrowAnchors: React.FC<XarrowAnchors> = (props) => {
-  console.log(props.startAnchor);
-  console.log(parseAnchor(props.startAnchor));
-  return (
-    <XarrowBasicPath {...props}>
-      {(getPath) => {
-        let newGetPath = getPath((pos) => {
-          pos.ys += 50;
-          return pos;
-        });
-        return <path d={(newGetPath as any)()} stroke="black" />;
-      }}
-    </XarrowBasicPath>
-  );
+/**
+ * assumes that the provided path is on the center of start and end element
+ * will smartly chose anchor based on given props and will calculate the offset.
+ */
+const XarrowAnchors: React.FC<XarrowAnchorsProps> = (props) => {
+  const startAnchors = parseAnchor(props.startAnchor);
+  const startPoints = calcAnchors(startAnchors, props.startElem.position);
+  const endAnchors = parseAnchor(props.endAnchor);
+  const endPoints = calcAnchors(endAnchors, props.endElem.position);
+
+  let { chosenStart, chosenEnd } = getShortestLine(startPoints, endPoints);
+  chosenStart.x -= props.startElem.position.x;
+  chosenStart.y -= props.startElem.position.y;
+  chosenEnd.x -= props.endElem.position.x;
+  chosenEnd.y -= props.endElem.position.y;
+
+  // offset points
+  let newGetPath = props.getPath((posSt) => {
+    posSt.xs += chosenStart.x;
+    posSt.ys += chosenStart.y;
+    posSt.xe += chosenEnd.x;
+    posSt.ye += chosenEnd.y;
+    return posSt;
+  });
+  if (!props.children) return <path d={(newGetPath as CallableFunction)()} stroke="black" />;
 };
 
 XarrowAnchors.propTypes = {

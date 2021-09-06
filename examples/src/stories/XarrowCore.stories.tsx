@@ -15,7 +15,7 @@ export default {
   component: XarrowCore,
 } as Meta;
 
-const XarrowCoreTestTemplate = ({ XComp = XarrowBasicPath }) => {
+const XarrowCoreTestTemplate = ({ XComp = XarrowMain }) => {
   const [showBox1, setShowBox1] = useState(true);
   const [showBox2, setShowBox2] = useState(true);
   const [trigger, setTrigger] = useState(true);
@@ -34,9 +34,10 @@ const XarrowCoreTestTemplate = ({ XComp = XarrowBasicPath }) => {
           <XComp
             start={'box1'}
             end={target}
-            extendPath={(pos) => {
-              return pos;
-            }}
+            // extendPath={(pos) => {
+            //   return pos;
+            // }}
+            startAnchor={'right'}
           />
         </div>
         <div style={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-around' }}>
@@ -48,8 +49,18 @@ const XarrowCoreTestTemplate = ({ XComp = XarrowBasicPath }) => {
 };
 
 // export const XarrowCoreStory: Story = (args) => <XarrowCoreTestTemplate XComp={XarrowCore} />;
-export const XarrowBasicStory: Story = (args) => <XarrowCoreTestTemplate XComp={XarrowBasicPath} />;
-export const XarrowAnchorsStory: Story = (args) => <XarrowCoreTestTemplate XComp={XarrowAnchors} />;
+export const XarrowBasicStory: Story = (args) => (
+  <XarrowCoreTestTemplate
+    XComp={() => (
+      <XarrowCore start={'box1'} end={'box2'}>
+        {(elems) => {
+          return <XarrowBasicPath {...elems} />;
+        }}
+      </XarrowCore>
+    )}
+  />
+);
+// export const XarrowAnchorsStory: Story = (args) => <XarrowCoreTestTemplate XComp={XarrowAnchors} />;
 export const XarrowMainStory: Story = (args) => <XarrowCoreTestTemplate XComp={XarrowMain} />;
 
 // const TestComponent = () => {
