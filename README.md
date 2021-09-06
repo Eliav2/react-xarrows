@@ -173,19 +173,13 @@ const SimpleTemplate = () => {
 
 </details>
 
+## react-xarrows V3
+react-xarrows v3 on it's way, see [discucssion](https://github.com/Eliav2/react-xarrows/discussions/96)
+
 ## Usage
 
-react-xarrow v2.0 released! no need to trigger render on parents anymore!  
 react-xarrows will smartly trigger updates on relevant elements! use `Xwrapper` and `useXarrow` hook to achieve
 selective rendering!
-
-please note that v2.0.0 is not working using react [StrictMode](https://reactjs.org/docs/strict-mode.html). to fix
-update to v2.0.1.
-
-##### breaking changes
-
-V2.0 introduced some breaking changes, mainly related to properties naming. see [CHANGELOG.md](./CHANGELOG.md) for
-details.
 
 #### useXarrow
 
