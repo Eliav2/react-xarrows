@@ -21,28 +21,25 @@ import PT from 'prop-types';
 
 export const log = console.log;
 
-export interface XarrowCoreProps {
+export interface XarrowCoreAPIProps {
   start: refType;
   end: refType;
-  // SVGChildren?: ReactNode | undefined;
+
   SVGcanvasProps?: AutoResizeSvgProps;
   SVGcanvasStyle?: React.CSSProperties;
   divContainerProps?: React.HTMLProps<HTMLDivElement>;
 
-  children: (state: { startElem: XElementType; endElem: XElementType; rootElem: XElementType }) => React.ReactElement;
-
   // the phase that xarrow will sample the DOM. can be useEffect or useLayoutEffect
   _updatePhase?: (effect: EffectCallback, deps?: DependencyList) => void;
+}
 
-  // the number of idle renders (cached result is returned) before running the actual expensive render that sample the DOM.
-  // can be used to sample the DOM after other components updated, that your xarrow maybe depends on.
-  _delayRenders?: number;
+export interface XarrowCoreProps extends XarrowCoreAPIProps {
+  children: (state: { startElem: XElementType; endElem: XElementType; rootElem: XElementType }) => React.ReactElement;
 }
 
 /**
- * this basic arrow component that responsible holding state for start and end element.
+ * this component responsible holding state for start and end element. returns svg canvas and state of the elements.
  * used as extensible component for extra features.
- * also delay (using memorization) the actual render so the DOM would be updated on the sample.
  */
 export const XarrowCore: React.FC<XarrowCoreProps> = (props) => {
   // console.log('XarrowCore');

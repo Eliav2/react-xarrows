@@ -89,14 +89,15 @@ const calcAnchors = (anchors: anchorCustomPositionType2[], anchorPos: posType) =
   });
 };
 
-export interface XarrowAnchorsProps {
+export interface XarrowAnchorsAPIProps {
+  startAnchor?: anchorType;
+  endAnchor?: anchorType;
+}
+
+export interface XarrowAnchorsProps extends XarrowAnchorsAPIProps {
   startElem: XElementType;
   endElem: XElementType;
   getPath: getPathType;
-
-  //API
-  startAnchor?: anchorType;
-  endAnchor?: anchorType;
 }
 
 /**

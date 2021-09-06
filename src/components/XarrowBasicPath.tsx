@@ -39,7 +39,8 @@ export const getPosition = (startElem: XElementType, endElem: XElementType, root
 };
 
 // export interface XarrowBasicProps extends Omit<XarrowCoreProps, 'children'> {
-export interface XarrowBasicProps {
+export interface XarrowBasicAPIProps {}
+export interface XarrowBasicProps extends XarrowBasicAPIProps {
   startElem: XElementType;
   endElem: XElementType;
   rootElem: XElementType;

@@ -1,13 +1,10 @@
 // import '../../wdyr';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { Meta, Story } from '@storybook/react';
 import XarrowCore from '../../../src/components/XarrowCore';
-import Xarrow, { useMultipleRenders, xarrowPropsType, Xwrapper, arrowShapes } from '../../../src';
+import { Xwrapper } from '../../../src';
 import { DraggableBox } from '../components/DraggableBox';
 import XarrowBasicPath from '../../../src/components/XarrowBasicPath';
-import XarrowAnchors from '../../../src/components/XarrowAnchors';
-import AutoResizeSvg from '../../../src/components/AutoResizeSvg';
-import Draggable from 'react-draggable';
 import XarrowMain from '../../../src/components/XarrowMain';
 
 export default {
@@ -31,14 +28,7 @@ const XarrowCoreTestTemplate = ({ XComp = XarrowMain }) => {
         <div style={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-around' }}>
           {showBox1 ? <DraggableBox id={'box1'} grid={[20, 20]} /> : null}
           {showBox2 ? <DraggableBox id={'box2'} grid={[20, 20]} /> : null}
-          <XComp
-            start={'box1'}
-            end={target}
-            // extendPath={(pos) => {
-            //   return pos;
-            // }}
-            startAnchor={'right'}
-          />
+          <XComp start={'box1'} end={target} startAnchor={'right'} endAnchor={'top'} />
         </div>
         <div style={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-around' }}>
           <DraggableBox id={'box3'} grid={[20, 20]} />
