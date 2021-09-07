@@ -49,7 +49,8 @@
     "@storybook/node-logger": "^6.3.6",
     "@storybook/preset-create-react-app": "^3.2.0",
     "@storybook/react": "^6.3.6",
-    "@welldone-software/why-did-you-render": "^6.2.1"
+    "@welldone-software/why-did-you-render": "^6.2.1",
+    "chromatic": "^5.9.2"
   },
   "eslintConfig": {
     "overrides": [

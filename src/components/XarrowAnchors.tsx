@@ -24,7 +24,7 @@ interface anchorCustomPositionType2 extends Omit<Required<anchorCustomPositionTy
   position: Exclude<typeof cAnchorEdge[number], 'auto'>;
 }
 const parseAnchor = (anchor: anchorType) => {
-  console.log('parseAnchor');
+  // console.log('parseAnchor');
   // convert to array
   let anchorChoice = Array.isArray(anchor) ? anchor : [anchor];
 
@@ -132,14 +132,14 @@ export interface XarrowAnchorsProps extends XarrowAnchorsAPIProps {
  * will smartly chose anchor based on given props and will calculate the offset.
  */
 const XarrowAnchors: React.FC<XarrowAnchorsProps> = (props) => {
-  const startAnchors = useMemo(() => parseAnchor(props.startAnchor), [props.startAnchor]);
-  // const startAnchors = parseAnchor(props.startAnchor);
+  const startAnchors = parseAnchor(props.startAnchor);
+  const endAnchors = parseAnchor(props.endAnchor);
   const startPoints = calcAnchors(startAnchors, props.startElem.position);
-  // const endAnchors = parseAnchor(props.endAnchor);
-  const endAnchors = useMemo(() => parseAnchor(props.endAnchor), [props.endAnchor]);
   const endPoints = calcAnchors(endAnchors, props.endElem.position);
-
+  // const startAnchors = useMemo(() => parseAnchor(props.startAnchor), [props.startAnchor]);
+  // const endAnchors = useMemo(() => parseAnchor(props.endAnchor), [props.endAnchor]);
   let { chosenStart, chosenEnd } = getShortestLine(startPoints, endPoints);
+  // console.log(startPoints, endPoints, chosenStart.anchor.position, chosenEnd.anchor.position);
   chosenStart.x -= props.startElem.position.x;
   chosenStart.y -= props.startElem.position.y;
   chosenEnd.x -= props.endElem.position.x;

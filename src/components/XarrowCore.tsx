@@ -42,7 +42,7 @@ export interface XarrowCoreProps extends XarrowCoreAPIProps {
  * used as extensible component for extra features.
  */
 export const XarrowCore: React.FC<XarrowCoreProps> = (props) => {
-  // console.log('XarrowCore');
+  console.log('XarrowCore');
   const { _updatePhase: effect = useLayoutEffect } = props;
 
   const rootDivRef = useRef<HTMLDivElement>(null);

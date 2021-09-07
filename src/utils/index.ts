@@ -67,7 +67,7 @@ export const getShortestLine = (sPoints: t1[], ePoints: t1[]) => {
 
 export const getElemPos = (elem: HTMLElement): posType => {
   // console.log(memorizedPositions);
-  if (!elem) {
+  if (!elem || !('getBoundingClientRect' in elem)) {
     // return null;
     return { x: 0, y: 0, right: 0, bottom: 0, height: 0, width: 0 };
   }

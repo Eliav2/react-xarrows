@@ -8,3 +8,5 @@ export const appendPropsToChildren = (children: React.ReactNode, props: Object) 
     return child;
   });
 };
+
+export const isDev = process.env.NODE_ENV === 'development';

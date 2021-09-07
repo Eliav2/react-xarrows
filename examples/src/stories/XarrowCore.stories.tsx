@@ -2,10 +2,11 @@
 import React, { useState } from 'react';
 import { Meta, Story } from '@storybook/react';
 import XarrowCore from '../../../src/components/XarrowCore';
-import { Xwrapper } from '../../../src';
+import { useXarrow, Xwrapper } from '../../../src';
 import { DraggableBox } from '../components/DraggableBox';
 import XarrowBasicPath from '../../../src/components/XarrowBasicPath';
 import XarrowMain from '../../../src/components/XarrowMain';
+import Xelem from '../../../src/components/Xelem';
 
 export default {
   title: 'XarrowCore',
@@ -20,21 +21,22 @@ const XarrowCoreTestTemplate = ({ XComp = XarrowMain }) => {
   const target = trigger ? 'box2' : 'box3';
 
   let arr = new Array(0).fill({});
-  console.log(arr);
+  console.log('XarrowCoreTestTemplate');
   return (
     <div>
       <button onClick={() => setShowBox1(!showBox1)}>show box1</button>
       <button onClick={() => setShowBox2(!showBox2)}>show box2</button>
       <button onClick={() => setTrigger(!trigger)}>trigger connection</button>
       <Xwrapper>
+        <Xelem>{(updateXarrow) => <button onClick={updateXarrow}>update Xarrow</button>}</Xelem>
         <div style={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-around' }}>
           {showBox1 ? <DraggableBox id={'box1'} grid={[20, 20]} initialOffset={{ x: 0, y: 0 }} /> : null}
           {showBox2 ? <DraggableBox id={'box2'} grid={[20, 20]} initialOffset={{ x: 500, y: 0 }} /> : null}
           <XComp
             start={'box1'}
             end={target}
-            startAnchor={{ offset: { inwards: 10 } }}
-            endAnchor={[{ offset: { inwards: 10 } }, ...arr]}
+            startAnchor={{ offset: { inwards: 0 } }}
+            endAnchor={[{ offset: { inwards: 0 } }, ...arr]}
           />
         </div>
         <div style={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-around' }}>
