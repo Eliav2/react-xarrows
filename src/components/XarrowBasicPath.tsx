@@ -15,17 +15,15 @@ function getPath<T extends extendPosType>(extendPos?: T, pos?: basicPos | undefi
   } else return `M ${pos.xs} ${pos.ys} L ${pos.xe} ${pos.ye}`;
 }
 export type getPathType = typeof getPath;
-const t1 = getPath;
-const t2 = t1((pos) => pos);
 
 export const getPosition = (startElem: XElementType, endElem: XElementType, rootElem: XElementType) => {
   const { x: xr, y: yr } = rootElem.position;
   const startPos = startElem.position;
   const endPos = endElem.position;
-  let xs = (startPos.x + startPos.right) / 2 - xr;
-  let ys = (startPos.y + startPos.bottom) / 2 - yr;
-  let xe = (endPos.x + endPos.right) / 2 - xr;
-  let ye = (endPos.y + endPos.bottom) / 2 - yr;
+  let xs = startPos.x - xr;
+  let ys = startPos.y - yr;
+  let xe = endPos.x - xr;
+  let ye = endPos.y - yr;
   const posSt = { xs, ys, xe, ye };
   const newGetPos = (extendPos: extendPosType) => getPath(extendPos, posSt);
   // const getPath: getPathType = (extendPos?: extendPosType, pos = posSt) => {

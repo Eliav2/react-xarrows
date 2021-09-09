@@ -1,4 +1,4 @@
-import { anchorCustomPositionType, refType } from '../types';
+import { anchorCustomPositionType, percentStr, refType, relativeOrAbsStr } from '../types';
 import React from 'react';
 import _ from 'lodash';
 import { posType } from '../privateTypes';
@@ -22,7 +22,8 @@ export const factorDpathStr = (d: string, factor) => {
 };
 
 // return relative,abs
-export const xStr2absRelative = (str): { abs: number; relative: number } => {
+export const xStr2absRelative = (str: relativeOrAbsStr): { abs: number; relative: number } => {
+  if (typeof str === 'number') return { abs: str, relative: 0 };
   if (typeof str !== 'string') return { abs: 0, relative: 0.5 };
   let sp = str.split('%');
   let absLen = 0,
@@ -95,3 +96,45 @@ export const getSvgPos = (svgRef: React.MutableRefObject<any>) => {
     y: xarrowElemY - xarrowStyleTop,
   };
 };
+
+const charCodeZero = '0'.charCodeAt(0);
+const charCodeNine = '9'.charCodeAt(0);
+
+export function isDigit(s: string) {
+  return s.length == 1 && s.charCodeAt(0) >= charCodeZero && s.charCodeAt(0) <= charCodeNine;
+}
+
+const isNumber = (s: string) => {
+  let i = 0;
+  if (s[0] == '-') i++;
+  for (; i < s.length; i++) if (!isDigit(s[i])) return false;
+  return true;
+};
+
+export const isPercentStr = (s: string): s is percentStr => {
+  // let i;
+  // if (s.length < 2) return false;
+  // for (i = 0; i < s.length - 1; i++) {
+  //   if (!isDigit(s[i])) return false;
+  // }
+  return isNumber(s.slice(0, -1)) && s[s.length - 1] == '%';
+};
+
+export const isRelativeOrAbsStr = (s: string | number) => {
+  if (typeof s === 'number') return true;
+  let sp = s.split('%');
+  if (sp.length == 1 || (sp.length == 2 && sp[1] == '')) {
+    return isPercentStr(s) || isNumber(s);
+  } else if (sp.length == 2) {
+    return isPercentStr(sp[0] + '%') && isNumber(sp[1]);
+  }
+  return false;
+};
+
+if (require.main === module) {
+  console.log(isPercentStr('1%'));
+  console.log(isPercentStr('1'));
+  // console.log(isRelativeOrAbsStr('1'));
+  // console.log(isRelativeOrAbsStr('1%'));
+}
+// isNaN('19');

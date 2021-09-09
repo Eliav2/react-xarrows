@@ -50,14 +50,22 @@ export type xarrowPropsType = {
 };
 
 export type pathType = typeof cPaths[number];
-export type _anchorType = anchorNamedType | anchorCustomPositionType;
+
+// // type percentStr = `${'1' | ''}${digit | ''}${digit}%`;
+// type DigitsStr = `${number}`;
+// let myNum: percentStr = '211%';
+// type digit = '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9';
+export type percentStr = `${number}%`;
+export type relativeOrAbsStr = number | `${number | percentStr}${number | ''}`;
+
+export type _anchorType = anchorNamedType | anchorCustomPositionType | relativeOrAbsStr;
 // export type anchorType = _anchorType | _anchorType[];
 export type anchorType = OneOrMore<_anchorType>;
 export type anchorNamedType = typeof cAnchorEdge[number];
 
 export type anchorCustomPositionType = {
   position?: anchorNamedType;
-  offset?: { x?: number; y?: number; inwards?: number; sidewards?: number };
+  offset?: { x?: number; y?: number; inwards?: relativeOrAbsStr; sidewards?: relativeOrAbsStr };
 };
 export type refType = React.MutableRefObject<any> | string;
 export type labelsType = {

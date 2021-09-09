@@ -19,6 +19,7 @@ const XarrowCoreTestTemplate = ({ XComp = XarrowMain }) => {
   const [trigger, setTrigger] = useState(true);
 
   const target = trigger ? 'box2' : 'box3';
+  // const update = useXarrow();
 
   let arr = new Array(0).fill({});
   console.log('XarrowCoreTestTemplate');
@@ -32,12 +33,7 @@ const XarrowCoreTestTemplate = ({ XComp = XarrowMain }) => {
         <div style={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-around' }}>
           {showBox1 ? <DraggableBox id={'box1'} grid={[20, 20]} initialOffset={{ x: 0, y: 0 }} /> : null}
           {showBox2 ? <DraggableBox id={'box2'} grid={[20, 20]} initialOffset={{ x: 500, y: 0 }} /> : null}
-          <XComp
-            start={'box1'}
-            end={target}
-            startAnchor={{ offset: { inwards: 0 } }}
-            endAnchor={[{ offset: { inwards: 0 } }, ...arr]}
-          />
+          <XComp start={'box1'} end={target} startAnchor={['0%', '10%', '-10%']} endAnchor={'left'} />
         </div>
         <div style={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-around' }}>
           <DraggableBox id={'box3'} grid={[20, 20]} initialOffset={{ x: 250, y: 100 }} />

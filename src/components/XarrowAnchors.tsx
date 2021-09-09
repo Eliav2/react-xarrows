@@ -3,8 +3,9 @@ import { getPathType } from './XarrowBasicPath';
 import PT from 'prop-types';
 import { cAnchorEdge } from '../constants';
 import { anchorEdgeType, posType, XElementType } from '../privateTypes';
-import { getShortestLine } from '../utils';
-import { anchorCustomPositionType, anchorType } from '../types';
+import { getShortestLine, isDigit, isPercentStr, isRelativeOrAbsStr, xStr2absRelative } from '../utils';
+import { anchorCustomPositionType, anchorNamedType, anchorType, percentStr, relativeOrAbsStr } from '../types';
+import _ from 'lodash';
 
 const pAnchorPositionType = PT.oneOf(cAnchorEdge);
 const pAnchorCustomPositionType = PT.exact({
@@ -20,9 +21,10 @@ const _pAnchorType = PT.oneOfType([pAnchorPositionType, pAnchorCustomPositionTyp
 const pAnchorType = PT.oneOfType([_pAnchorType, PT.arrayOf(_pAnchorType)]);
 
 // remove 'auto' as possible anchor from anchorCustomPositionType.position
-interface anchorCustomPositionType2 extends Omit<Required<anchorCustomPositionType>, 'position'> {
+interface parsedAnchorType extends Omit<Required<anchorCustomPositionType>, 'position'> {
   position: Exclude<typeof cAnchorEdge[number], 'auto'>;
 }
+
 const parseAnchor = (anchor: anchorType) => {
   // console.log('parseAnchor');
   // convert to array
@@ -30,16 +32,28 @@ const parseAnchor = (anchor: anchorType) => {
 
   //convert to array of objects
   let anchorChoice2 = anchorChoice.map((anchorChoice) => {
-    if (typeof anchorChoice === 'string') {
-      return { position: anchorChoice };
+    if (typeof anchorChoice !== 'object') {
+      const obj: { position: anchorNamedType; offset?: { sidewards: relativeOrAbsStr } } = {
+        position: anchorChoice as anchorNamedType,
+      };
+      if (isRelativeOrAbsStr(anchorChoice)) {
+        console.log('isPercentStr');
+        obj.position = 'auto';
+        _.set(obj, 'offset.sidewards', anchorChoice);
+        // obj.offset.sidewards = anchorChoice;
+      }
+      return obj;
     } else {
+      // it's object
       if (!('position' in anchorChoice)) anchorChoice.position = 'auto';
       return anchorChoice;
     }
   });
 
   //remove any invalid anchor names
-  anchorChoice2 = anchorChoice2.filter((an) => cAnchorEdge.includes(an?.position));
+  anchorChoice2 = anchorChoice2.filter(
+    (an) => (_.isString(an) && isPercentStr(an)) || (_.isObject(an) && cAnchorEdge.includes(an?.position))
+  );
   if (anchorChoice2.length == 0) anchorChoice2 = [{ position: 'auto' }];
 
   //replace any 'auto' with ['left','right','bottom','top']
@@ -71,15 +85,15 @@ const parseAnchor = (anchor: anchorType) => {
 
   // console.log(anchorChoice3);
 
-  return anchorChoice3 as anchorCustomPositionType2[];
+  return anchorChoice3 as parsedAnchorType[];
 };
 
 const defaultAnchorsOffsets = {
-  middle: { x: 0, y: 0 },
-  left: { x: -0.5, y: 0 },
-  right: { x: 0.5, y: 0 },
-  top: { x: 0, y: -0.5 },
-  bottom: { x: 0, y: 0.5 },
+  middle: { x: 0.5, y: 0.5 },
+  left: { x: 0, y: 0.5 },
+  right: { x: 1, y: 0.5 },
+  top: { x: 0.5, y: 0 },
+  bottom: { x: 0.5, y: 1 },
 };
 
 const inwardOffset = {
@@ -96,20 +110,41 @@ const sidewardsOffset = {
   top: { x: 1, y: 0 },
   bottom: { x: -1, y: 0 },
 };
+const inwardsDimOffset = {
+  middle: { x: 0, y: 0 },
+  left: { x: 1, y: 0 },
+  right: { x: -1, y: 0 },
+  top: { x: 0, y: 1 },
+  bottom: { x: 0, y: -1 },
+};
+const sidewardsDimOffset = {
+  middle: { x: 0, y: 0 },
+  left: { x: 0, y: -1 },
+  right: { x: 0, y: 1 },
+  top: { x: 1, y: 0 },
+  bottom: { x: -1, y: 0 },
+};
 
 // calcs the offset per each possible anchor
-const calcAnchors = (anchors: anchorCustomPositionType2[], anchorPos: posType) => {
+const calcAnchors = (anchors: parsedAnchorType[], anchorPos: posType) => {
   // now prepare this list of anchors to object expected by the `getShortestLine` function
+  // console.log(anchors);
   let newAnchors = anchors.map((anchor) => {
-    let xDef = defaultAnchorsOffsets[anchor.position].x * anchorPos.width;
-    let yDef = defaultAnchorsOffsets[anchor.position].y * anchorPos.height;
-    let xi = inwardOffset[anchor.position].x * anchor.offset.inwards;
-    let yi = inwardOffset[anchor.position].y * anchor.offset.inwards;
-    let xsi = sidewardsOffset[anchor.position].x * anchor.offset.sidewards;
-    let ysi = sidewardsOffset[anchor.position].y * anchor.offset.sidewards;
+    //offsets based anchors names
+    //user defined offsets
+    const { position: posName } = anchor;
+    let xDef = defaultAnchorsOffsets[posName].x * anchorPos.width;
+    let yDef = defaultAnchorsOffsets[posName].y * anchorPos.height;
+    let { abs: absInw, relative: relInw } = xStr2absRelative(anchor.offset.inwards);
+    let xi = inwardOffset[posName].x * absInw + inwardsDimOffset[posName].x * anchorPos.width * relInw;
+    let yi = inwardOffset[posName].y * absInw + inwardsDimOffset[posName].y * anchorPos.height * relInw;
+    let { abs: absSidw, relative: relSidw } = xStr2absRelative(anchor.offset.sidewards);
+    let xsi = sidewardsOffset[posName].x * absSidw + sidewardsDimOffset[posName].x * anchorPos.width * relSidw;
+    let ysi = sidewardsOffset[posName].y * absSidw + sidewardsDimOffset[posName].y * anchorPos.height * relSidw;
+    // console.log(anchor.position, xDef, yDef, anchorPos.x, anchorPos.y);
     return {
-      x: anchorPos.x + xDef + anchor.offset.x + xi + xsi,
-      y: anchorPos.y + yDef + anchor.offset.y + yi + ysi,
+      x: anchorPos.x + anchor.offset.x + xi + xsi + xDef,
+      y: anchorPos.y + anchor.offset.y + yi + ysi + yDef,
       anchor: anchor,
     };
   });
@@ -124,6 +159,7 @@ export interface XarrowAnchorsAPIProps {
 export interface XarrowAnchorsProps extends XarrowAnchorsAPIProps {
   startElem: XElementType;
   endElem: XElementType;
+  rootElem: XElementType;
   getPath: getPathType;
 }
 
@@ -132,20 +168,21 @@ export interface XarrowAnchorsProps extends XarrowAnchorsAPIProps {
  * will smartly chose anchor based on given props and will calculate the offset.
  */
 const XarrowAnchors: React.FC<XarrowAnchorsProps> = (props) => {
-  const startAnchors = parseAnchor(props.startAnchor);
-  const endAnchors = parseAnchor(props.endAnchor);
+  const startAnchors = useMemo(() => parseAnchor(props.startAnchor), [props.startAnchor]);
+  const endAnchors = useMemo(() => parseAnchor(props.endAnchor), [props.endAnchor]);
   const startPoints = calcAnchors(startAnchors, props.startElem.position);
   const endPoints = calcAnchors(endAnchors, props.endElem.position);
-  // const startAnchors = useMemo(() => parseAnchor(props.startAnchor), [props.startAnchor]);
-  // const endAnchors = useMemo(() => parseAnchor(props.endAnchor), [props.endAnchor]);
+
   let { chosenStart, chosenEnd } = getShortestLine(startPoints, endPoints);
-  // console.log(startPoints, endPoints, chosenStart.anchor.position, chosenEnd.anchor.position);
+  // console.log(chosenStart, chosenEnd);
   chosenStart.x -= props.startElem.position.x;
   chosenStart.y -= props.startElem.position.y;
   chosenEnd.x -= props.endElem.position.x;
   chosenEnd.y -= props.endElem.position.y;
+  // console.log(chosenStart.x, chosenStart.y);
+  // console.log(sp.x, sp.y);
 
-  // offset connection points to the selected anchors
+  // alter the state - offset connection points to the selected anchors
   let newGetPath = props.getPath((posSt) => {
     posSt.xs += chosenStart.x;
     posSt.ys += chosenStart.y;
@@ -160,8 +197,22 @@ XarrowAnchors.propTypes = {
   startAnchor: pAnchorType,
   endAnchor: pAnchorType,
 };
+XarrowAnchors.defaultProps = {
+  startAnchor: 'auto',
+  endAnchor: 'auto',
+};
 
 export default XarrowAnchors;
+
+if (require.main === module) {
+  const testAnchors = (anchor) => {
+    const dumyPosition: posType = { x: 0, y: 0, width: 50, height: 50, right: 0, bottom: 0 };
+    const parsedAnchors = parseAnchor(anchor);
+    const points = calcAnchors(parsedAnchors, dumyPosition);
+    return points;
+  };
+  console.log(testAnchors('30%'));
+}
 
 // Properties	Description	default value	type                                                               //
 //     start	ref to start element	none(Required!)	string/ReactRef                                        //
