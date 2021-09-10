@@ -2,12 +2,17 @@ import React from 'react';
 import { XarrowCoreProps } from './XarrowCore';
 import { XElementType } from '../privateTypes';
 
-type basicPos = { ys: number; xs: number; ye: number; xe: number };
-type extendPosType = ((pos: basicPos) => basicPos) | undefined;
+export type basicPos = { ys: number; xs: number; ye: number; xe: number };
+export type extendPosType = ((pos: basicPos) => basicPos) | undefined;
 // export type getPathType = (extendPos?: extendPosType, pos?: basicPos) => getPathType | string;
 
 function getPath(): string;
 function getPath(extendPos?: extendPosType, pos?: basicPos): getPathType;
+/**
+ * receives an optional function to extend
+ * @param extendPos function that receives as first argument the current path state, this function should return the new path state
+ * @param pos optional override
+ */
 function getPath<T extends extendPosType>(extendPos?: T, pos?: basicPos | undefined) {
   if (extendPos) {
     let newPos = extendPos(pos);

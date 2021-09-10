@@ -21,6 +21,8 @@ const XarrowCoreTestTemplate = ({ XComp = XarrowMain }) => {
   const target = trigger ? 'box2' : 'box3';
   // const update = useXarrow();
 
+  console.log('hey?', document.getElementById('box3')?.getBoundingClientRect());
+
   let arr = new Array(0).fill({});
   console.log('XarrowCoreTestTemplate');
   return (
@@ -31,12 +33,20 @@ const XarrowCoreTestTemplate = ({ XComp = XarrowMain }) => {
       <Xwrapper>
         <Xelem>{(updateXarrow) => <button onClick={updateXarrow}>update Xarrow</button>}</Xelem>
         <div style={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-around' }}>
-          {showBox1 ? <DraggableBox id={'box1'} grid={[20, 20]} initialOffset={{ x: 0, y: 0 }} /> : null}
-          {showBox2 ? <DraggableBox id={'box2'} grid={[20, 20]} initialOffset={{ x: 500, y: 0 }} /> : null}
-          <XComp start={'box1'} end={target} startAnchor={['0%', '10%', '-10%']} endAnchor={'left'} />
-        </div>
-        <div style={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-around' }}>
-          <DraggableBox id={'box3'} grid={[20, 20]} initialOffset={{ x: 250, y: 100 }} />
+          {/*{showBox1 ? <DraggableBox id={'box1'} grid={[20, 20]} initialOffset={{ x: 0, y: 0 }} /> : null}*/}
+          {/*{showBox2 ? <DraggableBox id={'box2'} grid={[20, 20]} initialOffset={{ x: 500, y: 0 }} /> : null}*/}
+          {/*<XComp*/}
+          {/*  start={'box1'}*/}
+          {/*  end={target}*/}
+          {/*  startAnchor={[{ position: 'auto' }]}*/}
+          {/*  endAnchor={'left'}*/}
+          {/*  extendPath={(pos) => {*/}
+          {/*    return pos;*/}
+          {/*  }}*/}
+          {/*/>*/}
+          <DraggableBox id={'box3'} grid={[20, 20]} initialOffset={{ x: 50, y: 100 }} />
+          <DraggableBox id={'box4'} grid={[20, 20]} initialOffset={{ x: 250, y: 100 }} />
+          <XComp start={document.getElementById('box3')?.getBoundingClientRect()} end={'box4'} />
         </div>
       </Xwrapper>
     </div>

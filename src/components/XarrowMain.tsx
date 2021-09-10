@@ -26,7 +26,7 @@ const XarrowMain: React.FC<XarrowMainProps> = (props) => {
               return (
                 <XarrowBasicPath {...elems}>
                   {(getPath) => {
-                    return <XarrowAnchors {...{ ...elems, getPath, ..._rest }} />;
+                    return <XarrowAnchors {...{ ...elems, getPath, start, end, ..._rest }} />;
                   }}
                 </XarrowBasicPath>
               );

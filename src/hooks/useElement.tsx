@@ -1,7 +1,7 @@
 import { refType } from '../types';
 import { useLayoutEffect, useState } from 'react';
 import { getElementByPropGiven, getElemPos } from '../utils';
-import { posType, XElementType } from '../privateTypes';
+import { Contains, containsPointType, pointType, posType, XElementType } from '../privateTypes';
 import _ from 'lodash';
 import { useDeepCompareEffect } from './useDeepCompareEffect';
 
@@ -13,7 +13,7 @@ import { useDeepCompareEffect } from './useDeepCompareEffect';
 export const useElement = (elemProp: refType): XElementType => {
   // console.log('useElement');
   const [elem, setElem] = useState(() => getElementByPropGiven(elemProp));
-  const [pos, setPos] = useState<posType>({ x: 0, y: 0, right: 0, bottom: 0, width: 0, height: 0 });
+  const [pos, setPos] = useState<containsPointType>({ x: 0, y: 0, right: 0, bottom: 0, width: 0, height: 0 });
   const elemRef = getElementByPropGiven(elemProp);
   useLayoutEffect(() => {
     // console.log('elemProp changed!');
@@ -32,13 +32,17 @@ export const useElement = (elemProp: refType): XElementType => {
   // or
   // sample dom at effects stage (triggers another render but takes more updated DOM sample)
   useLayoutEffect(() => {
-    // console.log('elem', elem);
+    // console.log('elem', elemRef);
+
     if (elemRef) {
       const newPos = getElemPos(elem);
       if (!_.isEqual(newPos, pos)) {
         // console.log('elem update pos!', newPos);
         setPos(newPos);
       }
+    } else if (_.isObject(elemProp) && 'x' in elemProp) {
+      // console.log(elemProp);
+      setPos(elemProp);
     }
   });
   return {

@@ -1,6 +1,6 @@
 import React, { ReactSVG } from 'react';
 import { cAnchorEdge, cArrowShapes, cPaths, cSvgElems } from './constants';
-import { OneOrMore, ToArray } from './privateTypes';
+import { Contains, OneOrMore, ToArray } from './privateTypes';
 
 export type xarrowPropsType = {
   start: refType;
@@ -67,7 +67,8 @@ export type anchorCustomPositionType = {
   position?: anchorNamedType;
   offset?: { x?: number; y?: number; inwards?: relativeOrAbsStr; sidewards?: relativeOrAbsStr };
 };
-export type refType = React.MutableRefObject<any> | string;
+
+export type refType = React.MutableRefObject<any> | string | Contains<{ x: number; y: number }>;
 export type labelsType = {
   start?: labelType;
   middle?: labelType;
