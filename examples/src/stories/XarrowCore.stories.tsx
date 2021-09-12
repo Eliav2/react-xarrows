@@ -46,7 +46,7 @@ const XarrowCoreTestTemplate = ({ XComp = XarrowMain }) => {
           {/*/>*/}
           <DraggableBox id={'box3'} grid={[20, 20]} initialOffset={{ x: 50, y: 100 }} />
           <DraggableBox id={'box4'} grid={[20, 20]} initialOffset={{ x: 250, y: 100 }} />
-          <XComp start={document.getElementById('box3')?.getBoundingClientRect()} end={'box4'} />
+          <XComp start={{ x: 50, y: 150 }} end={'box4'} />
         </div>
       </Xwrapper>
     </div>

@@ -27,20 +27,12 @@ export interface XarrowAnchorsProps extends XarrowAnchorsAPIProps {
  * will smartly chose anchor based on given props and will calculate the offset.
  */
 const XarrowAnchors: React.FC<XarrowAnchorsProps> = (props) => {
-  let startPoints: t1[];
-  let endPoints: t1[];
+  // let startPoints: t1[];
+  // let endPoints: t1[];
   const startAnchors = useMemo(() => parseAnchor(props.startAnchor), [props.startAnchor, props.start]);
-  if (isPosType(props.startElem.position)) {
-    startPoints = calcAnchors(startAnchors, props.startElem.position);
-  } else {
-    startPoints = [props.startElem.position];
-  }
+  const startPoints = calcAnchors(startAnchors, props.startElem.position);
   const endAnchors = useMemo(() => parseAnchor(props.endAnchor), [props.endAnchor, props.end]);
-  if (isPosType(props.endElem.position)) {
-    endPoints = calcAnchors(endAnchors, props.endElem.position);
-  } else {
-    endPoints = [props.endElem.position];
-  }
+  const endPoints = calcAnchors(endAnchors, props.endElem.position);
 
   let { chosenStart, chosenEnd } = getShortestLine(startPoints, endPoints);
 
@@ -187,7 +179,7 @@ const sidewardsDimOffset = {
 };
 
 // calcs the offset per each possible anchor
-const calcAnchors = (anchors: parsedAnchorType[], anchorPos: posType) => {
+const calcAnchors = (anchors: parsedAnchorType[], anchorPos: containsPointType) => {
   // now prepare this list of anchors to object expected by the `getShortestLine` function
   // console.log(anchors);
 
@@ -195,6 +187,8 @@ const calcAnchors = (anchors: parsedAnchorType[], anchorPos: posType) => {
     //offsets based anchors names
     //user defined offsets
     const { position: posName } = anchor;
+    anchorPos.width ||= 0;
+    anchorPos.height ||= 0;
     let xDef = defaultAnchorsOffsets[posName].x * anchorPos.width;
     let yDef = defaultAnchorsOffsets[posName].y * anchorPos.height;
     let { abs: absInw, relative: relInw } = xStr2absRelative(anchor.offset.inwards);
