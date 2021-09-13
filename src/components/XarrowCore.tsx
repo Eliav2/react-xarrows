@@ -1,22 +1,8 @@
-import React, {
-  DependencyList,
-  EffectCallback,
-  ReactNode,
-  SVGProps,
-  useContext,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from 'react';
+import React, { DependencyList, EffectCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { refType } from '../types';
-import { XarrowContext } from '../Xwrapper';
-import { AutoResizeSvg, AutoResizeSvgProps } from './AutoResizeSvg';
-import { DelayedComponent } from './DelayedComponent';
+import { AutoResizeSvgProps } from './AutoResizeSvg';
 import { XElementType } from '../privateTypes';
-import { useDeepCompareEffect } from '../hooks/useDeepCompareEffect';
 import { useElement } from '../hooks/useElement';
-import { appendPropsToChildren } from '../utils/reactUtils';
 import PT from 'prop-types';
 
 export const log = console.log;
@@ -96,19 +82,4 @@ XarrowCore.defaultProps = {
 };
 
 // XarrowCore.whyDidYouRender = true;
-
-// interface XSimpleArrowWithOptionsPropsType extends XarrowCoreProps {
-//   lineColor?: string;
-//   strokeWidth?: number;
-//   arrowBodyProps?: SVGProps<SVGPathElement>;
-// }
-//
-// const XSimpleArrowWithOptions: React.FC<XSimpleArrowWithOptionsPropsType> = (
-//   props,
-//   { lineColor, strokeWidth, arrowBodyProps }
-// ) => {
-//   return <XarrowCore {...props} arrowBodyProps={{ stroke: lineColor, strokeWidth, ...arrowBodyProps }} />;
-// };
-
-// export default XarrowCore;
 export default XarrowCore;

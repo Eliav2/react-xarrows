@@ -1,3 +1,5 @@
+import { OptionalKeys } from 'prop-types';
+
 export interface pointType {
   x: number;
   y: number;
@@ -26,6 +28,8 @@ export type Common<A, B> = {
 };
 
 export type Contains<T extends object> = T & { [key in string | number]: any };
+
+export type MaybeContains<T extends object> = Partial<T> & { [key in string | number]: any };
 export type XElementType = { position: containsPointType; element: HTMLElement };
 
 export type ToArray<Type> = [Type] extends [any] ? Type[] : never;

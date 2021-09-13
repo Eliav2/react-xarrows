@@ -1,11 +1,11 @@
 import React, { useMemo } from 'react';
-import { extendPosType, getPathType } from './XarrowBasicPath';
 import PT from 'prop-types';
 import { cAnchorEdge } from '../constants';
-import { anchorEdgeType, containsPointType, isPosType, posType, XElementType } from '../privateTypes';
-import { getShortestLine, isDigit, isPercentStr, isRelativeOrAbsStr, t1, xStr2absRelative } from '../utils';
-import { anchorCustomPositionType, anchorNamedType, anchorType, percentStr, refType, relativeOrAbsStr } from '../types';
+import { anchorEdgeType, containsPointType, posType, XElementType } from '../privateTypes';
+import { getShortestLine, isPercentStr, isRelativeOrAbsStr, xStr2absRelative } from '../utils';
+import { anchorCustomPositionType, anchorNamedType, anchorType, refType, relativeOrAbsStr } from '../types';
 import _ from 'lodash';
+import { extendPosType, getPathType } from '../utils/XarrowUtils';
 
 export interface XarrowAnchorsAPIProps {
   startAnchor?: anchorType;
@@ -20,6 +20,8 @@ export interface XarrowAnchorsProps extends XarrowAnchorsAPIProps {
   endElem: XElementType;
   rootElem: XElementType;
   getPath: getPathType;
+
+  children?: (state: getPathType) => React.ReactElement;
 }
 
 /**
@@ -29,9 +31,9 @@ export interface XarrowAnchorsProps extends XarrowAnchorsAPIProps {
 const XarrowAnchors: React.FC<XarrowAnchorsProps> = (props) => {
   // let startPoints: t1[];
   // let endPoints: t1[];
-  const startAnchors = useMemo(() => parseAnchor(props.startAnchor), [props.startAnchor, props.start]);
+  const startAnchors = useMemo(() => parseAnchor(props.startAnchor), [props.startAnchor]);
   const startPoints = calcAnchors(startAnchors, props.startElem.position);
-  const endAnchors = useMemo(() => parseAnchor(props.endAnchor), [props.endAnchor, props.end]);
+  const endAnchors = useMemo(() => parseAnchor(props.endAnchor), [props.endAnchor]);
   const endPoints = calcAnchors(endAnchors, props.endElem.position);
 
   let { chosenStart, chosenEnd } = getShortestLine(startPoints, endPoints);
@@ -44,9 +46,17 @@ const XarrowAnchors: React.FC<XarrowAnchorsProps> = (props) => {
     posSt.ye += chosenEnd.y - props.endElem.position.y;
     return posSt;
   });
-  if (props.extendPath) newGetPath = props.getPath(props.extendPath);
-  // if (!props.children) return <path d={newGetPath()} stroke="black" />;
-  return <path d={newGetPath()} stroke="black" />;
+  if (props.extendPath) newGetPath = newGetPath(props.extendPath);
+  if (!props.children) {
+    // in case this component is used without children(means that A UI feedback is expected) return a simple line connecting the chosen points
+    // let newPos2 = newGetPath((pos) => {
+    //   pos.xs += 100;
+    //   return pos;
+    // });
+    // console.log(newGetPath(), newPos2());
+    return <path d={newGetPath()} stroke="black" />;
+  }
+  return props.children(newGetPath);
 };
 
 const pAnchorPositionType = PT.oneOf(cAnchorEdge);

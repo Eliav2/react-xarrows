@@ -4,6 +4,7 @@ import { DelayedComponent } from './DelayedComponent';
 import XarrowAnchors, { XarrowAnchorsAPIProps } from './XarrowAnchors';
 import XarrowCore, { XarrowCoreAPIProps } from './XarrowCore';
 import XarrowBasicPath, { XarrowBasicAPIProps } from './XarrowBasicPath';
+import XarrowPathShape from './XarrowPathShape';
 
 //top to down(core down)
 export interface XarrowMainProps extends XarrowCoreAPIProps, XarrowBasicAPIProps, XarrowAnchorsAPIProps {
@@ -26,7 +27,13 @@ const XarrowMain: React.FC<XarrowMainProps> = (props) => {
               return (
                 <XarrowBasicPath {...elems}>
                   {(getPath) => {
+                    // returns anchors version
                     return <XarrowAnchors {...{ ...elems, getPath, start, end, ..._rest }} />;
+                    // return (
+                    //   <XarrowAnchors {...{ ...elems, getPath, start, end, ..._rest }}>
+                    //     {() => <XarrowPathShape />}
+                    //   </XarrowAnchors>
+                    // );
                   }}
                 </XarrowBasicPath>
               );
