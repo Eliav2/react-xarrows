@@ -1,14 +1,15 @@
 import { MaybeContains } from '../privateTypes';
 
-export type basicPos = MaybeContains<{ ys: number; xs: number; ye: number; xe: number }>;
+export type basicPos = MaybeContains<{ x1: number; y1: number; x2: number; y2: number }>;
+// export type basicPos = {};
 export type extendPosType = ((pos: basicPos) => basicPos) | undefined;
 
-export function getPath(): string;
-export function getPath(
+export function getPathState(): string;
+export function getPathState(
   extendPos?: extendPosType | undefined,
   pathFunc?: (pos: basicPos) => string,
   initialPos?: basicPos
-): getPathType;
+): getPathStateType;
 /**
  * receives an optional function to extend. if no extending function was given return the updated pos state
  *
@@ -20,18 +21,18 @@ export function getPath(
  * @param pathFunc
  * @param initialPos
  */
-export function getPath<T extends extendPosType>(
+export function getPathState<T extends extendPosType>(
   extendPos?: T,
   pathFunc?: (pos: basicPos) => string,
   initialPos: basicPos = {}
 ) {
   if (extendPos) {
     let newPos = extendPos({ ...initialPos });
-    return (newExtendPos, newPathFunc = pathFunc, _newPos = newPos) => getPath(newExtendPos, newPathFunc, _newPos);
+    return (newExtendPos, newPathFunc = pathFunc, _newPos = newPos) => getPathState(newExtendPos, newPathFunc, _newPos);
   } else {
     if (pathFunc) return pathFunc(initialPos);
     else return initialPos;
   }
 }
 
-export type getPathType = typeof getPath;
+export type getPathStateType = typeof getPathState;

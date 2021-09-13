@@ -21,10 +21,8 @@ const XarrowCoreTestTemplate = ({ XComp = XarrowMain }) => {
   const target = trigger ? 'box2' : 'box3';
   // const update = useXarrow();
 
-  console.log('hey?', document.getElementById('box3')?.getBoundingClientRect());
-
   let arr = new Array(0).fill({});
-  console.log('XarrowCoreTestTemplate');
+  // console.log('XarrowCoreTestTemplate');
   return (
     <div>
       <button onClick={() => setShowBox1(!showBox1)}>show box1</button>

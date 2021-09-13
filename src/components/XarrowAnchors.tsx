@@ -3,9 +3,16 @@ import PT from 'prop-types';
 import { cAnchorEdge } from '../constants';
 import { anchorEdgeType, containsPointType, posType, XElementType } from '../privateTypes';
 import { getShortestLine, isPercentStr, isRelativeOrAbsStr, xStr2absRelative } from '../utils';
-import { anchorCustomPositionType, anchorNamedType, anchorType, refType, relativeOrAbsStr } from '../types';
+import {
+  anchorCustomPositionType,
+  anchorNamedType,
+  anchorType,
+  partialXarrowProps,
+  refType,
+  relativeOrAbsStr,
+} from '../types';
 import _ from 'lodash';
-import { extendPosType, getPathType } from '../utils/XarrowUtils';
+import { extendPosType, getPathStateType } from '../utils/XarrowUtils';
 
 export interface XarrowAnchorsAPIProps {
   startAnchor?: anchorType;
@@ -13,15 +20,12 @@ export interface XarrowAnchorsAPIProps {
   extendPath?: extendPosType;
 }
 
-export interface XarrowAnchorsProps extends XarrowAnchorsAPIProps {
-  start: refType;
-  end: refType;
+export interface XarrowAnchorsProps extends XarrowAnchorsAPIProps, partialXarrowProps {
   startElem: XElementType;
   endElem: XElementType;
-  rootElem: XElementType;
-  getPath: getPathType;
+  getPathState: getPathStateType;
 
-  children?: (state: getPathType) => React.ReactElement;
+  children?: (state: getPathStateType) => React.ReactElement;
 }
 
 /**
@@ -39,21 +43,15 @@ const XarrowAnchors: React.FC<XarrowAnchorsProps> = (props) => {
   let { chosenStart, chosenEnd } = getShortestLine(startPoints, endPoints);
 
   // alter the state - offset connection points to the selected anchors
-  let newGetPath = props.getPath((posSt) => {
-    posSt.xs += chosenStart.x - props.startElem.position.x;
-    posSt.ys += chosenStart.y - props.startElem.position.y;
-    posSt.xe += chosenEnd.x - props.endElem.position.x;
-    posSt.ye += chosenEnd.y - props.endElem.position.y;
+  let newGetPath = props.getPathState((posSt) => {
+    posSt.x1 += chosenStart.x - props.startElem.position.x;
+    posSt.y1 += chosenStart.y - props.startElem.position.y;
+    posSt.x2 += chosenEnd.x - props.endElem.position.x;
+    posSt.y2 += chosenEnd.y - props.endElem.position.y;
     return posSt;
   });
   if (props.extendPath) newGetPath = newGetPath(props.extendPath);
   if (!props.children) {
-    // in case this component is used without children(means that A UI feedback is expected) return a simple line connecting the chosen points
-    // let newPos2 = newGetPath((pos) => {
-    //   pos.xs += 100;
-    //   return pos;
-    // });
-    // console.log(newGetPath(), newPos2());
     return <path d={newGetPath()} stroke="black" />;
   }
   return props.children(newGetPath);
@@ -151,7 +149,7 @@ const parseAnchor = (anchor: anchorType) => {
   return anchorChoice3 as parsedAnchorType[];
 };
 
-const defaultAnchorsOffsets = {
+const anchorsDefaultOffsets = {
   middle: { x: 0.5, y: 0.5 },
   left: { x: 0, y: 0.5 },
   right: { x: 1, y: 0.5 },
@@ -159,28 +157,28 @@ const defaultAnchorsOffsets = {
   bottom: { x: 0.5, y: 1 },
 };
 
-const inwardOffset = {
+const anchorsInwardOffset = {
   middle: { x: 0, y: 0 },
   left: { x: 1, y: 0 },
   right: { x: -1, y: 0 },
   top: { x: 0, y: 1 },
   bottom: { x: 0, y: -1 },
 };
-const sidewardsOffset = {
+const anchorsSidewardsOffset = {
   middle: { x: 0, y: 0 },
   left: { x: 0, y: -1 },
   right: { x: 0, y: 1 },
   top: { x: 1, y: 0 },
   bottom: { x: -1, y: 0 },
 };
-const inwardsDimOffset = {
+const anchorsInwardsDimOffset = {
   middle: { x: 0, y: 0 },
   left: { x: 1, y: 0 },
   right: { x: -1, y: 0 },
   top: { x: 0, y: 1 },
   bottom: { x: 0, y: -1 },
 };
-const sidewardsDimOffset = {
+const anchorsSidewardsDimOffset = {
   middle: { x: 0, y: 0 },
   left: { x: 0, y: -1 },
   right: { x: 0, y: 1 },
@@ -199,14 +197,16 @@ const calcAnchors = (anchors: parsedAnchorType[], anchorPos: containsPointType) 
     const { position: posName } = anchor;
     anchorPos.width ||= 0;
     anchorPos.height ||= 0;
-    let xDef = defaultAnchorsOffsets[posName].x * anchorPos.width;
-    let yDef = defaultAnchorsOffsets[posName].y * anchorPos.height;
+    let xDef = anchorsDefaultOffsets[posName].x * anchorPos.width;
+    let yDef = anchorsDefaultOffsets[posName].y * anchorPos.height;
     let { abs: absInw, relative: relInw } = xStr2absRelative(anchor.offset.inwards);
-    let xi = inwardOffset[posName].x * absInw + inwardsDimOffset[posName].x * anchorPos.width * relInw;
-    let yi = inwardOffset[posName].y * absInw + inwardsDimOffset[posName].y * anchorPos.height * relInw;
+    let xi = anchorsInwardOffset[posName].x * absInw + anchorsInwardsDimOffset[posName].x * anchorPos.width * relInw;
+    let yi = anchorsInwardOffset[posName].y * absInw + anchorsInwardsDimOffset[posName].y * anchorPos.height * relInw;
     let { abs: absSidw, relative: relSidw } = xStr2absRelative(anchor.offset.sidewards);
-    let xsi = sidewardsOffset[posName].x * absSidw + sidewardsDimOffset[posName].x * anchorPos.width * relSidw;
-    let ysi = sidewardsOffset[posName].y * absSidw + sidewardsDimOffset[posName].y * anchorPos.height * relSidw;
+    let xsi =
+      anchorsSidewardsOffset[posName].x * absSidw + anchorsSidewardsDimOffset[posName].x * anchorPos.width * relSidw;
+    let ysi =
+      anchorsSidewardsOffset[posName].y * absSidw + anchorsSidewardsDimOffset[posName].y * anchorPos.height * relSidw;
     // console.log(anchor.position, xDef, yDef, anchorPos.x, anchorPos.y);
     return {
       x: anchorPos.x + anchor.offset.x + xi + xsi + xDef,

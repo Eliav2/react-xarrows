@@ -1,39 +1,42 @@
 import React, { useContext } from 'react';
 import { XarrowContext } from '../Xwrapper';
-import { DelayedComponent } from './DelayedComponent';
+import { DelayedComponent, DelayedComponentPropsAPI } from './DelayedComponent';
 import XarrowAnchors, { XarrowAnchorsAPIProps } from './XarrowAnchors';
 import XarrowCore, { XarrowCoreAPIProps } from './XarrowCore';
 import XarrowBasicPath, { XarrowBasicAPIProps } from './XarrowBasicPath';
-import XarrowPathShape from './XarrowPathShape';
+import XarrowPathShape, { XarrowPathShapeAPIProps } from './XarrowPathShape';
+import _ from 'lodash';
 
 //top to down(core down)
-export interface XarrowMainProps extends XarrowCoreAPIProps, XarrowBasicAPIProps, XarrowAnchorsAPIProps {
-  // the number of idle renders (cached result is returned) before running the actual expensive render that sample the DOM.
-  // can be used to sample the DOM after other components updated, that your xarrow maybe depends on.
-  _delayRenders?: number;
+export interface XarrowMainProps
+  extends DelayedComponentPropsAPI,
+    XarrowCoreAPIProps,
+    XarrowBasicAPIProps,
+    XarrowAnchorsAPIProps,
+    XarrowPathShapeAPIProps {
+  children: undefined;
 }
 
 const XarrowMain: React.FC<XarrowMainProps> = (props) => {
-  const { _delayRenders = 1, ...rest } = props;
+  const { _delayRenders = 1 } = props;
   // console.log('DelayedXArrow');
   useContext(XarrowContext);
   return (
-    <DelayedComponent delay={_delayRenders}>
+    <DelayedComponent _delayRenders={_delayRenders}>
       {() => {
-        const { start, end, SVGcanvasProps, SVGcanvasStyle, divContainerProps, ..._rest } = rest;
         return (
-          <XarrowCore {...{ start, end, SVGcanvasProps, SVGcanvasStyle, divContainerProps }} {..._rest}>
+          <XarrowCore {...props}>
             {(elems) => {
               return (
                 <XarrowBasicPath {...elems}>
-                  {(getPath) => {
-                    // returns anchors version
-                    return <XarrowAnchors {...{ ...elems, getPath, start, end, ..._rest }} />;
-                    // return (
-                    //   <XarrowAnchors {...{ ...elems, getPath, start, end, ..._rest }}>
-                    //     {() => <XarrowPathShape />}
-                    //   </XarrowAnchors>
-                    // );
+                  {(getPathState) => {
+                    return (
+                      <XarrowAnchors {...{ ...elems, getPathState, ...props }}>
+                        {(getPathState) => {
+                          return <XarrowPathShape {...{ ...props, getPathState }} />;
+                        }}
+                      </XarrowAnchors>
+                    );
                   }}
                 </XarrowBasicPath>
               );

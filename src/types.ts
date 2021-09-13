@@ -2,6 +2,9 @@ import React, { ReactSVG } from 'react';
 import { cAnchorEdge, cArrowShapes, cPaths, cSvgElems } from './constants';
 import { Contains, OneOrMore, ToArray } from './privateTypes';
 
+//any xarrow prop is allowed to be passed
+export interface partialXarrowProps extends Partial<xarrowPropsType> {}
+
 export type xarrowPropsType = {
   start: refType;
   end: refType;

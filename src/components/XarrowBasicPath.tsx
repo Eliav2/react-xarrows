@@ -1,16 +1,17 @@
 import React from 'react';
 import { XElementType } from '../privateTypes';
-import { extendPosType, getPath, getPathType } from '../utils/XarrowUtils';
+import { extendPosType, getPathState, getPathStateType } from '../utils/XarrowUtils';
 
 // export interface XarrowBasicProps extends Omit<XarrowCoreProps, 'children'> {
 export interface XarrowBasicAPIProps {}
+
 export interface XarrowBasicProps extends XarrowBasicAPIProps {
   startElem: XElementType;
   endElem: XElementType;
   rootElem: XElementType;
   // arrowBodyProps?: SVGProps<SVGPathElement>;
 
-  children?: (state: getPathType) => React.ReactElement;
+  children?: (state: getPathStateType) => React.ReactElement;
 }
 
 /**
@@ -21,12 +22,12 @@ export interface XarrowBasicProps extends XarrowBasicAPIProps {
 const XarrowBasicPath: React.FC<XarrowBasicProps> = (props) => {
   const { startElem, endElem, rootElem } = props;
   const elems = Object.values({ startElem, endElem, rootElem }) as [XElementType, XElementType, XElementType];
-  const getPath = getPosition(...elems);
+  const getPathState = getPosition(...elems);
   if (!props.children) {
     // in case this component is used without children(means that A UI feedback is expected) return a simple line connecting the chosen points
-    return <path d={getPath()} stroke="black" />;
+    return <path d={getPathState()} stroke="black" />;
   }
-  return props.children(getPath);
+  return props.children(getPathState);
 };
 
 export default XarrowBasicPath;
@@ -42,18 +43,9 @@ export const getPosition = (startElem: XElementType, endElem: XElementType, root
   let xe = endPos.x - xr;
   let ye = endPos.y - yr;
   const posSt = { xs, ys, xe, ye };
-  return getPath(
+  return getPathState(
     (pos) => pos,
-    (pos) => `M ${pos.xs} ${pos.ys} L ${pos.xe} ${pos.ye}`,
+    (pos) => `M ${pos.x1} ${pos.y1} L ${pos.x2} ${pos.y2}`,
     posSt
   );
-  // const newGetPos = (extendPos: extendPosType) => getPath(extendPos, posSt);
-  // const getPath: getPathType = (extendPos?: extendPosType, pos = posSt) => {
-  //   if (extendPos) {
-  //     let newPos = extendPos(pos);
-  //     return (newExtendPos?) => getPath(newExtendPos, newPos);
-  //   } else return `M ${pos.xs} ${pos.ys} L ${pos.xe} ${pos.ye}`;
-  // };
-  // return getPath;
-  // return newGetPos as getPathType;
 };

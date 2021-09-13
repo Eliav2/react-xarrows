@@ -1,7 +1,7 @@
-import { getPath } from './XarrowUtils';
+import { getPathState } from './XarrowUtils';
 
 test('test1', () => {
-  let newGetPath = getPath(
+  let newGetPath = getPathState(
     (pos) => {
       pos.x = 10;
       return pos;
@@ -32,6 +32,8 @@ test('test1', () => {
 });
 
 test('no extending', () => {
-  let newGetPath = getPath(undefined, (pos) => `M0,0 L${pos.x},-10`, { x: 10 });
+  let newGetPath = getPathState(undefined, (pos) => `M0,0 L${pos.x},-10`, { x: 10 });
   expect(newGetPath).toMatch(`M0,0 L${10},-10`);
 });
+
+test('extending pathState types', () => {});
