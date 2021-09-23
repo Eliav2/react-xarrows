@@ -1,8 +1,7 @@
 import React from 'react';
 import { XElementType } from '../privateTypes';
-import { extendPosType, getPathState, getPathStateType } from '../utils/XarrowUtils';
+import { getPathState, getPathStateType, simplePosType } from '../utils/XarrowUtils';
 
-// export interface XarrowBasicProps extends Omit<XarrowCoreProps, 'children'> {
 export interface XarrowBasicAPIProps {}
 
 export interface XarrowBasicProps extends XarrowBasicAPIProps {
@@ -11,7 +10,9 @@ export interface XarrowBasicProps extends XarrowBasicAPIProps {
   rootElem: XElementType;
   // arrowBodyProps?: SVGProps<SVGPathElement>;
 
-  children?: (state: getPathStateType) => React.ReactElement;
+  children?: (
+    state: getPathStateType<simplePosType, `M ${number} ${number} L ${number} ${number}`>
+  ) => React.ReactElement;
 }
 
 /**
@@ -38,14 +39,14 @@ export const getPosition = (startElem: XElementType, endElem: XElementType, root
   const { x: xr, y: yr } = rootElem.position;
   const startPos = startElem.position;
   const endPos = endElem.position;
-  let xs = startPos.x - xr;
-  let ys = startPos.y - yr;
-  let xe = endPos.x - xr;
-  let ye = endPos.y - yr;
-  const posSt = { xs, ys, xe, ye };
+  let x1 = startPos.x - xr;
+  let y1 = startPos.y - yr;
+  let x2 = endPos.x - xr;
+  let y2 = endPos.y - yr;
+  const posSt = { x1, y1, x2, y2 };
   return getPathState(
     (pos) => pos,
-    (pos) => `M ${pos.x1} ${pos.y1} L ${pos.x2} ${pos.y2}`,
+    (pos) => `M ${pos.x1} ${pos.y1} L ${pos.x2} ${pos.y2}` as const,
     posSt
   );
 };

@@ -30,6 +30,7 @@ export type Common<A, B> = {
 export type Contains<T extends object> = T & { [key in string | number]: any };
 
 export type MaybeContains<T extends object> = Partial<T> & { [key in string | number]: any };
+// export type MaybeContains<T extends object> = Record<string, T>;
 export type XElementType = { position: containsPointType; element: HTMLElement };
 
 export type ToArray<Type> = [Type] extends [any] ? Type[] : never;
@@ -38,3 +39,7 @@ export type OneOrMore<T> = T | ToArray<T>;
 const toArray = <T>(arg: T | T[]): T[] => {
   return Array.isArray(arg) ? arg : [arg];
 };
+
+type Primitive = bigint | boolean | null | number | string | symbol | undefined;
+
+export type PlainObject = Record<string, Primitive>;

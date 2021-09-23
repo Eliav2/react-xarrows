@@ -5,7 +5,7 @@ import { pathType } from '../types';
 export interface DelayedComponentPropsAPI {
   // the number of idle renders (cached result is returned) before running the actual expensive render that sample the DOM.
   // can be used to sample the DOM after other components updated, that your xarrow maybe depends on.
-  _delayRenders: number;
+  _delayRenders?: number;
 }
 export interface DelayedComponentProps extends DelayedComponentPropsAPI {
   children: () => JSX.Element;

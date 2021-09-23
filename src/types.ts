@@ -23,7 +23,7 @@ export type xarrowPropsType = {
   path?: pathType;
   showXarrow?: boolean;
   curveness?: number;
-  gridBreak?: string;
+  gridBreak?: relativeOrAbsStr;
   // gridRadius?: number;
   dashness?:
     | boolean

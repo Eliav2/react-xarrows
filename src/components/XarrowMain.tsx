@@ -14,12 +14,12 @@ export interface XarrowMainProps
     XarrowBasicAPIProps,
     XarrowAnchorsAPIProps,
     XarrowPathShapeAPIProps {
-  children: undefined;
+  // children: undefined;
 }
 
 const XarrowMain: React.FC<XarrowMainProps> = (props) => {
   const { _delayRenders = 1 } = props;
-  // console.log('DelayedXArrow');
+  // console.log('XarrowMain');
   useContext(XarrowContext);
   return (
     <DelayedComponent _delayRenders={_delayRenders}>
@@ -32,8 +32,8 @@ const XarrowMain: React.FC<XarrowMainProps> = (props) => {
                   {(getPathState) => {
                     return (
                       <XarrowAnchors {...{ ...elems, getPathState, ...props }}>
-                        {(getPathState) => {
-                          return <XarrowPathShape {...{ ...props, getPathState }} />;
+                        {(getPathState, anchors) => {
+                          return <XarrowPathShape {...{ ...props, getPathState, anchors }} />;
                         }}
                       </XarrowAnchors>
                     );

@@ -61,6 +61,7 @@ export const XarrowCore: React.FC<XarrowCoreProps> = (props) => {
       <svg
         style={{
           position: 'absolute',
+          fill: 'transparent',
           ...props.SVGcanvasStyle,
         }}
         overflow="visible">

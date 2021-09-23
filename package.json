@@ -37,9 +37,10 @@
     "react": ">=16.8.0"
   },
   "devDependencies": {
-    "@babel/cli": "^7.13.16",
-    "@babel/core": "^7.14.2",
+    "@babel/cli": "^7.15.7",
+    "@babel/core": "^7.15.5",
     "@babel/preset-env": "^7.14.7",
+    "@babel/preset-flow": "^7.14.5",
     "@babel/preset-react": "^7.14.5",
     "@babel/preset-typescript": "^7.14.5",
     "@types/jest": "^26.0.23",
@@ -57,7 +58,9 @@
     "eslint-import-resolver-typescript": "^2.4.0",
     "eslint-plugin-import": "^2.22.1",
     "file-loader": "^6.2.0",
+    "flow-bin": "^0.160.1",
     "html-webpack-plugin": "^5.3.2",
+    "immer": "^9.0.6",
     "jest": "^27.0.5",
     "react": "^17.0.2",
     "style-loader": "^3.0.0",

@@ -3,8 +3,7 @@ import { getPathState } from './XarrowUtils';
 test('test1', () => {
   let newGetPath = getPathState(
     (pos) => {
-      pos.x = 10;
-      return pos;
+      return { x: 10 };
     },
     (pos) => `M0,0 L${pos.x},-10`
   );
@@ -12,8 +11,9 @@ test('test1', () => {
 
   let newGetPath2 = newGetPath(
     (pos) => {
-      pos.x += 20;
-      pos.y = 20;
+      const { x, y } = pos;
+      // pos.x += 20;
+      // pos.y = 20;
       return pos;
     }
     // (pos) => `M0,0 L${pos.x},${pos.y}`

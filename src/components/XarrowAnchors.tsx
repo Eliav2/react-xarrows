@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react';
 import PT from 'prop-types';
 import { cAnchorEdge } from '../constants';
-import { anchorEdgeType, containsPointType, posType, XElementType } from '../privateTypes';
-import { getShortestLine, isPercentStr, isRelativeOrAbsStr, xStr2absRelative } from '../utils';
+import { anchorEdgeType, Contains, containsPointType, PlainObject, posType, XElementType } from '../privateTypes';
+import { getShortestLine, isPercentStr, isRelativeOrAbsStr, choosenAnchorType, xStr2absRelative } from '../utils';
 import {
   anchorCustomPositionType,
   anchorNamedType,
@@ -12,20 +12,22 @@ import {
   relativeOrAbsStr,
 } from '../types';
 import _ from 'lodash';
-import { extendPosType, getPathStateType } from '../utils/XarrowUtils';
+import { getPathStateType, simplePosType } from '../utils/XarrowUtils';
 
 export interface XarrowAnchorsAPIProps {
   startAnchor?: anchorType;
   endAnchor?: anchorType;
-  extendPath?: extendPosType;
 }
 
 export interface XarrowAnchorsProps extends XarrowAnchorsAPIProps, partialXarrowProps {
   startElem: XElementType;
   endElem: XElementType;
-  getPathState: getPathStateType;
+  getPathState: getPathStateType<simplePosType, `M ${number} ${number} L ${number} ${number}`>;
 
-  children?: (state: getPathStateType) => React.ReactElement;
+  children?: (
+    posState: getPathStateType,
+    anchors: { chosenStart: choosenAnchorType; chosenEnd: choosenAnchorType }
+  ) => React.ReactElement;
 }
 
 /**
@@ -43,18 +45,18 @@ const XarrowAnchors: React.FC<XarrowAnchorsProps> = (props) => {
   let { chosenStart, chosenEnd } = getShortestLine(startPoints, endPoints);
 
   // alter the state - offset connection points to the selected anchors
-  let newGetPath = props.getPathState((posSt) => {
+  let newGetPath: getPathStateType = props.getPathState((posSt) => {
     posSt.x1 += chosenStart.x - props.startElem.position.x;
     posSt.y1 += chosenStart.y - props.startElem.position.y;
     posSt.x2 += chosenEnd.x - props.endElem.position.x;
     posSt.y2 += chosenEnd.y - props.endElem.position.y;
     return posSt;
   });
-  if (props.extendPath) newGetPath = newGetPath(props.extendPath);
   if (!props.children) {
     return <path d={newGetPath()} stroke="black" />;
   }
-  return props.children(newGetPath);
+
+  return props.children(newGetPath, { chosenStart, chosenEnd });
 };
 
 const pAnchorPositionType = PT.oneOf(cAnchorEdge);
@@ -81,9 +83,9 @@ XarrowAnchors.defaultProps = {
   endAnchor: 'auto',
 };
 
-// remove 'auto' as possible anchor from anchorCustomPositionType.position
-interface parsedAnchorType extends Omit<Required<anchorCustomPositionType>, 'position'> {
-  position: Exclude<typeof cAnchorEdge[number], 'auto'>;
+// remove 'auto'|'middle' as possible anchor from anchorCustomPositionType.position
+export interface parsedAnchorType extends Omit<Required<anchorCustomPositionType>, 'position'> {
+  position: anchorEdgeType;
 }
 
 const parseAnchor = (anchor: anchorType) => {
@@ -155,36 +157,36 @@ const anchorsDefaultOffsets = {
   right: { x: 1, y: 0.5 },
   top: { x: 0.5, y: 0 },
   bottom: { x: 0.5, y: 1 },
-};
+} as const;
 
-const anchorsInwardOffset = {
+export const anchorsInwardOffset = {
   middle: { x: 0, y: 0 },
   left: { x: 1, y: 0 },
   right: { x: -1, y: 0 },
   top: { x: 0, y: 1 },
   bottom: { x: 0, y: -1 },
-};
-const anchorsSidewardsOffset = {
+} as const;
+export const anchorsSidewardsOffset = {
   middle: { x: 0, y: 0 },
   left: { x: 0, y: -1 },
   right: { x: 0, y: 1 },
   top: { x: 1, y: 0 },
   bottom: { x: -1, y: 0 },
-};
+} as const;
 const anchorsInwardsDimOffset = {
   middle: { x: 0, y: 0 },
   left: { x: 1, y: 0 },
   right: { x: -1, y: 0 },
   top: { x: 0, y: 1 },
   bottom: { x: 0, y: -1 },
-};
+} as const;
 const anchorsSidewardsDimOffset = {
   middle: { x: 0, y: 0 },
   left: { x: 0, y: -1 },
   right: { x: 0, y: 1 },
   top: { x: 1, y: 0 },
   bottom: { x: -1, y: 0 },
-};
+} as const;
 
 // calcs the offset per each possible anchor
 const calcAnchors = (anchors: parsedAnchorType[], anchorPos: containsPointType) => {

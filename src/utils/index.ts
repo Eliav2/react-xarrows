@@ -2,6 +2,7 @@ import { anchorCustomPositionType, percentStr, refType, relativeOrAbsStr } from 
 import React from 'react';
 import _ from 'lodash';
 import { posType } from '../privateTypes';
+import { parsedAnchorType } from '../components/XarrowAnchors';
 
 export const getElementByPropGiven = (ref: refType): HTMLElement => {
   let myRef;
@@ -47,13 +48,13 @@ const dist = (p1, p2) => {
   return Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2);
 };
 
-export type t1 = { x: number; y: number; anchor?: anchorCustomPositionType };
+export type choosenAnchorType = { x: number; y: number; anchor?: parsedAnchorType };
 
-export const getShortestLine = (sPoints: t1[], ePoints: t1[]) => {
+export const getShortestLine = (sPoints: choosenAnchorType[], ePoints: choosenAnchorType[]) => {
   // closes tPair Of Points which feet to the specified anchors
   let minDist = Infinity,
     d = Infinity;
-  let closestPair: { chosenStart: t1; chosenEnd: t1 };
+  let closestPair: { chosenStart: choosenAnchorType; chosenEnd: choosenAnchorType };
   sPoints.forEach((sp) => {
     ePoints.forEach((ep) => {
       d = dist(sp, ep);
