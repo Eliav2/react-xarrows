@@ -8,7 +8,7 @@ import { Dir, Line, Vector } from '../classes/classes';
 export interface XarrowPathShapeAPIProps {
   path?: pathType;
   gridBreak?: relativeOrAbsStr;
-  curveness?: number;
+  curveness?: relativeOrAbsStr;
 }
 
 export interface XarrowPathShapeProps extends XarrowPathShapeAPIProps {
@@ -31,8 +31,11 @@ const XarrowPathShape: React.FC<XarrowPathShapeProps> = (props) => {
     let pe = new Vector(posState.x2, posState.y2);
     let ll = new Line(ps, pe);
     let gridBreak = xStr2absRelative(props.gridBreak);
+    let cp1: Vector = new Vector(ps),
+      cp2 = new Vector(pe);
     let cps1 = '';
     let cps2 = '';
+    let dStr: (pos: simplePosType) => string = () => '';
 
     if (startDir.eq(endDir)) {
       //two control points
@@ -40,28 +43,21 @@ const XarrowPathShape: React.FC<XarrowPathShapeProps> = (props) => {
         .abs()
         .mul(ll.diff.add(startDir.mul(gridBreak.abs).abs()))
         .mul(gridBreak.relative);
-      let cp1 = ps.add(dd);
-      cps1 = `L ${cp1.x} ${cp1.y}`;
-      let cp2 = cp1.add(ll.diff.mul(startDir.rotate(90).abs()));
-      cps2 = `L ${cp2.x} ${cp2.y}`;
+      cp1 = ps.add(dd);
+      cp2 = cp1.add(ll.diff.mul(startDir.rotate(90).abs()));
     } else {
       //one control point
       let dd = startDir.abs().mul(ll.diff);
-      let cp2 = ps.add(dd);
-      cps2 = `L ${cp2.x} ${cp2.y}`;
+      cp2 = ps.add(dd);
     }
     if (props.path === 'grid') {
-      getPathState = getPathState(
-        (pos) => {
-          return pos;
-        },
-        (pos) => `M ${pos.x1} ${pos.y1} ${cps1} ${cps2} L ${pos.x2} ${pos.y2}`
-      );
+      cps1 = cp1 ? `L ${cp1.x} ${cp1.y}` : '';
+      cps2 = `L ${cp2.x} ${cp2.y}`;
+      dStr = (pos) => `M ${pos.x1} ${pos.y1} ${cps1} ${cps2} L ${pos.x2} ${pos.y2}`;
+    } else if (props.path === 'smooth') {
+      dStr = (pos) => `M ${pos.x1} ${pos.y1} C ${cp1.x} ${cp1.y}, ${cp2.x} ${cp2.y} ${pos.x2} ${pos.y2}`;
     }
-
-    if (props.path === 'smooth') {
-      let cu = props.curveness;
-    }
+    getPathState = getPathState((pos) => pos, dStr);
   }
 
   return <path d={getPathState()} stroke="black" />;
@@ -69,6 +65,7 @@ const XarrowPathShape: React.FC<XarrowPathShapeProps> = (props) => {
 
 XarrowPathShape.defaultProps = {
   path: 'straight',
+  curveness: '50%',
 };
 
 export default XarrowPathShape;
