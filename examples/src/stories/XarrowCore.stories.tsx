@@ -13,7 +13,7 @@ export default {
   component: XarrowCore,
 } as Meta;
 
-const XarrowCoreTestTemplate = ({ XComp = XarrowMain }) => {
+const XarrowCoreTestTemplate = ({ XComp = XarrowMain, args }) => {
   const [showBox1, setShowBox1] = useState(true);
   const [showBox2, setShowBox2] = useState(true);
   const [trigger, setTrigger] = useState(true);
@@ -31,14 +31,15 @@ const XarrowCoreTestTemplate = ({ XComp = XarrowMain }) => {
       <Xwrapper>
         <Xelem>{(updateXarrow) => <button onClick={updateXarrow}>update Xarrow</button>}</Xelem>
         <div style={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-around' }}>
-          {showBox1 ? <DraggableBox id={'box1'} grid={[20, 20]} initialOffset={{ x: 0, y: 0 }} /> : null}
+          {showBox1 ? <DraggableBox id={'box1'} grid={[20, 20]} initialOffset={{ x: 420, y: 150 }} /> : null}
           {showBox2 ? <DraggableBox id={'box2'} grid={[20, 20]} initialOffset={{ x: 500, y: 200 }} /> : null}
           <XComp
             start={'box1'}
             end={target}
             startAnchor={[{ position: 'auto' }]}
             endAnchor={['auto']}
-            path={'smooth'}
+            path={'straight'}
+            {...args}
           />
           <DraggableBox id={'box3'} grid={[20, 20]} initialOffset={{ x: 50, y: 100 }} />
           {/*<DraggableBox id={'box4'} grid={[20, 20]} initialOffset={{ x: 250, y: 100 }} />*/}
@@ -62,7 +63,13 @@ export const XarrowBasicStory: Story = (args) => (
   />
 );
 // export const XarrowAnchorsStory: Story = (args) => <XarrowCoreTestTemplate XComp={XarrowAnchors} />;
-export const XarrowMainStory: Story = (args) => <XarrowCoreTestTemplate XComp={XarrowMain} />;
+export const XarrowMainStory: Story = (args) => <XarrowCoreTestTemplate XComp={XarrowMain} args={args} />;
+XarrowMainStory.args = {
+  path: 'grid',
+  gridBreak: '50%',
+  curveness: '0%',
+  _debug: true,
+};
 
 // const TestComponent = () => {
 //   console.log('TestComponent');
