@@ -36,8 +36,8 @@ const XarrowCoreTestTemplate = ({ XComp = XarrowMain, args }) => {
           <XComp
             start={'box1'}
             end={target}
-            startAnchor={[{ position: 'auto' }]}
-            endAnchor={['auto']}
+            startAnchor={[{ position: 'left' }]}
+            endAnchor={['left']}
             path={'straight'}
             {...args}
           />
@@ -65,9 +65,12 @@ export const XarrowBasicStory: Story = (args) => (
 // export const XarrowAnchorsStory: Story = (args) => <XarrowCoreTestTemplate XComp={XarrowAnchors} />;
 export const XarrowMainStory: Story = (args) => <XarrowCoreTestTemplate XComp={XarrowMain} args={args} />;
 XarrowMainStory.args = {
+  startAnchor: 'left',
+  endAnchor: 'right',
   path: 'grid',
   gridBreak: '50%',
   curveness: '0%',
+  strokeWidth: 4,
   _debug: true,
 };
 

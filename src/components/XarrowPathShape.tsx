@@ -4,6 +4,7 @@ import { getPathStateType, simplePosType } from '../utils/XarrowUtils';
 import { choosenAnchorType, xStr2absRelative } from '../utils';
 import { anchorsInwardOffset } from './XarrowAnchors';
 import { Dir, Line, Vector } from '../classes/classes';
+import { XarrowMainPropsAPI } from './XarrowMain';
 
 export interface XarrowPathShapeAPIProps {
   path?: pathType;
@@ -12,19 +13,25 @@ export interface XarrowPathShapeAPIProps {
   _debug?: boolean;
 }
 
-export interface XarrowPathShapeProps extends XarrowPathShapeAPIProps {
+export interface XarrowPathShapeProps extends XarrowPathShapeAPIProps, XarrowMainPropsAPI {
   getPathState: getPathStateType<simplePosType>;
   anchors: { chosenStart: choosenAnchorType; chosenEnd: choosenAnchorType };
+  children?: (posState: getPathStateType) => React.ReactElement;
 }
-
+const PATH_MARGIN = 10;
 const XarrowPathShape: React.FC<XarrowPathShapeProps> = (props) => {
   let getPathState = props.getPathState;
-  let startDir = new Dir(anchorsInwardOffset[props.anchors.chosenStart.anchor.position]).mul(-1);
-  let endDir = new Dir(anchorsInwardOffset[props.anchors.chosenEnd.anchor.position]);
   let posState = getPathState(undefined, null);
   let ps = new Vector(posState.x1, posState.y1);
   let pe = new Vector(posState.x2, posState.y2);
   let ll = new Line(ps, pe);
+  let startDir = new Dir(anchorsInwardOffset[props.anchors.chosenStart.anchor.position]).mul(-1);
+  let endDir = new Dir(anchorsInwardOffset[props.anchors.chosenEnd.anchor.position]);
+  // for 'middle' anchors
+  if (startDir.size() === 0)
+    startDir = new Dir(ll.diff.abs().x > ll.diff.abs().y ? new Vector(ll.diff.x, 0) : new Vector(0, ll.diff.y));
+  if (endDir.size() === 0)
+    endDir = new Dir(ll.diff.abs().x > ll.diff.abs().y ? new Vector(ll.diff.x, 0) : new Vector(0, ll.diff.y));
   let gridBreak = xStr2absRelative(props.gridBreak) ?? { relative: 0, abs: 0 };
   let cu = xStr2absRelative(props.curveness) ?? { relative: 0, abs: 0 };
   let cp1: Vector = new Vector(ps),
@@ -38,13 +45,16 @@ const XarrowPathShape: React.FC<XarrowPathShapeProps> = (props) => {
       (pos) => `M ${pos.x1} ${pos.y1} L ${pos.x2} ${pos.y2}`
     );
   } else {
-    let dStr: (pos: simplePosType) => string = () => '';
-
-    if (startDir.eq(endDir)) {
+    if (startDir.abs().eq(endDir.abs())) {
       //two control points
       let dd = startDir.mul(ll.diff.abs().add(startDir.mul(gridBreak.abs).abs())).mul(gridBreak.relative);
+      if (ll.diff.projection(startDir).mul(startDir).size() < -PATH_MARGIN) {
+        // cases where path is drawn in negative direction to the start or end anchors directions
+        dd = startDir.mul(PATH_MARGIN);
+      }
       cp1 = ps.add(dd);
       cp2 = cp1.add(ll.diff.mul(startDir.rotate(90).abs()));
+      // handle custom curveness
       let l1 = new Line(ps, cp1);
       let dd2 = startDir.mul(l1.diff.abs().mul(cu.relative).add(cu.abs));
       cp1 = cp1.add(dd2);
@@ -57,19 +67,29 @@ const XarrowPathShape: React.FC<XarrowPathShapeProps> = (props) => {
       let dd2 = d.mul(ll.diff.abs().mul(cu.relative).add(cu.abs));
       cp2 = cp2.add(dd2);
     }
+    getPathState = getPathState((pos) => ({ ...pos, cp1, cp2 }));
     if (props.path === 'grid') {
       cps1 = cp1 ? `L ${cp1.x} ${cp1.y}` : '';
       cps2 = `L ${cp2.x} ${cp2.y}`;
-      dStr = (pos) => `M ${pos.x1} ${pos.y1} ${cps1} ${cps2} L ${pos.x2} ${pos.y2}`;
+      getPathState = getPathState(
+        (pos) => pos,
+        (pos) => `M ${pos.x1} ${pos.y1} ${cps1} ${cps2} L ${pos.x2} ${pos.y2}`
+      );
     } else if (props.path === 'smooth') {
-      dStr = (pos) => `M ${pos.x1} ${pos.y1} C ${cp1.x} ${cp1.y}, ${cp2.x} ${cp2.y} ${pos.x2} ${pos.y2}`;
+      getPathState = getPathState(
+        (pos) => pos,
+        (pos) => `M ${pos.x1} ${pos.y1} C ${cp1.x} ${cp1.y}, ${cp2.x} ${cp2.y} ${pos.x2} ${pos.y2}`
+      );
     }
-    getPathState = getPathState((pos) => pos, dStr);
   }
+
+  let child = props.children?.(getPathState) ?? (
+    <path d={getPathState()} stroke="black" strokeWidth={props.strokeWidth} />
+  );
 
   return (
     <>
-      <path d={getPathState()} stroke="black" />
+      {child}
       {props._debug && (
         <>
           <circle cx={cp1.x} cy={cp1.y} r="3" stroke="black" fill="red" />
@@ -81,9 +101,9 @@ const XarrowPathShape: React.FC<XarrowPathShapeProps> = (props) => {
 };
 
 XarrowPathShape.defaultProps = {
-  path: 'straight',
+  path: 'smooth',
   gridBreak: '50%',
-  curveness: '20%',
+  curveness: '0%',
   _debug: false,
 };
 

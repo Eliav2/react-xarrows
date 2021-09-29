@@ -83,9 +83,10 @@ XarrowAnchors.defaultProps = {
   endAnchor: 'auto',
 };
 
-// remove 'auto'|'middle' as possible anchor from anchorCustomPositionType.position
+// remove 'auto' as possible anchor from anchorCustomPositionType.position
 export interface parsedAnchorType extends Omit<Required<anchorCustomPositionType>, 'position'> {
-  position: anchorEdgeType;
+  // position: anchorEdgeType;
+  position: Exclude<anchorNamedType, 'auto'>;
 }
 
 const parseAnchor = (anchor: anchorType) => {
