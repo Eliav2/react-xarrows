@@ -42,4 +42,4 @@ const toArray = <T>(arg: T | T[]): T[] => {
 
 type Primitive = bigint | boolean | null | number | string | symbol | undefined;
 
-export type PlainObject = Record<string, Primitive>;
+export type PlainObject = Record<string, any>;

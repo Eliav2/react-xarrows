@@ -1,8 +1,8 @@
 // import '../../wdyr';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Meta, Story } from '@storybook/react';
 import XarrowCore from '../../../src/components/XarrowCore';
-import { useXarrow, Xwrapper } from '../../../src';
+import { Xwrapper } from '../../../src';
 import { DraggableBox } from '../components/DraggableBox';
 import XarrowBasicPath from '../../../src/components/XarrowBasicPath';
 import XarrowMain from '../../../src/components/XarrowMain';
@@ -60,11 +60,105 @@ export const XarrowBasicStory: Story = (args) => (
         }}
       </XarrowCore>
     )}
+    args={undefined}
   />
 );
 // export const XarrowAnchorsStory: Story = (args) => <XarrowCoreTestTemplate XComp={XarrowAnchors} />;
 export const XarrowMainStory: Story = (args) => <XarrowCoreTestTemplate XComp={XarrowMain} args={args} />;
 XarrowMainStory.args = {
+  startAnchor: 'left',
+  endAnchor: 'right',
+  path: 'grid',
+  gridBreak: '50%',
+  curveness: '0%',
+  strokeWidth: 4,
+  _debug: true,
+};
+
+const canvasStyle = {
+  width: '100%',
+  height: '50vh',
+  background: 'white',
+  // overflow: 'auto',
+  display: 'flex',
+  color: 'black',
+} as const;
+
+const _canvasStyle = { ...canvasStyle, position: 'relative', height: 300 } as const;
+const ManyArrowsNum = 200;
+const ManyDraggablesNum = 2000;
+export const ManyArrows = (args) => {
+  const box = { id: 'box1', initialOffset: { x: 20, y: 20 }, reference: useRef(null) };
+  const box2 = { id: 'box2', initialOffset: { x: 320, y: 120 }, reference: useRef(null) };
+  const box3 = { id: 'box3', initialOffset: { x: 50, y: 150 }, reference: useRef(null) };
+  const box4 = { id: 'box4', initialOffset: { x: 320, y: 220 }, reference: useRef(null) };
+
+  const box10 = { id: 'box1', initialOffset: { x: 20, y: 20 }, reference: useRef(null) };
+  const box11 = { id: 'box2', initialOffset: { x: 320, y: 120 }, reference: useRef(null) };
+
+  return (
+    <div>
+      <div style={_canvasStyle} id="canvas">
+        {/*<Xwrapper>*/}
+        {/*  <DraggableBox {...box} />*/}
+        {/*  <DraggableBox {...box2} />*/}
+        {/*  <XarrowMain start={box.reference} end={box2.reference} />*/}
+        {/*  <XarrowMain start={box.reference} end={box2.reference} endAnchor={'top'} />*/}
+        {/*  <XarrowMain start={box.reference} end={box2.reference} startAnchor={'bottom'} />*/}
+        {/*</Xwrapper>*/}
+        {/*<Xwrapper>*/}
+        {/*  <DraggableBox {...box3} />*/}
+        {/*  <DraggableBox {...box4} />*/}
+        {/*  <XarrowMain start={box3.id} end={box4.id} />*/}
+        {/*</Xwrapper>*/}
+      </div>
+      <h1>{ManyArrowsNum} arrows</h1>
+      <div style={_canvasStyle} id="canvas">
+        <Xwrapper>
+          <DraggableBox {...box10} />
+          <DraggableBox {...box11} />
+          <XarrowMain start={box.reference} end={box2.reference} />
+          {Array(ManyArrowsNum)
+            .fill(undefined)
+            .map((v, i) => {
+              return (
+                <XarrowMain
+                  start={box.reference}
+                  end={box2.reference}
+                  // startAnchor={'bottom'}
+                  // endAnchor={'top'}
+                  key={i}
+                />
+              );
+            })}
+          <XarrowMain start={box10.reference} end={box11.reference} endAnchor={'top'} />
+          <XarrowMain start={box10.reference} end={box11.reference} startAnchor={'bottom'} />
+          {/*</Xwrapper>*/}
+          {/*<Xwrapper>*/}
+          {/*  <DraggableBox {...box3} />*/}
+          {/*  <DraggableBox {...box4} />*/}
+          {/*  <XarrowMain start={box3.reference} end={box4.reference} />*/}
+        </Xwrapper>
+      </div>
+      <h1>{ManyDraggablesNum} draggables</h1>
+      {/*  <Draggable>*/}
+      {/*    <div style={boxStyle as React.CSSProperties}>*/}
+      {/*      {Array(ManyDraggablesNum)*/}
+      {/*        .fill(undefined)*/}
+      {/*        .map((v, i) => {*/}
+      {/*          return (*/}
+      {/*            <Draggable key={i}>*/}
+      {/*              <div style={{ position: 'absolute' }}>{i}</div>*/}
+      {/*            </Draggable>*/}
+      {/*          );*/}
+      {/*        })}*/}
+      {/*    </div>*/}
+      {/*  </Draggable>*/}
+    </div>
+  );
+};
+
+ManyArrows.args = {
   startAnchor: 'left',
   endAnchor: 'right',
   path: 'grid',

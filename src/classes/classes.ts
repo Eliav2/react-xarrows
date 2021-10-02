@@ -68,7 +68,8 @@ export class Vector {
   }
 
   absSize() {
-    return Math.sqrt(this.x ** 2 + this.y ** 2);
+    // return Math.sqrt(this.x ** 2 + this.y ** 2);
+    return Math.abs(this.x) + Math.abs(this.y ** 2);
   }
 
   size() {
@@ -114,7 +115,7 @@ export class Vector {
     // return this.mul(v)
     //   .dev(v.size() ** 2)
     //   .mul(v);
-    // return this.mul(v).dev(v.mul(v)).mul(v);
+    // return this.mul(v).dev(v.mul(v)).mul(v)  ;
     return this.mul(v).dev(v.mul(v)).mul(v);
   }
 

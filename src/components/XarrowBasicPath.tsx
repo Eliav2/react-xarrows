@@ -2,7 +2,9 @@ import React from 'react';
 import { XElementType } from '../privateTypes';
 import { getPathState, getPathStateType, simplePosType } from '../utils/XarrowUtils';
 
-export interface XarrowBasicAPIProps {}
+export interface XarrowBasicAPIProps {
+  strokeWidth?: number;
+}
 
 export interface XarrowBasicProps extends XarrowBasicAPIProps {
   startElem: XElementType;
@@ -29,6 +31,10 @@ const XarrowBasicPath: React.FC<XarrowBasicProps> = (props) => {
     return <path d={getPathState()} stroke="black" />;
   }
   return props.children(getPathState);
+};
+
+XarrowBasicPath.defaultProps = {
+  strokeWidth: 4,
 };
 
 export default XarrowBasicPath;

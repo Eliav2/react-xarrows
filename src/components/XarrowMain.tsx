@@ -5,17 +5,19 @@ import XarrowAnchors, { XarrowAnchorsAPIProps } from './XarrowAnchors';
 import XarrowCore, { XarrowCoreAPIProps } from './XarrowCore';
 import XarrowBasicPath, { XarrowBasicAPIProps } from './XarrowBasicPath';
 import XarrowPathShape, { XarrowPathShapeAPIProps } from './XarrowPathShape';
+import XarrowEdges from './XarrowEdges';
 import _ from 'lodash';
 
 //top to down(core down)
-export interface XarrowMainProps
+export interface XarrowMainProps extends XarrowMainPropsAPI {
+  children?: undefined;
+}
+export interface XarrowMainPropsAPI
   extends DelayedComponentPropsAPI,
     XarrowCoreAPIProps,
     XarrowBasicAPIProps,
     XarrowAnchorsAPIProps,
-    XarrowPathShapeAPIProps {
-  // children: undefined;
-}
+    XarrowPathShapeAPIProps {}
 
 const XarrowMain: React.FC<XarrowMainProps> = (props) => {
   const { _delayRenders = 1 } = props;
@@ -33,7 +35,14 @@ const XarrowMain: React.FC<XarrowMainProps> = (props) => {
                     return (
                       <XarrowAnchors {...{ ...elems, getPathState, ...props }}>
                         {(getPathState, anchors) => {
-                          return <XarrowPathShape {...{ ...props, getPathState, anchors }} />;
+                          return (
+                            // <XarrowPathShape {...{ ...props, getPathState, anchors }} />
+                            <XarrowPathShape {...{ ...props, getPathState, anchors }}>
+                              {(getPathState) => {
+                                return <XarrowEdges {...{ ...props, getPathState }} />;
+                              }}
+                            </XarrowPathShape>
+                          );
                         }}
                       </XarrowAnchors>
                     );

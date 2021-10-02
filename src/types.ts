@@ -22,7 +22,7 @@ export type xarrowPropsType = {
   tailSize?: number;
   path?: pathType;
   showXarrow?: boolean;
-  curveness?: number;
+  curveness?: relativeOrAbsStr;
   gridBreak?: relativeOrAbsStr;
   // gridRadius?: number;
   dashness?:
@@ -32,8 +32,8 @@ export type xarrowPropsType = {
         nonStrokeLen?: number;
         animation?: boolean | number;
       };
-  headShape?: svgEdgeShapeType | svgCustomEdgeType;
-  tailShape?: svgEdgeShapeType | svgCustomEdgeType;
+  headShape?: svgEdgeType;
+  tailShape?: svgEdgeType;
   animateDrawing?: boolean | number;
   zIndex?: number;
   passProps?: JSX.IntrinsicElements[svgElemType];

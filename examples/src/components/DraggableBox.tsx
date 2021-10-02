@@ -1,6 +1,7 @@
 import Draggable, { DraggableEventHandler } from 'react-draggable';
 import React, { CSSProperties, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useXarrow } from '../../../src';
+// import { Rnd } from './Rnd';
 // import { useXarrow } from 'react-xarrows';
 import { Rnd } from 'react-rnd';
 
@@ -14,6 +15,8 @@ export const boxStyle = {
   alignItems: 'center',
   display: 'flex',
   justifyContent: 'center',
+  // width: 100,
+  // height: 30,
   // resize: 'both',
   // overflow: 'hidden',
 } as const;
@@ -45,6 +48,8 @@ export const DraggableBox = ({
   return (
     <Rnd
       {...rest}
+      // wrapperProps={{ style: {} }}
+      // wrapperProps={{ style: { ...boxStyle, ...style, ...moreStyle } }}
       default={{
         x: initialOffset?.x ?? 0,
         // x: 50,
@@ -54,12 +59,16 @@ export const DraggableBox = ({
       }}
       ref={curRef}
       id={id}
-      style={{ ...boxStyle, ...style, ...moreStyle }}
+      style={{ ...boxStyle, ...style, ...moreStyle, height: 100, width: 300 }}
       onDrag={update}
       onResize={update}>
-      {/*<div >*/}
-      {id}
-      {/*</div>*/}
+      <div
+      // ref={curRef} id={id}
+      >
+        {id}
+      </div>
+
+      {/*<div style={{ width: '100%', height: '100%' }}>{id}</div>*/}
     </Rnd>
 
     // <Draggable
@@ -74,7 +83,7 @@ export const DraggableBox = ({
     // </Draggable>
   );
 };
-
-export const DraggableBoxBetter: React.FC<DraggableBoxProps> = ({ ...args }) => {
-  return <DraggableBox {...args} />;
-};
+//
+// export const DraggableBoxBetter: React.FC<DraggableBoxProps> = ({ ...args }) => {
+//   return <DraggableBox {...args} />;
+// };

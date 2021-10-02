@@ -58,7 +58,8 @@ export const getShortestLine = (sPoints: choosenAnchorType[], ePoints: choosenAn
   sPoints.forEach((sp) => {
     ePoints.forEach((ep) => {
       d = dist(sp, ep);
-      if (d < minDist) {
+      // multiple with 0.95 so the next closer point is at least 5% closer
+      if (d < minDist * 0.95) {
         minDist = d;
         closestPair = { chosenStart: sp, chosenEnd: ep };
       }
