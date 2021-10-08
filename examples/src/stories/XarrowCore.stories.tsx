@@ -13,7 +13,7 @@ export default {
   component: XarrowCore,
 } as Meta;
 
-const XarrowCoreTestTemplate = ({ XComp = XarrowMain, args }) => {
+const XarrowMainTemplate = ({ XComp = XarrowMain, args }) => {
   const [showBox1, setShowBox1] = useState(true);
   const [showBox2, setShowBox2] = useState(true);
   const [trigger, setTrigger] = useState(true);
@@ -22,7 +22,7 @@ const XarrowCoreTestTemplate = ({ XComp = XarrowMain, args }) => {
   // const update = useXarrow();
 
   let arr = new Array(0).fill({});
-  // console.log('XarrowCoreTestTemplate');
+  // console.log('XarrowMainTemplate');
   return (
     <div>
       <button onClick={() => setShowBox1(!showBox1)}>show box1</button>
@@ -50,9 +50,9 @@ const XarrowCoreTestTemplate = ({ XComp = XarrowMain, args }) => {
   );
 };
 
-// export const XarrowCoreStory: Story = (args) => <XarrowCoreTestTemplate XComp={XarrowCore} />;
+// export const XarrowCoreStory: Story = (args) => <XarrowMainTemplate XComp={XarrowCore} />;
 export const XarrowBasicStory: Story = (args) => (
-  <XarrowCoreTestTemplate
+  <XarrowMainTemplate
     XComp={() => (
       <XarrowCore start={'box1'} end={'box2'}>
         {(elems) => {
@@ -63,8 +63,8 @@ export const XarrowBasicStory: Story = (args) => (
     args={undefined}
   />
 );
-// export const XarrowAnchorsStory: Story = (args) => <XarrowCoreTestTemplate XComp={XarrowAnchors} />;
-export const XarrowMainStory: Story = (args) => <XarrowCoreTestTemplate XComp={XarrowMain} args={args} />;
+// export const XarrowAnchorsStory: Story = (args) => <XarrowMainTemplate XComp={XarrowAnchors} />;
+export const XarrowMainStory: Story = (args) => <XarrowMainTemplate XComp={XarrowMain} args={args} />;
 XarrowMainStory.args = {
   startAnchor: 'auto',
   endAnchor: 'right',
@@ -73,6 +73,7 @@ XarrowMainStory.args = {
   curveness: '0%',
   strokeWidth: 4,
   _debug: true,
+  tailSize: 40,
 };
 
 const canvasStyle = {

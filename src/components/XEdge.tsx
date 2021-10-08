@@ -17,6 +17,7 @@ export interface XEdgeProps {
   props?: PlainObject;
   pos: { x: number; y: number };
   dir: Dir;
+  containerRef?: React.MutableRefObject<any>;
 }
 
 // offset head and tail so line would start just after tail and will end just before head
@@ -39,6 +40,7 @@ const XEdge: React.FC<XEdgeProps> = (props) => {
   const { pos, dir } = props;
   return (
     <g
+      ref={props.containerRef}
       style={{
         transformBox: 'fill-box',
         transformOrigin: 'center',

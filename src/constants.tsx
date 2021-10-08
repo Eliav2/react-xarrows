@@ -7,7 +7,7 @@ export const cSvgElems = ['circle', 'ellipse', 'line', 'path', 'polygon', 'polyl
 
 //default arrows svgs
 export const arrowShapes = {
-  arrow1: { svgElem: <path d="M 0 0 L 1 0.5 L 0 1 L 0.25 0.5 z" />, offsetForward: 0.25 },
+  arrow1: { svgElem: <path d="M 0 0 L 1 0.5 L 0 1 L 0.25 0.5 z" />, offsetForward: 0.75 },
   heart: {
     svgElem: (
       <path d="M 0,0.25 A 0.125,0.125 0,0,1 0.5,0.25 A 0.125,0.125 0,0,1 1,0.25 Q 1,0.625 0.5,1 Q 0,0.625 0,0.25 z" />

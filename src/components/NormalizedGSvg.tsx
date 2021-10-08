@@ -1,13 +1,18 @@
 import React from 'react';
 import { useLayoutEffect, useRef, useState } from 'react';
 
-const NormalizedGSvg = ({ children }) => {
-  const ref = useRef<SVGGElement>(null);
+export const useGetBBox = (ref, children) => {
   const [bbox, setBbox] = useState({ x: 0, y: 0, width: 0, height: 0 });
-  let min = Math.min(bbox.height, bbox.width);
   useLayoutEffect(() => {
     setBbox(ref.current?.getBBox());
-  }, [children]);
+  }, [ref.current]);
+  return bbox;
+};
+
+const NormalizedGSvg = ({ children }) => {
+  const ref = useRef<SVGGElement>(null);
+  const bbox = useGetBBox(ref, children);
+  let min = Math.min(bbox.height, bbox.width);
   return (
     <g
       ref={ref}

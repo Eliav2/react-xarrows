@@ -11,6 +11,7 @@
  */
 import { number } from 'prop-types';
 import { Contains, PlainObject } from '../privateTypes';
+import { Vector } from '../classes/classes';
 
 export const getPathState: getPathStateType<any> = function getPathState(
   extendPos?: any,
@@ -52,5 +53,5 @@ export interface getPathStateType<T extends PlainObject = any, K extends string 
   (extendPos: undefined, pathFunc: null): T;
 }
 
-export type PointType = Contains<{ x: number; y: number }>;
+export type PointType = Vector;
 export type simplePosType = { start: PointType; end: PointType };
