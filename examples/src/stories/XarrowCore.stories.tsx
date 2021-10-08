@@ -66,7 +66,7 @@ export const XarrowBasicStory: Story = (args) => (
 // export const XarrowAnchorsStory: Story = (args) => <XarrowCoreTestTemplate XComp={XarrowAnchors} />;
 export const XarrowMainStory: Story = (args) => <XarrowCoreTestTemplate XComp={XarrowMain} args={args} />;
 XarrowMainStory.args = {
-  startAnchor: 'left',
+  startAnchor: 'auto',
   endAnchor: 'right',
   path: 'grid',
   gridBreak: '50%',

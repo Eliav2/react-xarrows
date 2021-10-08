@@ -17,7 +17,7 @@ function useDeepCompareMemoize(value, condFunc) {
   return ref.current;
 }
 
-export function useDeepCompareEffect(callback, dependencies, effect = useLayoutEffect, condFunc = deepCompareEquals) {
+export function useCompareEffect(callback, dependencies, effect = useLayoutEffect, condFunc = deepCompareEquals) {
   effect(
     callback,
     dependencies.map((dep) => useDeepCompareMemoize(dep, condFunc))

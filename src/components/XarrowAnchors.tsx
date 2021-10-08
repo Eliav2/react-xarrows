@@ -21,6 +21,7 @@ export interface XarrowAnchorsAPIProps {
 
 export interface XarrowAnchorsProps extends XarrowAnchorsAPIProps, partialXarrowProps {
   startElem: XElementType;
+  rootElem: XElementType;
   endElem: XElementType;
   getPathState: getPathStateType<simplePosType, `M ${number} ${number} L ${number} ${number}`>;
 
@@ -101,7 +102,6 @@ const parseAnchor = (anchor: anchorType) => {
         position: anchorChoice as anchorNamedType,
       };
       if (isRelativeOrAbsStr(anchorChoice)) {
-        console.log('isPercentStr');
         obj.position = 'auto';
         _.set(obj, 'offset.sidewards', anchorChoice);
         // obj.offset.sidewards = anchorChoice;
@@ -151,6 +151,8 @@ const parseAnchor = (anchor: anchorType) => {
 
   return anchorChoice3 as parsedAnchorType[];
 };
+
+const offsetAnchors = (anchors, offset) => {};
 
 const anchorsDefaultOffsets = {
   middle: { x: 0.5, y: 0.5 },

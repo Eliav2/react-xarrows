@@ -39,7 +39,7 @@ const XarrowMain: React.FC<XarrowMainProps> = (props) => {
                             // <XarrowPathShape {...{ ...props, getPathState, anchors }} />
                             <XarrowPathShape {...{ ...props, getPathState, anchors }}>
                               {(getPathState) => {
-                                return <XarrowEdges {...{ ...props, getPathState }} />;
+                                return <XarrowEdges {...{ ...props, getPathState, anchors }} />;
                               }}
                             </XarrowPathShape>
                           );

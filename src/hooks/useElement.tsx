@@ -3,7 +3,7 @@ import { useLayoutEffect, useState } from 'react';
 import { getElementByPropGiven, getElemPos } from '../utils';
 import { Contains, containsPointType, pointType, posType, XElementType } from '../privateTypes';
 import _ from 'lodash';
-import { useDeepCompareEffect } from './useDeepCompareEffect';
+import { useCompareEffect } from './useCompareEffect';
 
 /**
  * would return current position and reference of a given element.

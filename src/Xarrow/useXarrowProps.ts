@@ -13,7 +13,7 @@ import { getElementByPropGiven, getElemPos, xStr2absRelative } from '../utils';
 import _ from 'lodash';
 import { arrowShapes, cAnchorEdge, cArrowShapes } from '../constants';
 import { anchorEdgeType, posType } from '../privateTypes';
-import { useDeepCompareEffect } from '../hooks/useDeepCompareEffect';
+import { useCompareEffect } from '../hooks/useCompareEffect';
 
 const parseLabels = (label: xarrowPropsType['labels']): labelsType => {
   let parsedLabel = { start: null, middle: null, end: null };
@@ -329,14 +329,14 @@ const useXarrowProps = (
   // rerender whenever position of start element or end element changes
   const [valVars, setValVars] = useState(initialValVars);
   const startPos = getElemPos(propsRefs.start);
-  useDeepCompareEffect(() => {
+  useCompareEffect(() => {
     valVars.startPos = startPos;
     shouldUpdatePosition.current = true;
     setValVars({ ...valVars });
     // console.log('start update pos', startPos);
   }, [startPos]);
   const endPos = getElemPos(propsRefs.end);
-  useDeepCompareEffect(() => {
+  useCompareEffect(() => {
     valVars.endPos = endPos;
     shouldUpdatePosition.current = true;
     setValVars({ ...valVars });

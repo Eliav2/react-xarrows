@@ -5,6 +5,7 @@ import { useHookTruetyCompare } from '../hooks/useHookTruetyCompare';
 import { useCallOnNextRender, useMultipleRenders } from '../hooks/useMultipleRenders';
 import { useDoesUpdateIsScheduled } from '../hooks/useDoesUpdateIsScheduled';
 import { appendPropsToChildren } from '../utils/reactUtils';
+
 export interface AutoResizeSvgProps extends SVGProps<SVGSVGElement> {
   effectPhase?: typeof useEffect;
   padding?: number;

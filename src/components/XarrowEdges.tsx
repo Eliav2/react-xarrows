@@ -3,6 +3,9 @@ import { getPathStateType, simplePosType } from '../utils/XarrowUtils';
 import { svgEdgeType, svgElemType } from '../types';
 import XEdge from './XEdge';
 import { XarrowMainProps, XarrowMainPropsAPI } from './XarrowMain';
+import { choosenAnchorType } from '../utils';
+import { Dir } from '../classes/classes';
+import { anchorsInwardOffset } from './XarrowAnchors';
 
 export interface XarrowEdgesAPIProps {
   showHead?: boolean;
@@ -20,16 +23,25 @@ export interface XarrowEdgesAPIProps {
 export interface XarrowEdgesProps extends XarrowEdgesAPIProps, XarrowMainPropsAPI {
   getPathState: getPathStateType<simplePosType>;
   children?: (posState: getPathStateType) => React.ReactElement;
+  anchors: { chosenStart: choosenAnchorType; chosenEnd: choosenAnchorType };
 }
 
 const XarrowEdges: React.FC<XarrowEdgesProps> = (props) => {
   let getPathState = props.getPathState;
   let pos = getPathState(undefined, null);
-  console.log(pos);
+  let startDir = new Dir(anchorsInwardOffset[props.anchors.chosenStart.anchor.position]);
+  let newGetPathState = getPathState((pos) => {
+    //todo: offset the size of the svg
+    return pos;
+  });
   return (
     <>
-      <path d={getPathState()} stroke="black" strokeWidth={props.strokeWidth} />
-      <XEdge transform={`translate(${pos.x1},${pos.y1}) rotate(${10}) scale(${1})`} />
+      <path d={newGetPathState()} stroke="black" strokeWidth={props.strokeWidth} />
+      <XEdge pos={{ x: pos.x1, y: pos.y1 }} dir={startDir.reverse()} />
+      {/*<XEdge*/}
+      {/*  transform={`translate(${pos.x2}px,${pos.y2}px) rotate(${0}) scale(${2})`}*/}
+      {/*  dir={new Dir(anchorsInwardOffset[props.anchors.chosenEnd.anchor.position]).reverse()}*/}
+      {/*/>*/}
     </>
   );
 };
