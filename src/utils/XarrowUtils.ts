@@ -9,7 +9,8 @@
  * @param pathFunc
  * @param posState
  */
-import { PlainObject } from '../privateTypes';
+import { number } from 'prop-types';
+import { Contains, PlainObject } from '../privateTypes';
 
 export const getPathState: getPathStateType<any> = function getPathState(
   extendPos?: any,
@@ -51,4 +52,5 @@ export interface getPathStateType<T extends PlainObject = any, K extends string 
   (extendPos: undefined, pathFunc: null): T;
 }
 
-export type simplePosType = { x1: number; y1: number; x2: number; y2: number };
+export type PointType = Contains<{ x: number; y: number }>;
+export type simplePosType = { start: PointType; end: PointType };

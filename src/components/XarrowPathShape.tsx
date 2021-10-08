@@ -22,8 +22,8 @@ const PATH_MARGIN = 10;
 const XarrowPathShape: React.FC<XarrowPathShapeProps> = (props) => {
   let getPathState = props.getPathState;
   let posState = getPathState(undefined, null);
-  let ps = new Vector(posState.x1, posState.y1);
-  let pe = new Vector(posState.x2, posState.y2);
+  let ps = new Vector(posState.start.x, posState.start.y);
+  let pe = new Vector(posState.end.x, posState.end.y);
   let ll = new Line(ps, pe);
   let startDir = new Dir(anchorsInwardOffset[props.anchors.chosenStart.anchor.position]).mul(-1);
   let endDir = new Dir(anchorsInwardOffset[props.anchors.chosenEnd.anchor.position]);
@@ -42,7 +42,7 @@ const XarrowPathShape: React.FC<XarrowPathShapeProps> = (props) => {
   if (props.path === 'straight') {
     getPathState = getPathState(
       (pos) => pos,
-      (pos) => `M ${pos.x1} ${pos.y1} L ${pos.x2} ${pos.y2}`
+      (pos) => `M ${pos.start.x} ${pos.start.y} L ${pos.end.x} ${pos.end.y}`
     );
   } else {
     if (startDir.abs().eq(endDir.abs())) {
@@ -73,12 +73,12 @@ const XarrowPathShape: React.FC<XarrowPathShapeProps> = (props) => {
       cps2 = `L ${cp2.x} ${cp2.y}`;
       getPathState = getPathState(
         (pos) => pos,
-        (pos) => `M ${pos.x1} ${pos.y1} ${cps1} ${cps2} L ${pos.x2} ${pos.y2}`
+        (pos) => `M ${pos.start.x} ${pos.start.y} ${cps1} ${cps2} L ${pos.end.x} ${pos.end.y}`
       );
     } else if (props.path === 'smooth') {
       getPathState = getPathState(
         (pos) => pos,
-        (pos) => `M ${pos.x1} ${pos.y1} C ${cp1.x} ${cp1.y}, ${cp2.x} ${cp2.y} ${pos.x2} ${pos.y2}`
+        (pos) => `M ${pos.start.x} ${pos.start.y} C ${cp1.x} ${cp1.y}, ${cp2.x} ${cp2.y} ${pos.end.x} ${pos.end.y}`
       );
     }
   }

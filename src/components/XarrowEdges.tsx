@@ -37,7 +37,7 @@ const XarrowEdges: React.FC<XarrowEdgesProps> = (props) => {
   return (
     <>
       <path d={newGetPathState()} stroke="black" strokeWidth={props.strokeWidth} />
-      <XEdge pos={{ x: pos.x1, y: pos.y1 }} dir={startDir.reverse()} />
+      <XEdge pos={{ x: pos.start.x, y: pos.start.y }} dir={startDir.reverse()} />
       {/*<XEdge*/}
       {/*  transform={`translate(${pos.x2}px,${pos.y2}px) rotate(${0}) scale(${2})`}*/}
       {/*  dir={new Dir(anchorsInwardOffset[props.anchors.chosenEnd.anchor.position]).reverse()}*/}

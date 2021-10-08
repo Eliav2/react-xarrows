@@ -1,6 +1,7 @@
 import React from 'react';
 import { XElementType } from '../privateTypes';
 import { getPathState, getPathStateType, simplePosType } from '../utils/XarrowUtils';
+import { Vector } from '../classes/classes';
 
 export interface XarrowBasicAPIProps {
   strokeWidth?: number;
@@ -49,10 +50,10 @@ export const getPosition = (startElem: XElementType, endElem: XElementType, root
   let y1 = startPos.y - yr;
   let x2 = endPos.x - xr;
   let y2 = endPos.y - yr;
-  const posSt = { x1, y1, x2, y2 };
+  const posSt = { start: new Vector(x1, y1), end: new Vector(x2, y2) };
   return getPathState(
     (pos) => pos,
-    (pos) => `M ${pos.x1} ${pos.y1} L ${pos.x2} ${pos.y2}` as const,
+    (pos) => `M ${pos.start.x} ${pos.start.y} L ${pos.end.x} ${pos.end.y}` as const,
     posSt
   );
 };

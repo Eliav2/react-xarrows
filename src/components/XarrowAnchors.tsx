@@ -47,10 +47,10 @@ const XarrowAnchors: React.FC<XarrowAnchorsProps> = (props) => {
 
   // alter the state - offset connection points to the selected anchors
   let newGetPath: getPathStateType = props.getPathState((posSt) => {
-    posSt.x1 += chosenStart.x - props.startElem.position.x;
-    posSt.y1 += chosenStart.y - props.startElem.position.y;
-    posSt.x2 += chosenEnd.x - props.endElem.position.x;
-    posSt.y2 += chosenEnd.y - props.endElem.position.y;
+    posSt.start.x += chosenStart.x - props.startElem.position.x;
+    posSt.start.y += chosenStart.y - props.startElem.position.y;
+    posSt.end.x += chosenEnd.x - props.endElem.position.x;
+    posSt.end.y += chosenEnd.y - props.endElem.position.y;
     return posSt;
   });
   if (!props.children) {
