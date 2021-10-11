@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useHookTruetyCompare } from '../hooks/useHookTruetyCompare';
-import { pathType } from '../types';
 
 export interface DelayedComponentPropsAPI {
   // the number of idle renders (cached result is returned) before running the actual expensive render that sample the DOM.
