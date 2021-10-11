@@ -39,6 +39,7 @@ const XarrowMainTemplate = ({ XComp = XarrowMain, args }) => {
             startAnchor={[{ position: 'left' }]}
             endAnchor={['left']}
             path={'straight'}
+            // arrowTailProps={{ style: { transform: 'translate(100px) rotate(90deg)', transformOrigin: 'center' } }}
             {...args}
           />
           <DraggableBox id={'box3'} grid={[20, 20]} initialOffset={{ x: 50, y: 100 }} />
@@ -73,7 +74,15 @@ XarrowMainStory.args = {
   curveness: '0%',
   strokeWidth: 4,
   _debug: true,
+  color: 'blue',
+  showHead: false,
+  showTail: true,
+  headColor: undefined,
+  tailColor: undefined,
+  headSize: 40,
   tailSize: 40,
+  // headShape: 'circle',
+  // tailShape: 'circle',
 };
 
 const canvasStyle = {

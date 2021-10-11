@@ -17,7 +17,8 @@ export interface XarrowPathShapeProps extends XarrowPathShapeAPIProps, XarrowMai
   getPathState: getPathStateType<simplePosType>;
   anchors: { chosenStart: choosenAnchorType; chosenEnd: choosenAnchorType };
   children?: (posState: getPathStateType) => React.ReactElement;
-  startEdgeJsx?: JSX.Element;
+  tailEdgeJsx?: JSX.Element;
+  headEdgeJsx?: JSX.Element;
 }
 const PATH_MARGIN = 10;
 const XarrowPathShape: React.FC<XarrowPathShapeProps> = (props) => {
@@ -88,7 +89,8 @@ const XarrowPathShape: React.FC<XarrowPathShapeProps> = (props) => {
   const jsx = (
     <>
       <path d={getPathState()} stroke="black" strokeWidth={props.strokeWidth} />
-      {props.startEdgeJsx}
+      {props.tailEdgeJsx}
+      {props.headEdgeJsx}
     </>
   );
 

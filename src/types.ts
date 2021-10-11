@@ -1,4 +1,4 @@
-import React, { ReactSVG } from 'react';
+import React, { ReactSVG, SVGFactory } from 'react';
 import { cAnchorEdge, cArrowShapes, cPaths, cSvgElems } from './constants';
 import { Contains, OneOrMore, ToArray } from './privateTypes';
 
@@ -36,11 +36,11 @@ export type xarrowPropsType = {
   tailShape?: svgEdgeType;
   animateDrawing?: boolean | number;
   zIndex?: number;
-  passProps?: JSX.IntrinsicElements[svgElemType];
+  passProps?: JSX.IntrinsicElements[svgElemStrType];
   SVGcanvasProps?: React.SVGAttributes<SVGSVGElement>;
   arrowBodyProps?: React.SVGProps<SVGPathElement>;
-  arrowHeadProps?: JSX.IntrinsicElements[svgElemType];
-  arrowTailProps?: JSX.IntrinsicElements[svgElemType];
+  arrowHeadProps?: JSX.IntrinsicElements[svgElemStrType];
+  arrowTailProps?: JSX.IntrinsicElements[svgElemStrType];
   divContainerProps?: React.HTMLProps<HTMLDivElement>;
   SVGcanvasStyle?: React.CSSProperties;
   divContainerStyle?: React.CSSProperties;
@@ -79,11 +79,13 @@ export type labelsType = {
 };
 export type labelType = JSX.Element | string;
 
+export type svgElemType = JSX.IntrinsicElements[keyof ReactSVG];
 export type svgCustomEdgeType = {
-  svgElem: JSX.IntrinsicElements[keyof ReactSVG];
+  // svgElem: React.SVGFactory;
+  svgElem: svgElemType;
   offsetForward?: number;
 };
 
-export type svgEdgeShapeType = typeof cArrowShapes[number];
-export type svgEdgeType = svgEdgeShapeType | svgCustomEdgeType;
-export type svgElemType = typeof cSvgElems[number];
+export type svgEdgeDefaultShapeType = typeof cArrowShapes[number];
+export type svgEdgeType = svgEdgeDefaultShapeType | svgElemType | svgCustomEdgeType;
+export type svgElemStrType = typeof cSvgElems[number];

@@ -5,8 +5,8 @@ import {
   labelsType,
   pathType,
   svgCustomEdgeType,
-  svgEdgeShapeType,
-  svgElemType,
+  svgEdgeDefaultShapeType,
+  svgElemStrType,
   xarrowPropsType,
 } from '../types';
 import { getElementByPropGiven, getElemPos, xStr2absRelative } from '../utils';
@@ -100,7 +100,7 @@ const parseDashness = (dashness, props) => {
 
 const parseEdgeShape = (svgEdge): svgCustomEdgeType => {
   if (typeof svgEdge == 'string') {
-    if (svgEdge in arrowShapes) svgEdge = arrowShapes[svgEdge as svgEdgeShapeType];
+    if (svgEdge in arrowShapes) svgEdge = arrowShapes[svgEdge as svgEdgeDefaultShapeType];
     else {
       console.warn(
         `'${svgEdge}' is not supported arrow shape. the supported arrow shapes is one of ${cArrowShapes}.
@@ -267,11 +267,11 @@ type parsedXarrowProps = {
   tailShape: svgCustomEdgeType;
   animateDrawing: number;
   zIndex: number;
-  passProps: JSX.IntrinsicElements[svgElemType];
+  passProps: JSX.IntrinsicElements[svgElemStrType];
   SVGcanvasProps: React.SVGAttributes<SVGSVGElement>;
   arrowBodyProps: React.SVGProps<SVGPathElement>;
-  arrowHeadProps: JSX.IntrinsicElements[svgElemType];
-  arrowTailProps: JSX.IntrinsicElements[svgElemType];
+  arrowHeadProps: JSX.IntrinsicElements[svgElemStrType];
+  arrowTailProps: JSX.IntrinsicElements[svgElemStrType];
   divContainerProps: React.HTMLProps<HTMLDivElement>;
   SVGcanvasStyle: React.CSSProperties;
   divContainerStyle: React.CSSProperties;
