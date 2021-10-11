@@ -1,13 +1,15 @@
-import React, { DependencyList, EffectCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { DependencyList, EffectCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { refType } from '../types';
 import { AutoResizeSvgProps } from './AutoResizeSvg';
 import { XElementType } from '../privateTypes';
 import { useElement } from '../hooks/useElement';
 import PT from 'prop-types';
+import { DelayedComponent, DelayedComponentProps, DelayedComponentPropsAPI } from './DelayedComponent';
+import { XarrowContext } from '../Xwrapper';
 
 export const log = console.log;
 
-export interface XarrowCoreAPIProps {
+export interface XarrowCorePropsAPI {
   start: refType;
   end: refType;
 
@@ -19,7 +21,7 @@ export interface XarrowCoreAPIProps {
   _updatePhase?: (effect: EffectCallback, deps?: DependencyList) => void;
 }
 
-export interface XarrowCoreProps extends XarrowCoreAPIProps {
+export interface XarrowCoreProps extends XarrowCorePropsAPI {
   children: (state: { startElem: XElementType; endElem: XElementType; rootElem: XElementType }) => React.ReactElement;
 }
 
@@ -27,7 +29,7 @@ export interface XarrowCoreProps extends XarrowCoreAPIProps {
  * this component responsible holding state for start and end element. returns svg canvas and state of the elements.
  * used as extensible component for extra features.
  */
-export const XarrowCore: React.FC<XarrowCoreProps> = (props) => {
+const XarrowCore: React.FC<XarrowCoreProps> = (props) => {
   // console.log('XarrowCore');
   const { _updatePhase: effect = useLayoutEffect } = props;
 
@@ -82,5 +84,12 @@ XarrowCore.defaultProps = {
   children: () => <div />,
 };
 
+interface XarrowCoreDelayedProps extends DelayedComponentProps, XarrowCorePropsAPI {}
+
+const XarrowCoreDelayed: React.FC<XarrowCoreDelayedProps> = (props) => {
+  useContext(XarrowContext);
+  return <DelayedComponent>{() => <XarrowCore {...props} />}</DelayedComponent>;
+};
+
 // XarrowCore.whyDidYouRender = true;
-export default XarrowCore;
+export default XarrowCoreDelayed;

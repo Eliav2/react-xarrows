@@ -1,11 +1,11 @@
 import React, { useContext } from 'react';
 import { XarrowContext } from '../Xwrapper';
 import { DelayedComponent, DelayedComponentPropsAPI } from './DelayedComponent';
-import XarrowAnchors, { XarrowAnchorsAPIProps } from './XarrowAnchors';
-import XarrowCore, { XarrowCoreAPIProps } from './XarrowCore';
-import XarrowBasicPath, { XarrowBasicAPIProps } from './XarrowBasicPath';
-import XarrowPathShape, { XarrowPathShapeAPIProps } from './XarrowPathShape';
-import XarrowEdges, { XarrowEdgesAPIProps } from './XarrowEdges';
+import XarrowAnchors, { XarrowAnchorsPropsAPI } from './XarrowAnchors';
+import XarrowCore, { XarrowCorePropsAPI } from './XarrowCore';
+import XarrowBasicPath, { XarrowBasicPropsAPI } from './XarrowBasicPath';
+import XarrowPathShape, { XarrowPathShapePropsAPI } from './XarrowPathShape';
+import XarrowEdges, { XarrowEdgesPropsAPI } from './XarrowEdges';
 import _ from 'lodash';
 
 //top to down(core down)
@@ -14,52 +14,50 @@ export interface XarrowMainProps extends XarrowMainPropsAPI {
 }
 export interface XarrowMainPropsAPI
   extends DelayedComponentPropsAPI,
-    XarrowCoreAPIProps,
-    XarrowBasicAPIProps,
-    XarrowAnchorsAPIProps,
-    XarrowPathShapeAPIProps,
-    XarrowEdgesAPIProps {}
+    XarrowCorePropsAPI,
+    XarrowBasicPropsAPI,
+    XarrowAnchorsPropsAPI,
+    XarrowPathShapePropsAPI,
+    XarrowEdgesPropsAPI {}
 
 const XarrowMain: React.FC<XarrowMainProps> = (props) => {
   const { _delayRenders = 1 } = props;
   // console.log('XarrowMain');
-  useContext(XarrowContext);
+  // useContext(XarrowContext);
   return (
-    <DelayedComponent _delayRenders={_delayRenders}>
-      {() => {
+    // <DelayedComponent _delayRenders={_delayRenders}>
+    //   {() => {
+    //     return (
+    <XarrowCore {...props}>
+      {(elems) => {
         return (
-          <XarrowCore {...props}>
-            {(elems) => {
+          <XarrowBasicPath {...elems}>
+            {(getPathState) => {
               return (
-                <XarrowBasicPath {...elems}>
-                  {(getPathState) => {
+                <XarrowAnchors {...{ ...elems, getPathState, ...props }}>
+                  {(getPathState, anchors) => {
                     return (
-                      <XarrowAnchors {...{ ...elems, getPathState, ...props }}>
-                        {(getPathState, anchors) => {
-                          return (
-                            // <XarrowPathShape {...{ ...props, getPathState, anchors }}>
-                            //   {(getPathState) => {
-                            //     return <XarrowEdges {...{ ...props, getPathState, anchors }} />;
-                            //   }}
-                            <XarrowEdges {...{ ...props, getPathState, anchors }}>
-                              {(getPathState, tailEdgeJsx, headEdgeJsx) => {
-                                return (
-                                  <XarrowPathShape {...{ ...props, getPathState, anchors, tailEdgeJsx, headEdgeJsx }} />
-                                );
-                              }}
-                            </XarrowEdges>
-                          );
+                      // <XarrowPathShape {...{ ...props, getPathState, anchors }}>
+                      //   {(getPathState) => {
+                      //     return <XarrowEdges {...{ ...props, getPathState, anchors }} />;
+                      //   }}
+                      <XarrowEdges {...{ ...props, getPathState, anchors }}>
+                        {(getPathState, tailEdgeJsx, headEdgeJsx) => {
+                          return <XarrowPathShape {...{ ...props, getPathState, anchors, tailEdgeJsx, headEdgeJsx }} />;
                         }}
-                      </XarrowAnchors>
+                      </XarrowEdges>
                     );
                   }}
-                </XarrowBasicPath>
+                </XarrowAnchors>
               );
             }}
-          </XarrowCore>
+          </XarrowBasicPath>
         );
       }}
-    </DelayedComponent>
+    </XarrowCore>
+    // );
+    // }}
+    // </DelayedComponent>
   );
 };
 

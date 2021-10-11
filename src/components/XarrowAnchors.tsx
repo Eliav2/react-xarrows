@@ -14,12 +14,12 @@ import {
 import _ from 'lodash';
 import { getPathStateType, simplePosType } from '../utils/XarrowUtils';
 
-export interface XarrowAnchorsAPIProps {
+export interface XarrowAnchorsPropsAPI {
   startAnchor?: anchorType;
   endAnchor?: anchorType;
 }
 
-export interface XarrowAnchorsProps extends XarrowAnchorsAPIProps, partialXarrowProps {
+export interface XarrowAnchorsProps extends XarrowAnchorsPropsAPI, partialXarrowProps {
   startElem: XElementType;
   rootElem: XElementType;
   endElem: XElementType;

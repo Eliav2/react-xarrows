@@ -3,11 +3,11 @@ import { XElementType } from '../privateTypes';
 import { getPathState, getPathStateType, simplePosType } from '../utils/XarrowUtils';
 import { Vector } from '../classes/classes';
 
-export interface XarrowBasicAPIProps {
+export interface XarrowBasicPropsAPI {
   strokeWidth?: number;
 }
 
-export interface XarrowBasicProps extends XarrowBasicAPIProps {
+export interface XarrowBasicProps extends XarrowBasicPropsAPI {
   startElem: XElementType;
   endElem: XElementType;
   rootElem: XElementType;
@@ -24,6 +24,7 @@ export interface XarrowBasicProps extends XarrowBasicAPIProps {
  * updated path for farther customization.
  */
 const XarrowBasicPath: React.FC<XarrowBasicProps> = (props) => {
+  // console.log('XarrowBasicPath');
   const { startElem, endElem, rootElem } = props;
   const elems = Object.values({ startElem, endElem, rootElem }) as [XElementType, XElementType, XElementType];
   const getPathState = getPosition(...elems);

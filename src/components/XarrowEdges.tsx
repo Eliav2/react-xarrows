@@ -32,7 +32,7 @@ const parseEdgeShape = (svgEdge: svgEdgeType): svgCustomEdgeType => {
   return parsedProp;
 };
 
-export interface XarrowEdgesAPIProps {
+export interface XarrowEdgesPropsAPI {
   showHead?: boolean;
   color?: string;
   headColor?: string | null;
@@ -48,13 +48,14 @@ export interface XarrowEdgesAPIProps {
   arrowTailProps?: JSX.IntrinsicElements[svgElemStrType];
 }
 
-export interface XarrowEdgesProps extends XarrowEdgesAPIProps, XarrowMainPropsAPI {
+export interface XarrowEdgesProps extends XarrowEdgesPropsAPI, XarrowMainPropsAPI {
   getPathState: getPathStateType<simplePosType>;
   children?: (posState: getPathStateType, tailEdgeJsx: JSX.Element, headEdgeJsx: JSX.Element) => React.ReactElement;
   anchors: { chosenStart: choosenAnchorType; chosenEnd: choosenAnchorType };
 }
 
 const XarrowEdges: React.FC<XarrowEdgesProps> = (props) => {
+  console.log('XarrowEdges');
   const reRender = useRerender();
   const {
     showHead = true,

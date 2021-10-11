@@ -6,14 +6,14 @@ import { anchorsInwardOffset } from './XarrowAnchors';
 import { Dir, Line, Vector } from '../classes/classes';
 import { XarrowMainPropsAPI } from './XarrowMain';
 
-export interface XarrowPathShapeAPIProps {
+export interface XarrowPathShapePropsAPI {
   path?: pathType;
   gridBreak?: relativeOrAbsStr;
   curveness?: relativeOrAbsStr;
   _debug?: boolean;
 }
 
-export interface XarrowPathShapeProps extends XarrowPathShapeAPIProps, XarrowMainPropsAPI {
+export interface XarrowPathShapeProps extends XarrowPathShapePropsAPI, XarrowMainPropsAPI {
   getPathState: getPathStateType<simplePosType>;
   anchors: { chosenStart: choosenAnchorType; chosenEnd: choosenAnchorType };
   children?: (posState: getPathStateType) => React.ReactElement;
