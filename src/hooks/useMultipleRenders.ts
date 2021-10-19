@@ -1,5 +1,5 @@
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { useHookTruetyCompare } from './useHookTruetyCompare';
+import { useTruetyHook } from './useTruetyHook';
 
 /**
  * will cause the consuming component to render <renders>
@@ -30,12 +30,12 @@ export const useMultipleRenders = (renders = 2, effect = useLayoutEffect) => {
  */
 export const useCallOnNextRender = (func, renders = 2) => {
   const count = useMultipleRenders(renders);
-  const val = useHookTruetyCompare(
+  const val = useTruetyHook(
+    useMemo,
     () => {
       return func();
     },
-    [count == renders - 1],
-    useMemo
+    [count == renders - 1]
   );
 
   return val;

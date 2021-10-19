@@ -43,3 +43,4 @@ const toArray = <T>(arg: T | T[]): T[] => {
 type Primitive = bigint | boolean | null | number | string | symbol | undefined;
 
 export type PlainObject = Record<string, any>;
+export type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (k: infer I) => void ? I : never;

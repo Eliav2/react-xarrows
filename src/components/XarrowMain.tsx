@@ -1,3 +1,4 @@
+// import '../wdyr';
 import React from 'react';
 import { DelayedComponentPropsAPI } from './DelayedComponent';
 import XarrowAnchors, { XarrowAnchorsPropsAPI } from './XarrowAnchors';

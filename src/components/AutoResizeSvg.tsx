@@ -1,7 +1,7 @@
 // smart svg that auto resizes based on children element. always renders twice
 import React, { SVGProps, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import _ from 'lodash';
-import { useHookTruetyCompare } from '../hooks/useHookTruetyCompare';
+import { useTruetyHook } from '../hooks/useTruetyHook';
 import { useCallOnNextRender, useMultipleRenders } from '../hooks/useMultipleRenders';
 import { useDoesUpdateIsScheduled } from '../hooks/useDoesUpdateIsScheduled';
 import { appendPropsToChildren } from '../utils/reactUtils';
@@ -35,13 +35,13 @@ export const AutoResizeSvg: React.FC<AutoResizeSvgProps> = ({
 
   if (!_.isNil(curSt.height)) curSt.height += padding;
   if (!_.isNil(curSt.width)) curSt.width += padding;
-  useHookTruetyCompare(
+  useTruetyHook(
+    effectPhase,
     () => {
       if (!curSt.width) setSt(curSt);
       else setInitialized(true);
     },
-    [!initialized],
-    effectPhase
+    [!initialized]
   );
 
   if (_.isEqual(st, curSt)) setSt(curSt);
