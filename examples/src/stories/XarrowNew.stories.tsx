@@ -1,16 +1,16 @@
-import { Meta } from '@storybook/react';
+import { Meta, Story } from '@storybook/react';
 import XarrowBuilder from '../../../src/components/XarrowBuilder';
 import React, { useState } from 'react';
 import { DraggableBox } from '../components/DraggableBox';
-import { Xwrapper } from 'react-xarrows';
-import XarrowMainNew from '../../../src/components/XarrowMainNew';
+import XarrowMainNew, { XarrowMainNewProps } from '../../../src/components/XarrowMainNew';
+import { Xwrapper } from '../../../src';
 
 export default {
-  title: 'XarrowBuilder',
-  component: XarrowBuilder,
+  title: 'XarrowMainNew',
+  component: XarrowMainNew,
 } as Meta;
 
-export const XarrowMainTemplate = () => {
+const XarrowMainTemplate = ({ ...args }) => {
   const [, render] = useState({});
   const reRender = () => render({});
   return (
@@ -20,9 +20,20 @@ export const XarrowMainTemplate = () => {
         <div style={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-around' }}>
           <DraggableBox id={'box1'} dragGrid={[20, 20]} initialOffset={{ x: 420, y: 150 }} />
           <DraggableBox id={'box2'} dragGrid={[20, 20]} initialOffset={{ x: 500, y: 200 }} />
-          <XarrowMainNew start={'box1'} end={'box2'} />
+          <XarrowMainNew start={'box1'} end={'box2'} {...args} />
         </div>
       </Xwrapper>
     </div>
   );
+};
+
+export const XarrowMainStory: Story<XarrowMainNewProps> = (args) => <XarrowMainTemplate {...args} />;
+
+XarrowMainStory.args = {
+  path: 'smooth',
+  delayRenders: 1,
+  startAnchor: 'auto',
+  endAnchor: 'auto',
+  curveness: '0%0',
+  _debug: false,
 };

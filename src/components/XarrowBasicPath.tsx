@@ -52,6 +52,7 @@ export const getPosition = (startElem: XElementType, endElem: XElementType, root
   let x2 = endPos.x - xr;
   let y2 = endPos.y - yr;
   const posSt = { start: new Vector(x1, y1), end: new Vector(x2, y2) };
+  // return posSt;
   return getPathState(
     (pos) => pos,
     (pos) => `M ${pos.start.x} ${pos.start.y} L ${pos.end.x} ${pos.end.y}` as const,

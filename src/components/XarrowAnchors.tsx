@@ -53,6 +53,7 @@ const XarrowAnchors: React.FC<XarrowAnchorsProps> = (props) => {
     posSt.end.y += chosenEnd.y - props.endElem.position.y;
     return posSt;
   });
+
   if (!props.children) {
     return <path d={newGetPath()} stroke="black" />;
   }
@@ -90,7 +91,7 @@ export interface parsedAnchorType extends Omit<Required<anchorCustomPositionType
   position: Exclude<anchorNamedType, 'auto'>;
 }
 
-const parseAnchor = (anchor: anchorType) => {
+export const parseAnchor = (anchor: anchorType) => {
   // console.log('parseAnchor');
   // convert to array
   let anchorChoice = Array.isArray(anchor) ? anchor : [anchor];
@@ -192,7 +193,7 @@ const anchorsSidewardsDimOffset = {
 } as const;
 
 // calcs the offset per each possible anchor
-const calcAnchors = (anchors: parsedAnchorType[], anchorPos: containsPointType) => {
+export const calcAnchors = (anchors: parsedAnchorType[], anchorPos: containsPointType) => {
   // now prepare this list of anchors to object expected by the `getShortestLine` function
   // console.log(anchors);
 

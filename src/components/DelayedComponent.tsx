@@ -13,7 +13,7 @@ export interface DelayedComponentProps extends DelayedComponentPropsAPI {
 // will render {delay} dumy memorized renders before actually rendering the given for each render
 // used to delay component that relay on DOM properties of other component
 export const DelayedComponent: React.FC<DelayedComponentProps> = ({ delayRenders = 1, children }) => {
-  console.log('DelayedXComponent');
+  // console.log('DelayedXComponent');
   const count = useRef(0);
 
   const c = count.current;

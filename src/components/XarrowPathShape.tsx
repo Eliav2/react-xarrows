@@ -85,7 +85,6 @@ const XarrowPathShape: React.FC<XarrowPathShapeProps> = (props) => {
     }
   }
 
-  console.log();
   const jsx = (
     <>
       <path d={getPathState()} stroke="black" strokeWidth={props.strokeWidth} />

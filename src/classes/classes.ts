@@ -1,4 +1,5 @@
 import { between, deg2Rad, math_operators, operatorFunc, round } from '../utils/mathUtils';
+import { Contains } from '../privateTypes';
 
 export const MATH_PRECISION = 5;
 
@@ -23,11 +24,15 @@ export class Vector {
   // _tmp: T;
   x: number;
   y: number;
-  faceDirs: Dir[]; // all allowed dirs
-  _chosenFaceDir: Dir; // chosen dir
-  dir: Dir;
+  faceDirs: Dir[] | null; // all allowed dirs
+  _chosenFaceDir: Dir | null; // chosen dir
+  dir: Dir | undefined;
 
-  constructor(x: number | Vector | { x: number; y: number }, y?: number) {
+  constructor(x: number, y: number);
+  constructor(v: Vector);
+  constructor(v: Contains<{ x: number; y: number }>);
+  // constructor(x: number | Vector | Contains<{ x: number; y: number }>, y?: number) {
+  constructor(x, y?) {
     if (x instanceof Vector || typeof x === 'object') {
       this.x = x.x;
       this.y = x.y;
