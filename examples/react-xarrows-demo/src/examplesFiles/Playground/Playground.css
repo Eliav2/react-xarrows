@@ -1,0 +1,137 @@
+:root {
+  --interfacesBarWidthPx: 100px;
+  --canvasWidthVw: 70vw;
+  --canvasHeightVh: 70vh;
+}
+
+.fixedBoxStyle {
+  border: 1px #999 solid;
+  border-radius: 10px;
+  text-align: center;
+  position: static;
+  width: 100%;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+}
+.fixedBoxStyle:hover {
+  background: rgb(230, 230, 230);
+}
+
+.interfacesBarStyle {
+  /* position: relative; */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+  height: 100%;
+  width: var(--interfacesBarWidthPx);
+  border: solid black 1px;
+}
+
+.interfaceTitleStyle {
+  font-size: 15px;
+  color: black;
+  position: absolute;
+  margin-top: 5px;
+  top: 0%;
+}
+
+.boxesContainer {
+  position: relative;
+  height: 100%;
+  width: calc(var(--canvasWidthVw) - var(--interfacesBarWidthPx) * 2);
+  border: solid black 1px;
+}
+
+.titleStyle {
+  font-size: 40px;
+  margin: 20px 0 0 20px;
+}
+
+.canvasStyle {
+  display: flex;
+  position: relative;
+  width: var(--canvasWidthVw);
+  height: var(--canvasHeightVh);
+  background: white;
+  color: black;
+}
+
+/*.canvasContainerStyle {*/
+/*  position: relative;*/
+/*  background: white;*/
+/*  color: black;*/
+/*  width: var(--canvasWidthVw);*/
+/*}*/
+
+.toolboxMenu {
+  width: 100px;
+  background: rgb(200, 200, 200);
+  text-align: center;
+}
+
+.toolboxTitle {
+  font-size: 20px;
+  height: 50px;
+}
+.toolboxContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+  height: calc(100% - 68px);
+}
+.wideBox,
+.interfaceBox {
+  border: 1px #999 solid;
+  border-radius: 10px;
+  text-align: center;
+  width: 100px;
+  height: 30px;
+  background: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.tallBox {
+  border: 1px #999 solid;
+  border-radius: 10px;
+  text-align: center;
+  width: 20px;
+  height: 80px;
+  background: white;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+}
+.interfaceBox {
+  height: 50px;
+}
+
+.triangle {
+  width: 0;
+  height: 0;
+  border-left: 25px solid transparent;
+  border-right: 25px solid transparent;
+  border-bottom: 50px solid #555;
+}
+
+.switchIcon {
+  top: 0;
+  width: 50px;
+  height: 50px;
+}
+
+.iconContainer {
+  background: white;
+  border-color: #999;
+  border-style: solid;
+  border-width: 1px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  border-radius: 10px;
+}

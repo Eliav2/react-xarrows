@@ -1,0 +1,111 @@
+{
+  "name": "react-xarrows",
+  "version": "2.0.2",
+  "author": "Eliav Louski",
+  "description": "Draw arrows (or lines) between components in React!",
+  "main": "dist/react-xarrows.cjs.js",
+  "module": "dist/react-xarrows.esm.js",
+  "types": "dist/types/index.d.ts",
+  "scripts": {
+    "build": "webpack --mode development --config-name lib",
+    "build:prod": "webpack --mode production --config-name lib",
+    "build:dev": "webpack --mode development --config-name lib",
+    "build:ts": "tsc",
+    "watch": "npm run watch:ts",
+    "watch:webpack": "webpack --watch --progress --mode development --config-name lib",
+    "watch:ts": "npm run clear:lib && tsc -w",
+    "clear:lib": "del /q lib && for /d %x in (lib\\*) do @rd /s /q \"%x\"",
+    "prepublishOnly": "yarn run build"
+  },
+  "homepage": "https://eliav2.github.io/react-xarrows/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Eliav2/react-xarrows"
+  },
+  "bugs": "https://github.com/Eliav2/react-xarrows/issues",
+  "dependencies": {
+    "@types/prop-types": "^15.7.3",
+    "lodash": "^4.17.21",
+    "prop-types": "^15.7.2"
+  },
+  "funding": {
+    "type": "individual",
+    "url": "https://www.paypal.com/donate?hosted_button_id=CRQ343F9VTRS8"
+  },
+  "peerDependencies": {
+    "react": ">=16.8.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.15.7",
+    "@babel/core": "^7.15.5",
+    "@babel/preset-env": "^7.14.7",
+    "@babel/preset-flow": "^7.14.5",
+    "@babel/preset-react": "^7.14.5",
+    "@babel/preset-typescript": "^7.14.5",
+    "@rollup/plugin-typescript": "^8.3.0",
+    "@types/jest": "^26.0.23",
+    "@types/lodash": "^4.14.168",
+    "@types/node": "^15.0.1",
+    "@types/react": "^16.9.19",
+    "@typescript-eslint/eslint-plugin": "^4.27.0",
+    "@typescript-eslint/parser": "^4.27.0",
+    "@welldone-software/why-did-you-render": "^6.2.1",
+    "babel-eslint": "^10.1.0",
+    "babel-jest": "^27.0.5",
+    "babel-loader": "^8.2.2",
+    "css-loader": "^5.2.6",
+    "eslint": "^7.29.0",
+    "eslint-import-resolver-typescript": "^2.4.0",
+    "eslint-plugin-import": "^2.22.1",
+    "file-loader": "^6.2.0",
+    "flow-bin": "^0.160.1",
+    "html-webpack-plugin": "^5.3.2",
+    "immer": "^9.0.6",
+    "jest": "^27.0.5",
+    "prettier": "^2.4.1",
+    "react": "^17.0.2",
+    "rollup": "^2.58.3",
+    "rollup-plugin-delete": "^2.0.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "style-loader": "^3.0.0",
+    "ts-loader": "^9.2.3",
+    "ts-node": "^9.1.1",
+    "typescript": "^4.3.4",
+    "webpack": "^5.44.0",
+    "webpack-cli": "^4.7.2",
+    "webpack-dev-server": "^3.11.2",
+    "webpack-node-externals": "^3.0.0"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ],
+  "license": "MIT",
+  "files": [
+    "dist",
+    "package.json",
+    "README.md"
+  ],
+  "prettier": {
+    "printWidth": 120,
+    "jsxBracketSameLine": true,
+    "singleQuote": true,
+    "tabWidth": 2
+  },
+  "keywords": [
+    "react",
+    "reactjs",
+    "line",
+    "lines",
+    "arrow",
+    "arrows",
+    "xarrows",
+    "draw",
+    "connect",
+    "between",
+    "elements",
+    "element"
+  ]
+}

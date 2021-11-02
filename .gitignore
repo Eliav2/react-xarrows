@@ -1,7 +1,7 @@
-node_modules/
-build/
+node_modules
+build
+dist
+lib
 .idea
-local/
-lib/
-dist/
+local
 .vscode
