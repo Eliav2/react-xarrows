@@ -6,7 +6,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { useXarrow } from "react-xarrows";
+import { useXarrow } from "react-xarrows/src";
 import { Rnd } from "react-rnd";
 
 export const boxStyle = {
@@ -47,6 +47,8 @@ export const DraggableBox = ({
   let curRef = reference ? reference : nodeRef;
 
   const update: (...args: any) => void = !onDrag ? useXarrow() : onDrag;
+  // const update = useXarrow();
+  // console.log(useXarrow() === update, onDrag === update);
   let moreStyle = {};
   if (initialOffset)
     moreStyle = {

@@ -2,7 +2,6 @@ import React, { useContext, useLayoutEffect, useRef, useState } from 'react';
 import { XelemContext } from './Xwrapper';
 
 const useXarrow = () => {
-  // console.log('useXarrow');
   const [mount, setMount] = useState(false);
   // const [, setRender] = useState({});
   // const reRender = () => setRender({});
