@@ -12,7 +12,8 @@ module.exports = {
   webpack: (config) => {
     const { oneOf } = config.module.rules[5];
     const babelLoader = oneOf.find(({ test }) => new RegExp(test).test(".ts"));
-    babelLoader.include = undefined;
+    // babelLoader.include = undefined;
+    babelLoader.include = [/src/];
     babelLoader.options.presets.push(
       "@babel/preset-typescript",
       "@babel/preset-react",

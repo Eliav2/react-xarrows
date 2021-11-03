@@ -25,7 +25,7 @@ const rollupConfig = defineConfig({
       globals: [{ react: 'React', lodash: '_', 'prop-types': 'PT' }],
     },
   ],
-  plugins: [del({ targets: `${dist}/*` }), typescript({ tsconfig: './tsconfig.rollup.json' })],
+  plugins: [del({ targets: `${dist}/*`, runOnce: true }), typescript({ tsconfig: './tsconfig.rollup.json' })],
   external: ['react', 'lodash', 'prop-types'],
 });
 

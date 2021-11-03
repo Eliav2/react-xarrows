@@ -56,7 +56,6 @@ export class Vector {
   }
 
   add<T extends Vector>(this: T, p: Vector | number, self = false): Vector {
-    console.log(self);
     return operatorFunc(this, p, math_operators.add, self);
   }
 

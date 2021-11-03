@@ -3,12 +3,22 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@material-ui/styles": "^4.11.4",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
+    "jss": "^10.8.2",
     "react": "^17.0.2",
+    "react-collapsible": "^2.8.4",
     "react-dom": "^17.0.2",
+    "react-draggable": "^4.4.4",
+    "react-numeric-input": "^2.2.3",
+    "react-popout": "^2.0.1",
+    "react-resizable": "^3.0.4",
+    "react-rnd": "^10.3.5",
+    "react-router-dom": "^5.3.0",
     "react-scripts": "4.0.3",
+    "react-spring": "^9.3.0",
     "web-vitals": "^1.0.1"
   },
   "scripts": {
@@ -25,6 +35,14 @@
       "react-app/jest"
     ],
     "overrides": [
+      {
+        "files": [
+          "**/*.stories.*"
+        ],
+        "rules": {
+          "import/no-anonymous-default-export": "off"
+        }
+      },
       {
         "files": [
           "**/*.stories.*"
