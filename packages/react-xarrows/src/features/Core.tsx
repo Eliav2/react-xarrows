@@ -3,7 +3,7 @@ import { useElement } from '../hooks/useElement';
 import { Contains, PlainObject, XElementType } from '../privateTypes';
 import { Vector } from '../classes/classes';
 import { refType } from '../types';
-import { XarrowFeature } from '../components/XarrowBuilder';
+import { createFeature, XarrowFeature } from '../components/XarrowBuilder';
 import PT from 'prop-types';
 
 export interface CoreStateChange {
@@ -26,7 +26,7 @@ export interface CoreProps {
 
 const pRefType = PT.oneOfType([PT.string, PT.exact({ current: PT.any })]);
 
-const Core: XarrowFeature<CoreProps, {}, CoreStateChange> = {
+const Core = createFeature<CoreProps, {}, CoreStateChange>({
   propTypes: {
     start: pRefType.isRequired,
     end: pRefType.isRequired,
@@ -91,7 +91,7 @@ const Core: XarrowFeature<CoreProps, {}, CoreStateChange> = {
       </div>
     );
   },
-};
+});
 
 export type posStType = Contains<{ start: Vector; end: Vector }>;
 const getPosition = (startElem: XElementType, endElem: XElementType, rootElem: XElementType) => {

@@ -1,14 +1,13 @@
-import { XarrowFeature } from '../components/XarrowBuilder';
+import { createFeature, XarrowFeature } from '../components/XarrowBuilder';
 import React, { useRef } from 'react';
 import { svgCustomEdgeType, svgEdgeType, svgElemStrType, svgElemType } from '../types';
 import { arrowShapes, cArrowShapes } from '../constants';
 import { useRerender } from '../hooks/HooksUtils';
 import { PathStateChange } from './Path';
 import { Dir, Vector } from '../classes/classes';
-import { anchorsInwardOffset } from '../components/XarrowAnchors';
 import XEdge from '../components/XEdge';
 import NormalizedGSvg, { useGetBBox } from '../components/NormalizedGSvg';
-import { AnchorsStateChange } from './Anchors';
+import { anchorsInwardOffset, AnchorsStateChange } from './Anchors';
 import { CoreStateChange, posStType } from './Core';
 import { PlainObject } from '../privateTypes';
 
@@ -31,7 +30,9 @@ export interface EdgesProps {
 
 type GetJsx = null | ((p: Vector) => JSX.Element);
 
-const Edges: XarrowFeature<EdgesProps, CoreStateChange & AnchorsStateChange> = {
+type tRet = { headEdgeJsx: (endVector: Vector) => JSX.Element; tailEdgeJsx: (startVector: Vector) => JSX.Element };
+
+const Edges = createFeature<EdgesProps, CoreStateChange & AnchorsStateChange, tRet>({
   propTypes: {},
   defaultProps: { normalizeSvg: true },
   state: (state, props) => {
@@ -60,31 +61,31 @@ const Edges: XarrowFeature<EdgesProps, CoreStateChange & AnchorsStateChange> = {
 
     const extendSt: PlainObject = {};
 
-    // tail logic
-    /////////////
-    if (showTail) {
-      let tailEdgeJsx: GetJsx | null;
-      const startEdgeRef = useRef();
-      const NormShape = props.normalizeSvg ? NormalizedGSvg : React.Fragment;
-      const normedTailShape = <NormShape>{parsedTailShape.svgElem}</NormShape>;
-      let tailEdgeBbox = useGetBBox(startEdgeRef, normedTailShape);
-      let tailDir = new Dir(anchorsInwardOffset[state.chosenStart.anchor.position]);
-      let tailOffset = tailDir.reverse().mul((tailEdgeBbox?.width ?? 0) * parsedTailShape.offsetForward);
-      pos.start = pos.start.add(tailOffset);
-      tailEdgeJsx = (p: Vector) => (
-        <XEdge
-          pos={{ x: p.x - tailOffset.x, y: p.y - tailOffset.y }}
-          dir={tailDir.reverse()}
-          size={tailSize}
-          containerRef={startEdgeRef}
-          svgElem={parsedTailShape.svgElem}
-          color={tailColor}
-          props={arrowTailProps}
-          rotate={tailRotate}
-        />
-      );
-      extendSt.tailEdgeJsx = tailEdgeJsx;
-    }
+    // // tail logic
+    // /////////////
+    // if (showTail) {
+    //   let tailEdgeJsx: GetJsx | null;
+    //   const startEdgeRef = useRef();
+    //   const NormShape = props.normalizeSvg ? NormalizedGSvg : React.Fragment;
+    //   const normedTailShape = <NormShape>{parsedTailShape.svgElem}</NormShape>;
+    //   let tailEdgeBbox = useGetBBox(startEdgeRef, normedTailShape);
+    //   let tailDir = new Dir(anchorsInwardOffset[state.chosenStart.anchor.position]);
+    //   let tailOffset = tailDir.reverse().mul((tailEdgeBbox?.width ?? 0) * parsedTailShape.offsetForward);
+    //   pos.start = pos.start.add(tailOffset);
+    //   tailEdgeJsx = (p: Vector) => (
+    //     <XEdge
+    //       pos={{ x: p.x - tailOffset.x, y: p.y - tailOffset.y }}
+    //       dir={tailDir.reverse()}
+    //       size={tailSize}
+    //       containerRef={startEdgeRef}
+    //       svgElem={parsedTailShape.svgElem}
+    //       color={tailColor}
+    //       props={arrowTailProps}
+    //       rotate={tailRotate}
+    //     />
+    //   );
+    //   extendSt.tailEdgeJsx = tailEdgeJsx;
+    // }
 
     // head logic
     /////////////
@@ -99,9 +100,24 @@ const Edges: XarrowFeature<EdgesProps, CoreStateChange & AnchorsStateChange> = {
       headColor,
       arrowHeadProps,
       headRotate,
-      extendSt
+      anchorsInwardOffset[state.chosenEnd.anchor.position]
+    );
+    extendSt.tailEdgeJsx = prepareEdgeJsx(
+      props,
+      state,
+      pos,
+      'start',
+      parsedTailShape,
+      showTail,
+      tailSize,
+      tailColor,
+      arrowTailProps,
+      headRotate,
+      anchorsInwardOffset[state.chosenStart.anchor.position]
     );
 
+    // head logic
+    /////////////
     // const NormShape = props.normalizeSvg ? NormalizedGSvg : React.Fragment;
     // const normedHeadShape = <NormShape>{parsedHeadShape.svgElem}</NormShape>;
     // const endEdgeRef = useRef();
@@ -125,8 +141,8 @@ const Edges: XarrowFeature<EdgesProps, CoreStateChange & AnchorsStateChange> = {
     //   );
     //   extendSt.headEdgeJsx = headEdgeJsx;
     // }
-    console.log(extendSt);
-    return extendSt;
+
+    return extendSt as tRet;
   },
 
   jsx: (state, props, nextJsx) => {
@@ -139,23 +155,22 @@ const Edges: XarrowFeature<EdgesProps, CoreStateChange & AnchorsStateChange> = {
       </>
     );
   },
-};
+});
 
-const prepareEdgeJsx = (props, state, pos, vName, parsedShape, show, size, color, arrowProps, rotate) => {
+const prepareEdgeJsx = (props, state, pos, vName, parsedShape, show, size, color, arrowProps, rotate, dir) => {
   const NormShape = props.normalizeSvg ? NormalizedGSvg : React.Fragment;
   const normedshape = <NormShape>{parsedShape.svgElem}</NormShape>;
   const endEdgeRef = useRef();
   let edgeBbox = useGetBBox(endEdgeRef, normedshape);
   if (show) {
     let edgeJsx: GetJsx | null;
-    let dir = new Dir(anchorsInwardOffset[state.chosenEnd.anchor.position]);
-    let offset = dir.reverse().mul((edgeBbox?.width ?? 0) * parsedShape.offsetForward);
-    // console.log('holaaaa caliing adddd', pos[vName]);
+    let _dir = new Dir(dir);
+    let offset = _dir.reverse().mul((edgeBbox?.width ?? 0) * parsedShape.offsetForward);
     pos[vName].add(offset, true, true);
     edgeJsx = (p: Vector) => (
       <XEdge
         pos={{ x: p.x - offset.x, y: p.y - offset.y }}
-        dir={dir.reverse()}
+        dir={_dir.reverse()}
         size={size}
         containerRef={endEdgeRef}
         svgElem={normedshape}

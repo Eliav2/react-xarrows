@@ -1,19 +1,16 @@
 import React, { FC, useContext } from 'react';
-import XarrowBuilder from './XarrowBuilder';
+import XarrowBuilder, { createFeatures } from './XarrowBuilder';
 import Core from '../features/Core';
 import { DelayedComponent } from './DelayedComponent';
 import { XarrowContext } from '../Xwrapper';
 import Anchors from '../features/Anchors';
 import Path from '../features/Path';
-// import Edges from '../features/Edges' ;
+import Edges from '../features/Edges';
 
 // each feature is implemented separately
-const features = [
-  Core, //
-  Anchors,
-  // Edges,
-  Path,
-];
+const features = createFeatures([Core, Anchors, Edges, Path] as const);
+
+export type Features = typeof features;
 
 const XarrowCustom = XarrowBuilder(features);
 type Props = typeof XarrowCustom extends React.FC<infer P> ? P : {};

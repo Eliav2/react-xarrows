@@ -51,6 +51,8 @@ export const XarrowMainStory: Story<XarrowMainNewProps> = (args) => (
 );
 
 XarrowMainStory.args = {
+  showHead: true,
+  showTail: true,
   path: "smooth",
   delayRenders: 1,
   startAnchor: "auto",

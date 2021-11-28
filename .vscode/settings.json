@@ -1,7 +1,10 @@
 {
- "editor.autoSave": "on",
- "editor.defaultFormatter": "esbenp.prettier-vscode",
- "editor.formatOnSave": true,
- "cSpell.words": ["Gcanvas", "Mchanges", "Xarrow", "bottomness", "buzzier", "curveness", "dashness", "isequal"],
- "workbench.colorTheme": "Default Dark+"
+  "editor.autoSave": "on",
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "cSpell.words": ["Gcanvas", "Mchanges", "Xarrow", "bottomness", "buzzier", "curveness", "dashness", "isequal"],
+  "workbench.colorTheme": "Default Dark+",
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
 }

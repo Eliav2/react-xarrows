@@ -1,8 +1,8 @@
-import { XarrowFeature } from '../components/XarrowBuilder';
-import { AnchorsStateChange } from './Anchors';
+import { createFeature, XarrowFeature } from '../components/XarrowBuilder';
+import { anchorsInwardOffset, AnchorsStateChange } from './Anchors';
 import { pathType, relativeOrAbsStr } from '../types';
 import { Dir, Line, Vector } from '../classes/classes';
-import { anchorsInwardOffset } from '../components/XarrowAnchors';
+// import { anchorsInwardOffset } from '../components/XarrowAnchors';
 import { choosenAnchorType, xStr2absRelative } from '../utils';
 import React from 'react';
 import PT from 'prop-types';
@@ -19,6 +19,7 @@ export interface PathProps {
 }
 
 const PATH_MARGIN = 10;
+// const Path = createFeature<PathProps, CoreStateChange & AnchorsStateChange>({
 const Path: XarrowFeature<PathProps, CoreStateChange & AnchorsStateChange> = {
   propTypes: {
     path: PT.oneOf(cPaths),
@@ -93,6 +94,8 @@ const Path: XarrowFeature<PathProps, CoreStateChange & AnchorsStateChange> = {
   },
   jsx: (state, props, nextJsx) => {
     const { cp1, cp2 } = state.posSt;
+    console.log({ cp1, cp2 });
+    console.log('test!!');
     return (
       <>
         {nextJsx()}
@@ -106,4 +109,6 @@ const Path: XarrowFeature<PathProps, CoreStateChange & AnchorsStateChange> = {
     );
   },
 };
+// );
+
 export default Path;

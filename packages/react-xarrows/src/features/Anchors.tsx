@@ -1,7 +1,6 @@
 import { anchorCustomPositionType, anchorNamedType, anchorType, relativeOrAbsStr } from '../types';
 import React, { useMemo } from 'react';
-import { XarrowFeature } from '../components/XarrowBuilder';
-import { parsedAnchorType } from '../components/XarrowAnchors';
+import { createFeature, XarrowFeature } from '../components/XarrowBuilder';
 import { choosenAnchorType, getShortestLine, isPercentStr, isRelativeOrAbsStr, xStr2absRelative } from '../utils';
 import { Vector } from '../classes/classes';
 import _ from 'lodash';
@@ -33,7 +32,8 @@ export interface AnchorsProps {
   endAnchor?: anchorType;
 }
 
-const Anchors: XarrowFeature<AnchorsProps, CoreStateChange, AnchorsStateChange> = {
+// const Anchors: XarrowFeature<AnchorsProps, CoreStateChange, AnchorsStateChange> = {
+const Anchors = createFeature<AnchorsProps, CoreStateChange, AnchorsStateChange>({
   propTypes: {
     startAnchor: pAnchorType,
     endAnchor: pAnchorType,
@@ -51,7 +51,12 @@ const Anchors: XarrowFeature<AnchorsProps, CoreStateChange, AnchorsStateChange> 
     return { chosenStart, chosenEnd };
   },
   // jsx:...  is not needed because this feature does not change the jsx, it's just changing the state which the jsx uses
-};
+});
+
+interface parsedAnchorType extends Omit<Required<anchorCustomPositionType>, 'position'> {
+  // position: anchorEdgeType;
+  position: Exclude<anchorNamedType, 'auto'>;
+}
 
 const parseAnchor = (anchor: anchorType) => {
   // console.log('parseAnchor');
