@@ -8,7 +8,12 @@ import Path from '../features/Path';
 import Edges from '../features/Edges';
 
 // each feature is implemented separately
-const features = createFeatures([Core, Anchors, Edges, Path] as const);
+const features = createFeatures([
+  Core, //
+  Anchors,
+  Edges,
+  Path,
+] as const);
 
 export type Features = typeof features;
 

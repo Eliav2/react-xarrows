@@ -31,12 +31,12 @@ const XarrowMainTemplate = ({ ...args }) => {
         >
           <DraggableBox
             id={"box1"}
-            dragGrid={[20, 20]}
+            dragGrid={[10, 10]}
             initialOffset={{ x: 420, y: 150 }}
           />
           <DraggableBox
             id={"box2"}
-            dragGrid={[20, 20]}
+            dragGrid={[10, 10]}
             initialOffset={{ x: 500, y: 200 }}
           />
           <XarrowMainNew start={"box1"} end={"box2"} {...args} />
@@ -56,7 +56,7 @@ XarrowMainStory.args = {
   path: "smooth",
   delayRenders: 1,
   startAnchor: "auto",
-  endAnchor: "auto",
+  endAnchor: ["left", "right"],
   curveness: "0%0",
   _debug: false,
 };

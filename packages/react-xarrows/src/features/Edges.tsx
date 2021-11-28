@@ -152,6 +152,7 @@ const Edges = createFeature<EdgesProps, CoreStateChange & AnchorsStateChange, tR
       <>
         {tailEdgeJsx?.(state.posSt.start)}
         {headEdgeJsx?.(state.posSt.end)}
+        {nextJsx()}
       </>
     );
   },
