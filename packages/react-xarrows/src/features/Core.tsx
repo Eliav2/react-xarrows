@@ -18,10 +18,14 @@ export interface CoreStateChange {
 export interface CoreProps {
   start: refType;
   end: refType;
+  strokeWidth?: number;
+  color?: string;
+  lineColor?: string;
 
   SVGcanvasProps?: React.SVGProps<SVGSVGElement>;
   SVGcanvasStyle?: React.CSSProperties;
   divContainerProps?: React.HTMLProps<HTMLDivElement>;
+  arrowBodyProps?: React.SVGProps<SVGPathElement>;
 }
 
 const pRefType = PT.oneOfType([PT.string, PT.exact({ current: PT.any })]);
@@ -30,16 +34,23 @@ const Core = createFeature<CoreProps, {}, CoreStateChange>({
   propTypes: {
     start: pRefType.isRequired,
     end: pRefType.isRequired,
+    strokeWidth: PT.number,
+
     SVGcanvasStyle: PT.object,
     divContainerProps: PT.object,
     SVGcanvasProps: PT.object,
+    arrowBodyProps: PT.object,
   },
   defaultProps: {
     divContainerProps: {},
     SVGcanvasProps: {},
     SVGcanvasStyle: {},
+    arrowBodyProps: {},
+    strokeWidth: 4,
+    color: 'CornflowerBlue',
+    lineColor: undefined,
   },
-  state: (_, props) => {
+  state: ({ state, props }) => {
     const rootDivRef = useRef<HTMLDivElement>(null);
 
     const startElem = useElement(props.start);
@@ -65,11 +76,13 @@ const Core = createFeature<CoreProps, {}, CoreStateChange>({
     }, []);
 
     const posSt = getPosition(startElem, endElem, rootElem);
-    const getPath = (posSt) => `M ${posSt.start.x} ${posSt.start.y} L ${posSt.end.x} ${posSt.end.y}`;
+    const getPath = (pos) => `M ${pos.start.x} ${pos.start.y} L ${pos.end.x} ${pos.end.y}`;
     return { startElem, endElem, rootElem, rootDivRef, posSt, getPath };
   },
-  jsx: (state, props, nextJsx) => {
+  jsx: ({ state, props, nextJsx }) => {
     const { posSt, rootElem } = state;
+
+    const { strokeWidth, color, lineColor = color } = props;
 
     //off set all vectors relative to the origin of divContainer
     for (let vectKey in posSt) {
@@ -85,7 +98,7 @@ const Core = createFeature<CoreProps, {}, CoreStateChange>({
             overflow: 'visible',
             ...props.SVGcanvasStyle,
           }}>
-          <path d={state.getPath(posSt)} stroke="black" />
+          <path d={state.getPath(posSt)} strokeWidth={strokeWidth} stroke={lineColor} {...props.arrowBodyProps} />
           {nextJsx()}
         </svg>
       </div>

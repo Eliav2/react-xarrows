@@ -12,15 +12,15 @@ const features = createFeatures([
   Core, //
   Anchors,
   Edges,
-  Path,
+  // Path,
 ] as const);
 
 export type Features = typeof features;
 
 const XarrowCustom = XarrowBuilder(features);
-type Props = typeof XarrowCustom extends React.FC<infer P> ? P : {};
+export type XarrowProps = typeof XarrowCustom extends React.FC<infer P> ? P : {};
 
-export interface XarrowMainNewProps extends Props {
+export interface XarrowMainNewProps extends XarrowProps {
   delayRenders?: number;
 }
 

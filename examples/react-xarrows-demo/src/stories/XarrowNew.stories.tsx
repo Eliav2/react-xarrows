@@ -51,6 +51,8 @@ export const XarrowMainStory: Story<XarrowMainNewProps> = (args) => (
 );
 
 XarrowMainStory.args = {
+  headSize: 4,
+  tailSize: 4,
   showHead: true,
   showTail: true,
   path: "smooth",
@@ -59,4 +61,7 @@ XarrowMainStory.args = {
   endAnchor: ["left", "right"],
   curveness: "0%0",
   _debug: false,
+  color: "cornflowerBlue",
+  headColor: "cornflowerBlue",
+  tailColor: "cornflowerBlue",
 };

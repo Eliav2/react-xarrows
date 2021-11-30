@@ -34,11 +34,15 @@ export interface AnchorsProps {
 
 // const Anchors: XarrowFeature<AnchorsProps, CoreStateChange, AnchorsStateChange> = {
 const Anchors = createFeature<AnchorsProps, CoreStateChange, AnchorsStateChange>({
+  parseProps: {
+    startAnchor: (startAnchor) => useMemo(() => parseAnchor(startAnchor), [startAnchor]),
+    endAnchor: (endAnchor) => useMemo(() => parseAnchor(endAnchor), [endAnchor]),
+  },
   propTypes: {
     startAnchor: pAnchorType,
     endAnchor: pAnchorType,
   },
-  state: (state, props) => {
+  state: ({ state, props }) => {
     const { startAnchor = 'auto', endAnchor = 'auto' } = props;
     const { startElem, endElem } = state;
     const startAnchors = useMemo(() => parseAnchor(startAnchor), [startAnchor]);

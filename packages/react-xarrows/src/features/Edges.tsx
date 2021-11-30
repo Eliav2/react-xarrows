@@ -3,13 +3,14 @@ import React, { useRef } from 'react';
 import { svgCustomEdgeType, svgEdgeType, svgElemStrType, svgElemType } from '../types';
 import { arrowShapes, cArrowShapes } from '../constants';
 import { useRerender } from '../hooks/HooksUtils';
-import { PathStateChange } from './Path';
-import { Dir, Vector } from '../classes/classes';
+import { PathProps, PathStateChange } from './Path';
+import { Dir, Line, Vector } from '../classes/classes';
 import XEdge from '../components/XEdge';
 import NormalizedGSvg, { useGetBBox } from '../components/NormalizedGSvg';
-import { anchorsInwardOffset, AnchorsStateChange } from './Anchors';
-import { CoreStateChange, posStType } from './Core';
-import { PlainObject } from '../privateTypes';
+import { anchorsInwardOffset, AnchorsProps, AnchorsStateChange } from './Anchors';
+import { CoreProps, CoreStateChange, posStType } from './Core';
+import { Merge, PlainObject, Spread } from '../privateTypes';
+import * as Path from 'path';
 
 export interface EdgesProps {
   showHead?: boolean;
@@ -32,10 +33,14 @@ type GetJsx = null | ((p: Vector) => JSX.Element);
 
 type tRet = { headEdgeJsx: (endVector: Vector) => JSX.Element; tailEdgeJsx: (startVector: Vector) => JSX.Element };
 
-const Edges = createFeature<EdgesProps, CoreStateChange & AnchorsStateChange, tRet>({
+const Edges = createFeature<
+  Spread<[EdgesProps, AnchorsProps, CoreProps, PathProps]>,
+  CoreStateChange & AnchorsStateChange,
+  tRet
+>({
   propTypes: {},
   defaultProps: { normalizeSvg: true },
-  state: (state, props) => {
+  state: ({ state, props }) => {
     // console.log('Edges');
     const {
       showHead = true,
@@ -100,7 +105,8 @@ const Edges = createFeature<EdgesProps, CoreStateChange & AnchorsStateChange, tR
       headColor,
       arrowHeadProps,
       headRotate,
-      anchorsInwardOffset[state.chosenEnd.anchor.position]
+      new Dir(anchorsInwardOffset[state.chosenEnd.anchor.position]),
+      [props.headSize]
     );
     extendSt.tailEdgeJsx = prepareEdgeJsx(
       props,
@@ -113,7 +119,8 @@ const Edges = createFeature<EdgesProps, CoreStateChange & AnchorsStateChange, tR
       tailColor,
       arrowTailProps,
       headRotate,
-      anchorsInwardOffset[state.chosenStart.anchor.position]
+      new Dir(anchorsInwardOffset[state.chosenStart.anchor.position]),
+      [props.tailSize]
     );
 
     // head logic
@@ -145,7 +152,7 @@ const Edges = createFeature<EdgesProps, CoreStateChange & AnchorsStateChange, tR
     return extendSt as tRet;
   },
 
-  jsx: (state, props, nextJsx) => {
+  jsx: ({ state, props, nextJsx }) => {
     const { tailEdgeJsx, headEdgeJsx } = state;
 
     return (
@@ -157,21 +164,44 @@ const Edges = createFeature<EdgesProps, CoreStateChange & AnchorsStateChange, tR
     );
   },
 });
-
-const prepareEdgeJsx = (props, state, pos, vName, parsedShape, show, size, color, arrowProps, rotate, dir) => {
+const prepareEdgeJsx = (props, state, pos, vName, parsedShape, show, size, color, arrowProps, rotate, dir, deps) => {
   const NormShape = props.normalizeSvg ? NormalizedGSvg : React.Fragment;
   const normedshape = <NormShape>{parsedShape.svgElem}</NormShape>;
   const endEdgeRef = useRef();
-  let edgeBbox = useGetBBox(endEdgeRef, normedshape);
+  let edgeBbox = useGetBBox(endEdgeRef, deps);
+
+  // todo: edges when path is straight
+  // for 'middle' anchors
+  // let offset = new Vector(1, 1).mul((edgeBbox?.width ?? 0) * parsedShape.offsetForward);
+  if (dir.size() === 0) {
+    console.log('middle');
+
+    // let vLen = ll.diff.abs().add(offset);
+    // dir = new Dir(vLen.x > vLen.y ? new Vector(vLen.x, 0) : new Vector(0, vLen.y));
+    // if (vName == 'start') dir = dir.reverse();
+  }
+
   if (show) {
+    if (props.path === 'straight') {
+      console.log('test1');
+    }
     let edgeJsx: GetJsx | null;
-    let _dir = new Dir(dir);
-    let offset = _dir.reverse().mul((edgeBbox?.width ?? 0) * parsedShape.offsetForward);
+    // todo: fix middle anchors
+    // if (dir.size() === 0) {
+    //   let ll = new Line(pos.start, pos.end);
+    //   dir = new Dir(ll.diff.abs().x > ll.diff.abs().y ? new Vector(ll.diff.x, 0) : new Vector(0, ll.diff.y));
+    //   if (vName === 'start') dir = dir.reverse();
+    // }
+    let offset = dir.reverse().mul((edgeBbox?.width ?? 0) * parsedShape.offsetForward);
+
     pos[vName].add(offset, true, true);
+    // let ll = new Line(pos.start, pos.end);
+    // dir = new Dir(ll.diff.abs().x > ll.diff.abs().y ? new Vector(ll.diff.x, 0) : new Vector(0, ll.diff.y));
+
     edgeJsx = (p: Vector) => (
       <XEdge
         pos={{ x: p.x - offset.x, y: p.y - offset.y }}
-        dir={_dir.reverse()}
+        dir={dir.reverse()}
         size={size}
         containerRef={endEdgeRef}
         svgElem={normedshape}

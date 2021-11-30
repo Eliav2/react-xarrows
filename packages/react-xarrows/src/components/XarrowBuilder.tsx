@@ -10,17 +10,24 @@ export type XarrowFeature<
   //  the state that was passed from previous feature
   S extends any = PlainObject,
   // the change of the state caused by the current feature
-  K extends PlainObject | void = PlainObject
+  K extends PlainObject | void = PlainObject,
+  // parsed properties
+  PS extends { [key in keyof P]?: any } = any
 > = {
   // function that receives the global State object, and props passed by the uses.
   // this function should return an object that will be reassigned to the State object and will extend it.
-  state?: (state: S, props: P) => K;
+  state?: ({ state: S, props: P }) => K;
 
   // receives the previous jsx,state,and props, this should return jsx that will be rendered to screen
-  jsx?: (state: Merge<K, S>, props: P, nextJsx?) => JSX.Element;
+
+  jsx?: (params: { state: Merge<K, S>; props: P; nextJsx? }) => JSX.Element; //ok
 
   propTypes?: WeakValidationMap<P>;
   defaultProps?: Partial<P>;
+
+  parseProps?: {
+    [key in keyof P]?: (prop: P[key]) => PS[key];
+  };
 };
 
 // type getProps<T> = UnionToIntersection<T extends XarrowFeature<infer S>[] ? S : never>;
@@ -35,22 +42,48 @@ const XarrowBuilder = <T extends any[]>(features: T): React.FC<getProps<T>> => {
   const stateFuncs = features.filter((f) => f.state).map((f) => f.state);
   const jsxFuncs = features.filter((f) => f.jsx).map((f) => f.jsx);
 
+  const parsePropsFuncs = {};
+  for (let i = 0; i < features.length; i++) Object.assign(parsePropsFuncs, features[i].parseProps);
+
   const CustomXarrow: React.FC<getProps<T>> = (props) => {
     // console.log('XarrowBuilder CustomXarrow render');
-    const State = {};
+    const state = {};
     let Jsx: JSX.Element;
 
-    for (let i = 0; i < stateFuncs.length; i++) {
-      Object.assign(State, stateFuncs[i](State, props));
+    const parsedProps = {};
+    for (let i = 0; i < features.length; i++) {
+      const feature = features[i];
+      const featureProps = feature.parseProps;
+      if (featureProps) {
+        for (const key in featureProps) {
+          const func = featureProps[key];
+          parsedProps[key] = func(props[key]);
+        }
+      }
     }
 
+    //build state object for current render
+    for (let i = 0; i < stateFuncs.length; i++) {
+      Object.assign(state, stateFuncs[i]({ state, props, parsedProps }));
+    }
+
+    // get next jsx for each feature
     let next;
     let nextFunc = (i) => {
       next = jsxFuncs[i] || (() => null);
-      return next(State, props, () => nextFunc(i + 1));
+      return next({
+        state: state,
+        props,
+        parsedProps,
+        nextJsx: () => nextFunc(i + 1),
+      });
     };
-    Jsx = jsxFuncs[0](State, props, () => nextFunc(1));
-
+    Jsx = jsxFuncs[0]({
+      state: state,
+      props,
+      parsedProps,
+      nextJsx: () => nextFunc(1),
+    });
     return Jsx;
   };
   const propTypes = {};

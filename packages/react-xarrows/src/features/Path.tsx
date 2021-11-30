@@ -33,7 +33,7 @@ const Path: XarrowFeature<PathProps, CoreStateChange & AnchorsStateChange> = {
     curveness: '0%',
     _debug: false,
   },
-  state: (state, props) => {
+  state: ({ state, props }) => {
     // console.log('hello Path State', props);
     let { posSt, chosenStart, chosenEnd, getPath } = state;
     const { start: ps, end: pe } = posSt;
@@ -58,12 +58,17 @@ const Path: XarrowFeature<PathProps, CoreStateChange & AnchorsStateChange> = {
       if (startDir.abs().eq(endDir.abs())) {
         //two control points
         let dd = endDir.mul(ll.diff.abs().add(endDir.mul(gridBreak.abs).abs())).mul(gridBreak.relative);
-        if (ll.diff.projection(endDir).mul(endDir).size() < -PATH_MARGIN) {
+        if (ll.diff.projection(endDir).mul(endDir).size() < PATH_MARGIN) {
           // cases where path is drawn in negative direction to the start or end anchors directions
           dd = endDir.mul(PATH_MARGIN);
         }
         cp2 = pe.sub(dd);
         cp1 = cp2.sub(ll.diff.mul(startDir.rotate(90).abs()));
+        let ll2 = new Line(cp1, ps);
+        let dd3 = startDir.mul(-ll2.diff.size()).size();
+        if (dd3 < PATH_MARGIN) {
+          cp1 = cp1.add(startDir.mul(PATH_MARGIN - dd3));
+        }
 
         // handle custom curveness
         let l1 = new Line(ps, cp1);
@@ -98,15 +103,15 @@ const Path: XarrowFeature<PathProps, CoreStateChange & AnchorsStateChange> = {
     }
     return { getPath };
   },
-  jsx: (state, props, nextJsx) => {
+  jsx: ({ state, props, nextJsx }) => {
     const { cp1, cp2 } = state.posSt;
     return (
       <>
         {nextJsx()}
         {props._debug && (
           <>
-            <circle cx={cp1.x} cy={cp1.y} r="3" stroke="black" fill="red" />
-            <circle cx={cp2.x} cy={cp2.y} r="3" stroke="black" fill="blue" />
+            {cp1 && <circle cx={cp1.x} cy={cp1.y} r="3" stroke="black" fill="red" />}
+            {cp2 && <circle cx={cp2.x} cy={cp2.y} r="3" stroke="black" fill="blue" />}
           </>
         )}
       </>
