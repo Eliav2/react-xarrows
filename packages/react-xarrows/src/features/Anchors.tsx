@@ -33,22 +33,29 @@ export interface AnchorsProps {
 }
 
 // const Anchors: XarrowFeature<AnchorsProps, CoreStateChange, AnchorsStateChange> = {
-const Anchors = createFeature<AnchorsProps, CoreStateChange, AnchorsStateChange>({
-  parseProps: {
-    startAnchor: (startAnchor) => useMemo(() => parseAnchor(startAnchor), [startAnchor]),
-    endAnchor: (endAnchor) => useMemo(() => parseAnchor(endAnchor), [endAnchor]),
-  },
+const Anchors = createFeature<
+  AnchorsProps,
+  CoreStateChange,
+  AnchorsStateChange,
+  { startAnchor: parsedAnchorType[]; endAnchor: parsedAnchorType[] }
+>({
   propTypes: {
     startAnchor: pAnchorType,
     endAnchor: pAnchorType,
   },
-  state: ({ state, props }) => {
-    const { startAnchor = 'auto', endAnchor = 'auto' } = props;
+  parseProps: {
+    startAnchor: (startAnchor) => useMemo(() => parseAnchor(startAnchor), [startAnchor]),
+    endAnchor: (endAnchor) => useMemo(() => parseAnchor(endAnchor), [endAnchor]),
+  },
+  defaultProps: {
+    startAnchor: 'auto',
+    endAnchor: 'auto',
+  },
+  state: ({ state, parsedProps }) => {
+    const { startAnchor, endAnchor } = parsedProps;
     const { startElem, endElem } = state;
-    const startAnchors = useMemo(() => parseAnchor(startAnchor), [startAnchor]);
-    const startPoints = calcAnchors(startAnchors, startElem.position);
-    const endAnchors = useMemo(() => parseAnchor(endAnchor), [endAnchor]);
-    const endPoints = calcAnchors(endAnchors, endElem.position);
+    const startPoints = calcAnchors(startAnchor, startElem.position);
+    const endPoints = calcAnchors(endAnchor, endElem.position);
     let { chosenStart, chosenEnd } = getShortestLine(startPoints, endPoints);
     state.posSt.start = new Vector(chosenStart);
     state.posSt.end = new Vector(chosenEnd);
@@ -62,7 +69,7 @@ interface parsedAnchorType extends Omit<Required<anchorCustomPositionType>, 'pos
   position: Exclude<anchorNamedType, 'auto'>;
 }
 
-const parseAnchor = (anchor: anchorType) => {
+const parseAnchor = (anchor: anchorType): parsedAnchorType[] => {
   // console.log('parseAnchor');
   // convert to array
   let anchorChoice = Array.isArray(anchor) ? anchor : [anchor];

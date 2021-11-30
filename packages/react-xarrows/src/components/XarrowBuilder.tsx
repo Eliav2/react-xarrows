@@ -16,7 +16,7 @@ export type XarrowFeature<
 > = {
   // function that receives the global State object, and props passed by the uses.
   // this function should return an object that will be reassigned to the State object and will extend it.
-  state?: ({ state: S, props: P }) => K;
+  state?: (params: { state: S; props: P; parsedProps: PS }) => K;
 
   // receives the previous jsx,state,and props, this should return jsx that will be rendered to screen
 
@@ -28,6 +28,21 @@ export type XarrowFeature<
   parseProps?: {
     [key in keyof P]?: (prop: P[key]) => PS[key];
   };
+};
+
+export const createFeature = <
+  // the given user properties
+  P extends any,
+  //  the state that was passed from previous feature
+  S extends any = PlainObject,
+  // the change of the state caused by the current feature
+  K extends PlainObject | void = PlainObject,
+  // parsed properties
+  PS extends { [key in keyof P]?: any } = any
+>(
+  features: XarrowFeature<P, S, K, PS>
+): XarrowFeature<P, S, K, PS> => {
+  return features;
 };
 
 // type getProps<T> = UnionToIntersection<T extends XarrowFeature<infer S>[] ? S : never>;
@@ -97,17 +112,5 @@ const XarrowBuilder = <T extends any[]>(features: T): React.FC<getProps<T>> => {
 export default XarrowBuilder;
 
 export const createFeatures = <T extends readonly any[]>(features: T): Writable<T> => {
-  return features;
-};
-
-export const createFeature = <
-  P extends PlainObject,
-  //  the state that was passed from previous feature
-  S extends PlainObject = PlainObject,
-  // the change of the state caused by the current feature
-  Snew extends PlainObject | void = PlainObject | void
->(
-  features: XarrowFeature<P, S, Snew>
-): XarrowFeature<P, S, Snew> => {
   return features;
 };
