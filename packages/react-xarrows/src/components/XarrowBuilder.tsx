@@ -5,28 +5,31 @@ import Edges from '../features/Edges';
 import { GetIndex, Merge, PlainObject, RangeUnion, UnionToIntersection, Writable } from '../privateTypes';
 
 export type XarrowFeature<
-  // the given user properties
+  // the given user properties with preprocessed properties (parsed by the 'parseProps' option)
   P extends any,
   //  the state that was passed from previous feature
   S extends any = PlainObject,
   // the change of the state caused by the current feature
   K extends PlainObject | void = PlainObject,
   // parsed properties
-  PS extends { [key in keyof P]?: any } = any
+  PS extends { [key in keyof P]?: any } = {},
+  // prefer values from parsed properties
+  PKK extends any = { [key in keyof P]: key extends keyof PS ? PS[key] : P[key] }
 > = {
   // function that receives the global State object, and props passed by the uses.
   // this function should return an object that will be reassigned to the State object and will extend it.
-  state?: (params: { state: S; props: P; parsedProps: PS }) => K;
+  state?: (params: { state: S; props: PKK }) => K;
 
   // receives the previous jsx,state,and props, this should return jsx that will be rendered to screen
 
-  jsx?: (params: { state: Merge<K, S>; props: P; nextJsx? }) => JSX.Element; //ok
+  jsx?: (params: { state: Merge<S, K>; props: PKK; nextJsx? }) => JSX.Element; //ok
 
   propTypes?: WeakValidationMap<P>;
   defaultProps?: Partial<P>;
 
   parseProps?: {
-    [key in keyof P]?: (prop: P[key]) => PS[key];
+    [key in keyof P]?: (prop: P[key]) => PS[key]; // keys in PS must be in P
+    // [key in keyof PS]: (prop: any) => PS[key]; // keys exists in PS must be in parseProps
   };
 };
 
@@ -38,7 +41,7 @@ export const createFeature = <
   // the change of the state caused by the current feature
   K extends PlainObject | void = PlainObject,
   // parsed properties
-  PS extends { [key in keyof P]?: any } = any
+  PS extends { [key in keyof P]?: any } = {}
 >(
   features: XarrowFeature<P, S, K, PS>
 ): XarrowFeature<P, S, K, PS> => {
@@ -65,7 +68,7 @@ const XarrowBuilder = <T extends any[]>(features: T): React.FC<getProps<T>> => {
     const state = {};
     let Jsx: JSX.Element;
 
-    const parsedProps = {};
+    const parsedProps = { ...(props as {}) };
     for (let i = 0; i < features.length; i++) {
       const feature = features[i];
       const featureProps = feature.parseProps;
@@ -79,7 +82,7 @@ const XarrowBuilder = <T extends any[]>(features: T): React.FC<getProps<T>> => {
 
     //build state object for current render
     for (let i = 0; i < stateFuncs.length; i++) {
-      Object.assign(state, stateFuncs[i]({ state, props, parsedProps }));
+      Object.assign(state, stateFuncs[i]({ state, props: parsedProps }));
     }
 
     // get next jsx for each feature
@@ -88,15 +91,13 @@ const XarrowBuilder = <T extends any[]>(features: T): React.FC<getProps<T>> => {
       next = jsxFuncs[i] || (() => null);
       return next({
         state: state,
-        props,
-        parsedProps,
+        props: parsedProps,
         nextJsx: () => nextFunc(i + 1),
       });
     };
     Jsx = jsxFuncs[0]({
       state: state,
-      props,
-      parsedProps,
+      props: parsedProps,
       nextJsx: () => nextFunc(1),
     });
     return Jsx;

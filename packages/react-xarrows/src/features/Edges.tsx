@@ -36,20 +36,26 @@ type tRet = { headEdgeJsx: (endVector: Vector) => JSX.Element; tailEdgeJsx: (sta
 const Edges = createFeature<
   Spread<[EdgesProps, AnchorsProps, CoreProps, PathProps]>,
   CoreStateChange & AnchorsStateChange,
-  tRet
+  tRet,
+  { headShape: svgCustomEdgeType; tailShape: svgCustomEdgeType }
 >({
   propTypes: {},
-  defaultProps: { normalizeSvg: true },
+  defaultProps: { normalizeSvg: true, headShape: arrowShapes.arrow1, tailShape: arrowShapes.arrow1 },
+  parseProps: {
+    headShape: (headShape) => parseEdgeShape(headShape),
+    tailShape: (tailShape) => parseEdgeShape(tailShape),
+  },
   state: ({ state, props }) => {
     // console.log('Edges');
+
     const {
       showHead = true,
       showTail = false,
       color = 'cornflowerBlue',
       headColor = color,
       tailColor = color,
-      headShape = arrowShapes.arrow1,
-      tailShape = arrowShapes.arrow1,
+      headShape = arrowShapes.arrow1 as svgCustomEdgeType,
+      tailShape = arrowShapes.arrow1 as svgCustomEdgeType,
       headSize = 40,
       tailSize = 40,
       headRotate = 0,
@@ -59,8 +65,8 @@ const Edges = createFeature<
     } = props;
 
     const reRender = useRerender();
-    let parsedHeadShape = parseEdgeShape(headShape);
-    let parsedTailShape = parseEdgeShape(tailShape);
+    // let parsedHeadShape = parseEdgeShape(headShape);
+    // let parsedTailShape = parseEdgeShape(tailShape);
     // let getPathState = state.getPath();
     let pos = state.posSt;
 
@@ -91,6 +97,16 @@ const Edges = createFeature<
     //   );
     //   extendSt.tailEdgeJsx = tailEdgeJsx;
     // }
+    let { posSt, chosenStart, chosenEnd, getPath } = state;
+
+    // for 'middle' anchors
+    // let startDir = new Dir(anchorsInwardOffset[chosenStart.anchor.position]).mul(-1);
+    // let endDir = new Dir(anchorsInwardOffset[chosenEnd.anchor.position]);
+
+    // if (startDir.size() === 0)
+    //   startDir = new Dir(ll.diff.abs().x > ll.diff.abs().y ? new Vector(ll.diff.x, 0) : new Vector(0, ll.diff.y));
+    // if (endDir.size() === 0)
+    //   endDir = new Dir(ll.diff.abs().x > ll.diff.abs().y ? new Vector(ll.diff.x, 0) : new Vector(0, ll.diff.y));
 
     // head logic
     /////////////
@@ -99,7 +115,7 @@ const Edges = createFeature<
       state,
       pos,
       'end',
-      parsedHeadShape,
+      headShape,
       showHead,
       headSize,
       headColor,
@@ -113,7 +129,7 @@ const Edges = createFeature<
       state,
       pos,
       'start',
-      parsedTailShape,
+      tailShape,
       showTail,
       tailSize,
       tailColor,
@@ -175,6 +191,7 @@ const prepareEdgeJsx = (props, state, pos, vName, parsedShape, show, size, color
   // let offset = new Vector(1, 1).mul((edgeBbox?.width ?? 0) * parsedShape.offsetForward);
   if (dir.size() === 0) {
     console.log('middle');
+    // console.log({ start: state.chosenStart, end: state.chosenEnd }[vName].anchor);
 
     // let vLen = ll.diff.abs().add(offset);
     // dir = new Dir(vLen.x > vLen.y ? new Vector(vLen.x, 0) : new Vector(0, vLen.y));

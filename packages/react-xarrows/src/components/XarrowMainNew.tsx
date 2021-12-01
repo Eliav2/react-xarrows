@@ -12,7 +12,7 @@ const features = createFeatures([
   Core, //
   Anchors,
   Edges,
-  // Path,
+  Path,
 ] as const);
 
 export type Features = typeof features;

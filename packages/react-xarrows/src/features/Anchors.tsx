@@ -51,8 +51,8 @@ const Anchors = createFeature<
     startAnchor: 'auto',
     endAnchor: 'auto',
   },
-  state: ({ state, parsedProps }) => {
-    const { startAnchor, endAnchor } = parsedProps;
+  state: ({ state, props }) => {
+    const { startAnchor, endAnchor } = props;
     const { startElem, endElem } = state;
     const startPoints = calcAnchors(startAnchor, startElem.position);
     const endPoints = calcAnchors(endAnchor, endElem.position);
@@ -64,7 +64,7 @@ const Anchors = createFeature<
   // jsx:...  is not needed because this feature does not change the jsx, it's just changing the state which the jsx uses
 });
 
-interface parsedAnchorType extends Omit<Required<anchorCustomPositionType>, 'position'> {
+export interface parsedAnchorType extends Omit<Required<anchorCustomPositionType>, 'position'> {
   // position: anchorEdgeType;
   position: Exclude<anchorNamedType, 'auto'>;
 }
