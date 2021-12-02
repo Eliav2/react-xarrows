@@ -41,6 +41,7 @@ const Path: XarrowFeature<PathProps, CoreStateChange & AnchorsStateChange & Edge
     const { start: ps, end: pe } = posSt;
     let ll = new Line(ps, pe);
     let llO = new Line(posSt.originalStart, posSt.originalEnd);
+    // let llO = ll;
     let startDir = new Dir(anchorsInwardOffset[chosenStart.anchor.position]).mul(-1);
     let endDir = new Dir(anchorsInwardOffset[chosenEnd.anchor.position]);
 

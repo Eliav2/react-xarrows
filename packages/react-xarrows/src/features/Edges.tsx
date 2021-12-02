@@ -86,14 +86,13 @@ const Edges = createFeature<
     // for 'middle' anchors
     let startDir = new Dir(anchorsInwardOffset[chosenStart.anchor.position]);
     let endDir = new Dir(anchorsInwardOffset[chosenEnd.anchor.position]);
-
     const ll = new Line(posSt.start, posSt.end);
     if (startDir.size() === 0)
-      startDir = new Dir(ll.diff.abs().x > ll.diff.abs().y ? new Vector(ll.diff.x, 0) : new Vector(0, ll.diff.y));
-    if (endDir.size() === 0)
-      endDir = new Dir(
+      startDir = new Dir(
         ll.diff.abs().x > ll.diff.abs().y ? new Vector(ll.diff.x, 0) : new Vector(0, ll.diff.y)
       ).reverse();
+    if (endDir.size() === 0)
+      endDir = new Dir(ll.diff.abs().x > ll.diff.abs().y ? new Vector(ll.diff.x, 0) : new Vector(0, ll.diff.y));
     posSt.originalStart = new Vector(posSt.start);
     posSt.originalEnd = new Vector(posSt.end);
 
