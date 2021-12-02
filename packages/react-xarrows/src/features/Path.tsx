@@ -1,5 +1,5 @@
 import { createFeature, XarrowFeature } from '../components/XarrowBuilder';
-import { anchorsInwardOffset, AnchorsStateChange } from './Anchors';
+import { AnchorsStateChange } from './Anchors';
 import { pathType, relativeOrAbsStr } from '../types';
 import { Dir, Line, Vector } from '../classes/classes';
 // import { anchorsInwardOffset } from '../components/XarrowAnchors';
@@ -8,6 +8,8 @@ import React from 'react';
 import PT from 'prop-types';
 import { cPaths } from '../constants';
 import { CoreStateChange } from './Core';
+import { anchorsInwardOffset } from '../utils/XarrowUtils';
+import { EdgesStateChange } from './Edges';
 
 export interface PathStateChange extends Partial<AnchorsStateChange> {}
 
@@ -20,7 +22,7 @@ export interface PathProps {
 
 const PATH_MARGIN = 20;
 // const Path = createFeature<PathProps, CoreStateChange & AnchorsStateChange>({
-const Path: XarrowFeature<PathProps, CoreStateChange & AnchorsStateChange> = {
+const Path: XarrowFeature<PathProps, CoreStateChange & AnchorsStateChange & EdgesStateChange> = {
   propTypes: {
     path: PT.oneOf(cPaths),
     gridBreak: PT.oneOfType([PT.string as any, PT.number]),
@@ -38,14 +40,15 @@ const Path: XarrowFeature<PathProps, CoreStateChange & AnchorsStateChange> = {
     let { posSt, chosenStart, chosenEnd, getPath } = state;
     const { start: ps, end: pe } = posSt;
     let ll = new Line(ps, pe);
+    let llO = new Line(posSt.originalStart, posSt.originalEnd);
     let startDir = new Dir(anchorsInwardOffset[chosenStart.anchor.position]).mul(-1);
     let endDir = new Dir(anchorsInwardOffset[chosenEnd.anchor.position]);
 
     // for 'middle' anchors
     if (startDir.size() === 0)
-      startDir = new Dir(ll.diff.abs().x > ll.diff.abs().y ? new Vector(ll.diff.x, 0) : new Vector(0, ll.diff.y));
+      startDir = new Dir(llO.diff.abs().x > llO.diff.abs().y ? new Vector(llO.diff.x, 0) : new Vector(0, llO.diff.y));
     if (endDir.size() === 0)
-      endDir = new Dir(ll.diff.abs().x > ll.diff.abs().y ? new Vector(ll.diff.x, 0) : new Vector(0, ll.diff.y));
+      endDir = new Dir(llO.diff.abs().x > llO.diff.abs().y ? new Vector(llO.diff.x, 0) : new Vector(0, llO.diff.y));
 
     let gridBreak = xStr2absRelative(props.gridBreak) ?? { relative: 0, abs: 0 };
     let cu = xStr2absRelative(props.curveness) ?? { relative: 0, abs: 0 };

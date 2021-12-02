@@ -23,6 +23,7 @@ export const operatorFunc = <T extends Vector>(p: T, p2: Vector | number, operat
     p.y = n.y;
   }
   let v = new Vector(operator(p.x, _p2.x), operator(p.y, _p2.y));
+  v._chosenFaceDir = p._chosenFaceDir;
   // handle 0/0 = NaN instead of 0
   if (isNaN(v.x)) v.x = 0;
   if (isNaN(v.y)) v.y = 0;

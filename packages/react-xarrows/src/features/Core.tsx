@@ -35,6 +35,7 @@ const Core = createFeature<CoreProps, {}, CoreStateChange>({
     start: pRefType.isRequired,
     end: pRefType.isRequired,
     strokeWidth: PT.number,
+    color: PT.string,
 
     SVGcanvasStyle: PT.object,
     divContainerProps: PT.object,
@@ -84,7 +85,7 @@ const Core = createFeature<CoreProps, {}, CoreStateChange>({
 
     const { strokeWidth, color, lineColor = color } = props;
 
-    //off set all vectors relative to the origin of divContainer
+    //offset all vectors relative to the origin of divContainer
     for (let vectKey in posSt) {
       posSt[vectKey] = posSt[vectKey].sub(rootElem.position);
     }

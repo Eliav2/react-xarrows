@@ -1,8 +1,6 @@
 import React, { WeakValidationMap } from 'react';
-import { AnchorsProps } from '../features/Anchors';
-import Core, { CoreProps, CoreStateChange } from '../features/Core';
-import Edges from '../features/Edges';
-import { GetIndex, Merge, PlainObject, RangeUnion, UnionToIntersection, Writable } from '../privateTypes';
+import { Merge, PlainObject, UnionToIntersection, Writable } from '../privateTypes';
+import { merge as mergeLD } from 'lodash';
 
 export type XarrowFeature<
   // the given user properties with preprocessed properties (parsed by the 'parseProps' option)
@@ -10,7 +8,7 @@ export type XarrowFeature<
   //  the state that was passed from previous feature
   S extends any = PlainObject,
   // the change of the state caused by the current feature
-  K extends PlainObject | void = PlainObject,
+  K extends PlainObject | void = void,
   // parsed properties
   PS extends { [key in keyof P]?: any } = {},
   // prefer values from parsed properties
@@ -28,8 +26,7 @@ export type XarrowFeature<
   defaultProps?: Partial<P>;
 
   parseProps?: {
-    [key in keyof P]?: (prop: P[key]) => PS[key]; // keys in PS must be in P
-    // [key in keyof PS]: (prop: any) => PS[key]; // keys exists in PS must be in parseProps
+    [key in keyof PS]: (prop: PS[key]) => PS[key]; // keys in PS must be in P
   };
 };
 
@@ -50,10 +47,10 @@ export const createFeature = <
 
 // type getProps<T> = UnionToIntersection<T extends XarrowFeature<infer S>[] ? S : never>;
 type getProps<T> = UnionToIntersection<
-  T extends Array<infer S> ? (S extends XarrowFeature<infer K, infer K1, infer K2> ? K : never) : never
+  T extends Array<infer S> ? (S extends XarrowFeature<infer K, infer K1, infer K2, infer K3> ? K : never) : never
 >;
 
-type t1 = getProps<[XarrowFeature<CoreProps, {}, CoreStateChange>, XarrowFeature<AnchorsProps>]>;
+// type t1 = getProps<[XarrowFeature<CoreProps, {}, CoreStateChange>, XarrowFeature<AnchorsProps>]>;
 
 const XarrowBuilder = <T extends any[]>(features: T): React.FC<getProps<T>> => {
   // console.log('XarrowBuilder');
@@ -63,9 +60,11 @@ const XarrowBuilder = <T extends any[]>(features: T): React.FC<getProps<T>> => {
   const parsePropsFuncs = {};
   for (let i = 0; i < features.length; i++) Object.assign(parsePropsFuncs, features[i].parseProps);
 
+  // **the state is being held in this scope so the state would remain the same between renders**
+  const state = {};
+
   const CustomXarrow: React.FC<getProps<T>> = (props) => {
     // console.log('XarrowBuilder CustomXarrow render');
-    const state = {};
     let Jsx: JSX.Element;
 
     const parsedProps = { ...(props as {}) };
@@ -83,6 +82,7 @@ const XarrowBuilder = <T extends any[]>(features: T): React.FC<getProps<T>> => {
     //build state object for current render
     for (let i = 0; i < stateFuncs.length; i++) {
       Object.assign(state, stateFuncs[i]({ state, props: parsedProps }));
+      // mergeLD(state, stateFuncs[i]({ state, props: parsedProps }));
     }
 
     // get next jsx for each feature

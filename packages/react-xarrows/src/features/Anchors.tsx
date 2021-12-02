@@ -1,13 +1,20 @@
 import { anchorCustomPositionType, anchorNamedType, anchorType, relativeOrAbsStr } from '../types';
 import React, { useMemo } from 'react';
-import { createFeature, XarrowFeature } from '../components/XarrowBuilder';
+import { createFeature } from '../components/XarrowBuilder';
 import { choosenAnchorType, getShortestLine, isPercentStr, isRelativeOrAbsStr, xStr2absRelative } from '../utils';
 import { Vector } from '../classes/classes';
 import _ from 'lodash';
 import { cAnchorEdge } from '../constants';
 import { anchorEdgeType, containsPointType } from '../privateTypes';
-import PT, { any } from 'prop-types';
+import PT from 'prop-types';
 import { CoreStateChange } from './Core';
+import {
+  anchorsDefaultOffsets,
+  anchorsInwardOffset,
+  anchorsInwardsDimOffset,
+  anchorsSidewardsDimOffset,
+  anchorsSidewardsOffset,
+} from '../utils/XarrowUtils';
 
 const pAnchorPositionType = PT.oneOf(cAnchorEdge);
 const pAnchorCustomPositionType = PT.exact({
@@ -32,7 +39,6 @@ export interface AnchorsProps {
   endAnchor?: anchorType;
 }
 
-// const Anchors: XarrowFeature<AnchorsProps, CoreStateChange, AnchorsStateChange> = {
 const Anchors = createFeature<
   AnchorsProps,
   CoreStateChange,
@@ -130,43 +136,6 @@ const parseAnchor = (anchor: anchorType): parsedAnchorType[] => {
 
   return anchorChoice3 as parsedAnchorType[];
 };
-
-const anchorsDefaultOffsets = {
-  middle: { x: 0.5, y: 0.5 },
-  left: { x: 0, y: 0.5 },
-  right: { x: 1, y: 0.5 },
-  top: { x: 0.5, y: 0 },
-  bottom: { x: 0.5, y: 1 },
-} as const;
-
-export const anchorsInwardOffset = {
-  middle: { x: 0, y: 0 },
-  left: { x: 1, y: 0 },
-  right: { x: -1, y: 0 },
-  top: { x: 0, y: 1 },
-  bottom: { x: 0, y: -1 },
-} as const;
-export const anchorsSidewardsOffset = {
-  middle: { x: 0, y: 0 },
-  left: { x: 0, y: -1 },
-  right: { x: 0, y: 1 },
-  top: { x: 1, y: 0 },
-  bottom: { x: -1, y: 0 },
-} as const;
-const anchorsInwardsDimOffset = {
-  middle: { x: 0, y: 0 },
-  left: { x: 1, y: 0 },
-  right: { x: -1, y: 0 },
-  top: { x: 0, y: 1 },
-  bottom: { x: 0, y: -1 },
-} as const;
-const anchorsSidewardsDimOffset = {
-  middle: { x: 0, y: 0 },
-  left: { x: 0, y: -1 },
-  right: { x: 0, y: 1 },
-  top: { x: 1, y: 0 },
-  bottom: { x: -1, y: 0 },
-} as const;
 
 // calcs the offset per each possible anchor
 const calcAnchors = (anchors: parsedAnchorType[], anchorPos: containsPointType) => {

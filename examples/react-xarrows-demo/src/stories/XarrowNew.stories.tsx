@@ -51,8 +51,8 @@ export const XarrowMainStory: Story<XarrowMainNewProps> = (args) => (
 );
 
 XarrowMainStory.args = {
-  headSize: 4,
-  tailSize: 4,
+  headSize: 40,
+  tailSize: 40,
   showHead: true,
   showTail: true,
   path: "smooth",
@@ -64,4 +64,6 @@ XarrowMainStory.args = {
   color: "cornflowerBlue",
   headColor: "cornflowerBlue",
   tailColor: "cornflowerBlue",
+  headRotate: 0,
+  tailRotate: 0,
 };

@@ -19,14 +19,13 @@ const operators = {
 };
 
 // const pathMargin = 15;
-
 export class Vector {
   // _tmp: T;
   x: number;
   y: number;
   faceDirs: Dir[] | null; // all allowed dirs
-  _chosenFaceDir: Dir | null; // chosen dir
-  dir: Dir | undefined;
+  _chosenFaceDir: Dir | null; // to which dir the vector is pointing
+  dir: Dir | undefined; // direction of the vector with respect to x and y
 
   constructor(x: number, y: number);
   constructor(v: Vector);

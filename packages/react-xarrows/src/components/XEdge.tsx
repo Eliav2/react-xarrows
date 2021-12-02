@@ -1,16 +1,18 @@
-import React, { ReactSVG } from 'react';
-import { svgElemStrType, svgElemType } from '../types';
+import React, { LegacyRef, ReactSVG, useRef } from 'react';
+import { svgCustomEdgeType, svgElemStrType, svgElemType } from '../types';
 import { PlainObject } from '../privateTypes';
 import { arrowShapes } from '../constants';
 import { Dir, Vector } from '../classes/classes';
-import NormalizedGSvg from './NormalizedGSvg';
+import NormalizedGSvg, { useGetBBox } from './NormalizedGSvg';
+import { posStType } from '../features/Core';
 
 export interface XEdgeProps {
   /**
    * API
    */
   // a jsx element of type svg like <circle .../> or <path .../>
-  svgElem: JSX.Element;
+  // svgElem: JSX.Element;
+  svgElem: svgCustomEdgeType;
 
   // should the svg be normalized to size 1x1 pixels anc origin centers at (0.5,0.5)?
   normalizeSvg?: boolean;
@@ -37,18 +39,29 @@ export interface XEdgeProps {
   /**
    * Internal
    */
-  pos: { x: number; y: number }; // initial offset pos
-  dir: Dir; // facing direction of the svg
-  containerRef?: React.MutableRefObject<any>; // internal
+  // pos: { x: number; y: number }; // initial offset pos
+  pos: Vector; // initial offset pos
+  containerRef?: LegacyRef<SVGGElement>; // internal
+  posSt: posStType;
+  vName: 'start' | 'end';
+  deps: any[];
+  state: any;
 }
 
 const XEdge: React.FC<XEdgeProps> = (props) => {
-  const { pos, dir } = props;
+  const { vName, svgElem, deps, pos, show, containerRef } = props;
   const NormShape = props.normalizeSvg ? NormalizedGSvg : React.Fragment;
+  const normedshape = <NormShape>{svgElem.svgElem}</NormShape>;
+  const dir = pos._chosenFaceDir;
+  // const endEdgeRef = useRef();
+  // let edgeBbox = useGetBBox(endEdgeRef, deps);
+  // let offset = dir.reverse().mul((edgeBbox?.width ?? 0) * svgElem.offsetForward);
+  // props.state[`${vName}Offset`] = offset;
+  // if (!show) offset = offset.mul(0);
   return (
     <g {...props.props}>
       <g
-        ref={props.containerRef}
+        ref={containerRef}
         style={{
           transformBox: 'fill-box',
           transformOrigin: 'center',
@@ -61,10 +74,7 @@ const XEdge: React.FC<XEdgeProps> = (props) => {
             transform: `translate(${pos.x}px,${pos.y}px) scale(${props.size})`,
             pointerEvents: 'auto',
           }}>
-          {/*<NormShape>*/}
-          {/*{props.svgElem}*/}
-          {/*</NormShape>*/}
-          {props.svgElem}
+          {normedshape}
         </g>
       </g>
     </g>
@@ -72,7 +82,7 @@ const XEdge: React.FC<XEdgeProps> = (props) => {
 };
 XEdge.defaultProps = {
   size: 30,
-  svgElem: arrowShapes.arrow1.svgElem,
+  svgElem: arrowShapes.arrow1,
   color: 'cornflowerBlue',
   normalizeSvg: true,
   rotate: 0,
