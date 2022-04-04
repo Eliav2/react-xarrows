@@ -73,3 +73,16 @@ export type GetIndex<Arr extends Array<any>, T> = Arr extends [...infer Tail, in
 export type RangeUnion<N extends number, Result extends Array<unknown> = []> = Result['length'] extends N
   ? Result[number]
   : RangeUnion<N, [...Result, Result['length']]>;
+
+export interface dimensionType extends pointType {
+  right: number;
+  bottom: number;
+}
+export type Mutable<T> = {
+  -readonly [K in keyof T]: Mutable<T[K]>;
+};
+
+export function removeReadOnly<T>(val: T): Mutable<T> {
+  return val;
+}
+export type Writeable<T> = { -readonly [P in keyof T]: T[P] };

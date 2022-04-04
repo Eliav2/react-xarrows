@@ -1,12 +1,8 @@
 import Draggable, { DraggableEventHandler } from "react-draggable";
-import React, {
-  CSSProperties,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { CSSProperties, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useXarrow } from "react-xarrows/src";
+import { useXarrow as useXarrowV2 } from "react-xarrow-v2";
+
 import { Rnd } from "react-rnd";
 
 export const boxStyle = {
@@ -46,7 +42,15 @@ export const DraggableBox = ({
   const nodeRef = useRef(null);
   let curRef = reference ? reference : nodeRef;
 
-  const update: (...args: any) => void = !onDrag ? useXarrow() : onDrag;
+  const updateXarrow = useXarrow();
+  const updateXarrowV2 = useXarrowV2();
+  const update = (...args) => {
+    updateXarrow();
+    updateXarrowV2();
+    // onDrag ?? onDrag(...args);
+  };
+
+  // const update: (...args: any) => void = !onDrag ? useXarrow() : onDrag;
   // const update = useXarrow();
   // console.log(useXarrow() === update, onDrag === update);
   let moreStyle = {};

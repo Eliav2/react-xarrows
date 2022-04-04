@@ -8,25 +8,29 @@ export type XarrowFeature<
   //  the state that was passed from previous feature
   S extends any = PlainObject,
   // the change of the state caused by the current feature
-  K extends PlainObject | void = void,
+  K extends PlainObject | void = PlainObject,
   // parsed properties
   PS extends { [key in keyof P]?: any } = {},
   // prefer values from parsed properties
   PKK extends any = { [key in keyof P]: key extends keyof PS ? PS[key] : P[key] }
 > = {
+  // the name of the feature(only for debugging on documentation)
+  name?: string;
+
   // function that receives the global State object, and props passed by the uses.
   // this function should return an object that will be reassigned to the State object and will extend it.
   state?: (params: { state: S; props: PKK }) => K;
 
   // receives the previous jsx,state,and props, this should return jsx that will be rendered to screen
-
   jsx?: (params: { state: Merge<S, K>; props: PKK; nextJsx? }) => JSX.Element; //ok
 
+  // propTypes that would be validated against the props passed by the user
   propTypes?: WeakValidationMap<P>;
+  // defaultProps that would be assigned to the props passed by the user
   defaultProps?: Partial<P>;
 
   parseProps?: {
-    [key in keyof PS]: (prop: PS[key]) => PS[key]; // keys in PS must be in P
+    [key in keyof P]: (prop: P[key]) => PS[key]; // keys in PS must be in P
   };
 };
 
@@ -36,7 +40,7 @@ export const createFeature = <
   //  the state that was passed from previous feature
   S extends any = PlainObject,
   // the change of the state caused by the current feature
-  K extends PlainObject | void = PlainObject,
+  K extends PlainObject | void = void,
   // parsed properties
   PS extends { [key in keyof P]?: any } = {}
 >(
@@ -63,8 +67,8 @@ const XarrowBuilder = <T extends any[]>(features: T): React.FC<getProps<T>> => {
   // **the state is being held in this scope so the state would remain the same between renders**
   const state = {};
 
-  const CustomXarrow: React.FC<getProps<T>> = (props) => {
-    // console.log('XarrowBuilder CustomXarrow render');
+  const XarrowDish: React.FC<getProps<T>> = (props) => {
+    // console.log('XarrowBuilder XarrowDish render');
     let Jsx: JSX.Element;
 
     const parsedProps = { ...(props as {}) };
@@ -104,11 +108,11 @@ const XarrowBuilder = <T extends any[]>(features: T): React.FC<getProps<T>> => {
   };
   const propTypes = {};
   for (let i = 0; i < features.length; i++) Object.assign(propTypes, features[i].propTypes);
-  CustomXarrow.propTypes = propTypes;
+  XarrowDish.propTypes = propTypes;
   const defaultProps = {};
   for (let i = 0; i < features.length; i++) Object.assign(defaultProps, features[i].defaultProps);
-  CustomXarrow.defaultProps = defaultProps;
-  return CustomXarrow;
+  XarrowDish.defaultProps = defaultProps;
+  return XarrowDish;
 };
 export default XarrowBuilder;
 

@@ -5,6 +5,7 @@ import { DelayedComponent } from './DelayedComponent';
 import { XarrowContext } from '../Xwrapper';
 import Anchors from '../features/Anchors';
 import Path from '../features/Path';
+import PathPro from '../features/PathPro';
 import Edges from '../features/Edges';
 
 // each feature is implemented separately
@@ -12,7 +13,8 @@ const features = createFeatures([
   Core, //
   Anchors,
   Edges,
-  Path,
+  // Path,
+  PathPro,
 ] as const);
 
 export type Features = typeof features;

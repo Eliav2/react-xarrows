@@ -3,7 +3,7 @@ import React, { useRef } from 'react';
 import { svgCustomEdgeType, svgEdgeType, svgElemStrType, svgElemType } from '../types';
 import { arrowShapes, cArrowShapes } from '../constants';
 import { PathProps } from './Path';
-import { Dir, Line, Vector } from '../classes/classes';
+import { Dir, Line, Vector } from '../classes/path';
 import XEdge from '../components/XEdge';
 import { AnchorsProps, AnchorsStateChange } from './Anchors';
 import { CoreProps, CoreStateChange } from './Core';
@@ -31,6 +31,8 @@ export interface EdgesProps {
 export type EdgesStateChange = {
   headOffset: Vector;
   tailOffset: Vector;
+  headEdgeRef: React.LegacyRef<SVGGElement>;
+  tailEdgeRef: React.LegacyRef<SVGGElement>;
 };
 
 const pSvgEdgeShapeType = PT.oneOf(Object.keys(arrowShapes) as Array<keyof typeof arrowShapes>);
@@ -45,19 +47,14 @@ const pSvgEdgeType = PT.oneOfType([
 
 const Edges = createFeature<
   Spread<[EdgesProps, AnchorsProps, CoreProps, PathProps]>,
-  CoreStateChange &
-    AnchorsStateChange & {
-      startOffset: Vector | undefined;
-      endOffset: Vector | undefined;
-      headEdgeRef: React.LegacyRef<SVGGElement>;
-      tailEdgeRef: React.LegacyRef<SVGGElement>;
-    },
+  CoreStateChange & AnchorsStateChange,
   EdgesStateChange,
   {
     headShape: svgCustomEdgeType;
     tailShape: svgCustomEdgeType;
   }
 >({
+  name: 'Edges',
   propTypes: {
     showHead: PT.bool,
     headColor: PT.string,
@@ -73,7 +70,13 @@ const Edges = createFeature<
     arrowTailProps: PT.object,
     normalizeSvg: PT.bool,
   },
-  defaultProps: { normalizeSvg: true, headShape: arrowShapes.arrow1, tailShape: arrowShapes.arrow1 },
+  defaultProps: {
+    normalizeSvg: true,
+    headShape: arrowShapes.arrow1,
+    tailShape: arrowShapes.arrow1,
+    showHead: true,
+    showTail: false,
+  },
   parseProps: {
     headShape: (headShape) => parseEdgeShape(headShape),
     tailShape: (tailShape) => parseEdgeShape(tailShape),
@@ -99,17 +102,17 @@ const Edges = createFeature<
     posSt.start._chosenFaceDir = startDir.reverse();
     posSt.end._chosenFaceDir = endDir.reverse();
 
-    state.headEdgeRef = useRef();
-    let headBbox = useGetBBox(state.headEdgeRef, [props.headSize, props.showHead]);
+    const headEdgeRef = useRef();
+    let headBbox = useGetBBox(headEdgeRef, [props.headSize, props.showHead]);
     let headOffset = posSt.end._chosenFaceDir.mul((headBbox?.width ?? 0) * props.headShape.offsetForward);
     if (props.showHead) posSt.end = posSt.end.add(headOffset);
 
-    state.tailEdgeRef = useRef();
-    let tailBbox = useGetBBox(state.tailEdgeRef, [props.tailSize, props.showTail]);
+    const tailEdgeRef = useRef();
+    let tailBbox = useGetBBox(tailEdgeRef, [props.tailSize, props.showTail]);
     let tailOffset = posSt.start._chosenFaceDir.reverse().mul((tailBbox?.width ?? 0) * props.tailShape.offsetForward);
     if (props.showTail) posSt.start = posSt.start.sub(tailOffset);
 
-    return { headOffset, tailOffset };
+    return { headOffset, tailOffset, headEdgeRef, tailEdgeRef };
   },
 
   jsx: ({ state, props, nextJsx }) => {
@@ -122,8 +125,8 @@ const Edges = createFeature<
       tailColor = color,
       headShape = arrowShapes.arrow1 as svgCustomEdgeType,
       tailShape = arrowShapes.arrow1 as svgCustomEdgeType,
-      headSize = 40,
-      tailSize = 40,
+      headSize = 24,
+      tailSize = 24,
       headRotate = 0,
       tailRotate = 0,
       arrowHeadProps = {},

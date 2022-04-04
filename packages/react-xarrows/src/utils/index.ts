@@ -2,7 +2,9 @@ import { anchorCustomPositionType, percentStr, refType, relativeOrAbsStr } from 
 import React from 'react';
 import _ from 'lodash';
 import { posType } from '../privateTypes';
-import { parsedAnchorType } from '../components/XarrowAnchors';
+import { parsedAnchorType } from '../features/Anchors';
+import { _faceDirType } from '../features/PathPro';
+// import { parsedAnchorType } from '../components/XarrowAnchors';
 
 export const getElementByPropGiven = (ref: refType): HTMLElement => {
   let myRef;
@@ -53,7 +55,11 @@ export type choosenAnchorType = { x: number; y: number; anchor: parsedAnchorType
 const defaultChosen = {
   x: 0,
   y: 0,
-  anchor: { position: 'middle' as const, offset: { x: 0, y: 0, inwards: 0, sidewards: 0 } },
+  anchor: {
+    position: 'middle' as const,
+    offset: { x: 0, y: 0, inwards: 0, sidewards: 0 },
+    facingDir: 'auto' as const,
+  },
 };
 const defaultPair = { chosenStart: defaultChosen, chosenEnd: defaultChosen };
 
@@ -138,6 +144,12 @@ export const isRelativeOrAbsStr = (s: string | number) => {
     return isPercentStr(sp[0] + '%') && isNumber(sp[1]);
   }
   return false;
+};
+
+export const between = (num: number, a: number, b: number, inclusiveA = true, inclusiveB = true): boolean => {
+  if (a > b) [a, b, inclusiveA, inclusiveB] = [b, a, inclusiveB, inclusiveA];
+  if (a == b && (inclusiveA || inclusiveB)) [inclusiveA, inclusiveB] = [true, true];
+  return (inclusiveA ? num >= a : num > a) && (inclusiveB ? num <= b : num < b);
 };
 
 // if (require.main === module) {

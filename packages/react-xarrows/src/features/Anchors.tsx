@@ -2,7 +2,7 @@ import { anchorCustomPositionType, anchorNamedType, anchorType, relativeOrAbsStr
 import React, { useMemo } from 'react';
 import { createFeature } from '../components/XarrowBuilder';
 import { choosenAnchorType, getShortestLine, isPercentStr, isRelativeOrAbsStr, xStr2absRelative } from '../utils';
-import { Vector } from '../classes/classes';
+import { Vector } from '../classes/path';
 import _ from 'lodash';
 import { cAnchorEdge } from '../constants';
 import { anchorEdgeType, containsPointType } from '../privateTypes';
@@ -16,7 +16,12 @@ import {
   anchorsSidewardsOffset,
 } from '../utils/XarrowUtils';
 
-const pAnchorPositionType = PT.oneOf(cAnchorEdge);
+const pAnchorString = (props, propName, componentName) => {
+  if (!/^\d+%?\d*$/.test(props[propName])) {
+    return new Error('Invalid prop `' + propName + '` supplied to' + ' `' + componentName + '`. Validation failed.');
+  }
+};
+const pAnchorPositionType = PT.oneOfType([PT.oneOf(cAnchorEdge), pAnchorString]);
 const pAnchorCustomPositionType = PT.exact({
   position: pAnchorPositionType.isRequired,
   offset: PT.exact({
@@ -45,6 +50,7 @@ const Anchors = createFeature<
   AnchorsStateChange,
   { startAnchor: parsedAnchorType[]; endAnchor: parsedAnchorType[] }
 >({
+  name: 'Anchors',
   propTypes: {
     startAnchor: pAnchorType,
     endAnchor: pAnchorType,
@@ -125,8 +131,12 @@ const parseAnchor = (anchor: anchorType): parsedAnchorType[] => {
       anchorChoiceCustom.offset ||= { x: 0, y: 0 };
       anchorChoiceCustom.offset.y ||= 0;
       anchorChoiceCustom.offset.x ||= 0;
+
       anchorChoiceCustom.offset.inwards ||= 0;
       anchorChoiceCustom.offset.sidewards ||= 0;
+      anchorChoiceCustom.facingDir ||= ['auto'];
+      if (!Array.isArray(anchorChoiceCustom.facingDir)) anchorChoiceCustom.facingDir = [anchorChoiceCustom.facingDir];
+
       anchorChoiceCustom = anchorChoiceCustom as Required<anchorCustomPositionType>;
       return anchorChoiceCustom;
     } else return anchorChoice;

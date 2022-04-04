@@ -1,7 +1,7 @@
 import { createFeature, XarrowFeature } from '../components/XarrowBuilder';
 import { AnchorsStateChange } from './Anchors';
 import { pathType, relativeOrAbsStr } from '../types';
-import { Dir, Line, Vector } from '../classes/classes';
+import { Dir, Line, Vector } from '../classes/path';
 // import { anchorsInwardOffset } from '../components/XarrowAnchors';
 import { choosenAnchorType, xStr2absRelative } from '../utils';
 import React from 'react';
@@ -23,6 +23,7 @@ export interface PathProps {
 const PATH_MARGIN = 20;
 // const Path = createFeature<PathProps, CoreStateChange & AnchorsStateChange>({
 const Path: XarrowFeature<PathProps, CoreStateChange & AnchorsStateChange & EdgesStateChange> = {
+  name: 'Path',
   propTypes: {
     path: PT.oneOf(cPaths),
     gridBreak: PT.oneOfType([PT.string as any, PT.number]),
@@ -96,12 +97,12 @@ const Path: XarrowFeature<PathProps, CoreStateChange & AnchorsStateChange & Edge
       }
       Object.assign(posSt, { cp1, cp2 });
       if (props.path === 'grid') {
-        getPath = (pos) =>
+        getPath = (pos = posSt) =>
           `M ${pos.start.x} ${pos.start.y} ${
             pos.cp1 ? `L ${pos.cp1.x} ${pos.cp1.y}` : ''
           } ${`L ${pos.cp2.x} ${pos.cp2.y}`} L ${pos.end.x} ${pos.end.y}`;
       } else if (props.path === 'smooth') {
-        getPath = (pos) =>
+        getPath = (pos = posSt) =>
           `M ${pos.start.x} ${pos.start.y} C ${pos.cp1.x} ${pos.cp1.y}, ${pos.cp2.x} ${pos.cp2.y} ${pos.end.x} ${pos.end.y}`;
       }
     }

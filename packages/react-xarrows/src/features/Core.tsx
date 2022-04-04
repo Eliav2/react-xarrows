@@ -1,17 +1,23 @@
 import React, { SVGProps, useEffect, useRef, useState } from 'react';
 import { useElement } from '../hooks/useElement';
 import { Contains, PlainObject, XElementType } from '../privateTypes';
-import { Vector } from '../classes/classes';
+import { Vector } from '../classes/path';
 import { refType } from '../types';
 import { createFeature, XarrowFeature } from '../components/XarrowBuilder';
 import PT from 'prop-types';
 
 export interface CoreStateChange {
+  // the source element
   startElem: XElementType;
+  // the target element
   endElem: XElementType;
+  // the element which Xarrow is being mounted
   rootElem: XElementType;
+  // reference to the Xarrow div wrapper
   rootDivRef: React.MutableRefObject<HTMLDivElement | null>;
+  // holds state of all positions of the Xarrow. being offset relative to the root element on jsx stage
   posSt: posStType;
+
   getPath: (posSt: posStType) => string;
 }
 
@@ -31,6 +37,7 @@ export interface CoreProps {
 const pRefType = PT.oneOfType([PT.string, PT.exact({ current: PT.any })]);
 
 const Core = createFeature<CoreProps, {}, CoreStateChange>({
+  name: 'Core',
   propTypes: {
     start: pRefType.isRequired,
     end: pRefType.isRequired,
@@ -77,7 +84,7 @@ const Core = createFeature<CoreProps, {}, CoreStateChange>({
     }, []);
 
     const posSt = getPosition(startElem, endElem, rootElem);
-    const getPath = (pos) => `M ${pos.start.x} ${pos.start.y} L ${pos.end.x} ${pos.end.y}`;
+    const getPath = (pos = posSt) => `M ${pos.start.x} ${pos.start.y} L ${pos.end.x} ${pos.end.y}`;
     return { startElem, endElem, rootElem, rootDivRef, posSt, getPath };
   },
   jsx: ({ state, props, nextJsx }) => {

@@ -51,7 +51,7 @@
 //   // will return the object
 //   (extendPos: undefined, pathFunc: null): T;
 // }
-import { Vector } from '../classes/classes';
+import { Vector } from '../classes/path';
 
 export type PointType = Vector;
 export type simplePosType = { start: PointType; end: PointType };

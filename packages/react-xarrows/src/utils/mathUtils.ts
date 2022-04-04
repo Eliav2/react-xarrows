@@ -1,4 +1,4 @@
-import { MATH_PRECISION, Vector } from '../classes/classes';
+import { MATH_PRECISION, Vector } from '../classes/path';
 
 export const math_operators = {
   add: (x, y) => x + y,

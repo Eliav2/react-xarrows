@@ -4,6 +4,7 @@ import React from 'react';
 export const cAnchorEdge = ['middle', 'left', 'right', 'top', 'bottom', 'auto'] as const;
 export const cPaths = ['smooth', 'grid', 'straight'] as const;
 export const cSvgElems = ['circle', 'ellipse', 'line', 'path', 'polygon', 'polyline', 'rect'] as const;
+export const cFacingDir = ['auto', 'inwards', 'outwards', 'left', 'right', 'up', 'down'] as const;
 
 //default arrows svgs
 export const arrowShapes = {

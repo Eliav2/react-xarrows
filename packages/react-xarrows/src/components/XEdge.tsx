@@ -2,7 +2,7 @@ import React, { LegacyRef, ReactSVG, useRef } from 'react';
 import { svgCustomEdgeType, svgElemStrType, svgElemType } from '../types';
 import { PlainObject } from '../privateTypes';
 import { arrowShapes } from '../constants';
-import { Dir, Vector } from '../classes/classes';
+import { Dir, Vector } from '../classes/path';
 import NormalizedGSvg, { useGetBBox } from './NormalizedGSvg';
 import { posStType } from '../features/Core';
 

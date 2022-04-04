@@ -8,5 +8,8 @@
   "scripts": {
     "start": "yarn workspace react-xarrows-demo start",
     "storybook": "yarn workspace react-xarrows-demo storybook"
+  },
+  "dependencies": {
+    "typescript": "^4.6.3"
   }
 }

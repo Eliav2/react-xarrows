@@ -19,6 +19,7 @@
     "react-router-dom": "^5.3.0",
     "react-scripts": "4.0.3",
     "react-spring": "^9.3.0",
+    "react-xarrow-v2": "npm:react-xarrows@2",
     "web-vitals": "^1.0.1"
   },
   "scripts": {
@@ -66,12 +67,12 @@
     ]
   },
   "devDependencies": {
-    "@storybook/addon-actions": "^6.3.12",
-    "@storybook/addon-essentials": "^6.3.12",
-    "@storybook/addon-links": "^6.3.12",
-    "@storybook/node-logger": "^6.3.12",
+    "@storybook/addon-actions": "^6.4.9",
+    "@storybook/addon-essentials": "^6.4.9",
+    "@storybook/addon-links": "^6.4.9",
+    "@storybook/node-logger": "^6.4.9",
     "@storybook/preset-create-react-app": "^3.2.0",
-    "@storybook/react": "^6.3.12",
+    "@storybook/react": "^6.4.9",
     "ts-loader": "^9.2.6"
   }
 }

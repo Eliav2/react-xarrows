@@ -1,5 +1,5 @@
 import React, { ReactSVG, SVGFactory } from 'react';
-import { cAnchorEdge, cArrowShapes, cPaths, cSvgElems } from './constants';
+import { cAnchorEdge, cArrowShapes, cFacingDir, cPaths, cSvgElems } from './constants';
 import { Contains, OneOrMore, ToArray } from './privateTypes';
 
 //any xarrow prop is allowed to be passed
@@ -69,6 +69,7 @@ export type anchorNamedType = typeof cAnchorEdge[number];
 export type anchorCustomPositionType = {
   position?: anchorNamedType;
   offset?: { x?: number; y?: number; inwards?: relativeOrAbsStr; sidewards?: relativeOrAbsStr };
+  facingDir?: _faceDirType | _faceDirType[];
 };
 
 export type refType = React.MutableRefObject<any> | string | Contains<{ x: number; y: number }>;
@@ -89,3 +90,5 @@ export type svgCustomEdgeType = {
 export type svgEdgeDefaultShapeType = typeof cArrowShapes[number];
 export type svgEdgeType = svgEdgeDefaultShapeType | svgElemType | svgCustomEdgeType;
 export type svgElemStrType = typeof cSvgElems[number];
+
+export type _faceDirType = typeof cFacingDir[number];
