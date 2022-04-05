@@ -14,7 +14,7 @@ export type XarrowFeature<
   // prefer values from parsed properties
   PKK extends any = { [key in keyof P]: key extends keyof PS ? PS[key] : P[key] }
 > = {
-  // the name of the feature(only for debugging on documentation)
+  // the name of the feat ure(only for debugging on documentation)
   name?: string;
 
   // function that receives the global State object, and props passed by the uses.

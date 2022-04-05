@@ -27,6 +27,7 @@ export interface CoreProps {
   strokeWidth?: number;
   color?: string;
   lineColor?: string;
+  zIndex?;
 
   SVGcanvasProps?: React.SVGProps<SVGSVGElement>;
   SVGcanvasStyle?: React.CSSProperties;
@@ -43,6 +44,7 @@ const Core = createFeature<CoreProps, {}, CoreStateChange>({
     end: pRefType.isRequired,
     strokeWidth: PT.number,
     color: PT.string,
+    zIndex: PT.number,
 
     SVGcanvasStyle: PT.object,
     divContainerProps: PT.object,
@@ -57,6 +59,7 @@ const Core = createFeature<CoreProps, {}, CoreStateChange>({
     strokeWidth: 4,
     color: 'CornflowerBlue',
     lineColor: undefined,
+    zIndex: undefined,
   },
   state: ({ state, props }) => {
     const rootDivRef = useRef<HTMLDivElement>(null);
@@ -90,7 +93,7 @@ const Core = createFeature<CoreProps, {}, CoreStateChange>({
   jsx: ({ state, props, nextJsx }) => {
     const { posSt, rootElem } = state;
 
-    const { strokeWidth, color, lineColor = color } = props;
+    const { strokeWidth, color, lineColor = color, zIndex } = props;
 
     //offset all vectors relative to the origin of divContainer
     for (let vectKey in posSt) {
@@ -98,7 +101,10 @@ const Core = createFeature<CoreProps, {}, CoreStateChange>({
     }
 
     return (
-      <div ref={state.rootDivRef} style={{ position: 'absolute', pointerEvents: 'none' }} {...props.divContainerProps}>
+      <div
+        ref={state.rootDivRef}
+        style={{ position: 'absolute', pointerEvents: 'none', zIndex }}
+        {...props.divContainerProps}>
         <svg
           style={{
             position: 'absolute',

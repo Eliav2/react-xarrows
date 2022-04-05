@@ -1,9 +1,9 @@
-import { createFeature, XarrowFeature } from '../components/XarrowBuilder';
+import { XarrowFeature } from '../components/XarrowBuilder';
 import { AnchorsStateChange } from './Anchors';
 import { pathType, relativeOrAbsStr } from '../types';
 import { Dir, Line, Vector } from '../classes/path';
 // import { anchorsInwardOffset } from '../components/XarrowAnchors';
-import { choosenAnchorType, xStr2absRelative } from '../utils';
+import { xStr2absRelative } from '../utils';
 import React from 'react';
 import PT from 'prop-types';
 import { cPaths } from '../constants';

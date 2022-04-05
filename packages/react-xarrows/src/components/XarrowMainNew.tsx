@@ -13,8 +13,13 @@ const features = createFeatures([
   Core, //
   Anchors,
   Edges,
-  // Path,
-  PathPro,
+  Path,
+  // PathPro,
+  //  todo:
+  //    Labels
+  //    dashness
+  //    custom svg shapes
+  //
 ] as const);
 
 export type Features = typeof features;
