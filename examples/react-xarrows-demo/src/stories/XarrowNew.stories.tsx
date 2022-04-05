@@ -57,8 +57,8 @@ export const XarrowMainStory: Story<XarrowMainNewProps> = (args) => (
 );
 
 XarrowMainStory.args = {
-  headSize: 40,
-  tailSize: 40,
+  headSize: 24,
+  tailSize: 24,
   showHead: true,
   showTail: false,
   path: "smooth",

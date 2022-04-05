@@ -74,6 +74,8 @@ export type RangeUnion<N extends number, Result extends Array<unknown> = []> = R
   ? Result[number]
   : RangeUnion<N, [...Result, Result['length']]>;
 
+export type PickKeys<P, PS> = Exclude<keyof P, Exclude<keyof P, keyof PS>>;
+
 export interface dimensionType extends pointType {
   right: number;
   bottom: number;

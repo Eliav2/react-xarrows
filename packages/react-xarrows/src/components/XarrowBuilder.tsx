@@ -1,5 +1,5 @@
 import React, { WeakValidationMap } from 'react';
-import { Merge, PlainObject, UnionToIntersection, Writable } from '../privateTypes';
+import { Merge, PickKeys, PlainObject, UnionToIntersection, Writable } from '../privateTypes';
 import { merge as mergeLD } from 'lodash';
 
 export type XarrowFeature<
@@ -10,7 +10,7 @@ export type XarrowFeature<
   // the change of the state caused by the current feature
   K extends PlainObject | void = PlainObject,
   // parsed properties
-  PS extends { [key in keyof P]?: any } = {},
+  PS extends { [key in PickKeys<P, PS>]?: any } = {},
   // prefer values from parsed properties
   PKK extends any = { [key in keyof P]: key extends keyof PS ? PS[key] : P[key] }
 > = {
@@ -30,7 +30,7 @@ export type XarrowFeature<
   defaultProps?: Partial<P>;
 
   parseProps?: {
-    [key in keyof P]: (prop: P[key]) => PS[key]; // keys in PS must be in P
+    [key in PickKeys<P, PS>]: (prop: P[key]) => PS[key]; // keys in PS must be in P
   };
 };
 

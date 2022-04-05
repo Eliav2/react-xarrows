@@ -12,6 +12,27 @@ import PT from 'prop-types';
 import { anchorsInwardOffset } from '../utils/XarrowUtils';
 import { useGetBBox } from '../components/NormalizedGSvg';
 
+const parseEdgeShape = (svgEdge: svgEdgeType): Required<svgCustomEdgeType> => {
+  let parsedProp: Required<svgCustomEdgeType> = arrowShapes['arrow1'];
+  if (React.isValidElement(svgEdge)) {
+    parsedProp.svgElem = svgEdge as svgElemType;
+  } else if (typeof svgEdge == 'string') {
+    if (svgEdge in arrowShapes) parsedProp = arrowShapes[svgEdge];
+    else {
+      console.warn(
+        `'${svgEdge}' is not supported arrow shape. the supported arrow shapes is one of ${cArrowShapes}.
+           reverting to default shape.`
+      );
+      parsedProp = arrowShapes['arrow1'];
+    }
+  } else {
+    parsedProp = svgEdge as Required<svgCustomEdgeType>;
+    if (parsedProp?.offsetForward === undefined) parsedProp.offsetForward = 0.5;
+    if (parsedProp?.svgElem === undefined) parsedProp.svgElem = arrowShapes['arrow1'].svgElem;
+  }
+  return parsedProp;
+};
+
 export interface EdgesProps {
   showHead?: boolean;
   headColor?: string;
@@ -50,8 +71,8 @@ const Edges = createFeature<
   CoreStateChange & AnchorsStateChange,
   EdgesStateChange,
   {
-    headShape: svgCustomEdgeType;
-    tailShape: svgCustomEdgeType;
+    headShape: Required<svgCustomEdgeType>;
+    tailShape: Required<svgCustomEdgeType>;
   }
 >({
   name: 'Edges',
@@ -78,8 +99,8 @@ const Edges = createFeature<
     showTail: false,
   },
   parseProps: {
-    headShape: (headShape) => parseEdgeShape(headShape),
-    tailShape: (tailShape) => parseEdgeShape(tailShape),
+    headShape: parseEdgeShape,
+    tailShape: parseEdgeShape,
   },
   state: ({ state, props }) => {
     // console.log('Edges');
@@ -171,25 +192,4 @@ const Edges = createFeature<
     );
   },
 });
-
-const parseEdgeShape = (svgEdge: svgEdgeType): Required<svgCustomEdgeType> => {
-  let parsedProp: Required<svgCustomEdgeType> = arrowShapes['arrow1'];
-  if (React.isValidElement(svgEdge)) {
-    parsedProp.svgElem = svgEdge as svgElemType;
-  } else if (typeof svgEdge == 'string') {
-    if (svgEdge in arrowShapes) parsedProp = arrowShapes[svgEdge];
-    else {
-      console.warn(
-        `'${svgEdge}' is not supported arrow shape. the supported arrow shapes is one of ${cArrowShapes}.
-           reverting to default shape.`
-      );
-      parsedProp = arrowShapes['arrow1'];
-    }
-  } else {
-    parsedProp = svgEdge as Required<svgCustomEdgeType>;
-    if (parsedProp?.offsetForward === undefined) parsedProp.offsetForward = 0.5;
-    if (parsedProp?.svgElem === undefined) parsedProp.svgElem = arrowShapes['arrow1'].svgElem;
-  }
-  return parsedProp;
-};
 export default Edges;
