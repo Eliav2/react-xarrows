@@ -51,12 +51,13 @@ const parseAnchor = (anchor: anchorType) => {
   let autosAncs = anchorChoice2.filter((an) => an.position === 'auto');
   if (autosAncs.length > 0) {
     anchorChoice2 = anchorChoice2.filter((an) => an.position !== 'auto');
+    const flattedAutosAncs = _.flatMap(autosAncs, (anchorObj) => {
+      return (['left', 'right', 'top', 'bottom'] as anchorEdgeType[]).map((anchorName) => {
+        return { ...anchorObj, position: anchorName };
+      });
+    });
     anchorChoice2.push(
-      ...autosAncs.flatMap((anchorObj) => {
-        return (['left', 'right', 'top', 'bottom'] as anchorEdgeType[]).map((anchorName) => {
-          return { ...anchorObj, position: anchorName };
-        });
-      })
+      ...flattedAutosAncs,
     );
   }
 
