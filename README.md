@@ -703,3 +703,13 @@ details {
     margin: 1em 0;
 }
 </style>
+
+## Troubleshooting
+
+### 1. TypeError: \_c.getTotalLength is not a function
+
+If you receive this error in your tests suits while using react-testing-library, you can import mockReactXarrow from 'react-xarrow/testing' like this:
+
+`import { mockReactXarrow } from 'react-xarrow/testing'`
+
+and use `mockReactXarrow()` function in your tests setup to avoid this error.
