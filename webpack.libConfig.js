@@ -12,7 +12,6 @@ module.exports = (env, argv) => {
     externals: [
       {
         react: 'react',
-        lodash: 'lodash',
         'prop-types': 'prop-types',
       },
       // nodeExternals(),
