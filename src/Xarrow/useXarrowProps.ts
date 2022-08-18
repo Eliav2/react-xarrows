@@ -10,9 +10,9 @@ import {
   xarrowPropsType,
 } from '../types';
 import { getElementByPropGiven, getElemPos, xStr2absRelative } from './utils';
-import _ from 'lodash';
 import { arrowShapes, cAnchorEdge, cArrowShapes } from '../constants';
 import { anchorEdgeType, dimensionType } from '../privateTypes';
+import compare from 'just-compare';
 
 const parseLabels = (label: xarrowPropsType['labels']): labelsType => {
   let parsedLabel = { start: null, middle: null, end: null };
@@ -293,7 +293,7 @@ const initialValVars = {
 // const parseAllProps = () => parseGivenProps(defaultProps, initialParsedProps);
 
 function deepCompareEquals(a, b) {
-  return _.isEqual(a, b);
+  return compare(a, b);
 }
 
 function useDeepCompareMemoize(value) {
