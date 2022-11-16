@@ -1,7 +1,7 @@
 import { anchorCustomPositionType, anchorNamedType, anchorType, relativeOrAbsStr } from '../types';
 import React, { useMemo } from 'react';
 import { createFeature } from '../components/XarrowBuilder';
-import { choosenAnchorType, getShortestLine, isPercentStr, isRelativeOrAbsStr, xStr2absRelative } from '../utils';
+import { getShortestLine, isPercentStr, isRelativeOrAbsStr, xStr2absRelative } from '../utils';
 import { Vector } from '../classes/path';
 import _ from 'lodash';
 import { cAnchorEdge } from '../constants';
@@ -15,66 +15,6 @@ import {
   anchorsSidewardsDimOffset,
   anchorsSidewardsOffset,
 } from '../utils/XarrowUtils';
-
-const pAnchorString = (props, propName, componentName) => {
-  if (!/^\d+%?\d*$/.test(props[propName])) {
-    return new Error('Invalid prop `' + propName + '` supplied to' + ' `' + componentName + '`. Validation failed.');
-  }
-};
-const pAnchorPositionType = PT.oneOfType([PT.oneOf(cAnchorEdge), pAnchorString]);
-const pAnchorCustomPositionType = PT.exact({
-  position: pAnchorPositionType.isRequired,
-  offset: PT.exact({
-    x: PT.number,
-    y: PT.number,
-    inwards: PT.oneOfType([PT.string, PT.number] as any),
-    sidewards: PT.oneOfType([PT.string, PT.number] as any),
-  }),
-});
-const _pAnchorType = PT.oneOfType([pAnchorPositionType, pAnchorCustomPositionType]);
-const pAnchorType = PT.oneOfType([_pAnchorType, PT.arrayOf(_pAnchorType)]);
-
-export interface AnchorsStateChange {
-  chosenStart: choosenAnchorType;
-  chosenEnd: choosenAnchorType;
-}
-
-export interface AnchorsProps {
-  startAnchor?: anchorType;
-  endAnchor?: anchorType;
-}
-
-const Anchors = createFeature<
-  AnchorsProps,
-  CoreStateChange,
-  AnchorsStateChange,
-  { startAnchor: parsedAnchorType[]; endAnchor: parsedAnchorType[] }
->({
-  name: 'Anchors',
-  propTypes: {
-    startAnchor: pAnchorType,
-    endAnchor: pAnchorType,
-  },
-  parseProps: {
-    startAnchor: (startAnchor) => useMemo(() => parseAnchor(startAnchor), [startAnchor]),
-    endAnchor: (endAnchor) => useMemo(() => parseAnchor(endAnchor), [endAnchor]),
-  },
-  defaultProps: {
-    startAnchor: 'auto',
-    endAnchor: 'auto',
-  },
-  state: ({ state, props }) => {
-    const { startAnchor, endAnchor } = props;
-    const { startElem, endElem } = state;
-    const startPoints = calcAnchors(startAnchor, startElem.position);
-    const endPoints = calcAnchors(endAnchor, endElem.position);
-    let { chosenStart, chosenEnd } = getShortestLine(startPoints, endPoints);
-    state.posSt.start = new Vector(chosenStart);
-    state.posSt.end = new Vector(chosenEnd);
-    return { chosenStart, chosenEnd };
-  },
-  // jsx:...  is not needed because this feature does not change the jsx, it's just changing the state which the jsx uses
-});
 
 export interface parsedAnchorType extends Omit<Required<anchorCustomPositionType>, 'position'> {
   // position: anchorEdgeType;
@@ -134,7 +74,7 @@ const parseAnchor = (anchor: anchorType): parsedAnchorType[] => {
 
       anchorChoiceCustom.offset.inwards ||= 0;
       anchorChoiceCustom.offset.sidewards ||= 0;
-      anchorChoiceCustom.facingDir ||= ['auto'];
+      anchorChoiceCustom.facingDir ??= ['auto'];
       if (!Array.isArray(anchorChoiceCustom.facingDir)) anchorChoiceCustom.facingDir = [anchorChoiceCustom.facingDir];
 
       anchorChoiceCustom = anchorChoiceCustom as Required<anchorCustomPositionType>;
@@ -177,5 +117,75 @@ const calcAnchors = (anchors: parsedAnchorType[], anchorPos: containsPointType) 
   });
   return newAnchors;
 };
+
+const pAnchorString = (props, propName, componentName) => {
+  if (!/^\d+%?\d*$/.test(props[propName])) {
+    return new Error('Invalid prop `' + propName + '` supplied to' + ' `' + componentName + '`. Validation failed.');
+  }
+};
+const pAnchorPositionType = PT.oneOfType([PT.oneOf(cAnchorEdge), pAnchorString]);
+const pAnchorCustomPositionType = PT.exact({
+  position: pAnchorPositionType.isRequired,
+  offset: PT.exact({
+    x: PT.number,
+    y: PT.number,
+    inwards: PT.oneOfType([PT.string, PT.number] as any),
+    sidewards: PT.oneOfType([PT.string, PT.number] as any),
+  }),
+});
+const _pAnchorType = PT.oneOfType([pAnchorPositionType, pAnchorCustomPositionType]);
+const pAnchorType = PT.oneOfType([_pAnchorType, PT.arrayOf(_pAnchorType)]);
+
+export type choosenAnchorType = { x: number; y: number; anchor: parsedAnchorType };
+export interface AnchorsStateChange {
+  chosenStart: choosenAnchorType;
+  chosenEnd: choosenAnchorType;
+}
+
+export interface AnchorsProps {
+  startAnchor?: anchorType;
+  endAnchor?: anchorType;
+}
+
+/**
+ * This feature responsibility is to manage the anchors of the Xarrow.
+ * example for expected 'startAnchor'(same for 'endAnchor') prop:
+ *    startAnchor = "auto" - the start anchor will be chosen automatically
+ *    startAnchor = "top" - the start anchor will be at the top of the start element
+ *    startAnchor = "0%0" - exactly equivalent to "auto"
+ *    startAnchor = "20%10" - offset 20%(relative to the current side of start element)and then more 10 pixels clockwise
+ *    startAnchor = ["auto","20%10"] -  multiple anchors can be specified
+ */
+const Anchors = createFeature<
+  AnchorsProps,
+  CoreStateChange,
+  AnchorsStateChange,
+  { startAnchor: parsedAnchorType[]; endAnchor: parsedAnchorType[] }
+>({
+  name: 'Anchors',
+  propTypes: {
+    startAnchor: pAnchorType,
+    endAnchor: pAnchorType,
+  },
+  parseProps: {
+    startAnchor: (startAnchor) => useMemo(() => parseAnchor(startAnchor), [startAnchor]),
+    endAnchor: (endAnchor) => useMemo(() => parseAnchor(endAnchor), [endAnchor]),
+  },
+  defaultProps: {
+    startAnchor: 'auto',
+    endAnchor: 'auto',
+  },
+  state: ({ state, props }) => {
+    const { startAnchor, endAnchor } = props;
+    const { startElem, endElem } = state;
+    const startPoints = calcAnchors(startAnchor, startElem.position);
+    const endPoints = calcAnchors(endAnchor, endElem.position);
+    let { chosenStart, chosenEnd } = getShortestLine(startPoints, endPoints);
+    state.posSt.start = new Vector(chosenStart);
+    state.posSt.end = new Vector(chosenEnd);
+    return { chosenStart, chosenEnd };
+  },
+  // jsx:...  is not needed because this feature does not change the jsx, it's just changing the state which the jsx uses
+});
 
 export default Anchors;

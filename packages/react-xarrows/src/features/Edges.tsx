@@ -11,6 +11,7 @@ import { Spread } from '../privateTypes';
 import PT from 'prop-types';
 import { anchorsInwardOffset } from '../utils/XarrowUtils';
 import { useGetBBox } from '../components/NormalizedGSvg';
+import { createPortal } from 'react-dom';
 
 const parseEdgeShape = (svgEdge: svgEdgeType): Required<svgCustomEdgeType> => {
   let parsedProp: Required<svgCustomEdgeType> = arrowShapes['arrow1'];
@@ -67,7 +68,8 @@ const pSvgEdgeType = PT.oneOfType([
 ]);
 
 const Edges = createFeature<
-  Spread<[EdgesProps, AnchorsProps, CoreProps, PathProps]>,
+  EdgesProps & CoreProps & AnchorsProps & PathProps,
+  // Spread<[EdgesProps, AnchorsProps, CoreProps]>,
   CoreStateChange & AnchorsStateChange,
   EdgesStateChange,
   {
@@ -107,16 +109,29 @@ const Edges = createFeature<
 
     let { posSt, chosenStart, chosenEnd, getPath } = state;
 
+    let startDir, endDir;
+    if (props?.path === 'straight') {
+      startDir = new Dir(props.path === 'straight' ? { x: 0, y: 0 } : anchorsInwardOffset[chosenStart.anchor.position]);
+      endDir = new Dir(props.path === 'straight' ? { x: 0, y: 0 } : anchorsInwardOffset[chosenEnd.anchor.position]);
+    } else {
+      startDir = new Dir(anchorsInwardOffset[chosenStart.anchor.position]);
+      endDir = new Dir(anchorsInwardOffset[chosenEnd.anchor.position]);
+    }
     // for 'middle' anchors
-    let startDir = new Dir(anchorsInwardOffset[chosenStart.anchor.position]);
-    let endDir = new Dir(anchorsInwardOffset[chosenEnd.anchor.position]);
+    // let startDir = new Dir(anchorsInwardOffset[chosenStart.anchor.position]);
+    // let endDir = new Dir(anchorsInwardOffset[chosenEnd.anchor.position]);
+    // let startDir = new Dir(
+    //   props.path === 'straight' ? { x: 0, y: 0 } : anchorsInwardOffset[chosenStart.anchor.position]
+    // );
+    // let endDir = new Dir(props.path === 'straight' ? { x: 0, y: 0 } : anchorsInwardOffset[chosenEnd.anchor.position]);
+
     const ll = new Line(posSt.start, posSt.end);
-    if (startDir.size() === 0)
-      startDir = new Dir(
-        ll.diff.abs().x > ll.diff.abs().y ? new Vector(ll.diff.x, 0) : new Vector(0, ll.diff.y)
-      ).reverse();
-    if (endDir.size() === 0)
-      endDir = new Dir(ll.diff.abs().x > ll.diff.abs().y ? new Vector(ll.diff.x, 0) : new Vector(0, ll.diff.y));
+    // if (startDir.size() === 0)
+    //   startDir = new Dir(
+    //     ll.diff.abs().x > ll.diff.abs().y ? new Vector(ll.diff.x, 0) : new Vector(0, ll.diff.y)
+    //   ).reverse();
+    // if (endDir.size() === 0)
+    //   endDir = new Dir(ll.diff.abs().x > ll.diff.abs().y ? new Vector(ll.diff.x, 0) : new Vector(0, ll.diff.y));
     posSt.originalStart = new Vector(posSt.start);
     posSt.originalEnd = new Vector(posSt.end);
 
@@ -136,7 +151,12 @@ const Edges = createFeature<
     return { headOffset, tailOffset, headEdgeRef, tailEdgeRef };
   },
 
-  jsx: ({ state, props, nextJsx }) => {
+  // this feature appends 2 arrow heads to the start and end of the line
+  jsx: ({ state, props, selfTree }) => {
+    // const svgCanvas = selfTree[0].props.children.ref?.current;
+    // or (equivalent)
+    const svgCanvas = state.svgCanvasRef.current;
+
     const { posSt } = state;
     const {
       showHead = true,
@@ -154,41 +174,44 @@ const Edges = createFeature<
       arrowTailProps = {},
     } = props;
     return (
-      <>
-        {showHead && (
-          <XEdge
-            containerRef={state.headEdgeRef}
-            show={showHead}
-            state={state}
-            pos={posSt.end.sub(state.headOffset)}
-            size={headSize}
-            svgElem={headShape}
-            color={headColor}
-            props={arrowHeadProps}
-            rotate={headRotate}
-            posSt={posSt}
-            vName={'end'}
-            deps={[headSize]}
-          />
-        )}
-        {showTail && (
-          <XEdge
-            containerRef={state.tailEdgeRef}
-            show={showTail}
-            state={state}
-            pos={posSt.start.add(state.tailOffset)}
-            size={tailSize}
-            svgElem={tailShape}
-            color={tailColor}
-            props={arrowTailProps}
-            rotate={tailRotate}
-            posSt={posSt}
-            vName={'start'}
-            deps={[tailSize]}
-          />
-        )}
-        {nextJsx()}
-      </>
+      svgCanvas &&
+      createPortal(
+        <>
+          {showHead && (
+            <XEdge
+              containerRef={state.headEdgeRef}
+              show={showHead}
+              state={state}
+              pos={posSt.end.sub(state.headOffset)}
+              size={headSize}
+              svgElem={headShape}
+              color={headColor}
+              props={arrowHeadProps}
+              rotate={headRotate}
+              posSt={posSt}
+              vName={'end'}
+              deps={[headSize]}
+            />
+          )}
+          {showTail && (
+            <XEdge
+              containerRef={state.tailEdgeRef}
+              show={showTail}
+              state={state}
+              pos={posSt.start.add(state.tailOffset)}
+              size={tailSize}
+              svgElem={tailShape}
+              color={tailColor}
+              props={arrowTailProps}
+              rotate={tailRotate}
+              posSt={posSt}
+              vName={'start'}
+              deps={[tailSize]}
+            />
+          )}
+        </>,
+        svgCanvas
+      )
     );
   },
 });

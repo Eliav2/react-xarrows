@@ -1,5 +1,5 @@
 import { Meta, Story } from "@storybook/react";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { DraggableBox } from "../components/DraggableBox";
 // import XarrowMainNew, { XarrowMainNewProps } from 'react-xarrows/src/components/XarrowMainNew';
 // import XarrowBuilder from 'react-xarrows/src/components/XarrowBuilder';
@@ -23,6 +23,8 @@ export default {
 const XarrowMainTemplate = ({ ...args }) => {
   const [, render] = useState({});
   const reRender = () => render({});
+
+  const divRef = useRef();
   return (
     <div>
       <Xwrapper>
@@ -45,7 +47,13 @@ const XarrowMainTemplate = ({ ...args }) => {
             dragGrid={[10, 10]}
             initialOffset={{ x: 500, y: 200 }}
           />
-          <XarrowMainNew start={"box1"} end={"box2"} {...args} />
+          <XarrowMainNew
+            start={"box1"}
+            end={"box2"}
+            {...args}
+            divContainerProps={{ ref: divRef, style: {} }}
+            headShape={"circle"}
+          />
         </div>
       </Xwrapper>
     </div>
@@ -116,11 +124,11 @@ XarrowVersionsComparisons.args = {
   // tailSize: 40,
   showHead: true,
   // showTail: true,
-  // path: "smooth",
+  path: "smooth",
   delayRenders: 4,
   startAnchor: "auto",
   endAnchor: ["left", "right"],
-  // curveness: "0%0",
+  curveness: "0%0",
   // _debug: false,
   // color: "cornflowerBlue",
   // headColor: "cornflowerBlue",

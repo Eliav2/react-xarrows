@@ -1,10 +1,20 @@
-import React, { SVGProps, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useElement } from '../hooks/useElement';
-import { Contains, PlainObject, XElementType } from '../privateTypes';
+import { Contains, XElementType } from '../privateTypes';
 import { Vector } from '../classes/path';
 import { refType } from '../types';
-import { createFeature, XarrowFeature } from '../components/XarrowBuilder';
+import { createFeature } from '../components/XarrowBuilder';
 import PT from 'prop-types';
+
+const pRefType = PT.oneOfType([PT.string, PT.exact({ current: PT.any })]);
+
+export type posStType = Contains<{ start: Vector; end: Vector }>;
+const getPosition = (startElem: XElementType, endElem: XElementType, rootElem: XElementType) => {
+  const { x: x1, y: y1 } = startElem.position;
+  const { x: x2, y: y2 } = endElem.position;
+  const posSt = { start: new Vector(x1, y1), end: new Vector(x2, y2) };
+  return posSt;
+};
 
 export interface CoreStateChange {
   // the source element
@@ -15,6 +25,7 @@ export interface CoreStateChange {
   rootElem: XElementType;
   // reference to the Xarrow div wrapper
   rootDivRef: React.MutableRefObject<HTMLDivElement | null>;
+  svgCanvasRef: React.MutableRefObject<SVGSVGElement | null>;
   // holds state of all positions of the Xarrow. being offset relative to the root element on jsx stage
   posSt: posStType;
 
@@ -27,15 +38,13 @@ export interface CoreProps {
   strokeWidth?: number;
   color?: string;
   lineColor?: string;
-  zIndex?;
+  zIndex?: number;
 
-  SVGcanvasProps?: React.SVGProps<SVGSVGElement>;
-  SVGcanvasStyle?: React.CSSProperties;
+  svgCanvasProps?: React.SVGProps<SVGSVGElement>;
+  svgCanvasStyle?: React.CSSProperties;
   divContainerProps?: React.HTMLProps<HTMLDivElement>;
   arrowBodyProps?: React.SVGProps<SVGPathElement>;
 }
-
-const pRefType = PT.oneOfType([PT.string, PT.exact({ current: PT.any })]);
 
 const Core = createFeature<CoreProps, {}, CoreStateChange>({
   name: 'Core',
@@ -46,15 +55,15 @@ const Core = createFeature<CoreProps, {}, CoreStateChange>({
     color: PT.string,
     zIndex: PT.number,
 
-    SVGcanvasStyle: PT.object,
+    svgCanvasStyle: PT.object,
     divContainerProps: PT.object,
-    SVGcanvasProps: PT.object,
+    svgCanvasProps: PT.object,
     arrowBodyProps: PT.object,
   },
   defaultProps: {
     divContainerProps: {},
-    SVGcanvasProps: {},
-    SVGcanvasStyle: {},
+    svgCanvasProps: {},
+    svgCanvasStyle: {},
     arrowBodyProps: {},
     strokeWidth: 4,
     color: 'CornflowerBlue',
@@ -63,6 +72,7 @@ const Core = createFeature<CoreProps, {}, CoreStateChange>({
   },
   state: ({ state, props }) => {
     const rootDivRef = useRef<HTMLDivElement>(null);
+    const svgCanvasRef = useRef<SVGSVGElement>(null);
 
     const startElem = useElement(props.start);
     const endElem = useElement(props.end);
@@ -88,7 +98,7 @@ const Core = createFeature<CoreProps, {}, CoreStateChange>({
 
     const posSt = getPosition(startElem, endElem, rootElem);
     const getPath = (pos = posSt) => `M ${pos.start.x} ${pos.start.y} L ${pos.end.x} ${pos.end.y}`;
-    return { startElem, endElem, rootElem, rootDivRef, posSt, getPath };
+    return { startElem, endElem, rootElem, rootDivRef, posSt, getPath, svgCanvasRef };
   },
   jsx: ({ state, props, nextJsx }) => {
     const { posSt, rootElem } = state;
@@ -100,32 +110,31 @@ const Core = createFeature<CoreProps, {}, CoreStateChange>({
       posSt[vectKey] = posSt[vectKey].sub(rootElem.position);
     }
 
+    // in case user passed overriding props such ref or style strip them and handel them separately
+    const { style: divStyle, ref: divRef = { current: null }, ...divContainerProps } = props.divContainerProps;
+    (divRef as React.MutableRefObject<HTMLDivElement>).current = state.rootDivRef.current;
+    const { style: svgStyle, ref: svgRef = { current: null }, ...svgCanvasProps } = props.svgCanvasProps;
+    (svgRef as React.MutableRefObject<SVGSVGElement>).current = state.svgCanvasRef.current;
+
     return (
       <div
         ref={state.rootDivRef}
-        style={{ position: 'absolute', pointerEvents: 'none', zIndex }}
-        {...props.divContainerProps}>
+        style={{ position: 'absolute', pointerEvents: 'none', zIndex, ...divStyle }}
+        {...divContainerProps}>
         <svg
           style={{
             position: 'absolute',
             fill: 'transparent',
             overflow: 'visible',
-            ...props.SVGcanvasStyle,
-          }}>
+            ...props.svgCanvasStyle,
+          }}
+          ref={state.svgCanvasRef}
+          {...props.svgCanvasProps}>
           <path d={state.getPath(posSt)} strokeWidth={strokeWidth} stroke={lineColor} {...props.arrowBodyProps} />
-          {nextJsx()}
         </svg>
       </div>
     );
   },
 });
-
-export type posStType = Contains<{ start: Vector; end: Vector }>;
-const getPosition = (startElem: XElementType, endElem: XElementType, rootElem: XElementType) => {
-  const { x: x1, y: y1 } = startElem.position;
-  const { x: x2, y: y2 } = endElem.position;
-  const posSt = { start: new Vector(x1, y1), end: new Vector(x2, y2) };
-  return posSt;
-};
 
 export default Core;

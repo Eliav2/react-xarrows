@@ -121,6 +121,8 @@ const PathPro: XarrowFeature<
     //     right: a.right - _xM,
     //     bottom: a.bottom - _yM,
     //   }));
+    // console.log('asd', svv.faceDirs, evv.faceDirs);
+    // console.log('asd', svv._chosenFaceDir, evv._chosenFaceDir);
     let smartGrid = calcFromStartToEnd(svv, evv, [], props.pathMargin, { zGridBreak: props.gridBreak }, allowedDirs);
 
     let points = smartGrid.getPoints();
@@ -131,11 +133,10 @@ const PathPro: XarrowFeature<
 
     return { getPath: () => arrowPath };
   },
-  jsx: ({ state, props, nextJsx }) => {
+  jsx: ({ state, props }) => {
     const { cp1, cp2 } = state.posSt;
     return (
       <>
-        {nextJsx()}
         {props._debug && (
           <>
             {cp1 && <circle cx={cp1.x} cy={cp1.y} r="3" stroke="black" fill="red" />}

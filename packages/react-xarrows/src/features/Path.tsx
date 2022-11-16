@@ -108,11 +108,10 @@ const Path: XarrowFeature<PathProps, CoreStateChange & AnchorsStateChange & Edge
     }
     return { getPath };
   },
-  jsx: ({ state, props, nextJsx }) => {
+  jsx: ({ state, props }) => {
     const { cp1, cp2 } = state.posSt;
     return (
       <>
-        {nextJsx()}
         {props._debug && (
           <>
             {cp1 && <circle cx={cp1.x} cy={cp1.y} r="3" stroke="black" fill="red" />}

@@ -22,7 +22,11 @@ export type XarrowFeature<
   state?: (params: { state: S; props: PKK }) => K;
 
   // receives the previous jsx,state,and props, this should return jsx that will be rendered to screen
-  jsx?: (params: { state: Merge<S, K>; props: PKK; nextJsx? }) => JSX.Element; //ok
+  jsx?: (params: { state: Merge<S, K>; props: PKK; nextJsx?; selfTree: JSX.Element[] }) => JSX.Element; //ok
+
+  // // will introduce options that can be modified across features, before state and jsx are calculated
+  // // similar to props in sense that this is interface to customization, but for other feature developers and not the end user
+  // options?: (params: { prevOptions: any; props: PKK }) => any;
 
   // propTypes that would be validated against the props passed by the user
   propTypes?: WeakValidationMap<P>;
@@ -35,17 +39,19 @@ export type XarrowFeature<
 };
 
 export const createFeature = <
-  // the given user properties
+  // the given user properties with preprocessed properties (parsed by the 'parseProps' option)
   P extends any,
   //  the state that was passed from previous feature
   S extends any = PlainObject,
   // the change of the state caused by the current feature
-  K extends PlainObject | void = void,
+  K extends PlainObject | void = PlainObject,
   // parsed properties
-  PS extends { [key in keyof P]?: any } = {}
+  PS extends { [key in PickKeys<P, PS>]?: any } = {},
+  // prefer values from parsed properties
+  PKK extends any = { [key in keyof P]: key extends keyof PS ? PS[key] : P[key] }
 >(
-  features: XarrowFeature<P, S, K, PS>
-): XarrowFeature<P, S, K, PS> => {
+  features: XarrowFeature<P, S, K, PS, PKK>
+): XarrowFeature<P, S, K, PS, PKK> => {
   return features;
 };
 
@@ -69,12 +75,13 @@ const XarrowBuilder = <T extends any[]>(features: T): React.FC<getProps<T>> => {
 
   const XarrowDish: React.FC<getProps<T>> = (props) => {
     // console.log('XarrowBuilder XarrowDish render');
+    const parsedJSX: React.ReactElement[] = [];
+
     let Jsx: JSX.Element;
 
     const parsedProps = { ...(props as {}) };
     for (let i = 0; i < features.length; i++) {
-      const feature = features[i];
-      const featureProps = feature.parseProps;
+      const featureProps = features[i].parseProps;
       if (featureProps) {
         for (const key in featureProps) {
           const func = featureProps[key];
@@ -89,22 +96,38 @@ const XarrowBuilder = <T extends any[]>(features: T): React.FC<getProps<T>> => {
       // mergeLD(state, stateFuncs[i]({ state, props: parsedProps }));
     }
 
-    // get next jsx for each feature
-    let next;
-    let nextFunc = (i) => {
-      next = jsxFuncs[i] || (() => null);
-      return next({
+    for (let i = 0; i < jsxFuncs.length; i++) {
+      let Jsx = jsxFuncs[i]({
         state: state,
         props: parsedProps,
-        nextJsx: () => nextFunc(i + 1),
+        // nextJsx: () => nextFunc(1),
+        selfTree: parsedJSX,
       });
-    };
-    Jsx = jsxFuncs[0]({
-      state: state,
-      props: parsedProps,
-      nextJsx: () => nextFunc(1),
-    });
-    return Jsx;
+      parsedJSX.push(Jsx);
+
+      // Object.assign(state, jsxFuncs[i]({ state, props: parsedProps }));
+      // mergeLD(state, stateFuncs[i]({ state, props: parsedProps }));
+    }
+
+    // // get next jsx for each feature
+    // let next;
+    // let nextFunc = (i) => {
+    //   next = jsxFuncs[i] || (() => null);
+    //   return next({
+    //     state: state,
+    //     props: parsedProps,
+    //     nextJsx: () => nextFunc(i + 1),
+    //   });
+    // };
+    // Jsx = jsxFuncs[0]({
+    //   state: state,
+    //   props: parsedProps,
+    //   nextJsx: () => nextFunc(1),
+    //   children: parsedJSX,
+    // });
+    // console.log('parsedJSX', parsedJSX);
+    // parsedJSX.push(Jsx)
+    return React.Children.toArray(parsedJSX) as any;
   };
   const propTypes = {};
   for (let i = 0; i < features.length; i++) Object.assign(propTypes, features[i].propTypes);

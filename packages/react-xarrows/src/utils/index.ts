@@ -24,7 +24,11 @@ export const factorDpathStr = (d: string, factor) => {
   return l.join('');
 };
 
-// return relative,abs
+/** return relative,abs
+ * 100 => { abs: 100, relative: 0 };
+ * 100% => { abs: 0, relative: 1 };
+ * 100%100 => { abs: 100, relative: 1 };
+ * */
 export const xStr2absRelative = (str: relativeOrAbsStr): { abs: number; relative: number } => {
   if (typeof str === 'number') return { abs: str, relative: 0 };
   if (typeof str !== 'string') return { abs: 0, relative: 0.5 };
