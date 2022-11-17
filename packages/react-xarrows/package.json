@@ -7,9 +7,9 @@
   "module": "dist/react-xarrows.esm.js",
   "types": "dist/types/index.d.ts",
   "scripts": {
-    "build": "rollup -c",
-    "watch": "rollup -c -w",
-    "prepublishOnly": "yarn run build"
+    "build": "tsc -p tsconfig.check.json && vite build && tsc",
+    "watch": "concurrently \"tsc -w\" \"vite build --config ./vite.config.watch.ts\"",
+    "prepublishOnly": "pnpm run build"
   },
   "homepage": "https://eliav2.github.io/react-xarrows/",
   "repository": {
@@ -19,73 +19,27 @@
   "bugs": "https://github.com/Eliav2/react-xarrows/issues",
   "dependencies": {
     "@types/prop-types": "^15.7.3",
-    "lodash": "^4.17.21",
     "prop-types": "^15.7.2",
-    "react-dom": "17"
+    "lodash": "^4.17.21"
   },
   "funding": {
     "type": "individual",
     "url": "https://www.paypal.com/donate?hosted_button_id=CRQ343F9VTRS8"
   },
   "peerDependencies": {
-    "react": ">=16.8.0"
+    "react": "^16.8.0 || ^17.0.0 || ^18.0.0 || >=18.0.0",
+    "react-dom": "^16.8.0 || ^17.0.0 || ^18.0.0 || >=18.0.0"
   },
   "devDependencies": {
-    "@babel/cli": "^7.15.7",
-    "@babel/core": "^7.15.5",
-    "@babel/preset-env": "^7.14.7",
-    "@babel/preset-flow": "^7.14.5",
-    "@babel/preset-react": "^7.14.5",
-    "@babel/preset-typescript": "^7.14.5",
-    "@rollup/plugin-typescript": "^8.3.0",
-    "@types/jest": "^26.0.23",
-    "@types/lodash": "^4.14.168",
-    "@types/node": "^15.0.1",
-    "@types/react": "^16.9.19",
-    "@typescript-eslint/eslint-plugin": "^4.27.0",
-    "@typescript-eslint/parser": "^4.27.0",
-    "@welldone-software/why-did-you-render": "^6.2.1",
-    "babel-eslint": "^10.1.0",
-    "babel-jest": "^27.0.5",
-    "babel-loader": "^8.2.2",
-    "css-loader": "^5.2.6",
-    "eslint": "^7.29.0",
-    "eslint-import-resolver-typescript": "^2.4.0",
-    "eslint-plugin-import": "^2.22.1",
-    "file-loader": "^6.2.0",
-    "html-webpack-plugin": "^5.3.2",
-    "immer": "^9.0.6",
-    "jest": "^27.0.5",
-    "react": "^17.0.2",
-    "rollup": "^2.58.3",
-    "rollup-plugin-delete": "^2.0.0",
-    "rollup-plugin-node-resolve": "^5.2.0",
-    "style-loader": "^3.0.0",
-    "ts-loader": "^9.2.3",
-    "ts-node": "^9.1.1",
-    "webpack": "^5.44.0",
-    "webpack-cli": "^4.7.2",
-    "webpack-dev-server": "^3.11.2",
-    "webpack-node-externals": "^3.0.0"
+    "vite": "^3.2.3",
+    "concurrently": "^7.2.1"
   },
-  "browserslist": [
-    ">0.2%",
-    "not dead",
-    "not ie <= 11",
-    "not op_mini all"
-  ],
   "license": "MIT",
   "files": [
     "dist",
-    "package.old.json",
+    "package.json",
     "README.md"
   ],
-  "prettier": {
-    "printWidth": 120,
-    "jsxBracketSameLine": true,
-    "singleQuote": true,
-    "tabWidth": 2
-  },
   "keywords": [
     "react",
     "reactjs",

@@ -12,5 +12,11 @@
   "devDependencies": {
     "typescript": "^4.8.0",
     "prettier": "^2.7.0"
+  },
+  "prettier": {
+    "printWidth": 120,
+    "jsxBracketSameLine": true,
+    "singleQuote": true,
+    "tabWidth": 2
   }
 }
