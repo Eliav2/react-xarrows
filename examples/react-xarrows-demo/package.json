@@ -20,6 +20,7 @@
     "react-scripts": "4.0.3",
     "react-spring": "^9.3.0",
     "react-xarrow-v2": "npm:react-xarrows@2",
+    "react-xarrows": "*",
     "web-vitals": "^1.0.1"
   },
   "scripts": {

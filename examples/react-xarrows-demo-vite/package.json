@@ -1,0 +1,27 @@
+{
+  "name": "react-xarrows-demo-vite",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-collapsible": "^2.8.4",
+    "react-dom": "^18.2.0",
+    "react-draggable": "^4.4.4",
+    "react-numeric-input": "2.2",
+    "react-router-dom": "5",
+    "react-xarrows": "*"
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.24",
+    "@types/react-dom": "^18.0.8",
+    "@vitejs/plugin-react": "^2.2.0",
+    "typescript": "^4.6.4",
+    "vite": "^3.2.3"
+  }
+}

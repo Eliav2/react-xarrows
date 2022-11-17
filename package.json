@@ -9,7 +9,8 @@
     "start": "yarn workspace react-xarrows-demo start",
     "storybook": "yarn workspace react-xarrows-demo storybook"
   },
-  "dependencies": {
-    "typescript": "^4.6.3"
+  "devDependencies": {
+    "typescript": "^4.8.0",
+    "prettier": "^2.7.0"
   }
 }
