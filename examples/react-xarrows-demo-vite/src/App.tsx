@@ -1,34 +1,43 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import './App.css'
+import './App.css';
+import { Xline, Xarrow } from 'react-xarrows/src/redesign/mock';
+import React from 'react';
 
-function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </div>
-  )
+interface BoxProps extends React.HTMLProps<HTMLDivElement> {
+  children?: React.ReactNode;
 }
 
-export default App
+const Box = ({ children, style, ...props }: BoxProps) => {
+  return (
+    <div
+      style={{
+        border: '1px solid',
+        borderRadius: 8,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: 80,
+        ...style,
+      }}
+      {...props}>
+      {children}
+    </div>
+  );
+};
+
+function App() {
+  return (
+    <div className="App">
+      <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+        <Box id={'box1'}>box1</Box>
+        <Box id={'box2'}>box2</Box>
+      </div>
+      <Xarrow start={'box1'} end={'box2'}>
+        {/*<Xline />*/}
+        {/*<path d="M10 10" />*/}
+        <path d="M 10 10 H 90 V 90 H 10 Z" fill="transparent" stroke="black" />
+      </Xarrow>
+    </div>
+  );
+}
+
+export default App;
