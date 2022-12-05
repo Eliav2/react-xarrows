@@ -19,7 +19,12 @@ Draw arrows between components in React!
 liked my work? star [this repo](https://github.com/Eliav2/react-xarrows).
 
 reallyy liked my work? [buy me a coffee](https://www.paypal.com/donate?hosted_button_id=CRQ343F9VTRS8)!  
-this project needs funding to stay open source and free :blush:
+
+## Help wanted
+
+This project needs another maintainer, especially for known bugs(and future ones) of react-xarrows v2. 
+I'm working on V3 from time to time, but don't have the time to respond and fix all active issues. 
+help would be welcomed(contact me on louski.a@gmail.com for more details)  
 
 ## installation
 
