@@ -173,8 +173,9 @@ const SimpleTemplate = () => {
 
 </details>
 
-## react-xarrows V3
-react-xarrows v3 on it's way, see [discucssion](https://github.com/Eliav2/react-xarrows/discussions/96)
+[//]: # (## react-xarrows V3)
+
+[//]: # (react-xarrows v3 on it's way, see [discucssion]&#40;https://github.com/Eliav2/react-xarrows/discussions/96&#41;)
 
 ## Usage
 
