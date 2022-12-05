@@ -32,10 +32,13 @@ function App() {
         <Box id={'box2'}>box2</Box>
       </div>
       <Xarrow start={'box1'} end={'box2'}>
-        {/*<Xline />*/}
+        <Xline />
+        {/*<Xline x={'0%'} y={'0%'}/>*/}
         {/*<path d="M10 10" />*/}
-        <path d="M 10 10 H 90 V 90 H 10 Z" fill="transparent" stroke="black" />
+        {/*<path d="M 10 10 H 90 V 90 H 10 Z" fill="transparent" stroke="black" />*/}
       </Xarrow>
+
+
     </div>
   );
 }
