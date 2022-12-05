@@ -22,6 +22,7 @@ module.exports = (env, argv) => {
     entry: path.resolve(__dirname, './src/index.tsx'),
 
     output: {
+      hashFunction: "xxhash64",
       filename: 'index.js',
       path: path.resolve(__dirname, `lib`),
       clean: true,

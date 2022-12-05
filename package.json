@@ -11,12 +11,12 @@
     "build:prod": "webpack --mode production --config-name lib",
     "build:dev": "webpack --mode development --config-name lib",
     "build:ts": "tsc",
-    "start": "yarn --cwd .\\examples\\ start",
+    "start": "pnpm --cwd .\\examples\\ start",
     "watch": "npm run watch:ts",
     "watch:webpack": "webpack --watch --progress --mode development --config-name lib",
     "watch:ts": "npm run clear:lib && tsc -w",
     "clear:lib": "del /q lib && for /d %x in (lib\\*) do @rd /s /q \"%x\"",
-    "prepublishOnly": "yarn run build"
+    "prepublishOnly": "pnpm run build"
   },
   "homepage": "https://eliav2.github.io/react-xarrows/",
   "repository": {
