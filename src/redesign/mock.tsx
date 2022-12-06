@@ -8,7 +8,7 @@ import { pick } from "shared/utils";
 type Point = Contains<{ x: number; y: number }>;
 type XElemRefType = React.MutableRefObject<any> | string | Point;
 
-interface XarrowProps {
+export interface XArrowProps {
   children: React.ReactNode;
 
   start: XElemRefType;
@@ -18,7 +18,7 @@ interface XarrowProps {
   svgCanvasProps?: React.SVGProps<SVGSVGElement>;
 }
 
-export const XArrow = (props: XarrowProps) => {
+export const XArrow = (props: XArrowProps) => {
   const render = useRerender();
   const rootDivRef = useRef<HTMLDivElement>(null);
   const svgCanvasRef = useRef<SVGSVGElement>(null);
@@ -46,8 +46,23 @@ export const XArrow = (props: XarrowProps) => {
 
   const xWrapperContextVal = useXWrapperContext();
   useLayoutEffect(() => {
-    xWrapperContextVal.render = render;
+    xWrapperContextVal.update = render;
   }, [rootDivRef.current]);
+
+  useEffect(() => {
+    // set all props on first render
+    const monitorDOMchanges = () => {
+      window.addEventListener("resize", render);
+      return () => {
+        window.removeEventListener("resize", render);
+      };
+    };
+
+    const cleanMonitorDOMchanges = monitorDOMchanges();
+    return () => {
+      cleanMonitorDOMchanges();
+    };
+  }, []);
 
   return (
     <div
@@ -84,30 +99,37 @@ interface XWrapperProps {
 }
 
 const XWrapperContextDefault = {
-  render: () => {},
-  set: false,
+  update: () => {},
 };
 export const XWrapper = (props: XWrapperProps) => {
   // value of the context will be mutated after mount of first XArrow
   return <XWrapperContext.Provider value={XWrapperContextDefault}>{props.children}</XWrapperContext.Provider>;
 };
-const XWrapperContext = React.createContext<{ render: () => void; set: boolean }>(XWrapperContextDefault);
+const XWrapperContext = React.createContext(XWrapperContextDefault);
 const useXWrapperContext = () => React.useContext(XWrapperContext);
-export const useXArrow = (): { render: () => void } => useXWrapperContext();
+export const useUpdateXArrow = () => useXWrapperContext();
 
-interface XArrowElementProps {}
+// interface XArrowElementProps {}
 
-export const XArrowElement = (props: XArrowElementProps) => {
+// export const XArrowElement = (props: XArrowElementProps) => {
+//   const val = useXArrowContext();
+//   console.log(val);
+//   return (
+//     <g style={{ transform: "translate(0)" }}>
+//       <path d="M 10 10 H 90 V 90 H 10 Z" fill="transparent" stroke="black" />
+//     </g>
+//   );
+// };
+
+interface ProvideXContextProps {
+  children: (context: ReturnType<typeof useXArrowContext>) => React.ReactNode;
+}
+export const ProvideXContext = (props: ProvideXContextProps) => {
   const val = useXArrowContext();
-  console.log(val);
-  return (
-    <g style={{ transform: "translate(0)" }}>
-      <path d="M 10 10 H 90 V 90 H 10 Z" fill="transparent" stroke="black" />
-    </g>
-  );
+  return <>{props.children(val)}</>;
 };
 
-interface XLineProps {}
+interface XLineProps extends React.SVGProps<SVGLineElement> {}
 
 export const XLine = (props: XLineProps) => {
   const val = useXArrowContext();
@@ -119,6 +141,7 @@ export const XLine = (props: XLineProps) => {
       y1={val.startPoint.y}
       x2={val.endPoint.x}
       y2={val.endPoint.y}
+      {...props}
       fill="transparent"
       stroke="white"
       strokeWidth={3}
