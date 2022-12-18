@@ -1,10 +1,11 @@
 import "./App.css";
-import { XLine, XArrow, ProvideXContext, XArrowProps } from "react-xarrows/src/redesign/mock";
+import { XLine, XArrow, ProvideXContext, XArrowProps, useXArrowContext } from "react-xarrows/src/redesign/XArrow";
 import { useUpdateXWrapper, XWrapper } from "react-xarrows/src/redesign/XWrapper";
 import React, { useRef } from "react";
 import Draggable from "react-draggable";
 import useRerender from "shared/hooks/useRerender";
 import { range } from "shared/utils";
+import { Anchor, useAutoSelectAnchor } from "../../../src/redesign/useAutoSelectAnchor";
 
 interface BoxProps extends React.HTMLProps<HTMLDivElement> {
   children?: React.ReactNode;
@@ -86,27 +87,54 @@ const SnakeXArrow = (props: SnakeXArrowProps) => {
   );
 };
 
+const LeftToRightXLine = () => {
+  const context = useXArrowContext();
+  const { startElem, endElem } = context;
+  if (!startElem || !endElem) return null;
+  return <XLine x1={startElem.right} y1={startElem.top + startElem.height / 2} x2={endElem.left} y2={endElem.top + endElem.height / 2} />;
+};
+
+const AutoAnchorXLine = (props: { startAnchor?: Anchor; endAnchor?: Anchor }) => {
+  const autoSelectAnchor = useAutoSelectAnchor(props);
+  if (!autoSelectAnchor) return null;
+  const pos = autoSelectAnchor();
+  return <XLine {...pos} />;
+};
+
 const MyArrows = () => {
   console.log("MyArrows render");
 
   return (
     <>
+      {/* simple arrow left to right */}
       <XArrow start={"box1"} end={"box2"}>
-        <XLine />
-      </XArrow>
-      <XArrow start={"box1"} end={"box2"}>
-        <ProvideXContext>
-          {(context) => {
-            const {
-              startPoint: { x: x1, y: y1 },
-              endPoint: { x: x2, y: y2 },
-            } = context;
-            return <XLine x1={x1 - 30} y1={y1} x2={x2 - 30} y2={y2} />;
-          }}
-        </ProvideXContext>
+        <AutoAnchorXLine startAnchor={["left", "right", { x: "25%", y: "50%" }]} />
       </XArrow>
 
-      <SnakeXArrow start={"box1"} end={"box2"} />
+      {/*/!* simple arrow left to right *!/*/}
+      {/*<XArrow start={"box1"} end={"box2"}>*/}
+      {/*  <LeftToRightXLine />*/}
+      {/*</XArrow>*/}
+
+      {/*/!* simple arrow *!/*/}
+      {/*<XArrow start={"box1"} end={"box2"}>*/}
+      {/*  <XLine />*/}
+      {/*</XArrow>*/}
+      {/*/!* simple arrow offset in y-axis *!/*/}
+      {/*<XArrow start={"box1"} end={"box2"}>*/}
+      {/*  <ProvideXContext>*/}
+      {/*    {(context) => {*/}
+      {/*      const {*/}
+      {/*        startPoint: { x: x1, y: y1 },*/}
+      {/*        endPoint: { x: x2, y: y2 },*/}
+      {/*      } = context;*/}
+      {/*      return <XLine x1={x1 - 30} y1={y1} x2={x2 - 30} y2={y2} />;*/}
+      {/*    }}*/}
+      {/*  </ProvideXContext>*/}
+      {/*</XArrow>*/}
+
+      {/*/!* snake arrow  *!/*/}
+      {/*<SnakeXArrow start={"box1"} end={"box2"} />*/}
     </>
   );
 };

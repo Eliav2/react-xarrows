@@ -20,39 +20,6 @@ export interface XArrowProps {
 export const XArrow = (props: XArrowProps) => {
   const render = useRerender();
   useXWrapperRegister(render);
-  const rootDivRef = useRef<HTMLDivElement>(null);
-  const svgCanvasRef = useRef<SVGSVGElement>(null);
-
-  const rootElem = usePosition(rootDivRef.current);
-  const startElem = usePosition(getElementByPropGiven(props.start));
-  const endElem = usePosition(getElementByPropGiven(props.end));
-
-  // let startPoint = { x: (startElem?.left ?? 0) - (rootElem?.left ?? 0) };
-  let startPoint = { x: 0, y: 0 };
-  let endPoint = { x: 0, y: 0 };
-  if (rootElem) {
-    // default connection is from the middle of the elements
-    if (startElem)
-      startPoint = {
-        x: startElem.left - rootElem.left + startElem.width / 2,
-        y: startElem.top - rootElem.top + startElem.height / 2,
-      };
-    if (endElem)
-      endPoint = {
-        x: endElem.left - rootElem.left + endElem.width / 2,
-        y: endElem.top - rootElem.top + endElem.height / 2,
-      };
-  }
-  const contextValue = { startElem, endElem, startPoint, endPoint };
-
-  // const xWrapperContextVal = useXWrapperContext();
-  // const XArrowId = useRef(0);
-  // useLayoutEffect(() => {
-  //   XArrowId.current = xWrapperContextVal.xWrapperXArrowsManager.registerXArrow(render);
-  //   return () => {
-  //     xWrapperContextVal.xWrapperXArrowsManager.unregisterXArrow(XArrowId.current);
-  //   };
-  // }, []);
 
   useEffect(() => {
     const monitorDOMChanges = () => {
@@ -67,6 +34,44 @@ export const XArrow = (props: XArrowProps) => {
       cleanMonitorDOMChanges();
     };
   }, []);
+
+  const rootDivRef = useRef<HTMLDivElement>(null);
+  const svgCanvasRef = useRef<SVGSVGElement>(null);
+
+  const rootElem = usePosition(rootDivRef.current);
+  const startElem = usePosition(getElementByPropGiven(props.start));
+  const endElem = usePosition(getElementByPropGiven(props.end));
+
+  let startPoint = { x: 0, y: 0 };
+  let endPoint = { x: 0, y: 0 };
+  if (rootElem) {
+    if (startElem) {
+      // offset by the root div position
+      startElem.left -= rootElem.left;
+      startElem.top -= rootElem.top;
+      startElem.bottom -= rootElem.bottom;
+      startElem.right -= rootElem.right;
+
+      // default connection is from the middle of the elements
+      startPoint = {
+        x: startElem.left + startElem.width / 2,
+        y: startElem.top + startElem.height / 2,
+      };
+    }
+
+    if (endElem) {
+      endElem.left -= rootElem.left;
+      endElem.top -= rootElem.top;
+      endElem.bottom -= rootElem.bottom;
+      endElem.right -= rootElem.right;
+
+      endPoint = {
+        x: endElem.left + endElem.width / 2,
+        y: endElem.top + endElem.height / 2,
+      };
+    }
+  }
+  const contextValue = { startElem, endElem, startPoint, endPoint };
 
   return (
     <div
@@ -97,6 +102,7 @@ const XArrowContext = React.createContext<{ startElem: positionType; endElem: po
   endPoint: { x: 0, y: 0 },
 });
 export const useXArrowContext = () => React.useContext(XArrowContext);
+
 // export const useUpdateXArrow = () => useXWrapperContext();
 
 interface ProvideXContextProps {
