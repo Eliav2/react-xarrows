@@ -7,37 +7,44 @@ import { XLine } from "../../../src/redesign/XLine";
 import { Box } from "./components/Box";
 
 function App() {
-  const box1Ref = useRef<HTMLDivElement>(null);
-  const box2Ref = useRef<HTMLDivElement>(null);
-
   return (
     <React.StrictMode>
       <div className="App">
-        <XWrapper>
-          {/* my boxes */}
-          <div style={{ display: "flex", justifyContent: "space-around" }}>
-            <Box ref={box1Ref} id={"box1"}>
-              box1
-            </Box>
-            <Box ref={box2Ref} id={"box2"}>
-              box2
-            </Box>
-          </div>
-          <div style={{ height: 50 }} />
-          {/* my arrows */}
-          {/* AutoAnchor arrow */}
-          <XArrow start={box1Ref} end={{ x: 300, y: 300 }}>
-            {/*<XLine />*/}
-            <AutoAnchorXLine />
-            {/*<AutoAnchorXLine startAnchor={["left", "right", { x: "25%", y: "50%" }]} />*/}
-          </XArrow>
-        </XWrapper>
+        <DemoXWrapper />
+        {/*<DemoXWrapper />*/}
       </div>
     </React.StrictMode>
   );
 }
 
 export default App;
+
+const DemoXWrapper = () => {
+  const box1Ref = useRef<HTMLDivElement>(null);
+  const box2Ref = useRef<HTMLDivElement>(null);
+
+  return (
+    <XWrapper>
+      {/* my boxes */}
+      <div style={{ display: "flex", justifyContent: "space-around" }}>
+        <Box ref={box1Ref} id={"box1"}>
+          box1
+        </Box>
+        <Box ref={box2Ref} id={"box2"}>
+          box2
+        </Box>
+      </div>
+      <div style={{ height: 50 }} />
+      {/* my arrows */}
+      {/* AutoAnchor arrow */}
+      <XArrow start={box1Ref} end={box2Ref}>
+        <XLine />
+        {/*<AutoAnchorXLine />*/}
+        {/*<AutoAnchorXLine startAnchor={["left", "right", { x: "25%", y: "50%" }]} />*/}
+      </XArrow>
+    </XWrapper>
+  );
+};
 
 const MyArrows = () => {
   console.log("MyArrows render");
@@ -74,20 +81,6 @@ const MyArrows = () => {
       {/*/!* snake arrow  *!/*/}
       {/*<SnakeXArrow start={"box1"} end={"box2"} />*/}
     </>
-  );
-};
-
-const MyBoxes = () => {
-  console.log("MyBoxes render");
-  return (
-    <div style={{ display: "flex", justifyContent: "space-around" }}>
-      <Box ref={box1Ref} id={"box1"}>
-        box1
-      </Box>
-      <Box ref={box2Ref} id={"box2"}>
-        box2
-      </Box>
-    </div>
   );
 };
 

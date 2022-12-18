@@ -37,7 +37,7 @@ export const XArrow = (props: XArrowProps) => {
   const svgCanvasRef = useRef<SVGSVGElement>(null);
 
   const rootElem = usePosition(rootDivRef.current);
-  let startElem: positionType, endElem: positionType;
+  let startElem: positionType | null, endElem: positionType | null;
   const startLocation = getElementByPropGiven(props.start);
   const endLocation = getElementByPropGiven(props.end);
   if (!isPoint(startLocation)) startElem = usePosition(startLocation);
@@ -102,7 +102,12 @@ export const XArrow = (props: XArrowProps) => {
   );
 };
 
-const XArrowContext = React.createContext<{ startElem: positionType; endElem: positionType; startPoint: Point; endPoint: Point }>({
+const XArrowContext = React.createContext<{
+  startElem: positionType | null;
+  endElem: positionType | null;
+  startPoint: Point;
+  endPoint: Point;
+}>({
   startElem: null,
   endElem: null,
   startPoint: { x: 0, y: 0 },
