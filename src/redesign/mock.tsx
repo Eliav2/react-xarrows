@@ -2,8 +2,7 @@ import { Contains } from "../privateTypes";
 import React, { useEffect, useLayoutEffect, useRef } from "react";
 import usePosition, { positionType } from "shared/hooks/usePosition";
 import useRerender from "shared/hooks/useRerender";
-import { pick } from "shared/utils";
-// import { useElement } from "../hooks/useElement";
+import { useXWrapperContext, useXWrapperRegister, XWrapper } from "./XWrapper";
 
 type Point = Contains<{ x: number; y: number }>;
 type XElemRefType = React.MutableRefObject<any> | string | Point;
@@ -20,6 +19,7 @@ export interface XArrowProps {
 
 export const XArrow = (props: XArrowProps) => {
   const render = useRerender();
+  useXWrapperRegister(render);
   const rootDivRef = useRef<HTMLDivElement>(null);
   const svgCanvasRef = useRef<SVGSVGElement>(null);
 
@@ -31,6 +31,7 @@ export const XArrow = (props: XArrowProps) => {
   let startPoint = { x: 0, y: 0 };
   let endPoint = { x: 0, y: 0 };
   if (rootElem) {
+    // default connection is from the middle of the elements
     if (startElem)
       startPoint = {
         x: startElem.left - rootElem.left + startElem.width / 2,
@@ -44,23 +45,26 @@ export const XArrow = (props: XArrowProps) => {
   }
   const contextValue = { startElem, endElem, startPoint, endPoint };
 
-  const xWrapperContextVal = useXWrapperContext();
-  useLayoutEffect(() => {
-    xWrapperContextVal.update = render;
-  }, [rootDivRef.current]);
+  // const xWrapperContextVal = useXWrapperContext();
+  // const XArrowId = useRef(0);
+  // useLayoutEffect(() => {
+  //   XArrowId.current = xWrapperContextVal.xWrapperXArrowsManager.registerXArrow(render);
+  //   return () => {
+  //     xWrapperContextVal.xWrapperXArrowsManager.unregisterXArrow(XArrowId.current);
+  //   };
+  // }, []);
 
   useEffect(() => {
-    // set all props on first render
-    const monitorDOMchanges = () => {
+    const monitorDOMChanges = () => {
       window.addEventListener("resize", render);
       return () => {
         window.removeEventListener("resize", render);
       };
     };
 
-    const cleanMonitorDOMchanges = monitorDOMchanges();
+    const cleanMonitorDOMChanges = monitorDOMChanges();
     return () => {
-      cleanMonitorDOMchanges();
+      cleanMonitorDOMChanges();
     };
   }, []);
 
@@ -93,37 +97,12 @@ const XArrowContext = React.createContext<{ startElem: positionType; endElem: po
   endPoint: { x: 0, y: 0 },
 });
 export const useXArrowContext = () => React.useContext(XArrowContext);
-
-interface XWrapperProps {
-  children: React.ReactNode;
-}
-
-const XWrapperContextDefault = {
-  update: () => {},
-};
-export const XWrapper = (props: XWrapperProps) => {
-  // value of the context will be mutated after mount of first XArrow
-  return <XWrapperContext.Provider value={XWrapperContextDefault}>{props.children}</XWrapperContext.Provider>;
-};
-const XWrapperContext = React.createContext(XWrapperContextDefault);
-const useXWrapperContext = () => React.useContext(XWrapperContext);
-export const useUpdateXArrow = () => useXWrapperContext();
-
-// interface XArrowElementProps {}
-
-// export const XArrowElement = (props: XArrowElementProps) => {
-//   const val = useXArrowContext();
-//   console.log(val);
-//   return (
-//     <g style={{ transform: "translate(0)" }}>
-//       <path d="M 10 10 H 90 V 90 H 10 Z" fill="transparent" stroke="black" />
-//     </g>
-//   );
-// };
+// export const useUpdateXArrow = () => useXWrapperContext();
 
 interface ProvideXContextProps {
   children: (context: ReturnType<typeof useXArrowContext>) => React.ReactNode;
 }
+
 export const ProvideXContext = (props: ProvideXContextProps) => {
   const val = useXArrowContext();
   return <>{props.children(val)}</>;
@@ -133,8 +112,6 @@ interface XLineProps extends React.SVGProps<SVGLineElement> {}
 
 export const XLine = (props: XLineProps) => {
   const val = useXArrowContext();
-  // console.log(val);
-  // return <path d="M 10 10 H 90 V 90 H 10 Z" fill="transparent" stroke="black" />;
   return (
     <line
       x1={val.startPoint.x}

@@ -1,5 +1,6 @@
 import "./App.css";
-import { XLine, XArrow, XArrowElement, XWrapper, useUpdateXArrow, ProvideXContext, XArrowProps } from "react-xarrows/src/redesign/mock";
+import { XLine, XArrow, ProvideXContext, XArrowProps } from "react-xarrows/src/redesign/mock";
+import { useUpdateXWrapper, XWrapper } from "react-xarrows/src/redesign/XWrapper";
 import React, { useRef } from "react";
 import Draggable from "react-draggable";
 import useRerender from "shared/hooks/useRerender";
@@ -10,10 +11,10 @@ interface BoxProps extends React.HTMLProps<HTMLDivElement> {
 }
 
 const Box = ({ children, style, ...props }: BoxProps) => {
+  // console.log(children, "render!");
   const render = useRerender();
-  console.log(children, "render!");
 
-  const updateXArrow = useUpdateXArrow();
+  const updateXArrow = useUpdateXWrapper();
   // console.log(updateXArrow);
   const ref = useRef<HTMLDivElement>(null);
   return (
@@ -21,10 +22,8 @@ const Box = ({ children, style, ...props }: BoxProps) => {
       nodeRef={ref}
       // grid={[20, 20]}
       onDrag={() => {
-        console.log(children, "onDrag!");
-        // console.log(updateXArrow);
-        updateXArrow.update();
-        // updateXArrow;
+        // console.log(children, "onDrag!");
+        updateXArrow();
       }}
     >
       <div
@@ -48,7 +47,8 @@ const Box = ({ children, style, ...props }: BoxProps) => {
   );
 };
 
-interface SnakeXArrowProps extends XArrowProps {}
+interface SnakeXArrowProps extends Pick<XArrowProps, "start" | "end"> {}
+
 const SnakeXArrow = (props: SnakeXArrowProps) => {
   return (
     <XArrow {...props}>
@@ -79,7 +79,7 @@ const SnakeXArrow = (props: SnakeXArrowProps) => {
             }
             points.push({ x1: len, y1: y2 ?? 0, x2: len, y2: y1 });
           }
-          return points.map((p) => <XLine {...p} />);
+          return points.map((p, i) => <XLine key={i} {...p} />);
         }}
       </ProvideXContext>
     </XArrow>
@@ -94,7 +94,18 @@ const MyArrows = () => {
       <XArrow start={"box1"} end={"box2"}>
         <XLine />
       </XArrow>
-      {/*todo: fix bug: last elment overider previos*/}
+      <XArrow start={"box1"} end={"box2"}>
+        <ProvideXContext>
+          {(context) => {
+            const {
+              startPoint: { x: x1, y: y1 },
+              endPoint: { x: x2, y: y2 },
+            } = context;
+            return <XLine x1={x1 - 30} y1={y1} x2={x2 - 30} y2={y2} />;
+          }}
+        </ProvideXContext>
+      </XArrow>
+
       <SnakeXArrow start={"box1"} end={"box2"} />
     </>
   );
