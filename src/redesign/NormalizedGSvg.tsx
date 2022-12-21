@@ -1,6 +1,4 @@
-import React from "react";
-import { useLayoutEffect, useRef, useState } from "react";
-import { useCompareEffect } from "../hooks/useCompareEffect";
+import React, { useLayoutEffect, useRef, useState } from "react";
 import isEqual from "react-fast-compare";
 
 const bboxDefault = { x: 0, y: 0, width: 0, height: 0 };
@@ -16,7 +14,6 @@ export const useGetBBox = (ref: React.RefObject<SVGGraphicsElement>, deps: any[]
   }, [ref.current, ...deps]);
   useLayoutEffect(() => {
     const v = getBBox(ref.current);
-    // console.log(isEqual(bbox, v), ref.current?.getBBox());
     if (!isEqual(bbox, v)) setBbox(v);
   });
   return bbox;

@@ -26,9 +26,6 @@ interface CurvedXArrowProps extends Pick<XArrowProps, "start" | "end"> {}
 
 const CurvedXArrow = (props: CurvedXArrowProps) => {
   const { start, end } = props;
-  // const { startElem, endElem } = useXArrowContext();
-  // if (!startElem || !endElem) return null;
-  // const { x1, y1, x2, y2 } = autoSelectAnchor({ startElem, endElem });
   return (
     <XArrow start={start} end={end}>
       <ProvideXContext>
@@ -71,8 +68,8 @@ const DemoXWrapper = () => {
       <div style={{ height: 50 }} />
       {/* my arrows */}
       {/*<CurvedXArrow start={box1Ref} end={box2Ref} />*/}
-      {/*<AutoAnchorWithHeadXArrow start={box1Ref} end={box2Ref} headSize={50} />*/}
-      <SnakeXArrow start={box1Ref} end={box2Ref} />
+      <AutoAnchorWithHeadXArrow start={box1Ref} end={box2Ref} headSize={50} />
+      {/*<SnakeXArrow start={box1Ref} end={box2Ref} />*/}
     </XWrapper>
   );
 };
