@@ -6,9 +6,10 @@ import Draggable from "react-draggable";
 
 interface BoxProps extends React.HTMLProps<HTMLDivElement> {
   children?: React.ReactNode;
+  small?: boolean;
 }
 
-export const Box = React.forwardRef(({ children, style, ...props }: BoxProps, forwardRef) => {
+export const Box = React.forwardRef(({ children, style, small, ...props }: BoxProps, forwardRef) => {
   // console.log(children, "render!");
   const render = useRerender();
 
@@ -33,8 +34,8 @@ export const Box = React.forwardRef(({ children, style, ...props }: BoxProps, fo
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          width: 80,
-          padding: 30,
+          width: small ? 50 : 80,
+          padding: small ? 10 : 30,
           ...style,
         }}
         {...props}

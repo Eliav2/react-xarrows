@@ -1,5 +1,5 @@
 import { positionType } from "shared/hooks/usePosition";
-import { useXArrowContext } from "./XArrow";
+import { useXContext } from "./XArrow";
 import { RelativeSize } from "shared/types";
 import { OneOrMore } from "./typeUtils";
 import { getRelativeSizeValue } from "shared/utils";
@@ -51,8 +51,8 @@ function findBestPoint(startPoints: { x: number; y: number }[], endPoints: { x: 
   for (const start of startPoints) {
     for (const end of endPoints) {
       const distance = Math.sqrt((start.x - end.x) ** 2 + (start.y - end.y) ** 2);
-      // multiple with 0.95 so the next closer point is at least 5% closer
-      if (distance < bestPoint.distance * 0.95) {
+      // multiple with 0.9 so the next closer point is at least 10% closer
+      if (distance < bestPoint.distance * 0.9) {
         bestPoint = { start, end, distance };
       }
     }
@@ -60,12 +60,17 @@ function findBestPoint(startPoints: { x: number; y: number }[], endPoints: { x: 
   return bestPoint;
 }
 
-const autoSelectAnchor = (
-  startElem: NonNullable<positionType>,
-  endElem: NonNullable<positionType>,
-  startAnchor: Anchor,
-  endAnchor: Anchor
-) => {
+export const autoSelectAnchor = ({
+  startElem,
+  endElem,
+  startAnchor = "auto",
+  endAnchor = "auto",
+}: {
+  startElem: NonNullable<positionType>;
+  endElem: NonNullable<positionType>;
+  startAnchor?: Anchor;
+  endAnchor?: Anchor;
+}) => {
   const startPoints = extractPointsFromAnchors(startElem, startAnchor);
   const endPoints = extractPointsFromAnchors(endElem, endAnchor);
   const bestPoint = findBestPoint(startPoints, endPoints);
@@ -73,8 +78,8 @@ const autoSelectAnchor = (
 };
 
 export const useAutoSelectAnchor = ({ startAnchor = "auto", endAnchor = "auto" }: { startAnchor?: Anchor; endAnchor?: Anchor } = {}) => {
-  const context = useXArrowContext();
+  const context = useXContext();
   const { startElem, endElem } = context;
   if (!startElem || !endElem) return null;
-  return () => autoSelectAnchor(startElem, endElem, startAnchor, endAnchor);
+  return () => autoSelectAnchor({ startElem, endElem, startAnchor, endAnchor });
 };

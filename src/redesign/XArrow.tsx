@@ -4,6 +4,7 @@ import useRerender from "shared/hooks/useRerender";
 import { useXWrapperRegister } from "./XWrapper";
 import { getElementByPropGiven } from "./utils";
 import { isPoint, Point, XElemRef } from "./types";
+import { useOneTimeWarn } from "shared/hooks/useOneTimeWarn";
 
 export interface XArrowProps {
   children: React.ReactNode;
@@ -78,7 +79,7 @@ export const XArrow = (props: XArrowProps) => {
       };
     }
   }
-  const contextValue = { startElem, endElem, startPoint, endPoint };
+  const contextValue = { startElem, endElem, startPoint, endPoint, __mounted: true };
 
   return (
     <div
@@ -107,19 +108,31 @@ const XArrowContext = React.createContext<{
   endElem: positionType | null;
   startPoint: Point;
   endPoint: Point;
+  __mounted: boolean;
 }>({
   startElem: null,
   endElem: null,
   startPoint: { x: 0, y: 0 },
   endPoint: { x: 0, y: 0 },
+  __mounted: false,
 });
-export const useXArrowContext = () => React.useContext(XArrowContext);
+export const useXContext = () => {
+  const val = React.useContext(XArrowContext);
+  const warn = useOneTimeWarn("react-xarrows: ");
+  if (!val.__mounted) {
+    warn(
+      "useXArrowContext is only available inside XArrow, wrap your component with XArrow to use it.\n" +
+        `Check ${new Error().stack?.split("at ")[2].trim()}\n\n`
+    );
+  }
+  return val;
+};
 
 interface ProvideXContextProps {
-  children: (context: ReturnType<typeof useXArrowContext>) => React.ReactNode;
+  children: (context: ReturnType<typeof useXContext>) => React.ReactNode;
 }
 
 export const ProvideXContext = (props: ProvideXContextProps) => {
-  const val = useXArrowContext();
+  const val = useXContext();
   return <>{props.children(val)}</>;
 };
