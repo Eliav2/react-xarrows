@@ -68,7 +68,6 @@ export const useUpdateXWrapper = () => useXWrapperContext().update;
  * receives a function(usually render a function) that would be executed whenever the XWrapper is updated.
  */
 export const useXWrapperRegister = (render) => {
-  // console.log("useXWrapperRegister");
   const xWrapperContext = useXWrapperContext();
   const XArrowId = useRef(0);
   useLayoutEffect(() => {

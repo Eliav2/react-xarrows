@@ -1,13 +1,15 @@
 import "./App.css";
-import { ProvideXContext, useXContext, XArrow, XArrowProps } from "react-xarrows/src/redesign/XArrow";
-import { XWrapper } from "react-xarrows/src/redesign/XWrapper";
-import XLine from "react-xarrows/src/redesign/XLine";
 import React, { useRef } from "react";
-import { Anchor, autoSelectAnchor } from "../../../src/redesign/useAutoSelectAnchor";
 import { Box } from "./components/Box";
 import useRerender from "shared/hooks/useRerender";
 import { AutoAnchorWithHeadXArrow } from "./components/AutoAnchorWithHeadXArrow";
 import SnakeXArrow from "./components/SnakeXArrow";
+// import { ProvideXContext, useXContext, XArrow, XArrowProps } from "react-xarrows/src/redesign/XArrow";
+// import { XWrapper } from "react-xarrows/src/redesign/XWrapper";
+// import XLine from "react-xarrows/src/redesign/XLine";
+// import { Anchor, autoSelectAnchor } from "react-xarrows/src/redesign/useAutoSelectAnchor";
+import { ProvideXContext, useXContext, XArrowProps, XWrapper, XLine, autoSelectAnchor, Anchor } from "react-xarrows";
+import { XArrow } from "react-xarrows/XArrow";
 
 function App() {
   return (
@@ -67,8 +69,8 @@ const DemoXWrapper = () => {
       </div>
       <div style={{ height: 50 }} />
       {/* my arrows */}
-      {/*<CurvedXArrow start={box1Ref} end={box2Ref} />*/}
-      <AutoAnchorWithHeadXArrow start={box1Ref} end={box2Ref} headSize={50} />
+      <CurvedXArrow start={box1Ref} end={box2Ref} />
+      {/*<AutoAnchorWithHeadXArrow start={box1Ref} end={box2Ref} headSize={50} />*/}
       {/*<SnakeXArrow start={box1Ref} end={box2Ref} />*/}
     </XWrapper>
   );

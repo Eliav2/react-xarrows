@@ -1,14 +1,14 @@
-import React, { useRef, useState } from 'react';
-import { Meta, Story } from '@storybook/react';
-import XarrowCore from 'react-xarrows/src/components/XarrowCore';
-import { Xwrapper } from 'react-xarrows/src';
-import { DraggableBox } from '../components/DraggableBox';
-import XarrowBasicPath from 'react-xarrows/src/components/XarrowBasicPath';
-import XarrowMain from 'react-xarrows/src/components/XarrowMain';
-import Xelem from 'react-xarrows/src/components/Xelem';
+import React, { useRef, useState } from "react";
+import { Meta, Story } from "@storybook/react";
+import XarrowCore from "react-xarrows/src/components/XarrowCore";
+import { Xwrapper } from "packages/react-xarrows/src";
+import { DraggableBox } from "../components/DraggableBox";
+import XarrowBasicPath from "react-xarrows/src/components/XarrowBasicPath";
+import XarrowMain from "react-xarrows/src/components/XarrowMain";
+import Xelem from "react-xarrows/src/components/Xelem";
 
 export default {
-  title: 'XarrowCore',
+  title: "XarrowCore",
   component: XarrowCore,
 } as Meta;
 
@@ -17,7 +17,7 @@ const XarrowMainTemplate = ({ XComp = XarrowMain, args }) => {
   const [showBox2, setShowBox2] = useState(true);
   const [trigger, setTrigger] = useState(true);
 
-  const target = trigger ? 'box2' : 'box3';
+  const target = trigger ? "box2" : "box3";
   // const update = useXarrow();
 
   let arr = new Array(0).fill({});
@@ -29,19 +29,19 @@ const XarrowMainTemplate = ({ XComp = XarrowMain, args }) => {
       <button onClick={() => setTrigger(!trigger)}>trigger connection</button>
       <Xwrapper>
         <Xelem>{(updateXarrow) => <button onClick={updateXarrow}>update Xarrow</button>}</Xelem>
-        <div style={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-around' }}>
-          {showBox1 ? <DraggableBox id={'box1'} dragGrid={[20, 20]} initialOffset={{ x: 420, y: 150 }} /> : null}
-          {showBox2 ? <DraggableBox id={'box2'} dragGrid={[20, 20]} initialOffset={{ x: 500, y: 200 }} /> : null}
+        <div style={{ display: "flex", width: "100%", alignItems: "center", justifyContent: "space-around" }}>
+          {showBox1 ? <DraggableBox id={"box1"} dragGrid={[20, 20]} initialOffset={{ x: 420, y: 150 }} /> : null}
+          {showBox2 ? <DraggableBox id={"box2"} dragGrid={[20, 20]} initialOffset={{ x: 500, y: 200 }} /> : null}
           <XComp
-            start={'box1'}
+            start={"box1"}
             end={target}
-            startAnchor={[{ position: 'left' }]}
-            endAnchor={['left']}
-            path={'straight'}
+            startAnchor={[{ position: "left" }]}
+            endAnchor={["left"]}
+            path={"straight"}
             // arrowTailProps={{ style: { transform: 'translate(100px) rotate(90deg)', transformOrigin: 'center' } }}
             {...args}
           />
-          <DraggableBox id={'box3'} dragGrid={[20, 20]} initialOffset={{ x: 50, y: 100 }} />
+          <DraggableBox id={"box3"} dragGrid={[20, 20]} initialOffset={{ x: 50, y: 100 }} />
           {/*<DraggableBox id={'box4'} grid={[20, 20]} initialOffset={{ x: 250, y: 100 }} />*/}
           {/*<XComp start={{ x: 50, y: 150 }} end={'box4'} />*/}
         </div>
@@ -54,7 +54,7 @@ const XarrowMainTemplate = ({ XComp = XarrowMain, args }) => {
 export const XarrowBasicStory: Story = (args) => (
   <XarrowMainTemplate
     XComp={() => (
-      <XarrowCore start={'box1'} end={'box2'}>
+      <XarrowCore start={"box1"} end={"box2"}>
         {(elems) => {
           return <XarrowBasicPath {...elems} />;
         }}
@@ -66,14 +66,14 @@ export const XarrowBasicStory: Story = (args) => (
 // export const XarrowAnchorsStory: Story = (args) => <XarrowMainTemplate XComp={XarrowAnchors} />;
 export const XarrowMainStory: Story = (args) => <XarrowMainTemplate XComp={XarrowMain} args={args} />;
 XarrowMainStory.args = {
-  startAnchor: 'auto',
-  endAnchor: 'right',
-  path: 'grid',
-  gridBreak: '50%',
-  curveness: '0%',
+  startAnchor: "auto",
+  endAnchor: "right",
+  path: "grid",
+  gridBreak: "50%",
+  curveness: "0%",
   strokeWidth: 4,
   _debug: true,
-  color: 'blue',
+  color: "blue",
   showHead: false,
   showTail: true,
   headColor: undefined,
@@ -85,25 +85,25 @@ XarrowMainStory.args = {
 };
 
 const canvasStyle = {
-  width: '100%',
-  height: '50vh',
-  background: 'white',
+  width: "100%",
+  height: "50vh",
+  background: "white",
   // overflow: 'auto',
-  display: 'flex',
-  color: 'black',
+  display: "flex",
+  color: "black",
 } as const;
 
-const _canvasStyle = { ...canvasStyle, position: 'relative', height: 300 } as const;
+const _canvasStyle = { ...canvasStyle, position: "relative", height: 300 } as const;
 const ManyArrowsNum = 200;
 const ManyDraggablesNum = 2000;
 export const ManyArrows = (args) => {
-  const box = { id: 'box1', initialOffset: { x: 20, y: 20 }, reference: useRef(null) };
-  const box2 = { id: 'box2', initialOffset: { x: 320, y: 120 }, reference: useRef(null) };
-  const box3 = { id: 'box3', initialOffset: { x: 50, y: 150 }, reference: useRef(null) };
-  const box4 = { id: 'box4', initialOffset: { x: 320, y: 220 }, reference: useRef(null) };
+  const box = { id: "box1", initialOffset: { x: 20, y: 20 }, reference: useRef(null) };
+  const box2 = { id: "box2", initialOffset: { x: 320, y: 120 }, reference: useRef(null) };
+  const box3 = { id: "box3", initialOffset: { x: 50, y: 150 }, reference: useRef(null) };
+  const box4 = { id: "box4", initialOffset: { x: 320, y: 220 }, reference: useRef(null) };
 
-  const box10 = { id: 'box1', initialOffset: { x: 20, y: 20 }, reference: useRef(null) };
-  const box11 = { id: 'box2', initialOffset: { x: 320, y: 120 }, reference: useRef(null) };
+  const box10 = { id: "box1", initialOffset: { x: 20, y: 20 }, reference: useRef(null) };
+  const box11 = { id: "box2", initialOffset: { x: 320, y: 120 }, reference: useRef(null) };
 
   return (
     <div>
@@ -140,8 +140,8 @@ export const ManyArrows = (args) => {
                 />
               );
             })}
-          <XarrowMain start={box10.reference} end={box11.reference} endAnchor={'top'} />
-          <XarrowMain start={box10.reference} end={box11.reference} startAnchor={'bottom'} />
+          <XarrowMain start={box10.reference} end={box11.reference} endAnchor={"top"} />
+          <XarrowMain start={box10.reference} end={box11.reference} startAnchor={"bottom"} />
           {/*</Xwrapper>*/}
           {/*<Xwrapper>*/}
           {/*  <DraggableBox {...box3} />*/}
@@ -168,11 +168,11 @@ export const ManyArrows = (args) => {
 };
 
 ManyArrows.args = {
-  startAnchor: 'left',
-  endAnchor: 'right',
-  path: 'grid',
-  gridBreak: '50%',
-  curveness: '0%',
+  startAnchor: "left",
+  endAnchor: "right",
+  path: "grid",
+  gridBreak: "50%",
+  curveness: "0%",
   strokeWidth: 4,
   _debug: true,
 };

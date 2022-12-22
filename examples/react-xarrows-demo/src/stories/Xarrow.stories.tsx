@@ -1,27 +1,27 @@
 /* eslint-disable */
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState } from "react";
 
 // import Xarrow, { xarrowPropsType, useXarrow, Xwrapper } from 'react-xarrows';
-import Xarrow, { xarrowPropsType, useXarrow, Xwrapper } from 'react-xarrows/src';
-import Draggable from 'react-draggable';
-import { Meta, Story } from '@storybook/react';
+import Xarrow, { xarrowPropsType, useXarrow, Xwrapper } from "packages/react-xarrows/src";
+import Draggable from "react-draggable";
+import { Meta, Story } from "@storybook/react";
 
 const flexBox = {
-  display: 'flex',
-  justifyContent: 'space-evenly',
-  alignItems: 'center',
+  display: "flex",
+  justifyContent: "space-evenly",
+  alignItems: "center",
 } as const;
 
 const boxStyle = {
-  border: '1px #999 solid',
-  borderRadius: '10px',
-  textAlign: 'center',
-  width: '100px',
-  height: '30px',
-  color: 'black',
-  alignItems: 'center',
-  display: 'flex',
-  justifyContent: 'center',
+  border: "1px #999 solid",
+  borderRadius: "10px",
+  textAlign: "center",
+  width: "100px",
+  height: "30px",
+  color: "black",
+  alignItems: "center",
+  display: "flex",
+  justifyContent: "center",
 } as const;
 
 const Box = ({ id, style = {} }) => {
@@ -33,25 +33,25 @@ const Box = ({ id, style = {} }) => {
 };
 
 export default {
-  title: 'Xarrow',
+  title: "Xarrow",
   component: Xarrow,
 } as Meta;
 
 const TriggerTemplate = ({ ...args }) => {
   const [refId, setRefId] = useState(false);
 
-  const endId = refId ? 'box2' : 'box3';
+  const endId = refId ? "box2" : "box3";
 
   return (
     <React.Fragment>
-      <div style={{ ...flexBox, flexDirection: 'column', height: '100vh' }}>
-        <div style={{ ...flexBox, height: '100vh', width: '100%' }} id="canvas">
+      <div style={{ ...flexBox, flexDirection: "column", height: "100vh" }}>
+        <div style={{ ...flexBox, height: "100vh", width: "100%" }} id="canvas">
           <div style={flexBox}>
-            <Box id={'box1'} />
+            <Box id={"box1"} />
           </div>
-          <div style={{ ...flexBox, flexDirection: 'column' }}>
-            <Box id={'box2'} />
-            <Box id={'box3'} />
+          <div style={{ ...flexBox, flexDirection: "column" }}>
+            <Box id={"box2"} />
+            <Box id={"box3"} />
           </div>
           <Xarrow start="box1" end={endId} {...args} />
         </div>
@@ -70,18 +70,18 @@ ToggleEnd.args = {
 };
 
 const canvasStyle = {
-  width: '100%',
-  height: '100vh',
-  background: 'white',
-  overflow: 'auto',
-  display: 'flex',
-  color: 'black',
+  width: "100%",
+  height: "100vh",
+  background: "white",
+  overflow: "auto",
+  display: "flex",
+  color: "black",
 };
 
 const DraggableBox = ({ box, forceRerender, style = {} }) => {
   return (
     <Draggable onDrag={forceRerender} onStop={forceRerender}>
-      <div ref={box.ref} id={box.id} style={{ ...boxStyle, position: 'absolute', left: box.x, top: box.y, ...style }}>
+      <div ref={box.ref} id={box.id} style={{ ...boxStyle, position: "absolute", left: box.x, top: box.y, ...style }}>
         {box.id}
       </div>
     </Draggable>
@@ -95,8 +95,8 @@ const SimpleTemplate = ({ box1: box1Style, box2: box2Style, ...xarrowProps }: an
   const forceRerender = () => setRender({});
   const boxRef = useRef();
   const box2Ref = useRef();
-  const box = { id: 'box1', x: 20, y: 20, ref: boxRef };
-  const box2 = { id: 'box2', x: 320, y: 120, ref: box2Ref };
+  const box = { id: "box1", x: 20, y: 20, ref: boxRef };
+  const box2 = { id: "box2", x: 320, y: 120, ref: box2Ref };
   return (
     <div style={canvasStyle} id="canvas">
       <DraggableBox box={box} forceRerender={forceRerender} style={box1Style} />
@@ -111,13 +111,13 @@ const SimpleTemplateStory: Story<typeCustomSimpleTemplate> = (args) => <SimpleTe
 export const CustomSimple = SimpleTemplateStory.bind({});
 
 CustomSimple.args = {
-  box1: { height: 150, width: 60, zIndex: 13, background: 'white' },
-  box2: { height: 90, width: 80, zIndex: 10, background: 'white' },
+  box1: { height: 150, width: 60, zIndex: 13, background: "white" },
+  box2: { height: 90, width: 80, zIndex: 10, background: "white" },
   zIndex: 2,
-  startAnchor: 'right',
-  endAnchor: 'left',
-  label: { start: 'start', middle: 'middle', end: 'end' },
-  color: 'CornflowerBlue',
+  startAnchor: "right",
+  endAnchor: "left",
+  label: { start: "start", middle: "middle", end: "end" },
+  color: "CornflowerBlue",
   lineColor: null,
   headColor: null,
   tailColor: null,
@@ -126,12 +126,12 @@ CustomSimple.args = {
   headSize: 6,
   showTail: false,
   tailSize: 6,
-  path: 'smooth',
+  path: "smooth",
   curveness: 0.8,
-  gridBreak: '50%',
+  gridBreak: "50%",
   dashness: false,
-  headShape: 'arrow1',
-  tailShape: 'arrow1',
+  headShape: "arrow1",
+  tailShape: "arrow1",
   animateDrawing: false,
   showXarrow: true,
   _debug: true,
@@ -142,22 +142,22 @@ export const CustomAdvanced = CustomSimple.bind({});
 
 CustomAdvanced.args = {
   startAnchor: {
-    position: 'right',
+    position: "right",
     offset: { x: 0, y: 0 },
   },
   endAnchor: {
-    position: 'left',
+    position: "left",
     offset: { x: 0, y: 0 },
     // facingDir: ['outwards', 'inwards'],
   },
-  label: { start: '', middle: '', end: '' },
-  path: 'smooth',
+  label: { start: "", middle: "", end: "" },
+  path: "smooth",
   // dashness: { strokeLen: 10, nonStrokeLen: 15, animation: -2 },
   dashness: false,
   headSize: 6,
   tailSize: 6,
-  headShape: 'arrow1',
-  tailShape: 'arrow1',
+  headShape: "arrow1",
+  tailShape: "arrow1",
   showXarrow: true,
   animateDrawing: 0,
   _debug: true,
@@ -169,15 +169,15 @@ CustomSvgHead.args = {
   headSize: 6,
   // headShape: 'circle',
   headShape: { svgElem: <path d="M 0 0 L 1 0.5 L 0 1 L 0.25 0.5 z" />, offsetForward: 0.25 },
-  arrowHeadProps: { fill: 'transparent', strokeWidth: '0.1', stroke: 'CornflowerBlue' },
+  arrowHeadProps: { fill: "transparent", strokeWidth: "0.1", stroke: "CornflowerBlue" },
   _extendSVGcanvas: 500,
 };
 
 export const gridBreak = CustomSvgHead.bind({});
 gridBreak.args = {
-  path: 'grid',
-  endAnchor: 'right',
-  gridBreak: '50%',
+  path: "grid",
+  endAnchor: "right",
+  gridBreak: "50%",
   arrowBodyProps: {},
   _extendSVGcanvas: 100,
 };
@@ -186,7 +186,7 @@ const DraggableBox2 = ({ id, style = {} }) => {
   const updateXarrow = useXarrow();
   return (
     <Draggable onDrag={updateXarrow} onStop={updateXarrow}>
-      <div id={id} style={{ ...boxStyle, position: 'relative', ...style }}>
+      <div id={id} style={{ ...boxStyle, position: "relative", ...style }}>
         {id}
       </div>
     </Draggable>
@@ -198,10 +198,10 @@ const AllStatesTemplate = ({ box: boxStyle, ...xarrowProps }) => {
   const forceRerender = () => setRender({});
   let boxNum = -1;
   // const states = ['right'];
-  const states = ['right', 'left', 'bottom', 'top'] as const;
+  const states = ["right", "left", "bottom", "top"] as const;
   // const states = ['right'];
   return (
-    <div style={{ ...canvasStyle, position: 'absolute', flexWrap: 'wrap' }} id="canvas">
+    <div style={{ ...canvasStyle, position: "absolute", flexWrap: "wrap" }} id="canvas">
       <Xwrapper>
         {states.map((st) =>
           states.map((st2) => {
@@ -210,27 +210,22 @@ const AllStatesTemplate = ({ box: boxStyle, ...xarrowProps }) => {
               <div
                 style={{
                   ...canvasStyle,
-                  alignItems: 'center',
-                  justifyContent: 'space-evenly',
+                  alignItems: "center",
+                  justifyContent: "space-evenly",
                   width: 250,
                   height: 100,
-                  border: '2px solid black',
+                  border: "2px solid black",
                   // position: 'relative', TODO: investigate: why causing infinity loop(when endAnchor='right')??
                 }}
-                key={st + st2}>
-                <div style={{ position: 'absolute', left: 0, top: 0 }}>
-                  {st} -{'>'} {st2}
+                key={st + st2}
+              >
+                <div style={{ position: "absolute", left: 0, top: 0 }}>
+                  {st} -{">"} {st2}
                 </div>
                 <Xwrapper>
                   <DraggableBox2 id={boxNum} style={{ ...boxStyle }} />
                   <DraggableBox2 id={boxNum + 1} style={{ ...boxStyle }} />
-                  <Xarrow
-                    start={String(boxNum)}
-                    end={String(boxNum + 1)}
-                    {...xarrowProps}
-                    startAnchor={st}
-                    endAnchor={st2}
-                  />
+                  <Xarrow start={String(boxNum)} end={String(boxNum + 1)} {...xarrowProps} startAnchor={st} endAnchor={st2} />
                 </Xwrapper>
               </div>
             );
@@ -245,7 +240,7 @@ export const AllStates: Story<{ box: typeDim } & xarrowPropsType> = (ar) => <All
 AllStates.args = {
   box: { height: 30, width: 50 },
   labels: null,
-  color: 'CornflowerBlue',
+  color: "CornflowerBlue",
   lineColor: null,
   headColor: null,
   tailColor: null,
@@ -254,12 +249,12 @@ AllStates.args = {
   headSize: 6,
   showTail: false,
   tailSize: 6,
-  path: 'smooth',
+  path: "smooth",
   curveness: 0.8,
-  gridBreak: '50%',
+  gridBreak: "50%",
   dashness: false,
-  headShape: 'arrow1',
-  tailShape: 'arrow1',
+  headShape: "arrow1",
+  tailShape: "arrow1",
   animateDrawing: false,
   showXarrow: true,
   _debug: false,

@@ -23,6 +23,12 @@
     "declaration": true,
     "declarationDir": "dist/types",
     "strictNullChecks": true
+    //    "baseUrl": ".",
+    //    "paths": {
+    //     "*": [
+    //       "*","dist/redesign/*"
+    //     ]
+    //    }
   },
   "include": [
     "src"
@@ -30,6 +36,11 @@
   "exclude": [
     "node_modules"
   ],
+  "paths": {
+    "./*": [
+      "src/redesign/*"
+    ]
+  },
   "references": [
     {
       "path": "./tsconfig.node.json"

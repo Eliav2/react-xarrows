@@ -17,6 +17,7 @@ export interface XArrowProps {
 }
 
 export const XArrow = (props: XArrowProps) => {
+  // console.log("XArrow");
   const render = useRerender();
   useXWrapperRegister(render);
 

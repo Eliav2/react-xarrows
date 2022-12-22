@@ -1,6 +1,6 @@
 import Draggable, { DraggableEventHandler } from "react-draggable";
 import React, { CSSProperties, useEffect, useLayoutEffect, useRef, useState } from "react";
-import { useXarrow } from "react-xarrows/src";
+import { useXarrow } from "packages/react-xarrows/src";
 import { useXarrow as useXarrowV2 } from "react-xarrow-v2";
 
 import { Rnd } from "react-rnd";

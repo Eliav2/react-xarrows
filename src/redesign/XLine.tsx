@@ -10,7 +10,7 @@ export interface XLineProps extends React.SVGProps<SVGLineElement> {
   component?: React.ElementType<XLineProps>;
 }
 
-const XLine = (props: XLineProps) => {
+export const XLine = (props: XLineProps) => {
   const val = useXContext();
   let {
     component: Component = "line" as const,

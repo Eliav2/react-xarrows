@@ -7,9 +7,8 @@ export default defineConfig({
   ...defaultViteConfig,
   build: {
     ...(defaultViteConfig as any).build,
-    emptyOutDir: false,
+    // emptyOutDir: false,
     watch: {
-      // include: path.join(__dirname, "src/**/*"),
       include: ["src/**/*"],
       clearScreen: false,
     },
