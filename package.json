@@ -5,7 +5,12 @@
   "description": "Draw arrows (or lines) between components in React!",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
-  "types": "dist/types/index.d.ts",
+  "types": "index.d.ts",
+  "typesVersions": {
+    "*": {
+      "*": ["dist/types/redesign/*"]
+    }
+  },
   "scripts": {
     "build:nocheck": "vite build && tsc",
     "build": "tsc -p tsconfig.check.json && vite build && tsc",
@@ -18,12 +23,13 @@
       "require": "./dist/index.js",
       "types": "./dist/types/index.d.ts"
     },
-    "./XArrow": {
-      "import": "./dist/XArrow.mjs",
-      "require": "./dist/XArrow.js",
-      "types": "./dist/types/redesign/XArrow.d.ts"
+    "./*": {
+      "import": "./dist/*.mjs",
+      "require": "./dist/*.js",
+      "types": "./dist/types/redesign/*.d.ts"
     }
   },
+
   "homepage": "https://eliav2.github.io/react-xarrows/",
   "repository": {
     "type": "git",
@@ -74,5 +80,9 @@
     "between",
     "elements",
     "element"
-  ]
+  ],
+  "engines": {
+    "node": ">=12.0.0"
+  }
+
 }

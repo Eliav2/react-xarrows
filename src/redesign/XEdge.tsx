@@ -1,21 +1,13 @@
-import React, { LegacyRef, ReactSVG, useRef } from "react";
-import { svgCustomEdgeType, svgElemStrType, svgElemType } from "../types";
-import { PlainObject } from "../privateTypes";
-import { arrowShapes } from "../constants";
-import { useXContext } from "./XArrow";
+import React, { LegacyRef } from "react";
+import { svgElemStrType } from "../types";
 import { Point } from "./types";
 import { Dir } from "./path";
-import { getBBox, useGetBBox } from "./NormalizedGSvg";
+import { getBBox } from "./NormalizedGSvg";
 
 export interface XEdgeProps {
-  // a jsx element of type svg like <circle .../> or <path .../>
-  // svgElem: JSX.Element;
-  children?: React.ReactNode;
+  children?: React.ReactNode; // a jsx element of type svg like <circle .../> or <path .../>
 
   dir?: Dir;
-
-  // should the svg be normalized to size 1x1 pixels anc origin centers at (0.5,0.5)?
-  normalizeSvg?: boolean;
 
   // the color of the svg shape
   // default to use always 'fill' and not 'stroke' so svg normalization would work as expected
@@ -76,7 +68,6 @@ XEdge.defaultProps = {
   size: 30,
   // children: arrowShapes.arrow1.svgElem,
   color: "cornflowerBlue",
-  normalizeSvg: true,
   rotate: 0,
 };
 

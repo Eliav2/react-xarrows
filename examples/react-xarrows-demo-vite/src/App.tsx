@@ -8,8 +8,11 @@ import SnakeXArrow from "./components/SnakeXArrow";
 // import { XWrapper } from "react-xarrows/src/redesign/XWrapper";
 // import XLine from "react-xarrows/src/redesign/XLine";
 // import { Anchor, autoSelectAnchor } from "react-xarrows/src/redesign/useAutoSelectAnchor";
-import { ProvideXContext, useXContext, XArrowProps, XWrapper, XLine, autoSelectAnchor, Anchor } from "react-xarrows";
-import { XArrow } from "react-xarrows/XArrow";
+// import { autoSelectAnchor, Anchor, XArrow, XArrowProps, ProvideXContext, useXContext, XWrapper, XLine } from "react-xarrows";
+import { Anchor, autoSelectAnchor } from "react-xarrows";
+import XArrow, { XArrowProps, ProvideXContext, useXContext } from "react-xarrows/XArrow";
+import XWrapper from "react-xarrows/XWrapper";
+import XLine from "react-xarrows/XLine";
 
 function App() {
   return (

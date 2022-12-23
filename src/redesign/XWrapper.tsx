@@ -1,5 +1,4 @@
 import React, { useLayoutEffect, useRef } from "react";
-import useRerender from "shared/hooks/useRerender";
 
 export const XWrapper = (props: XWrapperProps) => {
   // console.log("XWrapper");
@@ -16,6 +15,7 @@ export const XWrapper = (props: XWrapperProps) => {
     </XWrapperContext.Provider>
   );
 };
+export default XWrapper;
 
 /**
  * this class holds the registered XArrows and their render functions.

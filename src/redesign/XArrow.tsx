@@ -103,6 +103,7 @@ export const XArrow = (props: XArrowProps) => {
     </div>
   );
 };
+export default XArrow;
 
 const XArrowContext = React.createContext<{
   startElem: positionType | null;
