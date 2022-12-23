@@ -13,6 +13,7 @@ import { Anchor, autoSelectAnchor } from "react-xarrows";
 import XArrow, { XArrowProps, ProvideXContext, useXContext } from "react-xarrows/XArrow";
 import XWrapper from "react-xarrows/XWrapper";
 import XLine from "react-xarrows/XLine";
+import { pointsToCurves, smartZigZag, zigZag } from "react-xarrows/path";
 
 function App() {
   return (
@@ -37,8 +38,9 @@ const CurvedXArrow = (props: CurvedXArrowProps) => {
         {(context) => {
           const { startElem, endElem } = context;
           if (!startElem || !endElem) return null;
-          const { x1, y1, x2, y2 } = autoSelectAnchor({ startElem, endElem });
-          return <line {...{ x1, y1, x2, y2 }} fill="transparent" stroke="white" strokeWidth={3} />;
+          const { x1, y1, x2, y2, startDir, endDir } = autoSelectAnchor({ startElem, endElem, startAnchor: { y: "100%" } });
+          const points = zigZag(x1, y1, x2, y2);
+          return <polyline points={points.join(" ")} fill="transparent" stroke="white" strokeWidth={3} />;
         }}
       </ProvideXContext>
     </XArrow>

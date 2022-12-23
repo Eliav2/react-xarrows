@@ -1,6 +1,6 @@
-import { ProvideXContext, XArrow, XArrowProps } from "../../../../src/redesign/XArrow";
+import { ProvideXContext, XArrow, XArrowProps } from "react-xarrows/XArrow";
 import React from "react";
-import { zigZag } from "react-xarrows/src/redesign/path";
+import { zigZag } from "react-xarrows/path";
 
 interface SnakeXArrowProps extends Pick<XArrowProps, "start" | "end"> {}
 

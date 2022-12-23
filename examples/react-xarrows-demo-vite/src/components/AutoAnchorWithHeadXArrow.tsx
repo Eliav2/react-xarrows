@@ -1,10 +1,10 @@
 import React, { useRef } from "react";
-import { ProvideXContext, XArrow, XArrowProps } from "react-xarrows/src/redesign/XArrow";
-import { autoSelectAnchor } from "react-xarrows/src/redesign/useAutoSelectAnchor";
-import { Dir } from "react-xarrows/src/redesign/path";
-import XEdge from "react-xarrows/src/redesign/XEdge";
-import NormalizedGSvg from "react-xarrows/src/redesign/NormalizedGSvg";
-import XLine from "react-xarrows/src/redesign/XLine";
+import { ProvideXContext, XArrow, XArrowProps } from "react-xarrows/XArrow";
+import { autoSelectAnchor } from "react-xarrows/useAutoSelectAnchor";
+import { Dir } from "react-xarrows/path";
+import XEdge from "react-xarrows/XEdge";
+import NormalizedGSvg from "react-xarrows/NormalizedGSvg";
+import XLine from "react-xarrows/XLine";
 
 interface AutoAnchorWithHeadXArrowProps extends Pick<XArrowProps, "start" | "end"> {
   headSize?: number;

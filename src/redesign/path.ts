@@ -206,7 +206,14 @@ export class Line {
   private readonly startIncluded: boolean;
   private readonly endIncluded: boolean;
 
-  constructor(start: Vector, end: Vector, { startIncluded = true, endIncluded = false } = { startIncluded: true, endIncluded: false }) {
+  constructor(
+    start: Vector,
+    end: Vector,
+    { startIncluded = true, endIncluded = false } = {
+      startIncluded: true,
+      endIncluded: false,
+    }
+  ) {
     this.root = start;
     this.end = end;
     let [a, b] = this.getAB();
@@ -333,9 +340,14 @@ class VectorArr extends Array<Vector> {
   }
 }
 
+// subtract two points with respect to a given factor
 const deltaPoints = (p1: [number, number], p2: [number, number], factor = 1): [number, number] => {
   return [(p2[0] - p1[0]) * factor, (p2[1] - p1[1]) * factor];
 };
+
+/**
+ * receives a list of points and returns a string that that represents curves intersections when used as the 'd' attribute of svg path element
+ */
 export const pointsToCurves = (points: [number, number][]) => {
   const p0 = points[0];
   let path = `M ${p0[0]} ${p0[1]} `;
@@ -351,7 +363,8 @@ export const pointsToCurves = (points: [number, number][]) => {
   return path;
 };
 
-export const pointsToLines = (points: [number, number][]) => {
+// receives a list of points and returns a string that that represents lines intersections when used as the 'd' attribute of svg path element
+export const pointsToLines = (points: [number, number][]): string => {
   const p1 = points.splice(0, 1)[0];
   const first = `M ${p1[0]} ${p1[1]}`;
   return points.reduce((ac, cr) => ac + ` L ${cr[0]} ${cr[1]} `, first);
@@ -368,7 +381,7 @@ export const zigZag = (
   y1: number,
   x2: number,
   y2: number,
-  { zigzagPoint = 0.5, dir = "x", endPoint = true }: { zigzagPoint?: number; dir?: "x" | "y"; endPoint?: boolean } = {}
+  { zigzagPoint = 0.5, dir = "x", includeEndPoint = true }: { zigzagPoint?: number; dir?: "x" | "y"; includeEndPoint?: boolean } = {}
 ): [number, number][] => {
   let points: [number, number][] = [];
   let [x, y] = [x1, y1];
@@ -383,6 +396,19 @@ export const zigZag = (
     points.push([x, y]);
     points.push([x2, y]);
   }
-  if (endPoint) points.push([x2, y2]);
+  if (includeEndPoint) points.push([x2, y2]);
   return points;
+};
+
+/**
+ * takes start and end points and returns a list of lines traveling only on the x and y axis.
+ * automatically determines the direction of the first line based on the distance between the points
+ * @param zigzagPoint option that determines the point where the line changes direction
+ * @param dir option that determines the direction of the first line
+ * @param endPoint whether to include the end point in the list
+ * */
+export const smartZigZag = (x1, y1, x2, y2, { zigzagPoint = 0.5, includeEndPoint = true } = {}) => {
+  let [dx, dy] = deltaPoints([x1, x2], [x2, y2], zigzagPoint);
+  let dir = (Math.abs(dx) > Math.abs(dy) ? "x" : "y") as "x" | "y";
+  return zigZag(x1, y1, x2, y2, { zigzagPoint, dir, includeEndPoint });
 };

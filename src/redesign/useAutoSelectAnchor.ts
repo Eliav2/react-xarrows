@@ -3,18 +3,27 @@ import { useXContext } from "./XArrow";
 import { RelativeSize } from "shared/types";
 import { OneOrMore } from "./typeUtils";
 import { getRelativeSizeValue } from "shared/utils";
+import { Direction, NamedDirection } from "./types";
 
-const cAnchorsMap = {
-  middle: { x: "50%", y: "50%" },
-  left: { x: "0%", y: "50%" },
-  right: { x: "100%", y: "50%" },
-  top: { x: "50%", y: "0%" },
-  bottom: { x: "50%", y: "100%" },
-} as const;
+const cAnchorsPosMap: { [key in AnchorName]: AnchorsCustom } = {
+  middle: { x: "50%", y: "50%", dir: [{ x: 0, y: 0 }] },
+  left: { x: "0%", y: "50%", dir: [{ x: -1, y: 0 }] },
+  right: { x: "100%", y: "50%", dir: [{ x: 1, y: 0 }] },
+  top: { x: "50%", y: "0%", dir: [{ x: 0, y: -1 }] },
+  bottom: { x: "50%", y: "100%", dir: [{ x: 0, y: 1 }] },
+};
 
-type AnchorsEdges = keyof typeof cAnchorsMap;
-type AnchorsOptions = AnchorsEdges | "auto";
-type AnchorsCustom = { x: RelativeSize; y: RelativeSize };
+export type AnchorName = "middle" | NamedDirection;
+export type AnchorsOptions = AnchorName | "auto";
+export type AnchorDirection = OneOrMore<Direction>;
+export type AnchorsCustom = {
+  // the x position of the anchor relative to the element
+  x?: RelativeSize;
+  // the y position of the anchor relative to the element
+  y?: RelativeSize;
+  // the allowed directions out of this anchor
+  dir?: AnchorDirection;
+};
 export type Anchor = OneOrMore<AnchorsOptions | AnchorsCustom>;
 
 function extractPointsFromAnchors(elemPos: NonNullable<positionType>, anchor: Anchor) {
@@ -26,26 +35,36 @@ function extractPointsFromAnchors(elemPos: NonNullable<positionType>, anchor: An
     anchorArr = [...anchorArr.filter((an) => an !== "auto"), "left", "right", "top", "bottom"];
   }
   //remove any invalid anchor names
-  anchorArr = anchorArr.filter((an) => typeof an !== "string" || an in cAnchorsMap);
+  anchorArr = anchorArr.filter((an) => typeof an !== "string" || an in cAnchorsPosMap);
 
   // convert named anchors to custom anchors
   const anchorCustomArr: Array<AnchorsCustom> = anchorArr.map((an) => {
-    if (typeof an === "string") return cAnchorsMap[an];
+    if (typeof an === "string") return cAnchorsPosMap[an];
     return an;
   });
 
+  // make sure any given custom anchor has all the needed properties
+  const anchorCustomArrWithDefaults = anchorCustomArr.map((an) => {
+    const { x = "50%", y = "50%", dir = [{ x: 0, y: 0 }] } = an;
+    return { x, y, dir };
+  });
+
   // convert to points
-  const points = anchorCustomArr.map((an) => {
+  const points = anchorCustomArrWithDefaults.map((an) => {
     return {
-      x: getRelativeSizeValue(an.x, elemPos.width) + elemPos.left,
-      y: getRelativeSizeValue(an.y, elemPos.height) + elemPos.top,
+      x: getRelativeSizeValue(an.x ?? "50%", elemPos.width) + elemPos.left,
+      y: getRelativeSizeValue(an.y ?? "50%", elemPos.height) + elemPos.top,
+      dir: an.dir,
     };
   });
 
   return points;
 }
 
-function findBestPoint(startPoints: { x: number; y: number }[], endPoints: { x: number; y: number }[]) {
+function findBestPoint(
+  startPoints: { x: number; y: number; dir: AnchorDirection }[],
+  endPoints: { x: number; y: number; dir: AnchorDirection }[]
+) {
   // find the shortest distance between the start and end points
   let bestPoint = { start: startPoints[0], end: endPoints[0], distance: Infinity };
   for (const start of startPoints) {
@@ -74,7 +93,14 @@ export const autoSelectAnchor = ({
   const startPoints = extractPointsFromAnchors(startElem, startAnchor);
   const endPoints = extractPointsFromAnchors(endElem, endAnchor);
   const bestPoint = findBestPoint(startPoints, endPoints);
-  return { x1: bestPoint.start.x, y1: bestPoint.start.y, x2: bestPoint.end.x, y2: bestPoint.end.y };
+  return {
+    x1: bestPoint.start.x,
+    y1: bestPoint.start.y,
+    x2: bestPoint.end.x,
+    y2: bestPoint.end.y,
+    startDir: bestPoint.start.dir,
+    endDir: bestPoint.end.dir,
+  };
 };
 
 export const useAutoSelectAnchor = ({ startAnchor = "auto", endAnchor = "auto" }: { startAnchor?: Anchor; endAnchor?: Anchor } = {}) => {
