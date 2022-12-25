@@ -1,8 +1,43 @@
 {
-  "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    // using rollup to bundle the source code, so we're only using tsc to emit the declarations
-    "emitDeclarationOnly": true,
-    "noErrorTruncation": true
+    "target": "ESNext",
+    "useDefineForClassFields": true,
+    "lib": [
+      "DOM",
+      "DOM.Iterable",
+      "ESNext",
+      "esnext"
+    ],
+    "allowJs": false,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "react-jsx",
+    "noImplicitAny": false,
+    "declaration": true,
+    "declarationDir": "dist/types",
+    "strictNullChecks": true,
   },
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "node_modules"
+  ],
+//  "paths": {
+//    "./*": [
+//      "src/redesign/*"
+//    ]
+//  },
+  "references": [
+    {
+      "path": "./tsconfig.node.json"
+    }
+  ]
 }

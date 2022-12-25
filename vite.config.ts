@@ -24,6 +24,7 @@ export default defineConfig({
       formats: ["cjs", "es"],
     },
     rollupOptions: { external: ["react", "react-dom", "lodash", "prop-types", "@types/prop-types"] },
+    sourcemap: true,
   },
-  plugins: [dts({ entryRoot: "src", outputDir: "dist/types" })],
+  plugins: [dts({ entryRoot: "src", outputDir: "dist/types", tsConfigFilePath: "tsconfig.json" })],
 });

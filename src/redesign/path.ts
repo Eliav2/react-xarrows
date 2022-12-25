@@ -1,48 +1,43 @@
-import { between, deg2Rad, math_operators, operatorFunc, round } from "../utils/mathUtils";
+import { between, deg2Rad, eq, math_operators, operatorFunc, round } from "./mathUtils";
 import { Contains } from "./typeUtils";
-import { Point } from "./types";
-
-export const MATH_PRECISION = 5;
-
-// const eq = (a: number, b: number, precision = MATH_PRECISION) => Math.abs(a - b) < 1 / 10 ** precision;
-// const eq = (a: number, b: number) => Math.abs(a - b) < Number.EPSILON;
-const eq = (a: number, b: number) => Math.abs(a - b) < 10 ** -(MATH_PRECISION - 1);
-
-const operators = {
-  add: (x, y) => x + y,
-  sub: (x, y) => x - y,
-  mul: (x, y) => x * y,
-  dev: (x, y) => x / y,
-  greater: (x, y) => x > y,
-  greaterEqual: (x, y) => x >= y,
-  smaller: (x, y) => x < y,
-  smallerEqual: (x, y) => x <= y,
-};
+import { Direction, IPoint, parseDirection, PossiblyDirectedPoint, UVector } from "./types";
+import { toArray } from "./utils";
 
 // const pathMargin = 15;
 export class Vector {
   // _tmp: T;
   x: number;
   y: number;
-  faceDirs: Dir[] | null; // all allowed dirs
-  _chosenFaceDir: Dir | null; // to which dir the vector is pointing
-  dir: Dir | undefined; // direction of the vector with respect to x and y
+  // direction of the vector with respect to x and y
+  dir: Dir | undefined;
+  // vector going outside from the end of this vector must be in a direction in this list
+  allowedDirs: Dir[] | undefined;
 
   constructor(x: number, y: number);
   constructor(v: Vector);
-  constructor(v: Contains<{ x: number; y: number }>);
+  constructor(v: Contains<{ x: number; y: number; allowedDirs?: Dir[] }>);
   // constructor(x: number | Vector | Contains<{ x: number; y: number }>, y?: number) {
-  constructor(x, y?) {
-    if (x instanceof Vector || typeof x === "object") {
-      this.x = x.x;
-      this.y = x.y;
-      if (typeof y === "number") throw Error("illegal");
+  constructor(arg1: number | Vector | Contains<PossiblyDirectedPoint>, arg2?: number) {
+    if (arg1 instanceof Vector || typeof arg1 === "object") {
+      // this.x = arg1.x;
+      // this.y = arg1.y;
+      if (typeof arg2 === "number") throw Error("illegal");
+      if (arg1 instanceof Vector) {
+        this.x = arg1.x;
+        this.y = arg1.y;
+        this.allowedDirs = arg1.allowedDirs;
+      } else {
+        this.x = arg1.x;
+        this.y = arg1.y;
+        if (arg1.dir) {
+          const allowedDirs = toArray(arg1.dir);
+          this.allowedDirs = allowedDirs?.map((d) => new Dir(parseDirection(d)));
+        }
+      }
     } else {
-      this.x = x;
-      this.y = y;
+      this.x = arg1;
+      this.y = arg2 as number;
     }
-    this.faceDirs = null;
-    this._chosenFaceDir = null;
 
     if (!(this instanceof Dir)) this.dir = new Dir(this.x, this.y);
   }
@@ -84,25 +79,6 @@ export class Vector {
   abs() {
     return new Vector(Math.abs(this.x), Math.abs(this.y));
   }
-
-  setDirs(d: Dir[]) {
-    // let v = new Vector(this);
-    this.faceDirs = d;
-    return this;
-  }
-
-  setChosenDir(d: Dir) {
-    // let v = new Vector(this);
-    // v.requiredFaceDir = this.requiredFaceDir;
-    this._chosenFaceDir = d;
-    return this;
-  }
-
-  // setRequiredDir = (d: Dir) => {
-  //   // let v = new Vector(this);
-  //   this.requiredFaceDir = d;
-  //   return this;
-  // };
 
   rotate(deg) {
     const rad = deg2Rad(deg);
@@ -370,23 +346,23 @@ export const pointsToLines = (points: [number, number][]): string => {
   return points.reduce((ac, cr) => ac + ` L ${cr[0]} ${cr[1]} `, first);
 };
 
-/**
- * takes start and end points and returns a list of lines traveling only on the x and y axis
- * @param zigzagPoint option that determines the point where the line changes direction
- * @param dir option that determines the direction of the first line
- * @param endPoint whether to include the end point in the list
- */
-export const zigZag = (
-  x1: number,
-  y1: number,
-  x2: number,
-  y2: number,
-  { zigzagPoint = 0.5, dir = "x", includeEndPoint = true }: { zigzagPoint?: number; dir?: "x" | "y"; includeEndPoint?: boolean } = {}
-): [number, number][] => {
+export const zTurn = (
+  start: UVector,
+  end: UVector,
+  {
+    zigzagPoint = 0.5,
+    dir = "auto",
+  }: {
+    zigzagPoint?: number;
+    dir?: "x" | "y" | "auto";
+  } = {}
+) => {
   let points: [number, number][] = [];
+  let [x1, y1, x2, y2] = [start.x, start.y, end.x, end.y];
   let [x, y] = [x1, y1];
   points.push([x, y]);
   let [dx, dy] = deltaPoints([x, y], [x2, y2], zigzagPoint);
+  if (dir == "auto") dir = Math.abs(dx) > Math.abs(dy) ? "x" : "y";
   if (dir == "x") {
     x += dx;
     points.push([x, y]);
@@ -396,19 +372,27 @@ export const zigZag = (
     points.push([x, y]);
     points.push([x2, y]);
   }
-  if (includeEndPoint) points.push([x2, y2]);
+
+  points.push([x2, y2]);
   return points;
 };
 
 /**
- * takes start and end points and returns a list of lines traveling only on the x and y axis.
- * automatically determines the direction of the first line based on the distance between the points
- * @param zigzagPoint option that determines the point where the line changes direction
- * @param dir option that determines the direction of the first line
- * @param endPoint whether to include the end point in the list
- * */
-export const smartZigZag = (x1, y1, x2, y2, { zigzagPoint = 0.5, includeEndPoint = true } = {}) => {
-  let [dx, dy] = deltaPoints([x1, x2], [x2, y2], zigzagPoint);
-  let dir = (Math.abs(dx) > Math.abs(dy) ? "x" : "y") as "x" | "y";
-  return zigZag(x1, y1, x2, y2, { zigzagPoint, dir, includeEndPoint });
+ * takes start and end points and returns a list of lines traveling only on the x and y axis
+ */
+export const zigZag = ({
+  startPoint,
+  endPoint,
+}: {
+  startPoint: PossiblyDirectedPoint;
+  endPoint: PossiblyDirectedPoint;
+}): [number, number][] => {
+  // console.log(startPoint, endPoint);
+  const startVector = new Vector(startPoint);
+  const endVector = new Vector(startPoint);
+  // console.log(startPoint, startVector);
+  // const t = zTurn(startVector, endVector);
+  // console.log(zTurn(startVector, endVector), zTurn(startPoint, endPoint));
+  const t = zTurn(startPoint, endPoint);
+  return t;
 };

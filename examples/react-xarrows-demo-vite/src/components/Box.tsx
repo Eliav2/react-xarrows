@@ -1,6 +1,6 @@
 import React from "react";
 import useRerender from "shared/hooks/useRerender";
-import { useUpdateXWrapper } from "react-xarrows";
+import { useUpdateXWrapper } from "react-xarrows/XWrapper";
 import { usePassRef } from "shared/hooks/usePassChildrenRef";
 import Draggable from "react-draggable";
 
@@ -9,7 +9,7 @@ interface BoxProps extends React.HTMLProps<HTMLDivElement> {
   small?: boolean;
 }
 
-export const Box = React.forwardRef(({ children, style, small, ...props }: BoxProps, forwardRef) => {
+export const Box = React.forwardRef(function Box({ children, style, small, ...props }: BoxProps, forwardRef) {
   // console.log(children, "render!");
   const render = useRerender();
 

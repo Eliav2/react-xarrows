@@ -1,4 +1,5 @@
 import React, { useLayoutEffect, useRef } from "react";
+import { useEnsureContext, useXArrowWarn } from "./internal/hooks";
 
 export const XWrapper = (props: XWrapperProps) => {
   // console.log("XWrapper");
@@ -10,12 +11,40 @@ export const XWrapper = (props: XWrapperProps) => {
     }
   };
   return (
-    <XWrapperContext.Provider value={{ update, xWrapperXArrowsManager: xWrapperManager.current }}>
+    <XWrapperContext.Provider value={{ update, xWrapperXArrowsManager: xWrapperManager.current, __mounted: true }}>
       {props.children}
     </XWrapperContext.Provider>
   );
 };
 export default XWrapper;
+
+const XWrapperContextDefault = {
+  update: () => {},
+  xWrapperXArrowsManager: null,
+  __mounted: false,
+} as { update: () => void; xWrapperXArrowsManager: XWrapperManager | null; __mounted: boolean };
+
+const XWrapperContext = React.createContext(XWrapperContextDefault);
+export const useXWrapperContext = () => {
+  const val = React.useContext(XWrapperContext);
+  useEnsureContext(val, "XArrow", "useXWrapperContext");
+  // const warn = useXArrowWarn();
+  // if (!val.__mounted) {
+  //   warn(
+  //     "useXArrowContext is only available inside XArrow, wrap your component with XArrow to use it.\n" +
+  //       `Check ${new Error().stack?.split("at ")[2].trim()}\n\n`
+  //   );
+  // }
+
+  return val;
+};
+export const useUpdateXWrapper = () => {
+  const val = React.useContext(XWrapperContext);
+  useEnsureContext(val, "XWrapper", "useUpdateXWrapper", {
+    additionalInfo: "You won't be able to update XArrows without XWrapper wrapper",
+  });
+  return val.update;
+};
 
 /**
  * this class holds the registered XArrows and their render functions.
@@ -55,25 +84,19 @@ interface XWrapperProps {
   children: React.ReactNode;
 }
 
-const XWrapperContextDefault = {
-  update: () => {},
-  xWrapperXArrowsManager: {},
-} as { update: () => void; xWrapperXArrowsManager: XWrapperManager };
-
-const XWrapperContext = React.createContext(XWrapperContextDefault);
-export const useXWrapperContext = () => React.useContext(XWrapperContext);
-export const useUpdateXWrapper = () => useXWrapperContext().update;
-
 /**
  * receives a function(usually render a function) that would be executed whenever the XWrapper is updated.
  */
 export const useXWrapperRegister = (render) => {
   const xWrapperContext = useXWrapperContext();
   const XArrowId = useRef(0);
+  const mounted = useEnsureContext(xWrapperContext, "XWrapper", "useXWrapperRegister");
   useLayoutEffect(() => {
-    XArrowId.current = xWrapperContext.xWrapperXArrowsManager.register(render);
+    if (!mounted) return;
+    XArrowId.current = (xWrapperContext.xWrapperXArrowsManager as XWrapperManager).register(render);
     return () => {
-      xWrapperContext.xWrapperXArrowsManager.unregister(XArrowId.current);
+      if (!mounted) return;
+      (xWrapperContext.xWrapperXArrowsManager as XWrapperManager).unregister(XArrowId.current);
     };
   }, []);
 };

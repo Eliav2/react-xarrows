@@ -1,6 +1,6 @@
 import React, { LegacyRef } from "react";
 import { svgElemStrType } from "../types";
-import { Point } from "./types";
+import { IPoint } from "./types";
 import { Dir } from "./path";
 import { getBBox } from "./NormalizedGSvg";
 
@@ -26,7 +26,7 @@ export interface XEdgeProps {
   rotate?: number;
 
   containerRef?: LegacyRef<SVGGElement>; // internal
-  pos: Point;
+  pos: IPoint;
 }
 
 const XEdge = React.forwardRef<SVGGElement, XEdgeProps>((props, forwardRef) => {

@@ -4,6 +4,7 @@ import { RelativeSize } from "shared/types";
 import { OneOrMore } from "./typeUtils";
 import { getRelativeSizeValue } from "shared/utils";
 import { Direction, NamedDirection } from "./types";
+import { toArray } from "./utils";
 
 const cAnchorsPosMap: { [key in AnchorName]: AnchorsCustom } = {
   middle: { x: "50%", y: "50%", dir: [{ x: 0, y: 0 }] },
@@ -28,7 +29,7 @@ export type Anchor = OneOrMore<AnchorsOptions | AnchorsCustom>;
 
 function extractPointsFromAnchors(elemPos: NonNullable<positionType>, anchor: Anchor) {
   // convert to array
-  let anchorArr = Array.isArray(anchor) ? anchor : [anchor];
+  let anchorArr = toArray(anchor);
 
   // replace any 'auto' with ['left','right','bottom','top']
   if (anchorArr.some((an) => an === "auto")) {
@@ -94,10 +95,12 @@ export const autoSelectAnchor = ({
   const endPoints = extractPointsFromAnchors(endElem, endAnchor);
   const bestPoint = findBestPoint(startPoints, endPoints);
   return {
-    x1: bestPoint.start.x,
-    y1: bestPoint.start.y,
-    x2: bestPoint.end.x,
-    y2: bestPoint.end.y,
+    // x1: bestPoint.start.x,
+    // y1: bestPoint.start.y,
+    // x2: bestPoint.end.x,
+    // y2: bestPoint.end.y,
+    startPoint: bestPoint.start,
+    endPoint: bestPoint.end,
     startDir: bestPoint.start.dir,
     endDir: bestPoint.end.dir,
   };

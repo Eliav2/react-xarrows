@@ -13,7 +13,7 @@ import { Anchor, autoSelectAnchor } from "react-xarrows";
 import XArrow, { XArrowProps, ProvideXContext, useXContext } from "react-xarrows/XArrow";
 import XWrapper from "react-xarrows/XWrapper";
 import XLine from "react-xarrows/XLine";
-import { pointsToCurves, smartZigZag, zigZag } from "react-xarrows/path";
+import { pointsToCurves, zigZag } from "react-xarrows/path";
 
 function App() {
   return (
@@ -38,8 +38,12 @@ const CurvedXArrow = (props: CurvedXArrowProps) => {
         {(context) => {
           const { startElem, endElem } = context;
           if (!startElem || !endElem) return null;
-          const { x1, y1, x2, y2, startDir, endDir } = autoSelectAnchor({ startElem, endElem, startAnchor: { y: "100%" } });
-          const points = zigZag(x1, y1, x2, y2);
+          const { startPoint, endPoint, startDir, endDir } = autoSelectAnchor({
+            startElem,
+            endElem,
+            startAnchor: { y: "100%" },
+          });
+          const points = zigZag({ startPoint, endPoint });
           return <polyline points={points.join(" ")} fill="transparent" stroke="white" strokeWidth={3} />;
         }}
       </ProvideXContext>
@@ -74,9 +78,9 @@ const DemoXWrapper = () => {
       </div>
       <div style={{ height: 50 }} />
       {/* my arrows */}
-      <CurvedXArrow start={box1Ref} end={box2Ref} />
+      {/*<CurvedXArrow start={box1Ref} end={box2Ref} />*/}
       {/*<AutoAnchorWithHeadXArrow start={box1Ref} end={box2Ref} headSize={50} />*/}
-      {/*<SnakeXArrow start={box1Ref} end={box2Ref} />*/}
+      <SnakeXArrow start={box1Ref} end={box2Ref} />
     </XWrapper>
   );
 };
@@ -131,6 +135,9 @@ const AutoAnchorXLine = ({ startAnchor, endAnchor }: { startAnchor?: Anchor; end
   const context = useXContext();
   const { startElem, endElem } = context;
   if (!startElem || !endElem) return null;
-  const pos = autoSelectAnchor({ startElem, endElem, startAnchor, endAnchor });
-  return <XLine {...pos} />;
+  const {
+    startPoint: { x: x1, y: y1 },
+    endPoint: { x: x2, y: y2 },
+  } = autoSelectAnchor({ startElem, endElem, startAnchor, endAnchor });
+  return <XLine {...{ x1, y1, x2, y2 }} />;
 };

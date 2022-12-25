@@ -21,7 +21,10 @@ export const AutoAnchorWithHeadXArrow = (props: AutoAnchorWithHeadXArrowProps) =
         {(context) => {
           const { startElem, endElem } = context;
           if (!startElem || !endElem) return null;
-          const { x1, y1, x2, y2 } = autoSelectAnchor({ startElem, endElem });
+          const {
+            startPoint: { x: x1, y: y1 },
+            endPoint: { x: x2, y: y2 },
+          } = autoSelectAnchor({ startElem, endElem });
           const dir = new Dir(x2 - x1, y2 - y1);
           return (
             <>
