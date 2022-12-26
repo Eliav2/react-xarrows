@@ -13,7 +13,7 @@ import { Anchor, autoSelectAnchor } from "react-xarrows";
 import XArrow, { XArrowProps, ProvideXContext, useXContext } from "react-xarrows/XArrow";
 import XWrapper from "react-xarrows/XWrapper";
 import XLine from "react-xarrows/XLine";
-import { pointsToCurves, zigZag } from "react-xarrows/path";
+import { pointsToCurves, getBestPath } from "react-xarrows/path";
 
 function App() {
   return (
@@ -38,13 +38,17 @@ const CurvedXArrow = (props: CurvedXArrowProps) => {
         {(context) => {
           const { startElem, endElem } = context;
           if (!startElem || !endElem) return null;
-          const { startPoint, endPoint, startDir, endDir } = autoSelectAnchor({
+          const { startPoint, endPoint } = autoSelectAnchor({
             startElem,
             endElem,
-            startAnchor: { y: "100%" },
+            // startAnchor: "right",
+            // endAnchor: "top",
           });
-          const points = zigZag({ startPoint, endPoint });
-          return <polyline points={points.join(" ")} fill="transparent" stroke="white" strokeWidth={3} />;
+          // const points = [startPoint, endPoint];
+          // const points = zTurn(startPoint, endPoint);
+          const points = getBestPath({ startPoint, endPoint });
+          const points_s = points.map((p) => p.x + "," + p.y).join(" ");
+          return <polyline points={points_s} fill="transparent" stroke="white" strokeWidth={3} />;
         }}
       </ProvideXContext>
     </XArrow>
@@ -78,9 +82,9 @@ const DemoXWrapper = () => {
       </div>
       <div style={{ height: 50 }} />
       {/* my arrows */}
-      {/*<CurvedXArrow start={box1Ref} end={box2Ref} />*/}
+      <CurvedXArrow start={box1Ref} end={box2Ref} />
       {/*<AutoAnchorWithHeadXArrow start={box1Ref} end={box2Ref} headSize={50} />*/}
-      <SnakeXArrow start={box1Ref} end={box2Ref} />
+      {/*<SnakeXArrow start={box1Ref} end={box2Ref} />*/}
     </XWrapper>
   );
 };

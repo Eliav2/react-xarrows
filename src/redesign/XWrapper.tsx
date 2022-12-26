@@ -93,10 +93,10 @@ export const useXWrapperRegister = (render) => {
   const mounted = useEnsureContext(xWrapperContext, "XWrapper", "useXWrapperRegister");
   useLayoutEffect(() => {
     if (!mounted) return;
-    XArrowId.current = (xWrapperContext.xWrapperXArrowsManager as XWrapperManager).register(render);
+    XArrowId.current = xWrapperContext.xWrapperXArrowsManager!.register(render);
     return () => {
       if (!mounted) return;
-      (xWrapperContext.xWrapperXArrowsManager as XWrapperManager).unregister(XArrowId.current);
+      xWrapperContext.xWrapperXArrowsManager!.unregister(XArrowId.current);
     };
   }, []);
 };

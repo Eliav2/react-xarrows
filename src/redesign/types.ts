@@ -1,15 +1,17 @@
 import React from "react";
 import { OneOrMore } from "./typeUtils";
-import { Vector } from "./path";
+import { Dir, Vector } from "./path";
+import { toArray } from "./utils";
 
 /**
  * 'I' prefix stands for Interface, and these interfaces are usually simple objects that the user can choose to use
- * 'U' prefix stands for User, and these type are a union between the simpler interface and the class implementation used internally by this lib
+ * 'U' prefix stands for User, because the user can pass them as arguments to this lib,and these type are a union between the simpler interface and the class implementation used internally by this lib
+ * 'P' prefix stands for Parsed, because these types are the result of parsing the user input, and they are used immediately by this lib
  * for example:
- *   UVector = IVector | Vector, while IVector is just object {x: number, y: number},
- *   and Vector is the class implementation which can use IVector to construct it.
+ *   UVector = IVector | Vector, while IVector is just object {x: number, y: number}, and Vector is the class implementation which can use IVector to construct it.
  * */
 
+// represents a point/vector
 export interface IVector {
   x: number;
   y: number;
@@ -45,14 +47,27 @@ export const parseDirection = (dir: Direction): IDir => {
 
 // A point that a line passing through it should a have specific direction
 // (for example, 'left' dir   means that arrow going outside of this anchor can only go left)
-export interface DirectedPoint extends IPoint {
-  dir: Direction;
+export interface DirectedVector extends IVector {
+  trailingDir: Direction;
 }
 
 // A point that a line passing through it should a one of the given directions
-export interface PossiblyDirectedPoint extends IPoint {
-  dir?: OneOrMore<Direction>;
+export interface PossiblyDirectedVector extends IVector {
+  trailingDir?: OneOrMore<Direction>;
 }
+
+export interface PPossiblyDirectedVector extends IVector {
+  trailingDir: Dir[];
+}
+
+export const parsePossiblyDirectedVector = (p: PossiblyDirectedVector): PPossiblyDirectedVector => {
+  const trailingDirArr = toArray(p.trailingDir);
+  return {
+    x: p.x,
+    y: p.y,
+    trailingDir: trailingDirArr.map((dir) => new Dir(parseDirection(dir))),
+  };
+};
 
 export type XElemRef = React.MutableRefObject<any> | string | IPoint;
 

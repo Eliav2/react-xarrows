@@ -1,6 +1,6 @@
-import { between, deg2Rad, eq, math_operators, operatorFunc, round } from "./mathUtils";
 import { Contains } from "./typeUtils";
-import { Direction, IPoint, parseDirection, PossiblyDirectedPoint, UVector } from "./types";
+import { IVector, parseDirection, parsePossiblyDirectedVector, PossiblyDirectedVector, UVector } from "./types";
+import { between, deg2Rad, eq, math_operators, operatorFunc, round } from "./mathUtils";
 import { toArray } from "./utils";
 
 // const pathMargin = 15;
@@ -8,30 +8,28 @@ export class Vector {
   // _tmp: T;
   x: number;
   y: number;
-  // direction of the vector with respect to x and y
-  dir: Dir | undefined;
+  // // direction of the vector with respect to x and y
+  // dir!: Dir;
   // vector going outside from the end of this vector must be in a direction in this list
-  allowedDirs: Dir[] | undefined;
+  trailingDir: Dir[] | undefined;
 
   constructor(x: number, y: number);
   constructor(v: Vector);
-  constructor(v: Contains<{ x: number; y: number; allowedDirs?: Dir[] }>);
+  constructor(v: Contains<{ x: number; y: number; trailingDir?: Dir[] }>);
   // constructor(x: number | Vector | Contains<{ x: number; y: number }>, y?: number) {
-  constructor(arg1: number | Vector | Contains<PossiblyDirectedPoint>, arg2?: number) {
+  constructor(arg1: number | Vector | Contains<PossiblyDirectedVector>, arg2?: number) {
     if (arg1 instanceof Vector || typeof arg1 === "object") {
-      // this.x = arg1.x;
-      // this.y = arg1.y;
       if (typeof arg2 === "number") throw Error("illegal");
       if (arg1 instanceof Vector) {
         this.x = arg1.x;
         this.y = arg1.y;
-        this.allowedDirs = arg1.allowedDirs;
+        this.trailingDir = arg1.trailingDir;
       } else {
         this.x = arg1.x;
         this.y = arg1.y;
-        if (arg1.dir) {
-          const allowedDirs = toArray(arg1.dir);
-          this.allowedDirs = allowedDirs?.map((d) => new Dir(parseDirection(d)));
+        if (arg1.trailingDir) {
+          const trailingDirs = toArray(arg1.trailingDir);
+          this.trailingDir = trailingDirs?.map((d) => new Dir(parseDirection(d)));
         }
       }
     } else {
@@ -39,11 +37,15 @@ export class Vector {
       this.y = arg2 as number;
     }
 
-    if (!(this instanceof Dir)) this.dir = new Dir(this.x, this.y);
+    // if (!(this instanceof Dir)) this.dir = new Dir(this.x, this.y);
   }
 
   eq(p: Vector): boolean {
     return eq(p.x, this.x) && eq(p.y, this.y);
+  }
+
+  dir() {
+    return new Dir(this.x, this.y);
   }
 
   notEq(p: Vector): boolean {
@@ -103,7 +105,17 @@ export class Vector {
     return this;
   }
 
-  // eq = (p: Dir) => p.x === this.x && p.y === this.y;
+  // to establish zTurn, 2 vectors must be in the same direction
+  // this method check of there is a direction that is allowed in both vectors, and if so return it
+  canZTurnTo(v: Vector): Dir | undefined {
+    const res = this.trailingDir?.find((d) => v.trailingDir?.some((d2) => d.eq(d2)));
+    return res;
+  }
+
+  canRTurnTo(v: Vector): Dir | undefined {
+    const res = this.trailingDir?.find((d) => v.trailingDir?.some((d2) => d.eq(d2.rotate(90)) || d.eq(d2.rotate(-90))));
+    return res;
+  }
 }
 
 // receives a vector and returns direction unit
@@ -115,22 +127,28 @@ const fQ2 = (x, y) => {
   let yDir = Math.sqrt(1 - xDir ** 2) * ySign;
   return [xDir, yDir];
 };
+export const omitAttrs = <T, K extends keyof T>(Class: new () => T, keys: K[]): new () => Omit<T, typeof keys[number]> => {
+  return Class;
+};
+
+type t = typeof Vector;
 
 /**
  * normalized direction
  */
+// @ts-ignore
+// export class Dir extends omitAttrs(Vector, ["trailingDir", "dir"]) {
 export class Dir extends Vector {
-  // @ts-ignore
   constructor(xDiff: number | Vector | { x: number; y: number }, yDiff?: number) {
     if (xDiff instanceof Vector || typeof xDiff === "object") [xDiff, yDiff] = [xDiff.x, xDiff.y];
     if (typeof xDiff === "number" && typeof yDiff !== "number") throw Error("second argument should be number");
     // unit circle -  max dir  [0.707,0.707]
     let [x, y] = fQ2(xDiff, yDiff);
     super(x, y);
-    // // unit rect - max dir  [1,1]
-    // let m = Math.max(Math.abs(xDiff), Math.abs(yDiff));
-    // if (m == 0) m = 1;
-    // super(xDiff / m, yDiff / m);
+    // // @ts-ignore
+    // delete this.trailingDir;
+    // // @ts-ignore
+    // delete this.dir;
   }
 
   reverse() {
@@ -153,6 +171,11 @@ export class Dir extends Vector {
 
   toDegree() {
     return (Math.atan2(this.y, this.x) * 180) / Math.PI;
+  }
+
+  // returns 'x' if x is bigger, 'y' if y is bigger, 'x' if x and y are equal
+  toCloserAxis(): "x" | "y" {
+    return Math.abs(this.x) >= Math.abs(this.y) ? "x" : "y";
   }
 
   //rotate a point around the root (0,0) point
@@ -356,43 +379,59 @@ export const zTurn = (
     zigzagPoint?: number;
     dir?: "x" | "y" | "auto";
   } = {}
-) => {
-  let points: [number, number][] = [];
-  let [x1, y1, x2, y2] = [start.x, start.y, end.x, end.y];
-  let [x, y] = [x1, y1];
-  points.push([x, y]);
-  let [dx, dy] = deltaPoints([x, y], [x2, y2], zigzagPoint);
-  if (dir == "auto") dir = Math.abs(dx) > Math.abs(dy) ? "x" : "y";
+): IVector[] => {
+  let points: IVector[] = [];
+  let [s, e] = [new Vector(start), new Vector(end)];
+  let [x, y] = [s.x, s.y];
+  points.push(s);
+  let d = e.sub(s).mul(zigzagPoint);
+  if (dir == "auto") dir = Math.abs(d.x) > Math.abs(d.y) ? "x" : "y";
   if (dir == "x") {
-    x += dx;
-    points.push([x, y]);
-    points.push([x, y2]);
+    x += d.x;
+    points.push({ x, y });
+    points.push({ x, y: e.y });
   } else {
-    y += dy;
-    points.push([x, y]);
-    points.push([x2, y]);
+    y += d.y;
+    points.push({ x, y });
+    points.push({ x: e.x, y });
   }
-
-  points.push([x2, y2]);
+  points.push(e);
   return points;
 };
 
+export const rTurn = (
+  start: UVector,
+  end: UVector,
+  {
+    dir = "auto",
+  }: {
+    dir?: "x" | "y" | "auto";
+  } = {}
+): IVector[] => {
+  let [s, e] = [new Vector(start), new Vector(end)];
+  let d = e.sub(s);
+  if (dir == "auto") dir = Math.abs(d.x) > Math.abs(d.y) ? "x" : "y";
+  if (dir == "x") {
+    return [s, { x: e.x, y: s.y }, e];
+  }
+  return [s, { x: s.x, y: e.y }, e];
+};
+
 /**
- * takes start and end points and returns a list of lines traveling only on the x and y axis
+ * takes start and end points and returns a list of points that represents the best intuitive path between them
  */
-export const zigZag = ({
+export const getBestPath = ({
   startPoint,
   endPoint,
 }: {
-  startPoint: PossiblyDirectedPoint;
-  endPoint: PossiblyDirectedPoint;
-}): [number, number][] => {
-  // console.log(startPoint, endPoint);
-  const startVector = new Vector(startPoint);
-  const endVector = new Vector(startPoint);
-  // console.log(startPoint, startVector);
-  // const t = zTurn(startVector, endVector);
-  // console.log(zTurn(startVector, endVector), zTurn(startPoint, endPoint));
-  const t = zTurn(startPoint, endPoint);
-  return t;
+  startPoint: PossiblyDirectedVector;
+  endPoint: PossiblyDirectedVector;
+}): IVector[] => {
+  const startVector = new Vector(parsePossiblyDirectedVector(startPoint));
+  const endVector = new Vector(parsePossiblyDirectedVector(endPoint));
+  const zDir = startVector.canZTurnTo(endVector);
+  if (zDir) return zTurn(startVector, endVector, { dir: zDir.toCloserAxis() });
+  const rDir = startVector.canRTurnTo(endVector);
+  if (rDir) return rTurn(startVector, endVector, { dir: rDir.toCloserAxis() });
+  return [startVector, endVector];
 };

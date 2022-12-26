@@ -16,7 +16,7 @@ export default defineConfig({
   build: {
     minify: false,
     outDir: "dist",
-    emptyOutDir: true,
+    // emptyOutDir: true,
     lib: {
       // entry: ["src/index.ts"],
       entry: listAllFilesInDir("src/redesign"),
@@ -24,6 +24,7 @@ export default defineConfig({
       formats: ["cjs", "es"],
     },
     rollupOptions: { external: ["react", "react-dom", "lodash", "prop-types", "@types/prop-types"] },
+    // todo: to this only in prod mode
     sourcemap: true,
   },
   plugins: [dts({ entryRoot: "src", outputDir: "dist/types", tsConfigFilePath: "tsconfig.json" })],
