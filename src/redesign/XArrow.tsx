@@ -121,15 +121,7 @@ const XArrowContext = React.createContext<{
 });
 export const useXContext = () => {
   const val = React.useContext(XArrowContext);
-  const mounted = useEnsureContext(val, "XArrow", "useXContext");
-
-  // const warn = useXArrowWarn();
-  // if (!val.__mounted) {
-  //   warn(
-  //     "useXArrowContext is only available inside XArrow, wrap your component with XArrow to use it.\n" +
-  //       `Check ${new Error().stack?.split("at ")[2].trim()}\n\n`
-  //   );
-  // }
+  useEnsureContext(val, "XArrow", "useXContext");
   return val;
 };
 

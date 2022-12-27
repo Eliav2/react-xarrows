@@ -1,8 +1,8 @@
 import React, { useRef } from "react";
-import { ProvideXContext, XArrow, XArrowProps } from "react-xarrows/XArrow";
+import { ProvideXContext, useXContext, XArrow, XArrowProps } from "react-xarrows/XArrow";
 import { autoSelectAnchor } from "react-xarrows/useAutoSelectAnchor";
 import { Dir } from "react-xarrows/path";
-import XEdge from "react-xarrows/XEdge";
+import XEdge, { XEdgeProps } from "react-xarrows/XEdge";
 import NormalizedGSvg from "react-xarrows/NormalizedGSvg";
 import XLine from "react-xarrows/XLine";
 
@@ -12,7 +12,6 @@ interface AutoAnchorWithHeadXArrowProps extends Pick<XArrowProps, "start" | "end
 }
 
 export const AutoAnchorWithHeadXArrow = (props: AutoAnchorWithHeadXArrowProps) => {
-  const XEdgeEndRef = useRef<SVGGElement>(null);
   const { headSize = 30, headSharpness = 0.25 } = props;
 
   return (
@@ -28,11 +27,7 @@ export const AutoAnchorWithHeadXArrow = (props: AutoAnchorWithHeadXArrowProps) =
           const dir = new Dir(x2 - x1, y2 - y1);
           return (
             <>
-              <XEdge pos={{ x: x2, y: y2 }} dir={dir} size={headSize} ref={XEdgeEndRef}>
-                <NormalizedGSvg>
-                  <path d={`M 0 0 L 1 0.5 L 0 1 L ${headSharpness} 0.5 z`} />
-                </NormalizedGSvg>
-              </XEdge>
+              <ArrowHead pos={{ x: x2, y: y2 }} dir={dir} size={headSize} sharpness={headSharpness} />
               <XLine {...{ x1, y1, x2, y2 }} fill="transparent" stroke="white" strokeWidth={3} stripEnd={headSize * (1 - headSharpness)} />
             </>
           );
@@ -40,4 +35,21 @@ export const AutoAnchorWithHeadXArrow = (props: AutoAnchorWithHeadXArrowProps) =
       </ProvideXContext>
     </XArrow>
   );
+};
+
+interface ArrowHead extends XEdgeProps {
+  sharpness?: number;
+}
+
+const ArrowHead = (props: ArrowHead) => {
+  return (
+    <XEdge {...props}>
+      <NormalizedGSvg>
+        <path d={`M 0 0 L 1 0.5 L 0 1 L ${props.sharpness} 0.5 z`} />
+      </NormalizedGSvg>
+    </XEdge>
+  );
+};
+ArrowHead.defaultProps = {
+  sharpness: 0.25,
 };

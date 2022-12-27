@@ -27,6 +27,7 @@ const SnakeXArrow = (props: SnakeXArrowProps) => {
           } else {
             points.push(...zTurn({ x: x1, y: y1 }, { x: x2, y: y2 }, { dir: "x" }));
           }
+          points.pop(); // the last point is already in the array
           points.push({ x: x2, y: y2 });
           const points_s = points.map((p) => p.x + "," + p.y).join(" ");
           return <polyline points={points_s} fill="transparent" stroke="white" strokeWidth={3} />;

@@ -29,7 +29,7 @@ export interface XEdgeProps {
   pos: IPoint;
 }
 
-const XEdge = React.forwardRef<SVGGElement, XEdgeProps>((props, forwardRef) => {
+const XEdge = React.forwardRef<SVGGElement, XEdgeProps>(function XEdge(props, forwardRef) {
   const { children, containerRef, pos, dir = new Dir(0, 0), rotate = 0 } = props;
   // const dir = pos._chosenFaceDir;
   // const endEdgeRef = useRef();
