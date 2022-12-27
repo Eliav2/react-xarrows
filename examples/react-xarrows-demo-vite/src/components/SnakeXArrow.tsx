@@ -1,6 +1,7 @@
 import { ProvideXContext, XArrow, XArrowProps } from "react-xarrows/XArrow";
 import React from "react";
-import { zigZag, zTurn } from "react-xarrows/path";
+import { zTurn } from "react-xarrows/path";
+import { IVector } from "react-xarrows/types";
 
 interface SnakeXArrowProps extends Pick<XArrowProps, "start" | "end"> {}
 
@@ -15,7 +16,7 @@ const SnakeXArrow = (props: SnakeXArrowProps) => {
           } = context;
           let len = x2 - x1;
           const maxLen = 100 * (len > 0 ? 1 : -1);
-          const points: [number, number][] = [];
+          const points: IVector[] = [];
           let [x] = [x1, y1];
           if (Math.abs(len) > Math.abs(maxLen)) {
             while (Math.abs(len) > Math.abs(maxLen)) {
@@ -26,8 +27,9 @@ const SnakeXArrow = (props: SnakeXArrowProps) => {
           } else {
             points.push(...zTurn({ x: x1, y: y1 }, { x: x2, y: y2 }, { dir: "x" }));
           }
-          points.push([x2, y2]);
-          return <polyline points={points.join(" ")} fill="transparent" stroke="white" strokeWidth={3} />;
+          points.push({ x: x2, y: y2 });
+          const points_s = points.map((p) => p.x + "," + p.y).join(" ");
+          return <polyline points={points_s} fill="transparent" stroke="white" strokeWidth={3} />;
         }}
       </ProvideXContext>
     </XArrow>

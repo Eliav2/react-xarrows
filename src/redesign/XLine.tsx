@@ -8,6 +8,8 @@ export interface XLineProps extends React.SVGProps<SVGLineElement> {
   stripEnd?: RelativeSize; // how much of the end of the line should be removed
   stripStart?: RelativeSize; // how much of the start of the line should be removed
   component?: React.ElementType<XLineProps>;
+  color?: string;
+  strokeWidth?: number;
 }
 
 export const XLine = (props: XLineProps) => {
@@ -20,6 +22,8 @@ export const XLine = (props: XLineProps) => {
     y1 = val.startPoint.y,
     x2 = val.endPoint.x,
     y2 = val.endPoint.y,
+    color = "cornflowerblue",
+    strokeWidth = 3,
     ...p
   } = props;
   x1 = Number(x1);
@@ -41,10 +45,16 @@ export const XLine = (props: XLineProps) => {
       // x2={val.endPoint.x}
       // y2={val.endPoint.y}
       fill="transparent"
-      stroke="white"
-      strokeWidth={3}
+      stroke={color}
+      strokeWidth={strokeWidth}
       {...p}
     />
   );
 };
 export default XLine;
+
+XLine.defaultProps = {
+  component: "line",
+  color: "cornflowerblue",
+  strokeWidth: 3,
+};
