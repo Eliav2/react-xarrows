@@ -3,7 +3,16 @@ import { useXContext } from "./XArrow";
 import { RelativeSize } from "shared/types";
 import { OneOrMore } from "./typeUtils";
 import { getRelativeSizeValue } from "shared/utils";
-import { DirectedVector, Direction, NamedDirection, parseDirection, parsePossiblyDirectedVector, PossiblyDirectedVector } from "./types";
+import {
+  DirectedVector,
+  Direction,
+  IRect,
+  NamedDirection,
+  parseDirection,
+  parseIRect,
+  parsePossiblyDirectedVector,
+  PossiblyDirectedVector,
+} from "./types";
 import { toArray } from "./utils";
 import { Dir, getBestPath } from "./path";
 
@@ -35,11 +44,8 @@ export type AnchorCustom = {
 };
 export type Anchor = OneOrMore<AnchorsOptions | AnchorCustom>;
 
-function extractPointsFromAnchors(
-  elemPos: NonNullable<positionType>,
-  anchor: Anchor,
-  defaultAnchors: { [anchorName: string]: AnchorCustom } = {}
-) {
+function extractPointsFromAnchors(elemPos: IRect, anchor: Anchor, defaultAnchors: { [anchorName: string]: AnchorCustom } = {}) {
+  const pElemPos = parseIRect(elemPos);
   // convert to array
   let anchorArr = toArray(anchor);
 
@@ -65,8 +71,8 @@ function extractPointsFromAnchors(
   // convert to points
   const points = anchorCustomArrWithDefaults.map((an) => {
     return {
-      x: getRelativeSizeValue(an.x ?? "50%", elemPos.width) + elemPos.left,
-      y: getRelativeSizeValue(an.y ?? "50%", elemPos.height) + elemPos.top,
+      x: getRelativeSizeValue(an.x ?? "50%", pElemPos.width) + pElemPos.left,
+      y: getRelativeSizeValue(an.y ?? "50%", pElemPos.height) + pElemPos.top,
       trailingDir: an.trailingDir,
     };
   });
@@ -107,8 +113,8 @@ export const autoSelectAnchor = ({
   startAnchor = "auto",
   endAnchor = "auto",
 }: {
-  startElem: NonNullable<positionType>;
-  endElem: NonNullable<positionType>;
+  startElem: IRect;
+  endElem: IRect;
   startAnchor?: Anchor;
   endAnchor?: Anchor;
 }) => {

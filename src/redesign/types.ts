@@ -74,3 +74,19 @@ export type XElemRef = React.MutableRefObject<any> | string | IPoint;
 export function isPoint(o: any): o is IPoint {
   return typeof o === "object" && o && ("x" in o || "y" in o);
 }
+
+export interface IRect {
+  left: number;
+  top: number;
+  right: number;
+  bottom: number;
+}
+
+export interface PRect extends IRect {
+  width: number;
+  height: number;
+}
+export const parseIRect = (rec: IRect): PRect => {
+  const { left, top, right, bottom } = rec;
+  return { left, top, right, bottom, width: right - left, height: bottom - top };
+};

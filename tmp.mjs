@@ -1,15 +1,42 @@
 import { readdirSync } from "fs";
 import { resolve } from "path";
+import fs from "fs";
 
-// find all files in the current directory(no folders)
+// find all files in the current directory including subdirectories
 const listAllFilesInDir = (dir) => {
-  return readdirSync(dir, { withFileTypes: true }).filter(dirnet => dirnet.isFile()).map(dirnet => dirnet.name);
+  const files = readdirSync(dir);
+  console.log("files",files);
+  return files.reduce((acc, file) => {
+    const name = resolve(dir, file);
+    const isDirectory = fs.statSync(name).isDirectory();
+    return isDirectory ? [...acc, ...listAllFilesInDir(name)] : [...acc, name];
+  }, []);
+};
 
+const removeExtension = (filename) => {
+  const lastDotPosition = filename.lastIndexOf(".");
+  if (lastDotPosition === -1) {
+    return filename;
+  }
+  return filename.substring(0, lastDotPosition);
+};
+
+// find all files in the current directory including subdirectories
+const mapAllFilesInDir = (baseDir,output) => {
+  const files = readdirSync(baseDir);
+  console.log("files",files);
+  return files.reduce((acc, dir) => {
+    // const name = resolve(dir, file);
+    const name = `${baseDir}\\${dir}`;
+    const outputName = removeExtension(`${output}\\${dir}`);
+    const isDirectory = fs.statSync(name).isDirectory();
+    return isDirectory ? {...acc, ...mapAllFilesInDir(name,`${outputName}`)} : {...acc, [outputName]:removeExtension(name)};
+  }, {});
 };
 
 const getAbsolutePath = (dir) => {
   return resolve(dir);
 };
-console.log(resolve("."));
+console.log(mapAllFilesInDir("src\\redesign",'dist'));
 
 

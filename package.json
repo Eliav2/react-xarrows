@@ -19,13 +19,13 @@
   },
   "exports": {
     ".": {
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js",
+      "import": "./dist/build/index.mjs",
+      "require": "./dist/build/index.js",
       "types": "./dist/types/index.d.ts"
     },
     "./*": {
-      "import": "./dist/*.mjs",
-      "require": "./dist/*.js",
+      "import": "./dist/build/*.mjs",
+      "require": "./dist/build/*.js",
       "types": "./dist/types/redesign/*.d.ts"
     }
   },
