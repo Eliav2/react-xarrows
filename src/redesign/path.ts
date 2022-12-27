@@ -347,18 +347,20 @@ const deltaPoints = (p1: [number, number], p2: [number, number], factor = 1): [n
 /**
  * receives a list of points and returns a string that that represents curves intersections when used as the 'd' attribute of svg path element
  */
-export const pointsToCurves = (points: [number, number][]) => {
+export const pointsToCurves = (points: IVector[], { breakCurve = 0.5 } = {}) => {
   const p0 = points[0];
-  let path = `M ${p0[0]} ${p0[1]} `;
+  let path = `M ${p0.x} ${p0.y} `;
   if (points.length == 1) return path;
-  if (points.length == 2) return path + `L ${points[1][0]} ${points[1][1]}`;
+  if (points.length == 2) return path + `L ${points[1].x} ${points[1].y}`;
 
   let i;
+  console.log(points);
   for (i = 1; i < points.length - 2; i++) {
-    let [pdx, pdy] = deltaPoints(points[i], points[i + 1], 0.5);
-    path += `Q ${points[i][0]} ${points[i][1]} ${points[i][0] + pdx} ${points[i][1] + pdy}`;
+    // let [pdx, pdy] = deltaPoints(points[i], points[i + 1], 0.5);
+    let [pdx, pdy] = deltaPoints(Object.values<number>(points[i]), Object.values<number>(points[i + 1]), breakCurve);
+    path += `Q ${points[i].x} ${points[i].y} ${points[i].x + pdx} ${points[i].y + pdy} `;
   }
-  path += `Q ${points[i][0]} ${points[i][1]} ${points[i + 1][0]} ${points[i + 1][1]}`;
+  path += `Q ${points[i].x} ${points[i].y} ${points[i + 1].x} ${points[i + 1].y}`;
   return path;
 };
 
@@ -373,10 +375,10 @@ export const zTurn = (
   start: UVector,
   end: UVector,
   {
-    zigzagPoint = 0.5,
+    breakPoint = 0.5,
     dir = "auto",
   }: {
-    zigzagPoint?: number;
+    breakPoint?: number;
     dir?: "x" | "y" | "auto";
   } = {}
 ): IVector[] => {
@@ -384,7 +386,7 @@ export const zTurn = (
   let [s, e] = [new Vector(start), new Vector(end)];
   let [x, y] = [s.x, s.y];
   points.push(s);
-  let d = e.sub(s).mul(zigzagPoint);
+  let d = e.sub(s).mul(breakPoint);
   if (dir == "auto") dir = Math.abs(d.x) > Math.abs(d.y) ? "x" : "y";
   if (dir == "x") {
     x += d.x;
@@ -423,14 +425,19 @@ export const rTurn = (
 export const getBestPath = ({
   startPoint,
   endPoint,
+  options = { breakPoint: 0.5 },
 }: {
   startPoint: PossiblyDirectedVector;
   endPoint: PossiblyDirectedVector;
+  options?: {
+    breakPoint?: number;
+  };
 }): IVector[] => {
+  const { breakPoint = 0.5 } = options;
   const startVector = new Vector(parsePossiblyDirectedVector(startPoint));
   const endVector = new Vector(parsePossiblyDirectedVector(endPoint));
   const zDir = startVector.canZTurnTo(endVector);
-  if (zDir) return zTurn(startVector, endVector, { dir: zDir.toCloserAxis() });
+  if (zDir) return zTurn(startVector, endVector, { dir: zDir.toCloserAxis(), breakPoint });
   const rDir = startVector.canRTurnTo(endVector);
   if (rDir) return rTurn(startVector, endVector, { dir: rDir.toCloserAxis() });
   return [startVector, endVector];

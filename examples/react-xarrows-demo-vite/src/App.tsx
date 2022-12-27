@@ -3,12 +3,13 @@ import React, { useRef } from "react";
 import { Box } from "./components/Box";
 import useRerender from "shared/hooks/useRerender";
 import { AutoAnchorWithHeadXArrow } from "./components/AutoAnchorWithHeadXArrow";
-import SnakeXArrow from "./components/SnakeXArrow";
 import { Anchor, autoSelectAnchor } from "react-xarrows/useAutoSelectAnchor";
-import XArrow, { XArrowProps, ProvideXContext, useXContext } from "react-xarrows/XArrow";
+import XArrow, { ProvideXContext, useXContext } from "react-xarrows/XArrow";
 import XWrapper from "react-xarrows/XWrapper";
 import XLine from "react-xarrows/XLine";
-import { getBestPath } from "react-xarrows/path";
+import { getBestPath, pointsToCurves } from "react-xarrows/path";
+import { BestPathGridXArrow, BestPathGridXArrowProps } from "./components/BestPathGridXArrow";
+import SnakeXArrow from "./components/SnakeXArrow";
 
 function App() {
   return (
@@ -23,9 +24,7 @@ function App() {
 
 export default App;
 
-interface CurvedXArrowProps extends Pick<XArrowProps, "start" | "end"> {}
-
-const CurvedXArrow = (props: CurvedXArrowProps) => {
+export const BestPathSmoothXArrow = (props: BestPathGridXArrowProps) => {
   const { start, end } = props;
   return (
     <XArrow start={start} end={end}>
@@ -33,17 +32,11 @@ const CurvedXArrow = (props: CurvedXArrowProps) => {
         {(context) => {
           const { startElem, endElem } = context;
           if (!startElem || !endElem) return null;
-          const { startPoint, endPoint } = autoSelectAnchor({
-            startElem,
-            endElem,
-            // startAnchor: "right",
-            // endAnchor: "top",
-          });
-          // const points = [startPoint, endPoint];
-          // const points = zTurn(startPoint, endPoint);
+          const { startPoint, endPoint } = autoSelectAnchor({ startElem, endElem });
           const points = getBestPath({ startPoint, endPoint });
-          const points_s = points.map((p) => p.x + "," + p.y).join(" ");
-          return <polyline points={points_s} fill="transparent" stroke="white" strokeWidth={3} />;
+          const v = pointsToCurves(points, { breakCurve: 0.5 });
+          // console.log(v);
+          return <path d={v} stroke="white" strokeWidth={3} />;
         }}
       </ProvideXContext>
     </XArrow>
@@ -77,9 +70,10 @@ const DemoXWrapper = () => {
       </div>
       <div style={{ height: 50 }} />
       {/* my arrows */}
-      {/*<CurvedXArrow start={box1Ref} end={box2Ref} />*/}
+      {/*<BestPathSmoothXArrow start={box1Ref} end={box2Ref} />*/}
+      <BestPathGridXArrow start={box1Ref} end={box2Ref} breakPoint={0.5} />
       {/*<AutoAnchorWithHeadXArrow start={box1Ref} end={box2Ref} headSize={50} />*/}
-      <SnakeXArrow start={box1Ref} end={box2Ref} />
+      {/*<SnakeXArrow start={box1Ref} end={box2Ref} />*/}
     </XWrapper>
   );
 };
