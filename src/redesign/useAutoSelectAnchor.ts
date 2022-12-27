@@ -3,8 +3,9 @@ import { useXContext } from "./XArrow";
 import { RelativeSize } from "shared/types";
 import { OneOrMore } from "./typeUtils";
 import { getRelativeSizeValue } from "shared/utils";
-import { Direction, NamedDirection } from "./types";
+import { DirectedVector, Direction, NamedDirection, parseDirection, parsePossiblyDirectedVector, PossiblyDirectedVector } from "./types";
 import { toArray } from "./utils";
+import { Dir, getBestPath } from "./path";
 
 const cStartAnchorsMap: { [key in AnchorName]: AnchorCustom } = {
   middle: { x: "50%", y: "50%", trailingDir: [{ x: 0, y: 0 }] },
@@ -78,18 +79,27 @@ function findBestPoint(
   endPoints: { x: number; y: number; trailingDir: AnchorDirection }[]
 ) {
   // find the shortest distance between the start and end points
-  let bestPoint = { start: startPoints[0], end: endPoints[0], distance: Infinity };
-  for (const start of startPoints) {
-    for (const end of endPoints) {
-      const distance = Math.sqrt((start.x - end.x) ** 2 + (start.y - end.y) ** 2);
+  let bestPoint = { startPoint: startPoints[0], endPoint: endPoints[0], distance: Infinity };
+  for (const startPoint of startPoints) {
+    for (const endPoint of endPoints) {
+      const distance = Math.sqrt((startPoint.x - endPoint.x) ** 2 + (startPoint.y - endPoint.y) ** 2);
       // multiple with 0.9 so the next closer point is at least 10% closer
       if (distance < bestPoint.distance * 0.9) {
-        bestPoint = { start, end, distance };
+        bestPoint = { startPoint, endPoint, distance };
       }
     }
   }
   return bestPoint;
 }
+
+// function findBestEdgeDirections(startPoint: PossiblyDirectedVector, endPoint: PossiblyDirectedVector) {
+//   const a = getBestPath( startPoint, endPoint );
+//   // const startVector = parsePossiblyDirectedVector(startPoint);
+//   // const endVector = parsePossiblyDirectedVector(endPoint);
+//   // const startDirArr = toArray(startDir).map((dir)=> new Dir(parseDirection(dir)));
+//   // const endDirArr = toArray(endDir).map((dir)=> new Dir(parseDirection(dir)));
+//   //
+// }
 
 export const autoSelectAnchor = ({
   startElem,
@@ -104,10 +114,10 @@ export const autoSelectAnchor = ({
 }) => {
   const startPoints = extractPointsFromAnchors(startElem, startAnchor, cStartAnchorsMap);
   const endPoints = extractPointsFromAnchors(endElem, endAnchor, cEndAnchorsMap);
-  const bestPoint = findBestPoint(startPoints, endPoints);
+  const { startPoint, endPoint } = findBestPoint(startPoints, endPoints);
   return {
-    startPoint: bestPoint.start,
-    endPoint: bestPoint.end,
+    startPoint,
+    endPoint,
   };
 };
 

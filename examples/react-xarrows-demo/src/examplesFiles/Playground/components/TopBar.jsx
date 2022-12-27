@@ -1,41 +1,39 @@
-import React from 'react';
-import './TopBar.css';
+import React from "react";
+import "./TopBar.css";
 // import MaterialIcon from "material-icons-react";
 
 const actions = {
-  box: ['Add Connections', 'Remove Connections', 'Delete'],
-  arrow: ['Edit Properties', 'Remove Connection'],
+  box: ["Add Connections", "Remove Connections", "Delete"],
+  arrow: ["Edit Properties", "Remove Connection"],
 };
 
 const TopBar = (props) => {
   const handleEditAction = (action) => {
     switch (action) {
-      case 'Edit Name':
+      case "Edit Name":
         props.setBoxes((boxes) => {
-          var newName = prompt('Enter new name: ');
+          var newName = prompt("Enter new name: ");
           while ([...boxes, ...props.interfaces].map((a) => a.id).includes(newName))
-            newName = prompt('Name Already taken,Choose another: ');
+            newName = prompt("Name Already taken,Choose another: ");
           if (!newName) return;
           return boxes.map((box) => (box.id === props.selected.id ? { ...box, id: newName } : box));
         });
         break;
-      case 'Add Connections':
+      case "Add Connections":
         props.setActionState(action);
         break;
-      case 'Remove Connections':
+      case "Remove Connections":
         props.setActionState(action);
         break;
-      case 'Remove Connection':
+      case "Remove Connection":
         props.setLines((lines) =>
-          lines.filter(
-            (line) => !(line.props.root === props.selected.id.root && line.props.end === props.selected.id.end)
-          )
+          lines.filter((line) => !(line.props.root === props.selected.id.root && line.props.endPoint === props.selected.id.endPoint))
         );
         break;
-      case 'Edit Properties':
+      case "Edit Properties":
         props.setLines((lines) =>
           lines.map((line) =>
-            line.props.root === props.selected.id.root && line.props.end === props.selected.id.end
+            line.props.root === props.selected.id.root && line.props.endPoint === props.selected.id.endPoint
               ? {
                   ...line,
                   menuWindowOpened: true,
@@ -44,13 +42,11 @@ const TopBar = (props) => {
           )
         );
         break;
-      case 'Delete':
+      case "Delete":
         if (window.confirm(`are you sure you want to delete ${props.selected.id}?`)) {
           // first remove any lines connected to the node.
           props.setLines((lines) => {
-            return lines.filter(
-              (line) => !(line.props.root === props.selected.id || line.props.end === props.selected.id)
-            );
+            return lines.filter((line) => !(line.props.root === props.selected.id || line.props.endPoint === props.selected.id));
           });
           // if its a box remove from boxes
           if (props.boxes.map((box) => box.id).includes(props.selected.id)) {
@@ -71,7 +67,7 @@ const TopBar = (props) => {
     let allowedActions = [];
     if (props.selected) allowedActions = actions[props.selected.type];
     switch (props.actionState) {
-      case 'Normal':
+      case "Normal":
         return (
           <div className="actionBubbles">
             {allowedActions.map((action, i) => (
@@ -81,17 +77,17 @@ const TopBar = (props) => {
             ))}
           </div>
         );
-      case 'Add Connections':
+      case "Add Connections":
         return (
           <div className="actionBubbles">
             <p>To where connect new connection?</p>
-            <div className="actionBubble" onClick={() => props.setActionState('Normal')}>
+            <div className="actionBubble" onClick={() => props.setActionState("Normal")}>
               finish
             </div>
           </div>
         );
 
-      case 'Remove Connections':
+      case "Remove Connections":
         return (
           <div className="actionBubbles">
             <p>Which connection to remove?</p>
@@ -102,10 +98,7 @@ const TopBar = (props) => {
   };
 
   return (
-    <div
-      className="topBarStyle"
-      style={{ height: props.selected === null ? '0' : '60px' }}
-      onClick={(e) => e.stopPropagation()}>
+    <div className="topBarStyle" style={{ height: props.selected === null ? "0" : "60px" }} onClick={(e) => e.stopPropagation()}>
       <div className="topBarLabel" onClick={() => props.handleSelect(null)}>
         {/*<MaterialIcon*/}
         {/*  size={30}*/}

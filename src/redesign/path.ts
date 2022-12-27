@@ -1,7 +1,8 @@
 import { Contains } from "./typeUtils";
-import { IVector, parseDirection, parsePossiblyDirectedVector, PossiblyDirectedVector, UVector } from "./types";
+import { IDir, IVector, parseDirection, parsePossiblyDirectedVector, PossiblyDirectedVector, UVector } from "./types";
 import { between, deg2Rad, eq, math_operators, operatorFunc, round } from "./mathUtils";
 import { toArray } from "./utils";
+import { number } from "prop-types";
 
 // const pathMargin = 15;
 export class Vector {
@@ -112,9 +113,14 @@ export class Vector {
     return res;
   }
 
-  canRTurnTo(v: Vector): Dir | undefined {
-    const res = this.trailingDir?.find((d) => v.trailingDir?.some((d2) => d.eq(d2.rotate(90)) || d.eq(d2.rotate(-90))));
-    return res;
+  // to establish rTurn, the second vector must be in 90 degree or -90 degrees to the direction of the first vector
+  // this method check of there is a pair of directions that are allowed in both vectors, and if so return it
+  canRTurnTo(v: Vector): [Dir, Dir] | undefined {
+    for (const d of this.trailingDir ?? []) {
+      for (const d2 of v.trailingDir ?? []) {
+        if (d.eq(d2.rotate(90)) || d.eq(d2.rotate(-90))) return [d, d2];
+      }
+    }
   }
 }
 
@@ -340,24 +346,22 @@ class VectorArr extends Array<Vector> {
 }
 
 // subtract two points with respect to a given factor
-const deltaPoints = (p1: [number, number], p2: [number, number], factor = 1): [number, number] => {
+const deltaPoints = (p1: [number, number], p2: [number, number], factor = 0.5): [number, number] => {
   return [(p2[0] - p1[0]) * factor, (p2[1] - p1[1]) * factor];
 };
 
 /**
  * receives a list of points and returns a string that that represents curves intersections when used as the 'd' attribute of svg path element
  */
-export const pointsToCurves = (points: IVector[], { breakCurve = 0.5 } = {}) => {
+export const pointsToCurves = (points: IVector[]) => {
   const p0 = points[0];
   let path = `M ${p0.x} ${p0.y} `;
   if (points.length == 1) return path;
   if (points.length == 2) return path + `L ${points[1].x} ${points[1].y}`;
 
   let i;
-  console.log(points);
   for (i = 1; i < points.length - 2; i++) {
-    // let [pdx, pdy] = deltaPoints(points[i], points[i + 1], 0.5);
-    let [pdx, pdy] = deltaPoints(Object.values<number>(points[i]), Object.values<number>(points[i + 1]), breakCurve);
+    let [pdx, pdy] = deltaPoints(Object.values(points[i]) as [number, number], Object.values(points[i + 1]) as [number, number], 0.5);
     path += `Q ${points[i].x} ${points[i].y} ${points[i].x + pdx} ${points[i].y + pdy} `;
   }
   path += `Q ${points[i].x} ${points[i].y} ${points[i + 1].x} ${points[i + 1].y}`;
@@ -371,6 +375,33 @@ export const pointsToLines = (points: [number, number][]): string => {
   return points.reduce((ac, cr) => ac + ` L ${cr[0]} ${cr[1]} `, first);
 };
 
+// rTurn takes a start point and an end point and returns a list of points that represents a right or left turn
+// travel direction is on the 'x' or the 'y' axis. the direction is determined by the 'dir' parameter
+export const rTurn = (
+  start: UVector,
+  end: UVector,
+  {
+    dir = "auto",
+    includeStart = true,
+    includeEnd = true,
+  }: {
+    dir?: "x" | "y" | "auto";
+    includeStart?: boolean;
+    includeEnd?: boolean;
+  } = {}
+): Vector[] => {
+  let [s, e] = [new Vector(start), new Vector(end)];
+  let d = e.sub(s);
+  if (dir == "auto") dir = Math.abs(d.x) > Math.abs(d.y) ? "x" : "y";
+  const points: Vector[] = [];
+  if (includeStart) points.push(s);
+  if (dir == "x") points.push(new Vector(e.x, s.y));
+  else points.push(new Vector(s.x, e.y));
+  if (includeEnd) points.push(e);
+  return points;
+};
+
+// zTurn is consists of two rTurns and a specified break point
 export const zTurn = (
   start: UVector,
   end: UVector,
@@ -381,64 +412,56 @@ export const zTurn = (
     breakPoint?: number;
     dir?: "x" | "y" | "auto";
   } = {}
-): IVector[] => {
-  let points: IVector[] = [];
+): Vector[] => {
+  let points: Vector[] = [];
   let [s, e] = [new Vector(start), new Vector(end)];
-  let [x, y] = [s.x, s.y];
-  points.push(s);
   let d = e.sub(s).mul(breakPoint);
   if (dir == "auto") dir = Math.abs(d.x) > Math.abs(d.y) ? "x" : "y";
+  let [x, y] = [s.x, s.y];
+  points.push(s);
   if (dir == "x") {
     x += d.x;
-    points.push({ x, y });
-    points.push({ x, y: e.y });
+    points.push(new Vector({ x, y }));
+    points.push(new Vector({ x, y: e.y }));
   } else {
     y += d.y;
-    points.push({ x, y });
-    points.push({ x: e.x, y });
+    points.push(new Vector({ x, y }));
+    points.push(new Vector({ x: e.x, y }));
   }
   points.push(e);
   return points;
 };
 
-export const rTurn = (
-  start: UVector,
-  end: UVector,
-  {
-    dir = "auto",
-  }: {
-    dir?: "x" | "y" | "auto";
-  } = {}
-): IVector[] => {
-  let [s, e] = [new Vector(start), new Vector(end)];
-  let d = e.sub(s);
-  if (dir == "auto") dir = Math.abs(d.x) > Math.abs(d.y) ? "x" : "y";
-  if (dir == "x") {
-    return [s, { x: e.x, y: s.y }, e];
-  }
-  return [s, { x: s.x, y: e.y }, e];
-};
-
 /**
  * takes start and end points and returns a list of points that represents the best intuitive path between them
  */
-export const getBestPath = ({
+export const getBestPath = (
   startPoint,
   endPoint,
-  options = { breakPoint: 0.5 },
-}: {
-  startPoint: PossiblyDirectedVector;
-  endPoint: PossiblyDirectedVector;
-  options?: {
-    breakPoint?: number;
-  };
-}): IVector[] => {
+  options: { breakPoint: number } = { breakPoint: 0.5 }
+): { points: IVector[]; startDir: IDir | undefined; endDir: IDir | undefined } => {
   const { breakPoint = 0.5 } = options;
   const startVector = new Vector(parsePossiblyDirectedVector(startPoint));
   const endVector = new Vector(parsePossiblyDirectedVector(endPoint));
   const zDir = startVector.canZTurnTo(endVector);
-  if (zDir) return zTurn(startVector, endVector, { dir: zDir.toCloserAxis(), breakPoint });
+  if (zDir)
+    return {
+      points: zTurn(startVector, endVector, { dir: zDir.toCloserAxis(), breakPoint }),
+      startDir: zDir,
+      endDir: zDir,
+    };
   const rDir = startVector.canRTurnTo(endVector);
-  if (rDir) return rTurn(startVector, endVector, { dir: rDir.toCloserAxis() });
-  return [startVector, endVector];
+  if (rDir) {
+    const points = rTurn(startVector, endVector, { dir: rDir[0].toCloserAxis() });
+    return {
+      points,
+      startDir: rDir[0],
+      endDir: rDir[1],
+    };
+  }
+  return {
+    points: [startVector, endVector],
+    startDir: startVector.trailingDir?.[0],
+    endDir: endVector.trailingDir?.[0],
+  };
 };

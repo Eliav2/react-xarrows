@@ -1,35 +1,35 @@
-import { createFeature } from '../components/XarrowBuilder';
-import React, { useRef } from 'react';
-import { svgCustomEdgeType, svgEdgeType, svgElemStrType, svgElemType } from '../types';
-import { arrowShapes, cArrowShapes } from '../constants';
-import { PathProps } from './Path';
-import { Dir, Line, Vector } from '../classes/path';
-import XEdge from '../components/XEdge';
-import { AnchorsProps, AnchorsStateChange } from './Anchors';
-import { CoreProps, CoreStateChange } from './Core';
-import { Spread } from '../privateTypes';
-import PT from 'prop-types';
-import { anchorsInwardOffset } from '../utils/XarrowUtils';
-import { useGetBBox } from '../components/NormalizedGSvg';
-import { createPortal } from 'react-dom';
+import { createFeature } from "../components/XarrowBuilder";
+import React, { useRef } from "react";
+import { svgCustomEdgeType, svgEdgeType, svgElemStrType, svgElemType } from "../types";
+import { arrowShapes, cArrowShapes } from "../constants";
+import { PathProps } from "./Path";
+import { Dir, Line, Vector } from "../classes/path";
+import XEdge from "../components/XEdge";
+import { AnchorsProps, AnchorsStateChange } from "./Anchors";
+import { CoreProps, CoreStateChange } from "./Core";
+import { Spread } from "../privateTypes";
+import PT from "prop-types";
+import { anchorsInwardOffset } from "../utils/XarrowUtils";
+import { useGetBBox } from "../components/NormalizedGSvg";
+import { createPortal } from "react-dom";
 
 const parseEdgeShape = (svgEdge: svgEdgeType): Required<svgCustomEdgeType> => {
-  let parsedProp: Required<svgCustomEdgeType> = arrowShapes['arrow1'];
+  let parsedProp: Required<svgCustomEdgeType> = arrowShapes["arrow1"];
   if (React.isValidElement(svgEdge)) {
     parsedProp.svgElem = svgEdge as svgElemType;
-  } else if (typeof svgEdge == 'string') {
+  } else if (typeof svgEdge == "string") {
     if (svgEdge in arrowShapes) parsedProp = arrowShapes[svgEdge];
     else {
       console.warn(
         `'${svgEdge}' is not supported arrow shape. the supported arrow shapes is one of ${cArrowShapes}.
            reverting to default shape.`
       );
-      parsedProp = arrowShapes['arrow1'];
+      parsedProp = arrowShapes["arrow1"];
     }
   } else {
     parsedProp = svgEdge as Required<svgCustomEdgeType>;
     if (parsedProp?.offsetForward === undefined) parsedProp.offsetForward = 0.5;
-    if (parsedProp?.svgElem === undefined) parsedProp.svgElem = arrowShapes['arrow1'].svgElem;
+    if (parsedProp?.svgElem === undefined) parsedProp.svgElem = arrowShapes["arrow1"].svgElem;
   }
   return parsedProp;
 };
@@ -77,7 +77,7 @@ const Edges = createFeature<
     tailShape: Required<svgCustomEdgeType>;
   }
 >({
-  name: 'Edges',
+  name: "Edges",
   propTypes: {
     showHead: PT.bool,
     headColor: PT.string,
@@ -110,9 +110,9 @@ const Edges = createFeature<
     let { posSt, chosenStart, chosenEnd, getPath } = state;
 
     let startDir, endDir;
-    if (props?.path === 'straight') {
-      startDir = new Dir(props.path === 'straight' ? { x: 0, y: 0 } : anchorsInwardOffset[chosenStart.anchor.position]);
-      endDir = new Dir(props.path === 'straight' ? { x: 0, y: 0 } : anchorsInwardOffset[chosenEnd.anchor.position]);
+    if (props?.path === "straight") {
+      startDir = new Dir(props.path === "straight" ? { x: 0, y: 0 } : anchorsInwardOffset[chosenStart.anchor.position]);
+      endDir = new Dir(props.path === "straight" ? { x: 0, y: 0 } : anchorsInwardOffset[chosenEnd.anchor.position]);
     } else {
       startDir = new Dir(anchorsInwardOffset[chosenStart.anchor.position]);
       endDir = new Dir(anchorsInwardOffset[chosenEnd.anchor.position]);
@@ -161,7 +161,7 @@ const Edges = createFeature<
     const {
       showHead = true,
       showTail = false,
-      color = 'cornflowerBlue',
+      color = "cornflowerBlue",
       headColor = color,
       tailColor = color,
       headShape = arrowShapes.arrow1 as svgCustomEdgeType,
@@ -182,14 +182,14 @@ const Edges = createFeature<
               containerRef={state.headEdgeRef}
               show={showHead}
               state={state}
-              pos={posSt.end.sub(state.headOffset)}
+              pos={posSt.endPoint.sub(state.headOffset)}
               size={headSize}
               svgElem={headShape}
               color={headColor}
               props={arrowHeadProps}
               rotate={headRotate}
               posSt={posSt}
-              vName={'end'}
+              vName={"end"}
               deps={[headSize]}
             />
           )}
@@ -198,14 +198,14 @@ const Edges = createFeature<
               containerRef={state.tailEdgeRef}
               show={showTail}
               state={state}
-              pos={posSt.start.add(state.tailOffset)}
+              pos={posSt.startPoint.add(state.tailOffset)}
               size={tailSize}
               svgElem={tailShape}
               color={tailColor}
               props={arrowTailProps}
               rotate={tailRotate}
               posSt={posSt}
-              vName={'start'}
+              vName={"start"}
               deps={[tailSize]}
             />
           )}

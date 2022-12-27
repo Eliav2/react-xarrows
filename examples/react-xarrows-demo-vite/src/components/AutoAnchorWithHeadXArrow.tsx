@@ -41,7 +41,7 @@ interface ArrowHead extends XEdgeProps {
   sharpness?: number;
 }
 
-const ArrowHead = (props: ArrowHead) => {
+export const ArrowHead = (props: ArrowHead) => {
   return (
     <XEdge {...props}>
       <NormalizedGSvg>
