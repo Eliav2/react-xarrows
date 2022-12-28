@@ -3,7 +3,7 @@ import React, { useRef } from "react";
 import { Box } from "./components/Box";
 import useRerender from "shared/hooks/useRerender";
 import { ArrowHead, AutoAnchorWithHeadXArrow } from "./components/AutoAnchorWithHeadXArrow";
-import { Anchor, autoSelectAnchor } from "react-xarrows/useAutoSelectAnchor";
+import { Anchor, autoSelectAnchor } from "react-xarrows/path/useAutoSelectAnchor";
 import XArrow, { ProvideXContext, useXContext, XArrowProps } from "react-xarrows/XArrow";
 import XWrapper from "react-xarrows/XWrapper";
 import XLine from "react-xarrows/XLine";

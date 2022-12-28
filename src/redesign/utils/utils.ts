@@ -1,5 +1,5 @@
 // export const cAnchorEdge = ["middle", "left", "right", "top", "bottom", "auto"] as const;
-import { IPoint, isPoint, XElemRef } from "./types";
+import { IPoint, isPoint, XElemRef } from "../types/types";
 
 export const getElementByPropGiven = (ref: XElemRef): HTMLElement | null | IPoint => {
   if (typeof ref === "string") {

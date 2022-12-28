@@ -15,7 +15,7 @@
     "react-draggable": "^4.4.4",
     "react-numeric-input": "2.2",
     "react-router-dom": "5",
-    "react-xarrows": "*"
+    "react-xarrows": "workspace:../../dist"
   },
   "devDependencies": {
     "@types/react": "^18.0.24",

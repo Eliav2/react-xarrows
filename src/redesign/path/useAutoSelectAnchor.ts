@@ -1,7 +1,7 @@
 import { positionType } from "shared/hooks/usePosition";
-import { useXContext } from "./XArrow";
+import { useXContext } from "../XArrow";
 import { RelativeSize } from "shared/types";
-import { OneOrMore } from "./typeUtils";
+import { OneOrMore } from "../types/typeUtils";
 import { getRelativeSizeValue } from "shared/utils";
 import {
   DirectedVector,
@@ -12,9 +12,9 @@ import {
   parseIRect,
   parsePossiblyDirectedVector,
   PossiblyDirectedVector,
-} from "./types";
-import { toArray } from "./utils";
-import { Dir, getBestPath } from "./path";
+} from "../types/types";
+import { toArray } from "../utils/utils";
+import { Dir, getBestPath } from "./index";
 
 const cStartAnchorsMap: { [key in AnchorName]: AnchorCustom } = {
   middle: { x: "50%", y: "50%", trailingDir: [{ x: 0, y: 0 }] },

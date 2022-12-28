@@ -1,4 +1,4 @@
-import { Vector } from "./path";
+import { Vector } from "./index";
 
 export const math_operators = {
   add: (x, y) => x + y,

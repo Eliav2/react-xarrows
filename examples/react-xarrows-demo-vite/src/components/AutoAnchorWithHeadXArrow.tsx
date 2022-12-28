@@ -1,9 +1,9 @@
 import React, { useRef } from "react";
 import { ProvideXContext, useXContext, XArrow, XArrowProps } from "react-xarrows/XArrow";
-import { autoSelectAnchor } from "react-xarrows/useAutoSelectAnchor";
+import { autoSelectAnchor } from "react-xarrows/path/useAutoSelectAnchor";
 import { Dir } from "react-xarrows/path";
 import XEdge, { XEdgeProps } from "react-xarrows/XEdge";
-import NormalizedGSvg from "react-xarrows/NormalizedGSvg";
+import NormalizedGSvg from "react-xarrows/components/NormalizedGSvg";
 import XLine from "react-xarrows/XLine";
 
 interface AutoAnchorWithHeadXArrowProps extends Pick<XArrowProps, "start" | "end"> {

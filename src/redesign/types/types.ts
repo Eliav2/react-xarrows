@@ -1,7 +1,7 @@
 import React from "react";
 import { OneOrMore } from "./typeUtils";
-import { Dir, Vector } from "./path";
-import { toArray } from "./utils";
+import { Dir, Vector } from "../path";
+import { toArray } from "../utils/utils";
 
 /**
  * 'I' prefix stands for Interface, and these interfaces are usually simple objects that the user can choose to use
