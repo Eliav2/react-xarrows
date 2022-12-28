@@ -13,7 +13,7 @@ import {
   parsePossiblyDirectedVector,
   PossiblyDirectedVector,
 } from "../types/types";
-import { toArray } from "../utils/utils";
+import { toArray } from "../utils";
 import { Dir, getBestPath } from "./index";
 
 const cStartAnchorsMap: { [key in AnchorName]: AnchorCustom } = {

@@ -1,8 +1,8 @@
 import React, { LegacyRef } from "react";
-import { svgElemStrType } from "../../types";
-import { IPoint } from "../types/types";
-import { Dir } from "../path";
-import { getBBox } from "../components/NormalizedGSvg";
+import { svgElemStrType } from "../types";
+import { IPoint } from "./types/types";
+import { Dir } from "./path";
+import { getBBox } from "./components/NormalizedGSvg";
 
 export interface XEdgeProps {
   children?: React.ReactNode; // a jsx element of type svg like <circle .../> or <path .../>

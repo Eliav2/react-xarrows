@@ -1,11 +1,11 @@
 import React, { useEffect, useRef } from "react";
 import usePosition, { positionType } from "shared/hooks/usePosition";
 import useRerender from "shared/hooks/useRerender";
-import { useXWrapperRegister } from "../XWrapper";
-import { getElementByPropGiven } from "../utils";
-import { isPoint, IPoint, XElemRef } from "../types";
+import { useXWrapperRegister } from "./XWrapper";
+import { getElementByPropGiven } from "./utils";
+import { isPoint, IPoint, XElemRef } from "./types";
 import { useOneTimeWarn } from "shared/hooks/useOneTimeWarn";
-import { useEnsureContext, useXArrowWarn } from "../internal/hooks";
+import { useEnsureContext, useXArrowWarn } from "./internal/hooks";
 
 export interface XArrowProps {
   children: React.ReactNode;

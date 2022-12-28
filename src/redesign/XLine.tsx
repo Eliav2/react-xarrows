@@ -1,7 +1,7 @@
 import React from "react";
-import { useXContext } from "../XArrow";
+import { useXContext } from "./XArrow";
 import { RelativeSize } from "shared/types";
-import { Line, Vector } from "../path";
+import { Line, Vector } from "./path";
 import { getRelativeSizeValue } from "shared/utils";
 
 export interface XLineProps extends React.SVGProps<SVGLineElement> {

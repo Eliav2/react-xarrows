@@ -1,7 +1,7 @@
-import { Contains } from "../types/typeUtils";
-import { IDir, IVector, parseDirection, parsePossiblyDirectedVector, PossiblyDirectedVector, UVector } from "../types/types";
+import { Contains } from "../types";
+import { IDir, IVector, parseDirection, parsePossiblyDirectedVector, PossiblyDirectedVector, UVector } from "../types";
 import { between, deg2Rad, eq, math_operators, operatorFunc, round } from "./mathUtils";
-import { toArray } from "../utils/utils";
+import { toArray } from "../utils";
 import { number } from "prop-types";
 
 // const pathMargin = 15;
