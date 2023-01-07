@@ -19,10 +19,13 @@
   "bugs": "https://github.com/Eliav2/react-xarrows/issues",
   "dependencies": {
     "@types/prop-types": "^15.7.3",
-    "lodash": "^4.17.21",
     "prop-types": "^15.7.2",
     "react-fast-compare": "^3.2.0",
-    "shared": "*"
+    "shared": "workspace:*"
+  },
+  "peerDependencies": {
+    "react": "^16.8.0 || ^17.0.0 || ^18.0.0 || >=18.0.0",
+    "react-dom": "^16.8.0 || ^17.0.0 || ^18.0.0 || >=18.0.0"
   },
   "devDependencies": {
     "@rollup/plugin-typescript": "^8.3.3",
@@ -38,10 +41,6 @@
   "funding": {
     "type": "individual",
     "url": "https://www.paypal.com/donate?hosted_button_id=CRQ343F9VTRS8"
-  },
-  "peerDependencies": {
-    "react": "^16.8.0 || ^17.0.0 || ^18.0.0 || >=18.0.0",
-    "react-dom": "^16.8.0 || ^17.0.0 || ^18.0.0 || >=18.0.0"
   },
   "license": "MIT",
   "files": [

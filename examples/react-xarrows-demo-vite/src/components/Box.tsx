@@ -20,7 +20,7 @@ export const Box = React.forwardRef(function Box({ children, style, small, ...pr
   return (
     <Draggable
       nodeRef={ref}
-      // grid={[20, 20]}
+      grid={[20, 20]}
       onDrag={() => {
         // console.log(children, "onDrag!");
         updateXArrow();

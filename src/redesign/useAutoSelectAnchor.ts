@@ -1,20 +1,10 @@
-import { positionType } from "shared/hooks/usePosition";
-import { useXContext } from "../XArrow";
+import { useXContext } from "./XArrow";
 import { RelativeSize } from "shared/types";
-import { OneOrMore } from "../types/typeUtils";
+import { OneOrMore } from "./types/typeUtils";
 import { getRelativeSizeValue } from "shared/utils";
-import {
-  DirectedVector,
-  Direction,
-  IRect,
-  NamedDirection,
-  parseDirection,
-  parseIRect,
-  parsePossiblyDirectedVector,
-  PossiblyDirectedVector,
-} from "../types/types";
-import { toArray } from "../utils";
-import { Dir, getBestPath } from "./index";
+import { Direction, IRect, NamedDirection, parseIRect, parsePossiblyDirectedVector } from "./types/types";
+import { toArray } from "./utils";
+import { Vector } from "./path";
 
 const cStartAnchorsMap: { [key in AnchorName]: AnchorCustom } = {
   middle: { x: "50%", y: "50%", trailingDir: [{ x: 0, y: 0 }] },
@@ -107,29 +97,29 @@ function findBestPoint(
 //   //
 // }
 
-export const autoSelectAnchor = ({
-  startElem,
-  endElem,
-  startAnchor = "auto",
-  endAnchor = "auto",
-}: {
-  startElem: IRect;
-  endElem: IRect;
-  startAnchor?: Anchor;
-  endAnchor?: Anchor;
-}) => {
-  const startPoints = extractPointsFromAnchors(startElem, startAnchor, cStartAnchorsMap);
-  const endPoints = extractPointsFromAnchors(endElem, endAnchor, cEndAnchorsMap);
+export const autoSelectAnchor = (
+  startRect: IRect,
+  endRect: IRect,
+  {
+    startAnchor = "auto",
+    endAnchor = "auto",
+  }: {
+    startAnchor?: Anchor;
+    endAnchor?: Anchor;
+  } = {}
+) => {
+  const startPoints = extractPointsFromAnchors(startRect, startAnchor, cStartAnchorsMap);
+  const endPoints = extractPointsFromAnchors(endRect, endAnchor, cEndAnchorsMap);
   const { startPoint, endPoint } = findBestPoint(startPoints, endPoints);
   return {
-    startPoint,
-    endPoint,
+    startPoint: new Vector(parsePossiblyDirectedVector(startPoint)),
+    endPoint: new Vector(parsePossiblyDirectedVector(endPoint)),
   };
 };
 
 export const useAutoSelectAnchor = ({ startAnchor = "auto", endAnchor = "auto" }: { startAnchor?: Anchor; endAnchor?: Anchor } = {}) => {
   const context = useXContext();
-  const { startElem, endElem } = context;
-  if (!startElem || !endElem) return null;
-  return () => autoSelectAnchor({ startElem, endElem, startAnchor, endAnchor });
+  const { startRect, endRect } = context;
+  if (!startRect || !endRect) return null;
+  return () => autoSelectAnchor(startRect, endRect, { startAnchor, endAnchor });
 };

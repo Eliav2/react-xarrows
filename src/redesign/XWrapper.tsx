@@ -1,5 +1,5 @@
 import React, { useLayoutEffect, useRef } from "react";
-import { useEnsureContext, useXArrowWarn } from "./internal/hooks";
+import { useEnsureContext } from "./internal/hooks";
 
 export const XWrapper = (props: XWrapperProps) => {
   // console.log("XWrapper");

@@ -14,8 +14,8 @@ export const BestPathGridXArrow = (props: BestPathGridXArrowProps) => {
           const { startElem, endElem } = context;
           if (!startElem || !endElem) return null;
           const { startPoint, endPoint } = autoSelectAnchor({
-            startElem,
-            endElem,
+            startElem: startPosition,
+            endElem: endPosition,
             // startAnchor: "right",
             // endAnchor: "top",
           });

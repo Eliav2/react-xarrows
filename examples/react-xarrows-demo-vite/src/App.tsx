@@ -2,14 +2,10 @@ import "./App.css";
 import React, { useRef } from "react";
 import { Box } from "./components/Box";
 import useRerender from "shared/hooks/useRerender";
-import { ArrowHead, AutoAnchorWithHeadXArrow } from "./components/AutoAnchorWithHeadXArrow";
-import { Anchor, autoSelectAnchor } from "react-xarrows/path/useAutoSelectAnchor";
-import XArrow, { ProvideXContext, useXContext, XArrowProps } from "react-xarrows/XArrow";
-import XWrapper from "react-xarrows/XWrapper";
-import XLine from "react-xarrows/XLine";
-import { getBestPath, pointsToCurves, Dir } from "react-xarrows/path";
-import { BestPathGridXArrow, BestPathGridXArrowProps } from "./components/BestPathGridXArrow";
-import SnakeXArrow from "./components/SnakeXArrow";
+import { BestPathSmoothXArrow } from "./components/BestPathSmoothXArrow";
+import { Button, CardContent, Paper } from "@mui/material";
+import { ArrowHead } from "./components/ArrowHead";
+import { XArrow, XArrowProps, autoSelectAnchor, Anchor, useXContext, XWrapper, XLine, ProvideXContext } from "react-xarrows";
 
 function App() {
   return (
@@ -24,46 +20,55 @@ function App() {
 
 export default App;
 
-export interface BestPathSmoothXArrowProps extends Pick<XArrowProps, "start" | "end"> {
-  breakPoint?: number;
-}
-
-export const BestPathSmoothXArrow = (props: BestPathSmoothXArrowProps) => {
-  const { start, end, breakPoint = 0.5 } = props;
+const SimpleLineXArrow = (props: Omit<XArrowProps, "children">) => {
+  const { start, end } = props;
   return (
     <XArrow start={start} end={end}>
-      <ProvideXContext>
-        {(context) => {
-          const { startElem, endElem } = context;
-          if (!startElem || !endElem) return null;
-          // endElem.left -= 20;
-          const { startPoint, endPoint } = autoSelectAnchor({ startElem, endElem });
-          const { points, startDir, endDir } = getBestPath(startPoint, endPoint, { breakPoint });
-          // console.log("startDir", startDir);
-          // console.log("endDir", endDir);
-          // points[points.length - 1] = points[points.length - 1].sub(endDir.mul(30));
-          const v = pointsToCurves(points);
-          // console.log(v);
-          return (
-            <>
-              <path d={v} stroke="white" strokeWidth={3} />
-              <ArrowHead pos={endPoint} dir={new Dir(endPoint.trailingDir[0])} />
-            </>
-          );
-        }}
-      </ProvideXContext>
+      <XLine />
     </XArrow>
   );
 };
 
+// const AutoAnchorLeftXArrow = (props: Omit<XArrowProps, "children">) => {
+//   const { start, end } = props;
+//   return (
+//     <XArrow start={start} end={end}>
+//       <ProvideXContext>
+//         {(context) => {
+//           let { startRect, endRect } = context;
+//           if (!startRect || !endRect) return null;
+//           endRect = endRect.expand(headOffset);
+//           const { startPoint, endPoint } = autoSelectAnchor(startRect, endRect, { startAnchor, endAnchor });
+//           const { points, endDir } = getBestPath(startPoint, endPoint, { breakPoint });
+//           const v = pointsToCurves(points);
+//           return (
+//             <>
+//               <path d={v} stroke="white" strokeWidth={3} />
+//               <ArrowHead sharpness={arrowHeadSharpness} size={arrowHeadSize} pos={endPoint.add(endDir.mul(headOffset))} dir={endDir} />
+//             </>
+//           );
+//         }}
+//       </ProvideXContext>
+//     </XArrow>
+//   );
+// };
+
+const sayHello = () => {
+  console.log("hello");
+};
+
 const DemoXWrapper = () => {
+  // console.log("DemoXWrapper");
   const render = useRerender();
   const box1Ref = useRef<HTMLDivElement>(null);
   const box2Ref = useRef<HTMLDivElement>(null);
 
   return (
     <XWrapper>
-      <button onClick={render}>render</button>
+      <Paper>
+        <Button onClick={render}>render</Button>
+        <Button onClick={sayHello}>hello</Button>
+      </Paper>
       {/* my boxes */}
       <div
         style={{
@@ -83,10 +88,11 @@ const DemoXWrapper = () => {
       </div>
       <div style={{ height: 50 }} />
       {/* my arrows */}
-      <BestPathSmoothXArrow start={box1Ref} end={box2Ref} />
+      <BestPathSmoothXArrow start={box1Ref} end={box2Ref} headSharpness={0.25} />
       {/*<BestPathGridXArrow start={box1Ref} end={box2Ref} breakPoint={0.5} />*/}
       {/*<AutoAnchorWithHeadXArrow start={box1Ref} end={box2Ref} headSize={50} />*/}
       {/*<SnakeXArrow start={box1Ref} end={box2Ref} />*/}
+      {/*<SimpleLineXArrow start={box1Ref} end={box2Ref} />*/}
     </XWrapper>
   );
 };
@@ -131,19 +137,19 @@ const MyArrows = () => {
 
 const LeftToRightXLine = () => {
   const context = useXContext();
-  const { startElem, endElem } = context;
-  if (!startElem || !endElem) return null;
-  return <XLine x1={startElem.right} y1={startElem.top + startElem.height / 2} x2={endElem.left} y2={endElem.top + endElem.height / 2} />;
+  const { startRect, endRect } = context;
+  if (!startRect || !endRect) return null;
+  return <XLine x1={startRect.right} y1={startRect.top + startRect.height / 2} x2={endRect.left} y2={endRect.top + endRect.height / 2} />;
 };
 
 const AutoAnchorXLine = ({ startAnchor, endAnchor }: { startAnchor?: Anchor; endAnchor?: Anchor }) => {
   // const autoSelectAnchor = useAutoSelectAnchor(props);
   const context = useXContext();
-  const { startElem, endElem } = context;
-  if (!startElem || !endElem) return null;
+  const { startRect, endRect } = context;
+  if (!startRect || !endRect) return null;
   const {
     startPoint: { x: x1, y: y1 },
     endPoint: { x: x2, y: y2 },
-  } = autoSelectAnchor({ startElem, endElem, startAnchor, endAnchor });
+  } = autoSelectAnchor({ startRect, endRect, startAnchor, endAnchor });
   return <XLine {...{ x1, y1, x2, y2 }} />;
 };

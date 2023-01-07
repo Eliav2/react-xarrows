@@ -1,10 +1,9 @@
-import React, { useRef } from "react";
-import { ProvideXContext, useXContext, XArrow, XArrowProps } from "react-xarrows/XArrow";
-import { autoSelectAnchor } from "react-xarrows/path/useAutoSelectAnchor";
+import React from "react";
+import { ProvideXContext, XArrow, XArrowProps } from "react-xarrows/XArrow";
+import { autoSelectAnchor } from "react-xarrows/useAutoSelectAnchor";
 import { Dir } from "react-xarrows/path";
-import XEdge, { XEdgeProps } from "react-xarrows/XEdge";
-import NormalizedGSvg from "react-xarrows/components/NormalizedGSvg";
 import XLine from "react-xarrows/XLine";
+import { ArrowHead } from "./ArrowHead";
 
 interface AutoAnchorWithHeadXArrowProps extends Pick<XArrowProps, "start" | "end"> {
   headSize?: number;
@@ -18,12 +17,12 @@ export const AutoAnchorWithHeadXArrow = (props: AutoAnchorWithHeadXArrowProps) =
     <XArrow start={props.start} end={props.end}>
       <ProvideXContext>
         {(context) => {
-          const { startElem, endElem } = context;
-          if (!startElem || !endElem) return null;
+          const { startRect, endRect } = context;
+          if (!startRect || !endRect) return null;
           const {
             startPoint: { x: x1, y: y1 },
             endPoint: { x: x2, y: y2 },
-          } = autoSelectAnchor({ startElem, endElem });
+          } = autoSelectAnchor(startRect, endRect);
           const dir = new Dir(x2 - x1, y2 - y1);
           return (
             <>
@@ -35,21 +34,4 @@ export const AutoAnchorWithHeadXArrow = (props: AutoAnchorWithHeadXArrowProps) =
       </ProvideXContext>
     </XArrow>
   );
-};
-
-interface ArrowHead extends XEdgeProps {
-  sharpness?: number;
-}
-
-export const ArrowHead = (props: ArrowHead) => {
-  return (
-    <XEdge {...props}>
-      <NormalizedGSvg>
-        <path d={`M 0 0 L 1 0.5 L 0 1 L ${props.sharpness} 0.5 z`} />
-      </NormalizedGSvg>
-    </XEdge>
-  );
-};
-ArrowHead.defaultProps = {
-  sharpness: 0.25,
 };

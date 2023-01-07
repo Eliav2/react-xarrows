@@ -4,24 +4,6 @@ import fs, { readdirSync } from "fs";
 import { resolve } from "path";
 import generateFile from "vite-plugin-generate-file";
 
-// // find all files in the current directory(no folders)
-// const listAllFilesInDir = (dir: string) => {
-//   return readdirSync(dir, { withFileTypes: true })
-//     .filter((dirnet) => dirnet.isFile())
-//     .map((dirnet) => resolve(dir, dirnet.name));
-// };
-
-// // find all files in the current directory including subdirectories
-// const listAllFilesInDir = (dir) => {
-//   const files = readdirSync(dir);
-//   console.log("files", files);
-//   return files.reduce((acc, file) => {
-//     const name = resolve(dir, file);
-//     const isDirectory = fs.statSync(name).isDirectory();
-//     return isDirectory ? [...acc, ...listAllFilesInDir(name)] : [...acc, name];
-//   }, []);
-// };
-
 // read package.json file
 const packageJson = JSON.parse(fs.readFileSync(resolve(__dirname, "package.json"), "utf-8"));
 
@@ -63,11 +45,10 @@ const listAllSubDirectories = (baseDir) => {
 };
 
 const SOURCE_ENTRY = "src/redesign";
+// generate 'exports' and 'typesVersions' fields for package.json based on the source directory
 const createEntryPoints = (baseDir, distDir, typesDir) => {
   const dirs = listAllSubDirectories(baseDir);
   const entryPoints = dirs.map((dir) => dir.slice(baseDir.length + 1));
-  // console.log("dirs", dirs);
-  // console.log("entryPoints", entryPoints);
   const entryPointsMap = entryPoints.reduce((acc, entryPoint) => {
     return {
       ...acc,
@@ -107,6 +88,15 @@ const createEntryPoints = (baseDir, distDir, typesDir) => {
   };
   return { exports: entryPointsMap, typesVersions };
 };
+
+const pick = (obj, props) => {
+  const newObj = {};
+  props.forEach((prop) => {
+    newObj[prop] = obj[prop];
+  });
+  return newObj;
+};
+
 const createPackageJson = (packageJson, distDir, typesDir) => {
   const { exports, typesVersions } = createEntryPoints(SOURCE_ENTRY, distDir, typesDir);
   const newPackageJson = {
@@ -116,6 +106,7 @@ const createPackageJson = (packageJson, distDir, typesDir) => {
     types: "index.d.ts",
     typesVersions,
     exports,
+    dependencies: pick(packageJson.dependencies, ["react-fast-compare", "@types/prop-types", "prop-types"]),
   };
   delete newPackageJson.scripts;
   return newPackageJson;
@@ -127,16 +118,13 @@ export default defineConfig({
   build: {
     minify: false,
     outDir: "dist",
-    emptyOutDir: true,
+    emptyOutDir: false,
     lib: {
-      // entry: ["src/index.ts"],
-      // entry: listAllFilesInDir("src/redesign"),
-      // entry: { "build/internal/hooks": "src/redesign/internal/hooks" },
       entry: mapAllFilesInDir("src/redesign", "build"),
       name: "react-xarrows",
       formats: ["cjs", "es"],
     },
-    rollupOptions: { external: ["react", "react-dom", "lodash", "prop-types", "@types/prop-types"] },
+    rollupOptions: { external: ["react", "react-dom", "prop-types", "@types/prop-types"] },
     // todo: to this only in prod mode
     sourcemap: true,
   },
@@ -147,7 +135,6 @@ export default defineConfig({
       {
         type: "json",
         output: "./package.json",
-        // data: packageJson,
         data: createPackageJson(packageJson, "./build", "./types/redesign"),
       },
     ]),

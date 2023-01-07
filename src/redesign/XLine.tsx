@@ -1,8 +1,9 @@
 import React from "react";
 import { useXContext } from "./XArrow";
 import { RelativeSize } from "shared/types";
-import { Line, Vector } from "./path";
 import { getRelativeSizeValue } from "shared/utils";
+import { Vector } from "./path/vector";
+import { Line } from "./path/line";
 
 export interface XLineProps extends React.SVGProps<SVGLineElement> {
   stripEnd?: RelativeSize; // how much of the end of the line should be removed

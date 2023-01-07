@@ -6,6 +6,7 @@ import { getElementByPropGiven } from "./utils";
 import { isPoint, IPoint, XElemRef } from "./types";
 import { useOneTimeWarn } from "shared/hooks/useOneTimeWarn";
 import { useEnsureContext, useXArrowWarn } from "./internal/hooks";
+import { Rectangle } from "./path";
 
 export interface XArrowProps {
   children: React.ReactNode;
@@ -39,49 +40,65 @@ export const XArrow = (props: XArrowProps) => {
   const rootDivRef = useRef<HTMLDivElement>(null);
   const svgCanvasRef = useRef<SVGSVGElement>(null);
 
-  const rootElem = usePosition(rootDivRef.current);
-  let startElem: positionType | null, endElem: positionType | null;
+  const rootPosition = usePosition(rootDivRef.current);
   const startLocation = getElementByPropGiven(props.start);
   const endLocation = getElementByPropGiven(props.end);
-  if (!isPoint(startLocation)) startElem = usePosition(startLocation);
-  else {
-    startElem = { left: startLocation.x, top: startLocation.y, width: 0, height: 0, right: startLocation.x, bottom: startLocation.y };
-  }
-  if (!isPoint(endLocation)) endElem = usePosition(endLocation);
-  else {
-    endElem = { left: endLocation.x, top: endLocation.y, width: 0, height: 0, right: endLocation.x, bottom: endLocation.y };
-  }
+  let startPosition: positionType | null = usePosition(isPoint(startLocation) ? null : startLocation),
+    endPosition: positionType | null = usePosition(isPoint(endLocation) ? null : endLocation);
+
+  if (isPoint(startLocation))
+    startPosition = {
+      left: startLocation.x,
+      top: startLocation.y,
+      right: startLocation.x,
+      bottom: startLocation.y,
+      width: 0,
+      height: 0,
+    };
+  if (isPoint(endLocation))
+    endPosition = {
+      left: endLocation.x,
+      top: endLocation.y,
+      right: endLocation.x,
+      bottom: endLocation.y,
+      width: 0,
+      height: 0,
+    };
 
   let startPoint = { x: 0, y: 0 };
   let endPoint = { x: 0, y: 0 };
-  if (rootElem) {
-    if (startElem) {
+  if (rootPosition) {
+    if (startPosition) {
       // offset by the root div position
-      startElem.left -= rootElem.left;
-      startElem.top -= rootElem.top;
-      startElem.bottom -= rootElem.bottom;
-      startElem.right -= rootElem.right;
+      startPosition.left -= rootPosition.left;
+      startPosition.top -= rootPosition.top;
+      startPosition.bottom -= rootPosition.bottom;
+      startPosition.right -= rootPosition.right;
 
       // default connection is from the middle of the elements
       startPoint = {
-        x: startElem.left + startElem.width / 2,
-        y: startElem.top + startElem.height / 2,
+        x: startPosition.left + startPosition.width / 2,
+        y: startPosition.top + startPosition.height / 2,
       };
     }
 
-    if (endElem) {
-      endElem.left -= rootElem.left;
-      endElem.top -= rootElem.top;
-      endElem.bottom -= rootElem.bottom;
-      endElem.right -= rootElem.right;
+    if (endPosition) {
+      endPosition.left -= rootPosition.left;
+      endPosition.top -= rootPosition.top;
+      endPosition.bottom -= rootPosition.bottom;
+      endPosition.right -= rootPosition.right;
 
       endPoint = {
-        x: endElem.left + endElem.width / 2,
-        y: endElem.top + endElem.height / 2,
+        x: endPosition.left + endPosition.width / 2,
+        y: endPosition.top + endPosition.height / 2,
       };
     }
   }
-  const contextValue = { startElem, endElem, startPoint, endPoint, __mounted: true };
+
+  const startRect = startPosition && new Rectangle(startPosition);
+  const endRect = endPosition && new Rectangle(endPosition);
+
+  const contextValue = { startRect, endRect, startPoint, endPoint, __mounted: true };
 
   return (
     <div
@@ -107,14 +124,14 @@ export const XArrow = (props: XArrowProps) => {
 export default XArrow;
 
 const XArrowContext = React.createContext<{
-  startElem: positionType | null;
-  endElem: positionType | null;
+  startRect: Rectangle | null;
+  endRect: Rectangle | null;
   startPoint: IPoint;
   endPoint: IPoint;
   __mounted: boolean;
 }>({
-  startElem: null,
-  endElem: null,
+  startRect: null,
+  endRect: null,
   startPoint: { x: 0, y: 0 },
   endPoint: { x: 0, y: 0 },
   __mounted: false,

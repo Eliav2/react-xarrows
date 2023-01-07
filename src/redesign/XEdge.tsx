@@ -1,13 +1,13 @@
 import React, { LegacyRef } from "react";
 import { svgElemStrType } from "../types";
-import { IPoint } from "./types/types";
-import { Dir } from "./path";
+import { IDir, IPoint } from "./types/types";
 import { getBBox } from "./components/NormalizedGSvg";
+import { Dir } from "./path";
 
 export interface XEdgeProps {
   children?: React.ReactNode; // a jsx element of type svg like <circle .../> or <path .../>
 
-  dir?: Dir;
+  dir?: IDir;
 
   // the color of the svg shape
   // default to use always 'fill' and not 'stroke' so svg normalization would work as expected
@@ -30,7 +30,8 @@ export interface XEdgeProps {
 }
 
 const XEdge = React.forwardRef<SVGGElement, XEdgeProps>(function XEdge(props, forwardRef) {
-  const { children, containerRef, pos, dir = new Dir(0, 0), rotate = 0 } = props;
+  let { children, containerRef, pos, dir = new Dir(0, 0), rotate = 0 } = props;
+  const _dir = new Dir(dir);
   // const dir = pos._chosenFaceDir;
   // const endEdgeRef = useRef();
   // let edgeBbox = useGetBBox(endEdgeRef, deps);
@@ -47,7 +48,7 @@ const XEdge = React.forwardRef<SVGGElement, XEdgeProps>(function XEdge(props, fo
         style={{
           transformBox: "fill-box",
           transformOrigin: "center",
-          transform: `translate(${-dir.x * 50}%,${-dir.y * 50}%) rotate(${dir.toDegree() + rotate}deg) `,
+          transform: `translate(${-_dir.x * 50}%,${-_dir.y * 50}%) rotate(${_dir.toDegree() + rotate}deg) `,
           fill: props.color,
           pointerEvents: "auto",
         }}
