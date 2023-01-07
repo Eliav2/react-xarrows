@@ -6,6 +6,8 @@ import { BestPathSmoothXArrow } from "./components/BestPathSmoothXArrow";
 import { Button, CardContent, Paper } from "@mui/material";
 import { ArrowHead } from "./components/ArrowHead";
 import { XArrow, XArrowProps, autoSelectAnchor, Anchor, useXContext, XWrapper, XLine, ProvideXContext } from "react-xarrows";
+import { AutoAnchorWithHeadXArrow } from "./components/AutoAnchorWithHeadXArrow";
+import { BestPathGridXArrow } from "./components/BestPathGridXArrow";
 
 function App() {
   return (
@@ -88,8 +90,8 @@ const DemoXWrapper = () => {
       </div>
       <div style={{ height: 50 }} />
       {/* my arrows */}
-      <BestPathSmoothXArrow start={box1Ref} end={box2Ref} headSharpness={0.25} />
-      {/*<BestPathGridXArrow start={box1Ref} end={box2Ref} breakPoint={0.5} />*/}
+      {/*<BestPathSmoothXArrow start={box1Ref} end={box2Ref} headSharpness={0.25} />*/}
+      <BestPathGridXArrow start={box1Ref} end={box2Ref} breakPoint={0.5} />
       {/*<AutoAnchorWithHeadXArrow start={box1Ref} end={box2Ref} headSize={50} />*/}
       {/*<SnakeXArrow start={box1Ref} end={box2Ref} />*/}
       {/*<SimpleLineXArrow start={box1Ref} end={box2Ref} />*/}

@@ -25,10 +25,10 @@ export const pointsToCurves = (points: IVector[]) => {
 };
 
 // receives a list of points and returns a string that that represents lines intersections when used as the 'd' attribute of svg path element
-export const pointsToLines = (points: [number, number][]): string => {
+export const pointsToLines = (points: IVector[]): string => {
   const p1 = points.splice(0, 1)[0];
-  const first = `M ${p1[0]} ${p1[1]}`;
-  return points.reduce((ac, cr) => ac + ` L ${cr[0]} ${cr[1]} `, first);
+  const first = `M ${p1.x} ${p1.y}`;
+  return points.reduce((ac, cr) => ac + ` L ${cr.x} ${cr.y} `, first);
 };
 
 // rTurn takes a start point and an end point and returns a list of points that represents a right or left turn

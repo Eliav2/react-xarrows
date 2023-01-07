@@ -1,34 +1,42 @@
-import { XArrowProps, XArrow, autoSelectAnchor, ProvideXContext, getBestPath } from "react-xarrows";
 import React from "react";
+import { ArrowHead } from "./ArrowHead";
+import { autoSelectAnchor } from "react-xarrows/useAutoSelectAnchor";
+import { XArrow, ProvideXContext, getBestPath, pointsToCurves, useXContext, Vector, pointsToLines } from "react-xarrows";
+import type { Anchor, XArrowProps } from "react-xarrows";
 
-export interface BestPathGridXArrowProps extends Pick<XArrowProps, "start" | "end"> {
+export interface GridPathProps {
   breakPoint?: number;
+  headSize?: number;
+  headSharpness?: number;
+  startAnchor?: Anchor;
+  endAnchor?: Anchor;
 }
 
-export const BestPathGridXArrow = (props: BestPathGridXArrowProps) => {
-  const { start, end } = props;
+const GridPathWithHead = (props: GridPathProps) => {
+  const { breakPoint = 0.5, headSize = 30, headSharpness = 0.25, startAnchor, endAnchor } = props;
+  const headOffset = headSize * (1 - headSharpness);
+  const context = useXContext();
+  let { startRect, endRect } = context;
+  if (!startRect || !endRect) return null;
+  endRect = endRect.expand(headOffset); // expand the endRect to make room for the arrow head
+  const { startPoint, endPoint } = autoSelectAnchor(startRect, endRect, { startAnchor, endAnchor });
+  const { points, endDir } = getBestPath(startPoint, endPoint, { breakPoint });
+  const v = pointsToLines(points);
   return (
-    <XArrow start={start} end={end}>
-      <ProvideXContext>
-        {(context) => {
-          const { startElem, endElem } = context;
-          if (!startElem || !endElem) return null;
-          const { startPoint, endPoint } = autoSelectAnchor({
-            startElem: startPosition,
-            endElem: endPosition,
-            // startAnchor: "right",
-            // endAnchor: "top",
-          });
-          // const points = [startPoint, endPoint];
-          // const points = zTurn(startPoint, endPoint);
-          const points = getBestPath({ startPoint, endPoint, options: { breakPoint: props.breakPoint } });
-          const points_s = points.map((p) => p.x + "," + p.y).join(" ");
-          return <polyline points={points_s} stroke="white" strokeWidth={3} />;
-        }}
-      </ProvideXContext>
-    </XArrow>
+    <>
+      <path d={v} stroke="white" strokeWidth={3} />
+      <ArrowHead sharpness={headSharpness} size={headSize} pos={endPoint.add(endDir.mul(headOffset))} dir={endDir} />
+    </>
   );
 };
-BestPathGridXArrow.defaultProps = {
-  grid: 0.5,
+
+export interface BestPathSmoothXArrowProps extends Pick<XArrowProps, "start" | "end">, GridPathProps {}
+
+export const BestPathGridXArrow = (props: BestPathSmoothXArrowProps) => {
+  const { start, end, ...smoothPathProps } = props;
+  return (
+    <XArrow start={start} end={end}>
+      <GridPathWithHead {...smoothPathProps} />
+    </XArrow>
+  );
 };
