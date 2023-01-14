@@ -1,0 +1,210 @@
+---
+sidebar_position: 4
+---
+
+# Other solutions
+
+import { Resizable as ReResizable } from "re-resizable";
+import TrueResizable from "react-true-resizable";
+import { ResizableBox as ReactResizable } from "react-resizable"
+import { Rnd as ReactRnd } from "react-rnd"
+import { BoxStyle } from "@site/src/demos/Basic";
+
+export const Comparison = (props) => {
+  return (
+    <div>
+      <table>
+        <tbody>
+        <tr>
+          <th><a href={"https://www.npmjs.com/package/react-true-resizable"}>react-true-resizable</a></th>
+          <th><a href={"https://www.npmjs.com/package/re-resizable"}>re-resizable</a></th>
+          <th><a href={"https://www.npmjs.com/package/react-rnd"}>react-rnd</a></th>
+          <th><a href={"https://www.npmjs.com/package/react-resizable"}>react-resizable</a></th>
+        </tr>
+        <tr>
+          <td>
+            <TrueResizable>
+              <div style={BoxStyle}>TrueResizable</div>
+            </TrueResizable>
+          </td>
+          <td>
+            <ReResizable>
+              <div style={BoxStyle}>ReResizable</div>
+            </ReResizable>
+          </td>
+          <td style={{ width: 140 }}>
+            <ReactRnd>
+              <div style={BoxStyle}>ReactRnd</div>
+            </ReactRnd>
+          </td>
+          <td>
+            does not work: outdated and old lib
+            <ReactResizable>
+              <div style={BoxStyle}>ReactResizable</div>
+            </ReactResizable>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  );
+};
+
+when applying the next jsx:
+```jsx
+const BoxStyle = {
+  border: "solid",
+  borderRadius: 12,
+  width: 120,
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "center",
+  alignItems: "center",
+};
+
+<Resizable>
+  <div style={BoxStyle}>ReactResizable</div>
+</Resizable>
+```
+
+`Resizable` represents react-true-resizable, re-resizable, react-rnd, and react-resizable.
+
+the next behavior would present:
+
+<Comparison />
+
+:::note
+The elements are interactive, play with them!
+:::
+
+as we can see, react-true-resizable is the only one that works as expected. explained next:
+
+### react-true-resizable
+
+export const WorkingTrueResizable = () => (
+  <TrueResizable>
+    <div style={BoxStyle}>TrueResizable</div>
+  </TrueResizable>
+)
+
+```jsx
+export const WorkingTrueResizable = () => (
+  <TrueResizable >
+    <div style={BoxStyle}>TrueResizable</div>
+  </TrueResizable>
+)
+```
+
+<WorkingTrueResizable />
+
+the only component that work as expected is react-true-resizable, because it's the only component that controls the children element
+(the `div`) height and width. also, react-true-resizable does not mutate position style.
+
+the other solutions create wrapper around the div and controls the wrapper dimensions and positioning style, which directly changes
+the children layout. [learn more](/docs/implementation-notes)
+
+### re-resizable
+
+because re-resizable create wrapper around the div, if we want re-resizable to work as expected, we should apply the style wrapper:
+
+export const WorkingReResizable = () => (
+  <ReResizable style={BoxStyle}>
+    <div>working ReResizable</div>
+  </ReResizable>
+)
+
+```jsx
+export const WorkingReResizable = () => (
+  <ReResizable style={BoxStyle}>
+    <div>working ReResizable</div>
+  </ReResizable>
+)
+```
+
+<WorkingReResizable />
+
+### react-rnd
+
+react-rnd wrapped the target DOM node with absolutely positioned div, so you should place rnd inside the relatively
+positioned div.
+
+note that is layout of the rest of the page does not being change(because of absolutely positioned element is removed
+from the normal document flow([read more](https://developer.mozilla.org/en-US/docs/Web/CSS/position#values))).
+
+export const WorkingReactRnd = () => (
+  <div style={{ position: "relative" }}>
+    <ReactRnd style={{ ...BoxStyle,position: "relative" }}>
+      <div>ReactRnd</div>
+    </ReactRnd>
+  </div>
+)
+
+<WorkingReactRnd />
+
+<br />
+
+### react-resizable
+
+***seems to not work at all***
+
+react-resizable requires that height and width would be set, thus losing flexibility getting the implicit width and height the browser set on initial layout.
+
+react-resizable also creates wrapper and controls the wrapper dimensions and positioning style.
+
+this lib does not supply codesandbox preview and could not get this lib to work properly, even not when duplicating the exact demos from their docs.
+
+this is replication of [this demo](https://strml.github.io/react-resizable/examples/1.html), but this isn't working,possibly because it is not compatible with newer versions of react:
+
+export const ReactResizableBoxStyle = {
+  display: " flex",
+  justifyContent: " center",
+  alignItems: " center",
+  flexDirection: " column",
+  background: "#ccc",
+  border: "1pxSolidBlack",
+  textAlign: " center",
+  padding: "10px",
+  boxSizing: " borderBox",
+  marginBottom: "10px",
+  overflow: " hidden",
+  position: " relative",
+  margin: "20px",
+}
+
+export const WorkingReactResizable = () => {
+  return (
+    <ReactResizable width={200} height={200}>
+      <span style={ReactResizableBoxStyle}>{"<ResizableBox>"}</span>
+    </ReactResizable>)
+}
+
+
+```jsx
+export const ReactResizableBoxStyle = {
+  display:" flex",
+  justifyContent:" center",
+  alignItems:" center",
+  flexDirection:" column",
+  background: "#ccc",
+  border: "1pxSolidBlack",
+  textAlign:" center",
+  padding: "10px",
+  boxSizing:" borderBox",
+  marginBottom: "10px",
+  overflow:" hidden",
+  position:" relative",
+  margin: "20px",
+}
+
+export const WorkingReactResizable = () => {
+  return (
+    <ReactResizable width={200} height={200}>
+      <span  style={ReactResizableBoxStyle}>{"<ResizableBox>"}</span>
+    </ReactResizable>  )
+}
+```
+
+<WorkingReactResizable />
+
+
+

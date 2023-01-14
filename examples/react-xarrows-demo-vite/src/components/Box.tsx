@@ -10,19 +10,12 @@ interface BoxProps extends React.HTMLProps<HTMLDivElement> {
 }
 
 export const Box = React.forwardRef(function Box({ children, style, small, ...props }: BoxProps, forwardRef) {
-  // console.log(children, "render!");
-  const render = useRerender();
-
   const updateXArrow = useUpdateXWrapper();
-  // console.log(updateXArrow);
-  // const ref = useRef<HTMLDivElement>(null);
   const ref = usePassRef<HTMLDivElement>(forwardRef);
   return (
     <Draggable
       nodeRef={ref}
-      grid={[1, 1]}
       onDrag={() => {
-        // console.log(children, "onDrag!");
         updateXArrow();
       }}
     >
@@ -40,7 +33,6 @@ export const Box = React.forwardRef(function Box({ children, style, small, ...pr
         }}
         {...props}
       >
-        {/*<button onClick={render}>render</button>*/}
         {children}
       </div>
     </Draggable>

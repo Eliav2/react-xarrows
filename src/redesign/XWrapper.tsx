@@ -25,9 +25,9 @@ const XWrapperContextDefault = {
 } as { update: () => void; xWrapperXArrowsManager: XWrapperManager | null; __mounted: boolean };
 
 const XWrapperContext = React.createContext(XWrapperContextDefault);
-export const useXWrapperContext = () => {
+export const useXWrapperContext = ({ noWarn = false } = {}) => {
   const val = React.useContext(XWrapperContext);
-  useEnsureContext(val, "XArrow", "useXWrapperContext");
+  useEnsureContext(val, "XWrapper", "useXWrapperContext", { noWarn });
   // const warn = useXArrowWarn();
   // if (!val.__mounted) {
   //   warn(
@@ -87,10 +87,10 @@ interface XWrapperProps {
 /**
  * receives a function(usually render a function) that would be executed whenever the XWrapper is updated.
  */
-export const useXWrapperRegister = (render) => {
-  const xWrapperContext = useXWrapperContext();
+export const useXWrapperRegister = (render, noWarn = false) => {
+  const xWrapperContext = useXWrapperContext({ noWarn });
   const XArrowId = useRef(0);
-  const mounted = useEnsureContext(xWrapperContext, "XWrapper", "useXWrapperRegister");
+  const mounted = useEnsureContext(xWrapperContext, "XWrapper", "useXWrapperRegister", { noWarn });
   useLayoutEffect(() => {
     if (!mounted) return;
     XArrowId.current = xWrapperContext.xWrapperXArrowsManager!.register(render);

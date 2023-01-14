@@ -7,10 +7,10 @@ export const useEnsureContext = (
   context: any,
   wrapperName: string,
   hookName: string,
-  { mountedProp = "__mounted", additionalInfo = "" } = {}
+  { mountedProp = "__mounted", additionalInfo = "", noWarn = false } = {}
 ): boolean => {
   const warn = useXArrowWarn();
-  if (!context[mountedProp]) {
+  if (!context[mountedProp] && !noWarn) {
     warn(
       `${hookName} is only available inside ${wrapperName}, wrap your component with ${wrapperName} to use it.\n` + additionalInfo
       // +`Check ${new Error().stack?.split("at ")[2].trim()}\n\n`

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import usePosition, { positionType } from "shared/hooks/usePosition";
 import useRerender from "shared/hooks/useRerender";
-import { useXWrapperRegister } from "./XWrapper";
+import { useXWrapperContext, useXWrapperRegister } from "./XWrapper";
 import { getElementByPropGiven } from "./utils";
 import { isPoint, IPoint, XElemRef } from "./types";
 import { useOneTimeWarn } from "shared/hooks/useOneTimeWarn";
@@ -21,7 +21,8 @@ export interface XArrowProps {
 export const XArrow = (props: XArrowProps) => {
   // console.log("XArrow");
   const render = useRerender();
-  useXWrapperRegister(render);
+
+  useXWrapperRegister(render, true);
 
   useEffect(() => {
     const monitorDOMChanges = () => {
