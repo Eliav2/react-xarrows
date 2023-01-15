@@ -1,20 +1,24 @@
 import React, { useEffect, useRef } from "react";
 import usePosition, { positionType } from "shared/hooks/usePosition";
 import useRerender from "shared/hooks/useRerender";
-import { useXWrapperContext, useXWrapperRegister } from "./XWrapper";
+import { useXWrapperRegister } from "./XWrapper";
 import { getElementByPropGiven } from "./utils";
-import { isPoint, IPoint, XElemRef } from "./types";
-import { useOneTimeWarn } from "shared/hooks/useOneTimeWarn";
-import { useEnsureContext, useXArrowWarn } from "./internal/hooks";
+import { IPoint, isPoint, XElemRef } from "./types";
+import { useEnsureContext } from "./internal/hooks";
 import { Rectangle } from "./path";
 
 export interface XArrowProps {
+  // children is a jsx elements of type svg like <circle .../> or <path .../>
   children: React.ReactNode;
 
+  // a reference to the start element, can be a ref, an id or a (x,y) position
   start: XElemRef;
+  // a reference to the end element, can be a ref, an id or a (x,y) position
   end: XElemRef;
 
+  // props that will be passed to top level <div/> element wrapping the svg shape
   divWrapperProps?: React.HTMLProps<HTMLDivElement>;
+  // props that will be passed to top level <svg/> element, containing all arrow parts
   svgCanvasProps?: React.SVGProps<SVGSVGElement>;
 }
 

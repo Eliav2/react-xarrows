@@ -1,8 +1,8 @@
 export * from "./XArrow";
 export { default as XArrow } from "./XArrow";
 
-export * from "./XEdge";
-export { default as XEdge } from "./XEdge";
+export * from "./XHead";
+export { default as XEdge } from "./XHead";
 
 export * from "./XLine";
 export { default as XLine } from "./XLine";

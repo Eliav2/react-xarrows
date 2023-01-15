@@ -91,7 +91,7 @@ const DemoXWrapper = () => {
       <div style={{ height: 50 }} />
       {/* my arrows */}
       {/*<BestPathSmoothXArrow start={box1Ref} end={box2Ref} headSharpness={0.25} />*/}
-      <BestPathGridXArrow start={box1Ref} end={box2Ref} breakPoint={0.5} />
+      <BestPathGridXArrow start={box1Ref} end={box2Ref} breakPoint={0.5} startAnchor={"left"} endAnchor={"top"} />
       {/*<AutoAnchorWithHeadXArrow start={box1Ref} end={box2Ref} headSize={50} />*/}
       {/*<SnakeXArrow start={box1Ref} end={box2Ref} />*/}
       {/*<SimpleLineXArrow start={box1Ref} end={box2Ref} />*/}

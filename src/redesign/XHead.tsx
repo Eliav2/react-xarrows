@@ -4,7 +4,7 @@ import { IDir, IPoint } from "./types/types";
 import { getBBox } from "./components/NormalizedGSvg";
 import { Dir } from "./path";
 
-export interface XEdgeProps {
+export interface XHeadProps {
   children?: React.ReactNode; // a jsx element of type svg like <circle .../> or <path .../>
 
   dir?: IDir;
@@ -29,7 +29,7 @@ export interface XEdgeProps {
   pos: IPoint;
 }
 
-const XEdge = React.forwardRef<SVGGElement, XEdgeProps>(function XEdge(props, forwardRef) {
+const XHead = React.forwardRef<SVGGElement, XHeadProps>(function XEdge(props, forwardRef) {
   let { children, containerRef, pos, dir = new Dir(0, 0), rotate = 0 } = props;
   const _dir = new Dir(dir);
   // const dir = pos._chosenFaceDir;
@@ -65,14 +65,14 @@ const XEdge = React.forwardRef<SVGGElement, XEdgeProps>(function XEdge(props, fo
     </g>
   );
 });
-XEdge.defaultProps = {
+XHead.defaultProps = {
   size: 30,
   // children: arrowShapes.arrow1.svgElem,
   color: "cornflowerBlue",
   rotate: 0,
 };
 
-export default XEdge;
+export default XHead;
 
 export const getXEdgeSize = (ref: React.RefObject<any>) => {
   // const bbox = useGetBBox(ref);
