@@ -15,34 +15,15 @@ import Basic from '@site/src/demos/Basic';
 
 <DemoPreviewer name={"Basic"} Comp={Basic} />
 
-## Enable Relative Offset
+## Draggable
 
-when `enableRelativeOffset` is set to `true`, Resizable would also inject `left` and `top` CSS style,
-in order to make the resizable element resizable more naturally on left and top handles.
-works best when on absolutely positioned elements.
-
-:::note
-`left` and `top` takes affect only when positioning is other than static.
-
-in this example, we set the positioning style `relative`, if we choose `absolute`, the rest of the page layout wouldn't be
-changed on resizing. the behavior of this demo(code block is heightened even when resizing from top) is the exactly wanted behavior.
-:::
-
-import RelativeOffset from '@site/src/demos/relativeOffset';
-
-<DemoPreviewer name={"relativeOffset"} Comp={RelativeOffset} />
-
-## Resizable and Draggable
-
-You can use [react-draggable](https://www.npmjs.com/package/react-draggable) with Resizable, but because react-draggable
-does not forward refs correctly, you will need to pass direct ref to resizable,namely,
-use Resizable.nodeRef prop instead of Resizable.children prop.
+You can use [react-draggable](https://www.npmjs.com/package/react-draggable) with react-xarrows, just make sure to update
+all xarrows under the same XWrapper when the draggable element is moved.
 
 
-[//]: # (import Draggable from '@site/src/demos/draggable';)
+import Draggable from '@site/src/demos/draggable';
 
-[//]: # ()
-[//]: # (<DemoPreviewer name={"draggable"} Comp={Draggable} />)
+<DemoPreviewer name={"draggable"} Comp={Draggable} />
 
 [//]: # ()
 [//]: # (## handle styling)
