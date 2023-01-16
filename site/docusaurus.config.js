@@ -12,7 +12,7 @@ const config = {
   baseUrl: "/",
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "warn",
-  favicon: "img/favicon.ico",
+  favicon: "img/favicon.png",
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
@@ -58,7 +58,8 @@ const config = {
         title: "react-xarrows",
         logo: {
           alt: "react-xarrows Logo",
-          src: "img/logo.svg",
+          // src: "img/logo256.png",
+          src: "img/favicon.png",
         },
         items: [
           {
@@ -69,7 +70,7 @@ const config = {
           },
           { to: "/blog", label: "Blog", position: "left" },
           {
-            href: "https://github.com/facebook/docusaurus",
+            href: "https://github.com/Eliav2/react-xarrows",
             label: "GitHub",
             position: "right",
           },
@@ -83,7 +84,7 @@ const config = {
             items: [
               {
                 label: "Tutorial",
-                to: "/docs/intro",
+                to: "/docs/quick-start",
               },
             ],
           },
@@ -92,15 +93,11 @@ const config = {
             items: [
               {
                 label: "Stack Overflow",
-                href: "https://stackoverflow.com/questions/tagged/docusaurus",
+                href: "https://stackoverflow.com/questions/tagged/react-xarrows",
               },
               {
-                label: "Discord",
-                href: "https://discordapp.com/invite/docusaurus",
-              },
-              {
-                label: "Twitter",
-                href: "https://twitter.com/docusaurus",
+                label: "Discussions",
+                href: "https://github.com/Eliav2/react-xarrows/discussions",
               },
             ],
           },
@@ -113,12 +110,12 @@ const config = {
               },
               {
                 label: "GitHub",
-                href: "https://github.com/facebook/docusaurus",
+                href: "https://github.com/Eliav2/react-xarrows",
               },
             ],
           },
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
+        copyright: `Copyright © ${new Date().getFullYear()} react-xarrows, Inc. Built with Docusaurus.`,
       },
       prism: {
         theme: lightCodeTheme,

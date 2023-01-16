@@ -8,17 +8,17 @@ import React from "react";
 const Badges = () => {
   return (
     <div style={{ marginBottom: 16 }}>
-      <a href={"https://www.npmjs.com/package/react-true-resizable"}>
-        <img src={"https://img.shields.io/npm/v/react-true-resizable"} />
+      <a href={"https://www.npmjs.com/package/react-xarrows"}>
+        <img src={"https://img.shields.io/npm/v/react-xarrows"} />
       </a>
-      <a href={"https://www.npmjs.com/package/react-true-resizable"}>
-        <img src={"https://img.shields.io/npm/dw/react-true-resizable"} />
+      <a href={"https://www.npmjs.com/package/react-xarrows"}>
+        <img src={"https://img.shields.io/npm/dw/react-xarrows"} />
       </a>
-      <a href={"https://bundlephobia.com/package/react-true-resizable"}>
-        <img src={"https://img.shields.io/bundlephobia/minzip/react-true-resizable"} />
+      <a href={"https://bundlephobia.com/package/react-xarrows"}>
+        <img src={"https://img.shields.io/bundlephobia/minzip/react-xarrows"} />
       </a>
-      <a href={"https://github.com/Eliav2/react-true-resizable/issues"}>
-        <img src={"https://img.shields.io/github/issues/Eliav2/react-true-resizable"} />
+      <a href={"https://github.com/Eliav2/react-xarrows/issues"}>
+        <img src={"https://img.shields.io/github/issues/Eliav2/react-xarrows"} />
       </a>
     </div>
   );
@@ -29,6 +29,7 @@ function HomepageHeader() {
   return (
     <header className={clsx("hero hero--primary", styles.heroBanner)}>
       <div className="container">
+        <img src={"img/logo256.png"} height={128} alt={"xarrows img"} />
         <h1 className="hero__title">{siteConfig.title}</h1>
         <p className="hero__subtitle">{siteConfig.tagline}</p>
         <Badges />
