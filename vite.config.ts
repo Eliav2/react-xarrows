@@ -3,6 +3,7 @@ import dts from "vite-plugin-dts";
 import fs, { readdirSync } from "fs";
 import { resolve } from "path";
 import generateFile from "vite-plugin-generate-file";
+import { viteStaticCopy } from "vite-plugin-static-copy";
 
 // read package.json file
 const packageJson = JSON.parse(fs.readFileSync(resolve(__dirname, "package.json"), "utf-8"));
@@ -46,32 +47,32 @@ const listAllSubDirectories = (baseDir) => {
 
 const SOURCE_ENTRY = "src/redesign";
 // generate 'exports' and 'typesVersions' fields for package.json based on the source directory
-const createEntryPoints = (baseDir, distDir, typesDir) => {
+const createEntryPoints = (baseDir, esmBuildDir, cjsBuildDir, typesDir) => {
   const dirs = listAllSubDirectories(baseDir);
   const entryPoints = dirs.map((dir) => dir.slice(baseDir.length + 1));
   const entryPointsMap = entryPoints.reduce((acc, entryPoint) => {
     return {
       ...acc,
       [`./${entryPoint}`]: {
-        import: `${distDir}/${entryPoint}/index.mjs`,
-        require: `${distDir}/${entryPoint}/index.js`,
+        import: `${esmBuildDir}/${entryPoint}/index.esm.js`,
+        require: `${cjsBuildDir}/${entryPoint}/index.js`,
         types: `${typesDir}/${entryPoint}/index.d.ts`,
       },
       [`./${entryPoint}/*`]: {
-        import: `${distDir}/${entryPoint}/*.mjs`,
-        require: `${distDir}/${entryPoint}/*.js`,
+        import: `${esmBuildDir}/${entryPoint}/*.esm.js`,
+        require: `${cjsBuildDir}/${entryPoint}/*.js`,
         types: `${typesDir}/${entryPoint}/*.d.ts`,
       },
     };
   }, {});
   entryPointsMap["."] = {
-    import: `${distDir}/index.mjs`,
-    require: `${distDir}/index.js`,
+    import: `${esmBuildDir}/index.esm.js`,
+    require: `${cjsBuildDir}/index.js`,
     types: `${typesDir}/index.d.ts`,
   };
   entryPointsMap["./*"] = {
-    import: `${distDir}/*.mjs`,
-    require: `${distDir}/*.js`,
+    import: `${esmBuildDir}/*.esm.js`,
+    require: `${cjsBuildDir}/*.js`,
     types: `${typesDir}/*.d.ts`,
   };
 
@@ -97,12 +98,12 @@ const pick = (obj, props) => {
   return newObj;
 };
 
-const createPackageJson = (packageJson, distDir, typesDir) => {
-  const { exports, typesVersions } = createEntryPoints(SOURCE_ENTRY, distDir, typesDir);
+const createPackageJson = (packageJson, esmBuildDir, cjsBuildDir, typesDir) => {
+  const { exports, typesVersions } = createEntryPoints(SOURCE_ENTRY, esmBuildDir, cjsBuildDir, typesDir);
   const newPackageJson = {
     ...packageJson,
-    main: `${distDir}/index.js`,
-    module: `${distDir}/index.mjs`,
+    main: `${cjsBuildDir}/index.js`,
+    module: `${esmBuildDir}/index.mjs`,
     types: "index.d.ts",
     typesVersions,
     exports,
@@ -119,24 +120,43 @@ export default defineConfig({
     minify: false,
     outDir: "dist",
     emptyOutDir: false,
+    rollupOptions: {
+      external: ["react", "react-dom", "prop-types", "@types/prop-types"],
+      // output: { dir: "dist/lib/build" }
+      output: [
+        { dir: "dist/lib/build/esm", format: "esm" },
+        { dir: "dist/lib/build/cjs", format: "cjs" },
+      ],
+    },
     lib: {
-      entry: mapAllFilesInDir("src/redesign", "build"),
+      entry: mapAllFilesInDir("src/redesign", "js"),
       name: "react-xarrows",
       formats: ["cjs", "es"],
     },
-    rollupOptions: { external: ["react", "react-dom", "prop-types", "@types/prop-types"] },
     // todo: to this only in prod mode
     sourcemap: true,
   },
   plugins: [
-    dts({ entryRoot: "src", outputDir: "dist/types", tsConfigFilePath: "tsconfig.json" }),
+    dts({ entryRoot: "src", outputDir: "dist/lib/types", tsConfigFilePath: "tsconfig.json" }),
     // @ts-ignore
     generateFile([
       {
         type: "json",
         output: "./package.json",
-        data: createPackageJson(packageJson, "./build", "./types/redesign"),
+        data: createPackageJson(packageJson, "./lib/build/esm/js", "./lib/build/cjs/js", "./lib/types/redesign"),
       },
     ]),
+    viteStaticCopy({
+      targets: [
+        {
+          src: "LICENSE",
+          dest: ".",
+        },
+        {
+          src: "README.md",
+          dest: ".",
+        },
+      ],
+    }),
   ],
 });

@@ -1,0 +1,74 @@
+---
+slug: react-xarrows-v3
+title: react-xarrows V3
+authors: [eliav]
+tags: [react-xarrows, react]
+---
+
+react-xarrows v3 takes different approach from v2. v3 is more flexible and customizable, but also slightly more complex and verbose(in terms of code length).
+
+react-xarrows v2 implemented a huge single component(with some smaller utility components), and each feature was
+controlled by a set of properties that were passed to this component. for example, the arrow head was controlled by the
+`headSize`, `headColor`, and `showHead` properties.
+this approach does not scale well as complexity grows.
+
+react-xarrows v3 takes a different approach, and emphasizes component composition rather than passing props. meaning,
+v3 would give you the tools to compose your own custom arrow using component composition, hooks, and utilities that abstract most of the complicated logic rather than trying to implement every possible use case in a single component and adjust it using props.
+
+so, for example, in v2, to add a head to the arrow you would use the `showHead` prop, to change it's color you would use the `headColor` prop, and so on.
+```js
+<Xarrow
+  start="a"
+  end="b"
+  showHead
+  headColor="red"
+  headSize={10}
+/>
+```
+
+import XarrowV2 from "react-xarrows-v2"
+
+export const Circle = ({ id }) => {
+  return (
+    <div
+      id={id}
+      style={{
+        width: 20,
+        height: 20,
+        borderRadius: "50%",
+        backgroundColor: "red",
+      }}
+    />
+  )
+}
+
+export const V2Example = () => {
+  return (
+    <div style={{ display: "flex", justifyContent: "space-around" }}>
+      <XarrowV2
+        start="a"
+        end="b"
+        showHead
+        headColor="red"
+        headSize={10}
+      />
+      <Circle id="a" />
+      <Circle id="b" />
+    </div>
+  )
+}
+
+<V2Example/>
+
+notice that single component is responsible to create the arrow body, the head, and the label, and it is also responsible to position them all correctly based on the selected anchoring(e.g `startAnchor='auto'`).
+
+
+in v3, you would need to create an `Head` component, and pass it the color you want to use.
+```js
+<XArrow
+  start="a"
+  end="b"
+>
+  <Head color="red" size={10} />
+</XArrow>
+```

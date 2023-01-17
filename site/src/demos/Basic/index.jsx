@@ -1,5 +1,6 @@
 import React, { useRef } from "react";
-import { XArrow, XLine } from "react-xarrows";
+import XArrow from "react-xarrows/XArrow";
+import XLine from "react-xarrows/XLine";
 
 export default function BasicExample() {
   const box1Ref = useRef(null);

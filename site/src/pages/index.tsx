@@ -29,9 +29,12 @@ function HomepageHeader() {
   return (
     <header className={clsx("hero hero--primary", styles.heroBanner)}>
       <div className="container">
-        <img src={"img/logo256.png"} height={128} alt={"xarrows img"} />
-        <h1 className="hero__title">{siteConfig.title}</h1>
+        <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+          <img src={"img/logo256.png"} height={128} alt={"xarrows img"} style={{ paddingRight: 16 }} />
+          <h1 className="hero__title">{siteConfig.title}</h1>
+        </div>
         <p className="hero__subtitle">{siteConfig.tagline}</p>
+
         <Badges />
 
         <div className={styles.buttons}>
