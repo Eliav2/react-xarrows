@@ -1,7 +1,7 @@
 import React from "react";
 import { ArrowHead } from "./ArrowHead";
-import { autoSelectAnchor } from "react-xarrows/useAutoSelectAnchor";
-import { XArrow, ProvideXContext, getBestPath, pointsToCurves, useXContext, Vector } from "react-xarrows";
+import { autoSelectAnchor } from "react-xarrows/AutoSelectAnchor";
+import { XArrow, ProvideXArrow, getBestPath, pointsToCurves, useXArrow, Vector } from "react-xarrows";
 import type { Anchor, XArrowProps } from "react-xarrows";
 
 export interface SmoothPathProps {
@@ -15,7 +15,7 @@ export interface SmoothPathProps {
 const SmoothPathWithHead = (props: SmoothPathProps) => {
   const { breakPoint = 0.5, headSize = 30, headSharpness = 0.25, startAnchor, endAnchor } = props;
   const headOffset = headSize * (1 - headSharpness);
-  const context = useXContext();
+  const context = useXArrow();
   let { startRect, endRect } = context;
   if (!startRect || !endRect) return null;
   endRect = endRect.expand(headOffset); // expand the endRect to make room for the arrow head

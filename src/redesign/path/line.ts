@@ -52,6 +52,10 @@ export class Line {
     return new Line(this.root, this.end.sub(this.dir().mul(size)));
   }
 
+  stripStart(size: number) {
+    return new Line(this.root.add(this.dir().mul(size)), this.end);
+  }
+
   xDiff() {
     return new Vector(this.end.x - this.root.x, 0);
   }

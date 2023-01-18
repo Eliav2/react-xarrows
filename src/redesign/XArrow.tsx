@@ -6,6 +6,7 @@ import { getElementByPropGiven } from "./utils";
 import { IPoint, isPoint, XElemRef } from "./types";
 import { useEnsureContext } from "./internal/hooks";
 import { Rectangle } from "./path";
+import PositionProvider from "./PositionProvider";
 
 export interface XArrowProps {
   // children is a jsx elements of type svg like <circle .../> or <path .../>
@@ -103,8 +104,6 @@ export const XArrow = (props: XArrowProps) => {
   const startRect = startPosition && new Rectangle(startPosition);
   const endRect = endPosition && new Rectangle(endPosition);
 
-  const contextValue = { startRect, endRect, startPoint, endPoint, __mounted: true };
-
   return (
     <div
       ref={rootDivRef}
@@ -121,7 +120,9 @@ export const XArrow = (props: XArrowProps) => {
         ref={svgCanvasRef}
         {...props.svgCanvasProps}
       >
-        <XArrowContext.Provider value={contextValue}>{props.children}</XArrowContext.Provider>
+        <XArrowContext.Provider value={{ startRect, endRect, __mounted: true }}>
+          <PositionProvider value={{ startPoint, endPoint }}>{props.children}</PositionProvider>
+        </XArrowContext.Provider>
       </svg>
     </div>
   );
@@ -131,14 +132,14 @@ export default XArrow;
 const XArrowContext = React.createContext<{
   startRect: Rectangle | null;
   endRect: Rectangle | null;
-  startPoint: IPoint;
-  endPoint: IPoint;
+  // startPoint: IPoint;
+  // endPoint: IPoint;
   __mounted: boolean;
 }>({
   startRect: null,
   endRect: null,
-  startPoint: { x: 0, y: 0 },
-  endPoint: { x: 0, y: 0 },
+  // startPoint: { x: 0, y: 0 },
+  // endPoint: { x: 0, y: 0 },
   __mounted: false,
 });
 export const useXArrow = () => {

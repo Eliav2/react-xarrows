@@ -10,7 +10,7 @@ react-xarrows v3 takes different approach from v2. v3 is more flexible and custo
 react-xarrows v2 implemented a huge single component(with some smaller utility components), and each feature was
 controlled by a set of properties that were passed to this component. for example, the arrow head was controlled by the
 `headSize`, `headColor`, and `showHead` properties.
-this approach does not scale well as complexity grows.
+this approach does not scale well as complexity grows, and worse, this way the component can't be extended easily.
 
 react-xarrows v3 takes a different approach, and emphasizes component composition rather than passing props. meaning,
 v3 would give you the tools to compose your own custom arrow using component composition, hooks, and utilities that abstract most of the complicated logic rather than trying to implement every possible use case in a single component and adjust it using props.

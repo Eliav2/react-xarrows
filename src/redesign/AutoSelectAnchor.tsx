@@ -7,6 +7,7 @@ import { toArray } from "./utils";
 import { Dir, getBestPath, Vector } from "./path";
 import React from "react";
 import { useEnsureContext } from "./internal/hooks";
+import PositionProvider from "./PositionProvider";
 
 const cStartAnchorsMap: { [key in AnchorName]: AnchorCustom } = {
   middle: { x: "50%", y: "50%", trailingDir: [{ x: 0, y: 0 }] },
@@ -132,17 +133,6 @@ const AutoSelectAnchor = ({ startAnchor = "auto", endAnchor = "auto", children }
   const v = autoSelectAnchor(startRect, endRect, { startAnchor, endAnchor });
   // const { points, endDir } = getBestPath(startPoint, endPoint, { zBreakPoint: breakPoint });
 
-  return <AutoSelectAnchorContext.Provider value={{ ...v, __mounted: true }}>{children}</AutoSelectAnchorContext.Provider>;
+  return <PositionProvider value={v}>{children}</PositionProvider>;
 };
 export default AutoSelectAnchor;
-
-const AutoSelectAnchorContext = React.createContext<{ startPoint?: Vector<Dir[]>; endPoint?: Vector<Dir[]>; __mounted: boolean }>({
-  __mounted: false,
-});
-
-export const useAutoSelectAnchor = () => {
-  // console.log("useAutoSelectAnchor");
-  const val = React.useContext(AutoSelectAnchorContext);
-  // useEnsureContext(val, "AutoSelectAnchor", "useAutoSelectAnchor");
-  return val;
-};
