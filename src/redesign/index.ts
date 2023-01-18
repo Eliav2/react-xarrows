@@ -15,7 +15,10 @@ export { default as AutoSelectAnchor } from "./AutoSelectAnchor";
 
 export * from "./path";
 
-export * from "./components";
+export * from "./shapes";
 
 export * from "./PositionProvider";
 export { default as PositionProvider } from "./PositionProvider";
+
+export * from "./NormalizedGSvg";
+export { default as NormalizedGSvg } from "./NormalizedGSvg";

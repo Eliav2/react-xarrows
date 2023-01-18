@@ -1,8 +1,10 @@
 import React, { LegacyRef } from "react";
 import { svgElemStrType } from "../types";
 import { IDir, IPoint } from "./types/types";
-import { getBBox } from "./components/NormalizedGSvg";
+import { getBBox } from "./NormalizedGSvg";
 import { Dir } from "./path";
+import { usePositionProvider } from "./PositionProvider";
+import { BasicHeadShape1 } from "./shapes";
 
 export interface XHeadProps {
   children?: React.ReactNode; // a jsx element of type svg like <circle .../> or <path .../>
@@ -26,11 +28,19 @@ export interface XHeadProps {
   rotate?: number;
 
   containerRef?: LegacyRef<SVGGElement>; // internal
-  pos: IPoint;
+  pos?: IPoint;
 }
 
 const XHead = React.forwardRef<SVGGElement, XHeadProps>(function XEdge(props, forwardRef) {
-  let { children, containerRef, pos, dir = new Dir(0, 0), rotate = 0 } = props;
+  const { startPoint, endPoint } = usePositionProvider();
+  let {
+    children = <BasicHeadShape1 />,
+    containerRef,
+    pos = endPoint ?? { x: 0, y: 0 },
+    dir = new Dir((endPoint?.x ?? 0) - (startPoint?.x ?? 0), (endPoint?.y ?? 0) - (startPoint?.y ?? 0)),
+    rotate = 0,
+  } = props;
+
   const _dir = new Dir(dir);
   // const dir = pos._chosenFaceDir;
   // const endEdgeRef = useRef();

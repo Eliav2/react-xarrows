@@ -15,7 +15,11 @@ import {
   XLine,
   AutoSelectAnchor,
   PositionProvider,
+  XHead,
+  NormalizedGSvg,
+  BasicHeadShape1,
 } from "react-xarrows";
+import BasicHead1 from "react-xarrows/components/BasicHead1";
 import { AutoAnchorWithHeadXArrow } from "./components/AutoAnchorWithHeadXArrow";
 import { BestPathGridXArrow } from "./components/BestPathGridXArrow";
 import SnakeXArrow from "./components/SnakeXArrow";
@@ -103,7 +107,8 @@ const DemoXWrapper = () => {
 
       <XArrow start={box1Ref} end={box2Ref}>
         <AutoSelectAnchor>
-          <XLine />
+          <XLine stripEnd={10} />
+          <XHead color={"red"} />
         </AutoSelectAnchor>
       </XArrow>
 
