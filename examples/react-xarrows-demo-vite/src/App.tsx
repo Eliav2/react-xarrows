@@ -5,9 +5,20 @@ import useRerender from "shared/hooks/useRerender";
 import { BestPathSmoothXArrow } from "./components/BestPathSmoothXArrow";
 import { Button, CardContent, Paper } from "@mui/material";
 import { ArrowHead } from "./components/ArrowHead";
-import { XArrow, XArrowProps, autoSelectAnchor, Anchor, useXContext, XWrapper, XLine, ProvideXContext } from "react-xarrows";
+import {
+  XArrow,
+  XArrowProps,
+  autoSelectAnchor,
+  Anchor,
+  useXArrow,
+  XWrapper,
+  XLine,
+  ProvideXContext,
+  AutoSelectAnchor,
+} from "react-xarrows";
 import { AutoAnchorWithHeadXArrow } from "./components/AutoAnchorWithHeadXArrow";
 import { BestPathGridXArrow } from "./components/BestPathGridXArrow";
+import SnakeXArrow from "./components/SnakeXArrow";
 
 function App() {
   return (
@@ -89,11 +100,20 @@ const DemoXWrapper = () => {
         </Box>
       </div>
       <div style={{ height: 50 }} />
+
+      <XArrow start={box1Ref} end={box2Ref}>
+        <XLine stroke={"red"} />
+
+        <AutoSelectAnchor>
+          <XLine />
+        </AutoSelectAnchor>
+      </XArrow>
+
       {/* my arrows */}
       {/*<BestPathSmoothXArrow start={box1Ref} end={box2Ref} headSharpness={0.25} />*/}
-      <BestPathGridXArrow start={box1Ref} end={box2Ref} breakPoint={0.5} startAnchor={"left"} endAnchor={"top"} />
+      {/*<BestPathGridXArrow start={box1Ref} end={box2Ref} breakPoint={0.5} startAnchor={"left"} endAnchor={"top"} />*/}
       {/*<AutoAnchorWithHeadXArrow start={box1Ref} end={box2Ref} headSize={50} />*/}
-      {/*<SnakeXArrow start={box1Ref} end={box2Ref} />*/}
+      <SnakeXArrow start={box1Ref} end={box2Ref} />
       {/*<SimpleLineXArrow start={box1Ref} end={box2Ref} />*/}
     </XWrapper>
   );
@@ -138,7 +158,7 @@ const MyArrows = () => {
 };
 
 const LeftToRightXLine = () => {
-  const context = useXContext();
+  const context = useXArrow();
   const { startRect, endRect } = context;
   if (!startRect || !endRect) return null;
   return <XLine x1={startRect.right} y1={startRect.top + startRect.height / 2} x2={endRect.left} y2={endRect.top + endRect.height / 2} />;
@@ -146,7 +166,7 @@ const LeftToRightXLine = () => {
 
 const AutoAnchorXLine = ({ startAnchor, endAnchor }: { startAnchor?: Anchor; endAnchor?: Anchor }) => {
   // const autoSelectAnchor = useAutoSelectAnchor(props);
-  const context = useXContext();
+  const context = useXArrow();
   const { startRect, endRect } = context;
   if (!startRect || !endRect) return null;
   const {

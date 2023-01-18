@@ -1,4 +1,4 @@
-import { ProvideXContext, XArrow, XArrowProps } from "react-xarrows/XArrow";
+import { ProvideXArrow, XArrow, XArrowProps } from "react-xarrows/XArrow";
 import React from "react";
 import { zTurn } from "react-xarrows/path";
 import { IVector } from "react-xarrows/types";
@@ -8,7 +8,7 @@ interface SnakeXArrowProps extends Pick<XArrowProps, "start" | "end"> {}
 const SnakeXArrow = (props: SnakeXArrowProps) => {
   return (
     <XArrow {...props}>
-      <ProvideXContext>
+      <ProvideXArrow>
         {(context) => {
           const {
             startPoint: { x: x1, y: y1 },
@@ -32,7 +32,7 @@ const SnakeXArrow = (props: SnakeXArrowProps) => {
           const points_s = points.map((p) => p.x + "," + p.y).join(" ");
           return <polyline points={points_s} fill="transparent" stroke="white" strokeWidth={3} />;
         }}
-      </ProvideXContext>
+      </ProvideXArrow>
     </XArrow>
   );
 };

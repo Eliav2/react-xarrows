@@ -1,10 +1,12 @@
-import { useXContext } from "./XArrow";
+import { useXArrow } from "./XArrow";
 import { RelativeSize } from "shared/types";
 import { OneOrMore } from "./types/typeUtils";
 import { getRelativeSizeValue } from "shared/utils";
 import { Direction, IRect, NamedDirection, parseIRect, parsePossiblyDirectedVector } from "./types/types";
 import { toArray } from "./utils";
-import { Vector } from "./path";
+import { Dir, getBestPath, Vector } from "./path";
+import React from "react";
+import { useEnsureContext } from "./internal/hooks";
 
 const cStartAnchorsMap: { [key in AnchorName]: AnchorCustom } = {
   middle: { x: "50%", y: "50%", trailingDir: [{ x: 0, y: 0 }] },
@@ -117,9 +119,30 @@ export const autoSelectAnchor = (
   };
 };
 
-export const useAutoSelectAnchor = ({ startAnchor = "auto", endAnchor = "auto" }: { startAnchor?: Anchor; endAnchor?: Anchor } = {}) => {
-  const context = useXContext();
-  const { startRect, endRect } = context;
+export type AutoSelectAnchorProps = {
+  children: React.ReactNode;
+  startAnchor?: Anchor;
+  endAnchor?: Anchor;
+};
+
+const AutoSelectAnchor = ({ startAnchor = "auto", endAnchor = "auto", children }: AutoSelectAnchorProps) => {
+  const context = useXArrow();
+  let { startRect, endRect } = context;
   if (!startRect || !endRect) return null;
-  return () => autoSelectAnchor(startRect, endRect, { startAnchor, endAnchor });
+  const v = autoSelectAnchor(startRect, endRect, { startAnchor, endAnchor });
+  // const { points, endDir } = getBestPath(startPoint, endPoint, { zBreakPoint: breakPoint });
+
+  return <AutoSelectAnchorContext.Provider value={{ ...v, __mounted: true }}>{children}</AutoSelectAnchorContext.Provider>;
+};
+export default AutoSelectAnchor;
+
+const AutoSelectAnchorContext = React.createContext<{ startPoint?: Vector<Dir[]>; endPoint?: Vector<Dir[]>; __mounted: boolean }>({
+  __mounted: false,
+});
+
+export const useAutoSelectAnchor = () => {
+  // console.log("useAutoSelectAnchor");
+  const val = React.useContext(AutoSelectAnchorContext);
+  // useEnsureContext(val, "AutoSelectAnchor", "useAutoSelectAnchor");
+  return val;
 };

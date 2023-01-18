@@ -134,7 +134,7 @@ export default defineConfig({
       formats: ["cjs", "es"],
     },
     // todo: to this only in prod mode
-    sourcemap: true,
+    // sourcemap: true,
   },
   plugins: [
     dts({ entryRoot: "src", outputDir: "dist/lib/types", tsConfigFilePath: "tsconfig.json" }),
@@ -147,6 +147,7 @@ export default defineConfig({
       },
     ]),
     viteStaticCopy({
+      flatten: false,
       targets: [
         {
           src: "LICENSE",

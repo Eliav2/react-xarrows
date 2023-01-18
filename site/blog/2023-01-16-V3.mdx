@@ -21,46 +21,51 @@ so, for example, in v2, to add a head to the arrow you would use the `showHead` 
   start="a"
   end="b"
   showHead
-  headColor="red"
+  headColor="purple"
   headSize={10}
 />
 ```
 
 import XarrowV2 from "react-xarrows-v2"
+import { useRef, forwardRef } from "react"
 
-export const Circle = ({ id }) => {
+export const Circle = forwardRef((props, fref) => {
   return (
     <div
-      id={id}
+      ref={fref}
       style={{
         width: 20,
         height: 20,
         borderRadius: "50%",
-        backgroundColor: "red",
+        border: "1px solid red",
       }}
     />
   )
-}
+})
 
-export const V2Example = () => {
+export const ExampleV2 = () => {
+  const aRef = useRef(null)
+  const bRef = useRef(null)
   return (
     <div style={{ display: "flex", justifyContent: "space-around" }}>
+      <Circle ref={aRef} />
+      <Circle ref={bRef} />
       <XarrowV2
-        start="a"
-        end="b"
+        start={aRef}
+        end={bRef}
         showHead
-        headColor="red"
+        headColor="purple"
         headSize={10}
       />
-      <Circle id="a" />
-      <Circle id="b" />
     </div>
   )
 }
 
-<V2Example/>
+<ExampleV2 />
+<div style={{ height: 20 }} />
 
-notice that single component is responsible to create the arrow body, the head, and the label, and it is also responsible to position them all correctly based on the selected anchoring(e.g `startAnchor='auto'`).
+
+notice that single component is responsible to create the arrow body, the head, and the label, and it is also responsible to position them all correctly based on the selected anchoring(e.g`startAnchor='auto'`).
 
 
 in v3, you would need to create an `Head` component, and pass it the color you want to use.
@@ -72,3 +77,43 @@ in v3, you would need to create an `Head` component, and pass it the color you w
   <Head color="red" size={10} />
 </XArrow>
 ```
+
+import { XArrow, useXContext, autoSelectAnchor, XHead, NormalizedGSvg,XLine } from "react-xarrows"
+
+export const Head = ({ color, size }) => {
+  const context = useXContext();
+  let { startRect, endRect } = context;
+  if (!startRect || !endRect) return null;
+  const {
+    startPoint: { x: x1, y: y1 },
+    endPoint: { x: x2, y: y2 },
+  } = autoSelectAnchor(startRect, endRect);
+  return (
+    <XHead pos={{ x: x2, y: y2 }} dir={{ x1: x2 - x1, y: y2 - y1 }} size={size}>
+      <NormalizedGSvg>
+        <path d={`M 0 0 L 1 0.5 L 0 1 L 0.25 0.5 z`} />
+      </NormalizedGSvg>
+    </XHead>
+  )
+}
+
+export const ExampleV3 = () => {
+  const aRef = useRef()
+  const bRef = useRef()
+  return (
+    <div style={{ display: "flex", justifyContent: "space-around" }}>
+      <Circle ref={aRef} />
+      <Circle ref={bRef} />
+      <XArrow
+        start={aRef}
+        end={bRef}
+      >
+        <XLine {...{ x1, y1, x2, y2 }}/>
+        <Head color="red" size={100} />
+      </XArrow>
+    </div>
+  )
+}
+
+<ExampleV3 />
+<div style={{ height: 20 }} />

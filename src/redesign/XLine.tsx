@@ -1,9 +1,10 @@
 import React from "react";
-import { useXContext } from "./XArrow";
+import { useXArrow } from "./XArrow";
 import { RelativeSize } from "shared/types";
 import { getRelativeSizeValue } from "shared/utils";
 import { Vector } from "./path/vector";
 import { Line } from "./path/line";
+import { useAutoSelectAnchor } from "./AutoSelectAnchor";
 
 export interface XLineProps extends React.SVGProps<SVGLineElement> {
   stripEnd?: RelativeSize; // how much of the end of the line should be removed
@@ -14,7 +15,7 @@ export interface XLineProps extends React.SVGProps<SVGLineElement> {
 }
 
 export const XLine = (props: XLineProps) => {
-  const val = useXContext();
+  const val = useXArrow();
   let {
     component: Component = "line" as const,
     stripEnd,
@@ -27,14 +28,17 @@ export const XLine = (props: XLineProps) => {
     strokeWidth = 3,
     ...p
   } = props;
-  x1 = Number(x1);
-  y1 = Number(y1);
-  x2 = Number(x2);
-  y2 = Number(y2);
+  const { startPoint, endPoint } = useAutoSelectAnchor();
+
+  x1 = startPoint?.x ?? Number(x1);
+  y1 = startPoint?.y ?? Number(y1);
+  x2 = endPoint?.x ?? Number(x2);
+  y2 = endPoint?.y ?? Number(y2);
   let l = new Line(new Vector(x1, y1), new Vector(x2, y2));
   if (props.stripEnd) {
-    l = l.stripEnd(getRelativeSizeValue(props.stripEnd, l.diff.size()));
+    l = l.stripEnd(getRelativeSizeValue(props.stripEnd, l.diff().size()));
   }
+
   return (
     <Component
       x1={l.root.x}

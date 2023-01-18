@@ -20,7 +20,7 @@ const SmoothPathWithHead = (props: SmoothPathProps) => {
   if (!startRect || !endRect) return null;
   endRect = endRect.expand(headOffset); // expand the endRect to make room for the arrow head
   const { startPoint, endPoint } = autoSelectAnchor(startRect, endRect, { startAnchor, endAnchor });
-  const { points, endDir } = getBestPath(startPoint, endPoint, { breakPoint });
+  const { points, endDir } = getBestPath(startPoint, endPoint, { zBreakPoint: breakPoint });
   const v = pointsToCurves(points);
   return (
     <>
@@ -40,3 +40,15 @@ export const BestPathSmoothXArrow = (props: BestPathSmoothXArrowProps) => {
     </XArrow>
   );
 };
+// export const BestPathSmoothXArrow = (props: BestPathSmoothXArrowProps) => {
+//   const { start, end, ...smoothPathProps } = props;
+//   return (
+//     <XArrow start={start} end={end}>
+//       <AutoSelectAnchor>
+//          <BestPath>
+//            <SmoothPathWithHead {...smoothPathProps} />
+//          </BestPath>
+//       </AutoSelectAnchor>
+//     </XArrow>
+//   );
+// };

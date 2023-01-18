@@ -141,17 +141,17 @@ const XArrowContext = React.createContext<{
   endPoint: { x: 0, y: 0 },
   __mounted: false,
 });
-export const useXContext = () => {
+export const useXArrow = () => {
   const val = React.useContext(XArrowContext);
   useEnsureContext(val, "XArrow", "useXContext");
   return val;
 };
 
 interface ProvideXContextProps {
-  children: (context: ReturnType<typeof useXContext>) => React.ReactNode;
+  children: (context: ReturnType<typeof useXArrow>) => React.ReactNode;
 }
 
-export const ProvideXContext = (props: ProvideXContextProps) => {
-  const val = useXContext();
+export const ProvideXArrow = (props: ProvideXContextProps) => {
+  const val = useXArrow();
   return <>{props.children(val)}</>;
 };

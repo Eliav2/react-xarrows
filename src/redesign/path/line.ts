@@ -11,12 +11,6 @@ export class Line {
   readonly a: number; //slope
   readonly b: number; // meet with y-axis
 
-  // note! this doesn't have to be direction on x or y exclusively
-  readonly dir: Dir;
-
-  // the vector connecting start and end
-  readonly diff: Vector;
-
   private readonly startIncluded: boolean;
   private readonly endIncluded: boolean;
 
@@ -35,9 +29,16 @@ export class Line {
     this.b = b;
     this.startIncluded = startIncluded;
     this.endIncluded = endIncluded;
-    this.dir = new Dir(this.end.x - this.root.x, this.end.y - this.root.y);
+  }
 
-    this.diff = new Vector(this.end.x - this.root.x, this.end.y - this.root.y);
+  // note! this doesn't have to be direction on x or y exclusively
+  dir() {
+    return new Dir(this.end.x - this.root.x, this.end.y - this.root.y);
+  }
+
+  // the vector connecting start and end
+  diff() {
+    return this.end.sub(this.root);
   }
 
   //return form of y = ax+b form
@@ -48,7 +49,7 @@ export class Line {
   }
 
   stripEnd(size: number) {
-    return new Line(this.root, this.end.sub(this.dir.mul(size)));
+    return new Line(this.root, this.end.sub(this.dir().mul(size)));
   }
 
   xDiff() {
@@ -62,13 +63,13 @@ export class Line {
   getCloserEdge(v: Vector) {
     let l1 = new Line(v, this.root);
     let l2 = new Line(v, this.end);
-    return l1.diff.absSize() < l2.diff.absSize() ? this.root : this.end;
+    return l1.diff().absSize() < l2.diff().absSize() ? this.root : this.end;
   }
 
   // meeting point with other line
   getCut(l: Line): Vector | null {
     // handle edge cases
-    if (l.dir.parallel(this.dir)) {
+    if (l.dir().parallel(this.dir())) {
       // return null; //dont include inclusive points when parallel
       // if (this.isOnLine(l.end)) {
       //   // return this.getCloserEdge(l.end);

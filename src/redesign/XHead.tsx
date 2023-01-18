@@ -74,7 +74,7 @@ XHead.defaultProps = {
 
 export default XHead;
 
-export const getXEdgeSize = (ref: React.RefObject<any>) => {
+export const getXHeadSize = (ref: React.RefObject<any>) => {
   // const bbox = useGetBBox(ref);
   // console.log(bbox);
   return getBBox(ref.current);

@@ -90,19 +90,22 @@ export const zTurn = (
 
 /**
  * takes start and end points and returns a list of points that represents the best intuitive path between them
+ * currently the best path can be either a straight line rTurn or zTurn
+ * todo: add pTurn option
  */
 export const getBestPath = <S extends PossiblyDirectedVector, E extends PossiblyDirectedVector>(
   startPoint: S,
   endPoint: E,
-  options: { breakPoint: number } = { breakPoint: 0.5 }
+  options: { zBreakPoint: number } = { zBreakPoint: 0.5 }
 ): { points: IVector[]; startDir: S extends Vector<Dir[]> ? Dir : undefined; endDir: E extends Vector<Dir[]> ? Dir : undefined } => {
-  const { breakPoint = 0.5 } = options;
+  const { zBreakPoint = 0.5 } = options;
   const startVector = new Vector(parsePossiblyDirectedVector(startPoint));
   const endVector = new Vector(parsePossiblyDirectedVector(endPoint));
   const zDir = startVector.canZTurnTo(endVector);
   if (zDir)
     return {
-      points: zTurn(startVector, endVector, { dir: zDir.toCloserAxis(), breakPoint }),
+      points: zTurn(startVector, endVector, { dir: zDir.toCloserAxis(), breakPoint: zBreakPoint }),
+      // todo: fix types issues
       startDir: zDir,
       endDir: zDir,
     };
@@ -115,6 +118,7 @@ export const getBestPath = <S extends PossiblyDirectedVector, E extends Possibly
       endDir: rDir[1],
     };
   }
+  // if no turn is possible, return a straight line
   return {
     points: [startVector, endVector],
     startDir: startVector.trailingDir?.[0],
