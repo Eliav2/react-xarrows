@@ -16,3 +16,6 @@ export { default as AutoSelectAnchor } from "./AutoSelectAnchor";
 export * from "./path";
 
 export * from "./components";
+
+export * from "./PositionProvider";
+export { default as PositionProvider } from "./PositionProvider";

@@ -15,7 +15,6 @@ export interface XLineProps extends React.SVGProps<SVGLineElement> {
 }
 
 export const XLine = (props: XLineProps) => {
-  const val = useXArrow();
   let {
     component: Component = "line" as const,
     stripEnd,

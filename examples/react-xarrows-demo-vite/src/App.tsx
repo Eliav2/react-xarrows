@@ -13,8 +13,8 @@ import {
   useXArrow,
   XWrapper,
   XLine,
-  ProvideXContext,
   AutoSelectAnchor,
+  PositionProvider,
 } from "react-xarrows";
 import { AutoAnchorWithHeadXArrow } from "./components/AutoAnchorWithHeadXArrow";
 import { BestPathGridXArrow } from "./components/BestPathGridXArrow";
@@ -102,10 +102,8 @@ const DemoXWrapper = () => {
       <div style={{ height: 50 }} />
 
       <XArrow start={box1Ref} end={box2Ref}>
-        <XLine stroke={"red"} />
-
         <AutoSelectAnchor>
-          <XLine>{/*<ArrowHead />*/}</XLine>
+          <XLine />
         </AutoSelectAnchor>
       </XArrow>
 
