@@ -1,6 +1,6 @@
 import React from "react";
-import { ProvideXContext, XArrow, XArrowProps } from "react-xarrows/XArrow";
-import { autoSelectAnchor } from "react-xarrows/useAutoSelectAnchor";
+import { ProvideXArrow, XArrow, XArrowProps } from "react-xarrows/XArrow";
+import { autoSelectAnchor } from "react-xarrows/AutoSelectAnchor";
 import { Dir } from "react-xarrows/path";
 import XLine from "react-xarrows/XLine";
 import { ArrowHead } from "./ArrowHead";
@@ -15,7 +15,7 @@ export const AutoAnchorWithHeadXArrow = (props: AutoAnchorWithHeadXArrowProps) =
 
   return (
     <XArrow start={props.start} end={props.end}>
-      <ProvideXContext>
+      <ProvideXArrow>
         {(context) => {
           const { startRect, endRect } = context;
           if (!startRect || !endRect) return null;
@@ -31,7 +31,7 @@ export const AutoAnchorWithHeadXArrow = (props: AutoAnchorWithHeadXArrowProps) =
             </>
           );
         }}
-      </ProvideXContext>
+      </ProvideXArrow>
     </XArrow>
   );
 };

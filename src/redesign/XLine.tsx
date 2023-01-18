@@ -34,17 +34,19 @@ export const XLine = (props: XLineProps) => {
   y1 = startPoint?.y ?? Number(y1);
   x2 = endPoint?.x ?? Number(x2);
   y2 = endPoint?.y ?? Number(y2);
-  let l = new Line(new Vector(x1, y1), new Vector(x2, y2));
   if (props.stripEnd) {
+    let l = new Line(new Vector(x1, y1), new Vector(x2, y2));
     l = l.stripEnd(getRelativeSizeValue(props.stripEnd, l.diff().size()));
+    x2 = l.end.x;
+    y2 = l.end.y;
   }
 
   return (
     <Component
-      x1={l.root.x}
-      y1={l.root.y}
-      x2={l.end.x}
-      y2={l.end.y}
+      x1={x1}
+      y1={y1}
+      x2={x2}
+      y2={y2}
       // x1={val.startPoint.x}
       // y1={val.startPoint.y}
       // x2={val.endPoint.x}
