@@ -3,7 +3,7 @@ import React, { useRef } from "react";
 import { Box } from "./components/Box";
 import useRerender from "shared/hooks/useRerender";
 import { BestPathSmoothXArrow } from "./components/BestPathSmoothXArrow";
-import { Button, CardContent, Paper } from "@mui/material";
+import { Button, CardContent, Paper, Box as MuiBox } from "@mui/material";
 import { ArrowHead } from "./components/ArrowHead";
 import {
   XArrow,
@@ -106,8 +106,14 @@ const DemoXWrapper = () => {
       <div style={{ height: 50 }} />
 
       <XArrow start={box1Ref} end={box2Ref}>
+        {/*<AutoSelectAnchor>*/}
+        {/*  <text fill={"red"} x="65" y="55" className="Rrrrr">*/}
+        {/*    Grumpy!*/}
+        {/*  </text>*/}
+        {/*</AutoSelectAnchor>*/}
+
         <AutoSelectAnchor>
-          <XLine stripEnd={10} />
+          <XLine stripEnd={22.5} />
           <XHead color={"red"} />
         </AutoSelectAnchor>
       </XArrow>

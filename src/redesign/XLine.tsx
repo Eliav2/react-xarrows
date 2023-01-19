@@ -1,5 +1,4 @@
 import React from "react";
-import { useXArrow } from "./XArrow";
 import { RelativeSize } from "shared/types";
 import { getRelativeSizeValue } from "shared/utils";
 import { Vector } from "./path/vector";
@@ -14,7 +13,7 @@ export interface XLineProps extends React.SVGProps<SVGLineElement> {
   strokeWidth?: number;
 }
 
-export const XLine = (props: XLineProps) => {
+export const XLine = React.forwardRef((props: XLineProps, ref: React.ForwardedRef<SVGElement>) => {
   let {
     component: Component = "line" as const,
     stripEnd,
@@ -51,8 +50,20 @@ export const XLine = (props: XLineProps) => {
     }
   }
 
-  return <Component x1={x1} y1={y1} x2={x2} y2={y2} fill="transparent" stroke={color} strokeWidth={strokeWidth} {...p} />;
-};
+  return (
+    <Component
+      ref={ref as React.ForwardedRef<SVGLineElement>}
+      x1={x1}
+      y1={y1}
+      x2={x2}
+      y2={y2}
+      fill="transparent"
+      stroke={color}
+      strokeWidth={strokeWidth}
+      {...p}
+    />
+  );
+});
 export default XLine;
 
 XLine.defaultProps = {

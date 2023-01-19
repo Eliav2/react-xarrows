@@ -1,7 +1,7 @@
 import React, { useLayoutEffect, useRef } from "react";
 import { useEnsureContext } from "./internal/hooks";
 
-export const XWrapper = (props: XWrapperProps) => {
+export const XWrapper = React.forwardRef(({ children }: XWrapperProps, forwardedRef) => {
   // console.log("XWrapper");
   const xWrapperManager = useRef(new XWrapperManager());
   const update = () => {
@@ -12,10 +12,10 @@ export const XWrapper = (props: XWrapperProps) => {
   };
   return (
     <XWrapperContext.Provider value={{ update, xWrapperXArrowsManager: xWrapperManager.current, __mounted: true }}>
-      {props.children}
+      {(children && React.isValidElement(children) && React.cloneElement(children, { ref: forwardedRef } as any)) || children}
     </XWrapperContext.Provider>
   );
-};
+});
 export default XWrapper;
 
 const XWrapperContextDefault = {

@@ -1,0 +1,21 @@
+---
+---
+
+
+export function Test({ children }: { children: React.ReactElement }) {
+  const ref = useRef(null);
+  console.log(children);
+  console.log(ref);
+  return <>{React.cloneElement(children, { ref })}</>;
+}
+
+<XArrow start={box1Ref} end={box2Ref}>
+  <Test>
+    <AutoSelectAnchor>
+      <text fill={"red"} x="65" y="55" className="Rrrrr">
+        Grumpy!
+      </text>
+    </AutoSelectAnchor>
+  </Test>
+</XArrow>
+

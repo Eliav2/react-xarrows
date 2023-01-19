@@ -1,5 +1,6 @@
 import React, { useLayoutEffect, useRef, useState } from "react";
 import isEqual from "react-fast-compare";
+import { usePassRef } from "shared/hooks/usePassChildrenRef";
 
 const bboxDefault = { x: 0, y: 0, width: 0, height: 0 };
 export const getBBox = (ref: SVGGraphicsElement | null) => {
@@ -19,11 +20,15 @@ export const useGetBBox = (ref: React.RefObject<SVGGraphicsElement>, deps: any[]
   return bbox;
 };
 
+export interface NormalizedGSvgProps {
+  children: React.ReactElement;
+}
+
 /**
  * takes svg react element as children and normalizes it to be centered and have a size of 1
  */
-const NormalizedGSvg = ({ children }) => {
-  const ref = useRef<SVGGElement>(null);
+const NormalizedGSvg = React.forwardRef(function NormalizedGSvg({ children }: NormalizedGSvgProps, forwardedRef) {
+  const ref = usePassRef<SVGGElement>(forwardedRef);
   const bbox = useGetBBox(ref, [ref.current]);
   let min = Math.min(bbox.height, bbox.width);
   return (
@@ -38,5 +43,5 @@ const NormalizedGSvg = ({ children }) => {
       {children}
     </g>
   );
-};
+});
 export default NormalizedGSvg;

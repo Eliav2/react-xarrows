@@ -20,7 +20,7 @@ interface PositionProviderProps {
  * the start and end points can be provided as absolute positions (x,y) or as a function that receives the previous
  * position and returns the new position.
  */
-const PositionProvider = ({ children, value }: PositionProviderProps) => {
+const PositionProvider = React.forwardRef(function PositionProvider({ children, value }: PositionProviderProps, ref) {
   let pos = value;
   const prevPos = usePositionProvider();
   let startPoint = { x: 0, y: 0 },
@@ -40,8 +40,12 @@ const PositionProvider = ({ children, value }: PositionProviderProps) => {
       endPoint = pos.endPoint(prevPos.endPoint);
     }
   } else if (pos.endPoint) endPoint = pos.endPoint;
-  return <PositionProviderContext.Provider value={{ startPoint, endPoint }}>{children}</PositionProviderContext.Provider>;
-};
+  return (
+    <PositionProviderContext.Provider value={{ startPoint, endPoint }}>
+      {(children && React.isValidElement(children) && React.cloneElement(children, { ref } as any)) || children}
+    </PositionProviderContext.Provider>
+  );
+});
 export default PositionProvider;
 
 type PositionProviderContextProps = {

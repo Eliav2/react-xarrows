@@ -126,13 +126,20 @@ export type AutoSelectAnchorProps = {
   endAnchor?: Anchor;
 };
 
-const AutoSelectAnchor = ({ startAnchor = "auto", endAnchor = "auto", children }: AutoSelectAnchorProps) => {
+const AutoSelectAnchor = React.forwardRef(function AutoSelectAnchor(
+  { startAnchor = "auto", endAnchor = "auto", children }: AutoSelectAnchorProps,
+  ref: React.ForwardedRef<SVGElement>
+) {
   const context = useXArrow();
   let { startRect, endRect } = context;
   if (!startRect || !endRect) return null;
   const v = autoSelectAnchor(startRect, endRect, { startAnchor, endAnchor });
   // const { points, endDir } = getBestPath(startPoint, endPoint, { zBreakPoint: breakPoint });
-
-  return <PositionProvider value={v}>{children}</PositionProvider>;
-};
+  return (
+    <PositionProvider value={v}>
+      {/* pass ref to the inner children if possible (if a single ReactElement, and not array,string,number,etc) */}
+      {(children && React.isValidElement(children) && React.cloneElement(children, { ref } as any)) || children}
+    </PositionProvider>
+  );
+});
 export default AutoSelectAnchor;

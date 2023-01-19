@@ -7,6 +7,7 @@ import { IPoint, isPoint, XElemRef } from "./types";
 import { useEnsureContext } from "./internal/hooks";
 import { Rectangle } from "./path";
 import PositionProvider from "./PositionProvider";
+import { usePassRef } from "shared/hooks/usePassChildrenRef";
 
 export interface XArrowProps {
   // children is a jsx elements of type svg like <circle .../> or <path .../>
@@ -23,7 +24,7 @@ export interface XArrowProps {
   svgCanvasProps?: React.SVGProps<SVGSVGElement>;
 }
 
-export const XArrow = (props: XArrowProps) => {
+export const XArrow = React.forwardRef(function XArrow(props: XArrowProps, forwardedRef: React.ForwardedRef<SVGSVGElement>) {
   // console.log("XArrow");
   const render = useRerender();
 
@@ -43,7 +44,7 @@ export const XArrow = (props: XArrowProps) => {
     };
   }, []);
 
-  const rootDivRef = useRef<HTMLDivElement>(null);
+  const rootDivRef = usePassRef<HTMLDivElement>(forwardedRef);
   const svgCanvasRef = useRef<SVGSVGElement>(null);
 
   const rootPosition = usePosition(rootDivRef.current);
@@ -126,7 +127,7 @@ export const XArrow = (props: XArrowProps) => {
       </svg>
     </div>
   );
-};
+});
 export default XArrow;
 
 const XArrowContext = React.createContext<{
