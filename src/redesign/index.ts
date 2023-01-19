@@ -22,3 +22,4 @@ export { default as PositionProvider } from "./PositionProvider";
 
 export * from "./NormalizedGSvg";
 export { default as NormalizedGSvg } from "./NormalizedGSvg";
+export { evalIfFunc } from "./utils";

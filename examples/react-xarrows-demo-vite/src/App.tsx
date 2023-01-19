@@ -113,8 +113,27 @@ const DemoXWrapper = () => {
         {/*</AutoSelectAnchor>*/}
 
         <AutoSelectAnchor>
-          <XLine stripEnd={22.5} />
-          <XHead color={"red"} />
+          <PositionProvider
+            value={{
+              startPoint: (prevS) => ({ ...prevS, x: prevS.x + 50 }),
+              // endPoint: (prevS) => ({ ...prevS, x: prevS.x + 30 }),
+            }}
+          >
+            <PositionProvider
+              value={{
+                endPoint: (prevS) => ({ ...prevS, y: prevS.y - 50 }),
+              }}
+            >
+              <PositionProvider
+                value={{
+                  endPoint: (prevS) => ({ ...prevS, y: prevS.y - 100 }),
+                }}
+              >
+                <XLine stripEnd={22.5} />
+                <XHead color={"red"} />
+              </PositionProvider>
+            </PositionProvider>
+          </PositionProvider>
         </AutoSelectAnchor>
       </XArrow>
 

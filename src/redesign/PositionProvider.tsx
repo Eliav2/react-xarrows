@@ -1,7 +1,8 @@
 import React from "react";
 import { IPoint } from "./types";
+import { evalIfFunc } from "./utils";
 
-interface PositionProviderProps {
+export interface PositionProviderProps {
   children: React.ReactNode;
   value: {
     // override the given position of the start element, optional
@@ -10,6 +11,10 @@ interface PositionProviderProps {
     endPoint?: IPoint | ((startPoint: IPoint) => IPoint);
   };
 }
+
+const reducePoint = (acc: IPoint, val: IPoint) => {
+  return { x: acc.x + val.x, y: acc.y + val.y };
+};
 
 /**
  * This component is used to provide the start and end points of the arrow.
@@ -21,27 +26,25 @@ interface PositionProviderProps {
  * position and returns the new position.
  */
 const PositionProvider = React.forwardRef(function PositionProvider({ children, value }: PositionProviderProps, ref) {
-  let pos = value;
-  const prevPos = usePositionProvider();
-  let startPoint = { x: 0, y: 0 },
-    endPoint = { x: 0, y: 0 };
-  if (typeof prevPos.startPoint == "object") startPoint = prevPos.startPoint;
-  if (typeof prevPos.endPoint == "object") endPoint = prevPos.endPoint;
+  const prevVal = React.useContext(PositionProviderContext);
+  const startPoint = value.startPoint,
+    endPoint = value.endPoint;
+  let finalStartPoint: IPoint = startPoint as IPoint,
+    finalEndPoint: IPoint = endPoint as IPoint;
 
-  //check if start point is a function
-  if (typeof pos.startPoint === "function") {
-    if (prevPos.startPoint) {
-      startPoint = pos.startPoint(prevPos.startPoint);
+  if (prevVal) {
+    if (typeof startPoint === "function" || typeof startPoint === "undefined") {
+      const accStartPoint = evalIfFunc(prevVal, "prevVal", (context) => context.value.startPoint);
+      finalStartPoint = startPoint ? startPoint(accStartPoint) : accStartPoint;
     }
-  } else if (pos.startPoint) startPoint = pos.startPoint;
-  //check if end point is a function
-  if (typeof pos.endPoint === "function") {
-    if (prevPos.endPoint) {
-      endPoint = pos.endPoint(prevPos.endPoint);
+    if (typeof endPoint === "function" || typeof endPoint === "undefined") {
+      const accEndPoint = evalIfFunc(prevVal, "prevVal", (context) => context.value.endPoint);
+      finalEndPoint = endPoint ? endPoint(accEndPoint) : accEndPoint;
     }
-  } else if (pos.endPoint) endPoint = pos.endPoint;
+  }
+
   return (
-    <PositionProviderContext.Provider value={{ startPoint, endPoint }}>
+    <PositionProviderContext.Provider value={{ value: { startPoint: finalStartPoint, endPoint: finalEndPoint }, prevVal }}>
       {(children && React.isValidElement(children) && React.cloneElement(children, { ref } as any)) || children}
     </PositionProviderContext.Provider>
   );
@@ -49,12 +52,25 @@ const PositionProvider = React.forwardRef(function PositionProvider({ children, 
 export default PositionProvider;
 
 type PositionProviderContextProps = {
-  startPoint?: IPoint;
-  endPoint?: IPoint;
+  value: PositionProviderVal;
+  prevVal: PositionProviderContextProps;
+} | null;
+
+type PosPoint = IPoint | ((startPoint: IPoint) => PosPoint);
+type PositionProviderVal = {
+  startPoint: PosPoint;
+  endPoint: PosPoint;
 };
 
-const PositionProviderContext = React.createContext<PositionProviderContextProps>({});
+const PositionProviderContext = React.createContext<PositionProviderContextProps>({
+  value: {
+    startPoint: { x: 0, y: 0 },
+    endPoint: { x: 0, y: 0 },
+  },
+  prevVal: null,
+});
+
 export const usePositionProvider = () => {
   const val = React.useContext(PositionProviderContext);
-  return val;
+  return val?.value;
 };

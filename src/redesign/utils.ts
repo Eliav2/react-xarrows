@@ -16,3 +16,20 @@ export const toArray = <T>(value: T | T[]): [T] extends [undefined] ? [] : Array
   return (Array.isArray(value) ? value : [value]) as any;
 };
 export const omitAttrs = <T, K extends keyof T>(Class: new () => T, keys: K[]): new () => Omit<T, typeof keys[number]> => Class;
+
+export const evalIfFunc = <C extends { [key in Key]: any } & { [key: string]: any }, Key extends string, V extends any>(
+  context: C,
+  prevContextKey: Key,
+  getVal: (context: C) => V // function to get the value from the context
+): RemoveFunctions<V> => {
+  const val = getVal(context);
+  if (typeof val === "function") {
+    const res = evalIfFunc(context[prevContextKey], prevContextKey, val as any);
+    return val(res);
+  }
+
+  // stop condition (when the value is not a function)
+  return val as RemoveFunctions<V>;
+};
+
+type RemoveFunctions<T> = Exclude<T, Function>;

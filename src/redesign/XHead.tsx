@@ -89,3 +89,29 @@ export const getXHeadSize = (ref: React.RefObject<any>) => {
   // console.log(bbox);
   return getBBox(ref.current);
 };
+
+export interface HeadProviderProps {
+  children: React.ReactNode;
+  value: {
+    // override the given position of the start element, optional
+    dir?: IDir | ((startDir: IDir) => IDir);
+  };
+}
+
+const HeadProvider = React.forwardRef(function HeadProvider({ children }: HeadProviderProps, forwardRef) {
+  return (
+    <HeadProviderContext.Provider value={{}}>
+      {(children && React.isValidElement(children) && React.cloneElement(children, { ref: forwardRef } as any)) || children}
+    </HeadProviderContext.Provider>
+  );
+});
+
+type HeadProviderContextProps = {
+  dir?: IDir;
+};
+const HeadProviderContext = React.createContext<HeadProviderContextProps>({});
+
+export const useHeadProvider = () => {
+  const val = React.useContext(HeadProviderContext);
+  return val;
+};
