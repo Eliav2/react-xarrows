@@ -8,6 +8,7 @@ import { useEnsureContext } from "./internal/hooks";
 import { Rectangle } from "./path";
 import PositionProvider from "./PositionProvider";
 import { usePassRef } from "shared/hooks/usePassChildrenRef";
+import { HeadProvider } from "./XHead";
 
 export interface XArrowProps {
   // children is a jsx elements of type svg like <circle .../> or <path .../>
@@ -122,7 +123,9 @@ export const XArrow = React.forwardRef(function XArrow(props: XArrowProps, forwa
         {...props.svgCanvasProps}
       >
         <XArrowContext.Provider value={{ startRect, endRect, __mounted: true }}>
-          <PositionProvider value={{ startPoint, endPoint }}>{props.children}</PositionProvider>
+          <PositionProvider value={{ startPoint, endPoint }}>
+            <HeadProvider value={{ color: "cornflowerblue", rotate: 0, size: 30 }}>{props.children}</HeadProvider>
+          </PositionProvider>
         </XArrowContext.Provider>
       </svg>
     </div>

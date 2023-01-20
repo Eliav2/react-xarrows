@@ -1,6 +1,6 @@
 import React from "react";
 import { IPoint } from "./types";
-import { evalIfFunc } from "./utils";
+import { getLastValue } from "./utils";
 
 export interface PositionProviderProps {
   children: React.ReactNode;
@@ -27,24 +27,12 @@ const reducePoint = (acc: IPoint, val: IPoint) => {
  */
 const PositionProvider = React.forwardRef(function PositionProvider({ children, value }: PositionProviderProps, ref) {
   const prevVal = React.useContext(PositionProviderContext);
-  const startPoint = value.startPoint,
-    endPoint = value.endPoint;
-  let finalStartPoint: IPoint = startPoint as IPoint,
-    finalEndPoint: IPoint = endPoint as IPoint;
 
-  if (prevVal) {
-    if (typeof startPoint === "function" || typeof startPoint === "undefined") {
-      const accStartPoint = evalIfFunc(prevVal, "prevVal", (context) => context.value.startPoint);
-      finalStartPoint = startPoint ? startPoint(accStartPoint) : accStartPoint;
-    }
-    if (typeof endPoint === "function" || typeof endPoint === "undefined") {
-      const accEndPoint = evalIfFunc(prevVal, "prevVal", (context) => context.value.endPoint);
-      finalEndPoint = endPoint ? endPoint(accEndPoint) : accEndPoint;
-    }
-  }
+  const startPoint = getLastValue(value.startPoint, prevVal, "prevVal", (context) => context?.value.startPoint) ?? { x: 0, y: 0 };
+  const startEnd = getLastValue(value.endPoint, prevVal, "prevVal", (context) => context?.value.endPoint) ?? { x: 0, y: 0 };
 
   return (
-    <PositionProviderContext.Provider value={{ value: { startPoint: finalStartPoint, endPoint: finalEndPoint }, prevVal }}>
+    <PositionProviderContext.Provider value={{ value: { startPoint: startPoint, endPoint: startEnd }, prevVal }}>
       {(children && React.isValidElement(children) && React.cloneElement(children, { ref } as any)) || children}
     </PositionProviderContext.Provider>
   );
@@ -53,13 +41,13 @@ export default PositionProvider;
 
 type PositionProviderContextProps = {
   value: PositionProviderVal;
-  prevVal: PositionProviderContextProps;
-} | null;
+  prevVal?: PositionProviderContextProps;
+};
 
 type PosPoint = IPoint | ((startPoint: IPoint) => PosPoint);
 type PositionProviderVal = {
-  startPoint: PosPoint;
-  endPoint: PosPoint;
+  startPoint: IPoint;
+  endPoint: IPoint;
 };
 
 const PositionProviderContext = React.createContext<PositionProviderContextProps>({
@@ -67,7 +55,7 @@ const PositionProviderContext = React.createContext<PositionProviderContextProps
     startPoint: { x: 0, y: 0 },
     endPoint: { x: 0, y: 0 },
   },
-  prevVal: null,
+  prevVal: undefined,
 });
 
 export const usePositionProvider = () => {

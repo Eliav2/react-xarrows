@@ -1,11 +1,13 @@
 import React from "react";
 import { RelativeSize } from "shared/types";
 import { getRelativeSizeValue } from "shared/utils";
-import { Vector } from "./path/vector";
+import { Dir, Vector } from "./path/vector";
 import { Line } from "./path/line";
 import { usePositionProvider } from "./PositionProvider";
+import { HeadProvider } from "./XHead";
 
 export interface XLineProps extends React.SVGProps<SVGLineElement> {
+  children?: React.ReactNode;
   stripEnd?: RelativeSize; // how much of the end of the line should be removed
   stripStart?: RelativeSize; // how much of the start of the line should be removed
   component?: React.ElementType<XLineProps>;
@@ -49,19 +51,21 @@ export const XLine = React.forwardRef((props: XLineProps, ref: React.ForwardedRe
       y1 = l.root.y;
     }
   }
-
   return (
-    <Component
-      ref={ref as React.ForwardedRef<SVGLineElement>}
-      x1={x1}
-      y1={y1}
-      x2={x2}
-      y2={y2}
-      fill="transparent"
-      stroke={color}
-      strokeWidth={strokeWidth}
-      {...p}
-    />
+    <>
+      <Component
+        ref={ref as React.ForwardedRef<SVGLineElement>}
+        x1={x1}
+        y1={y1}
+        x2={x2}
+        y2={y2}
+        fill="transparent"
+        stroke={color}
+        strokeWidth={strokeWidth}
+        {...p}
+      />
+      <HeadProvider value={{ dir: new Dir(endPoint.x - startPoint.x, endPoint.y - startPoint.y), color }}>{props.children}</HeadProvider>
+    </>
   );
 });
 export default XLine;

@@ -1,5 +1,5 @@
 // export const cAnchorEdge = ["middle", "left", "right", "top", "bottom", "auto"] as const;
-import { IPoint, isPoint, XElemRef } from "./types";
+import { IPoint, isPoint, RemoveFunctions, XElemRef } from "./types";
 
 export const getElementByPropGiven = (ref: XElemRef): HTMLElement | null | IPoint => {
   if (typeof ref === "string") {
@@ -17,6 +17,9 @@ export const toArray = <T>(value: T | T[]): [T] extends [undefined] ? [] : Array
 };
 export const omitAttrs = <T, K extends keyof T>(Class: new () => T, keys: K[]): new () => Omit<T, typeof keys[number]> => Class;
 
+/**
+ * this function can be used to walk through contexts above in the tree and calculate accumulated values of a given value
+ */
 export const evalIfFunc = <C extends { [key in Key]: any } & { [key: string]: any }, Key extends string, V extends any>(
   context: C,
   prevContextKey: Key,
@@ -32,4 +35,27 @@ export const evalIfFunc = <C extends { [key in Key]: any } & { [key: string]: an
   return val as RemoveFunctions<V>;
 };
 
-type RemoveFunctions<T> = Exclude<T, Function>;
+/**
+ * this utility function is used to get the accumulated value of the given value from the upper contexts in the tree
+ */
+export const getLastValue = <
+  CurVal,
+  CFields extends string,
+  C extends ({ [key in CFields]: any } & { [key: string]: any }) | null,
+  Key extends CFields,
+  V extends any
+>(
+  curVal: CurVal,
+  context: C,
+  prevContextKey: Key, // the key name of the field in the context that points to the previous context
+  getVal: (context: C) => V
+): RemoveFunctions<V> => {
+  let finalVal = curVal;
+  if (context) {
+    if (typeof curVal === "function" || typeof curVal === "undefined") {
+      const accCurPoint = evalIfFunc(context, prevContextKey, getVal);
+      finalVal = curVal ? curVal(accCurPoint) : accCurPoint;
+    }
+  }
+  return finalVal as any;
+};
