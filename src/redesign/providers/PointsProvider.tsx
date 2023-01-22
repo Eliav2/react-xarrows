@@ -31,6 +31,7 @@ export const usePointsProvider = () => {
   const pointsProvider = React.useContext(PointsProviderContext);
   pointsProvider.points[0] ||= startPoint;
   pointsProvider.points[1] ||= endPoint;
+  // console.log("usePointsProvider", pointsProvider.points);
   return pointsProvider;
 };
 

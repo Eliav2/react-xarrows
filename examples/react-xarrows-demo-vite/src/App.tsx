@@ -20,6 +20,7 @@ import {
   BasicHeadShape1,
   XPath,
   BestPath,
+  HeadProvider,
 } from "react-xarrows";
 import BasicHead1 from "react-xarrows/components/BasicHead1";
 import { AutoAnchorWithHeadXArrow } from "./components/AutoAnchorWithHeadXArrow";
@@ -28,12 +29,12 @@ import SnakeXArrow from "./components/SnakeXArrow";
 
 function App() {
   return (
-    <React.StrictMode>
-      <div className="App">
-        <DemoXWrapper />
-        {/*<DemoXWrapper />*/}
-      </div>
-    </React.StrictMode>
+    // <React.StrictMode>
+    <div className="App">
+      <DemoXWrapper />
+      {/*<DemoXWrapper />*/}
+    </div>
+    // </React.StrictMode>
   );
 }
 
@@ -116,7 +117,12 @@ const DemoXWrapper = () => {
 
         <AutoSelectAnchor>
           <BestPath>
-            <XPath />
+            {/*todo: provide a way to use the selected anchor dir and offset endpoint*/}
+            {/*todo: create a generic XProvider component*/}
+            <PositionProvider>
+              <XPath />
+            </PositionProvider>
+            <XHead />
           </BestPath>
         </AutoSelectAnchor>
 

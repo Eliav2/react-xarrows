@@ -23,7 +23,7 @@ export interface PositionProviderProps {
  * position and returns the new position.
  */
 const PositionProvider = React.forwardRef(function PositionProvider(
-  { children, value, imperativeRef }: PositionProviderProps,
+  { children, value = {}, imperativeRef }: PositionProviderProps,
   ref: React.ForwardedRef<any>
 ) {
   const prevVal = React.useContext(PositionProviderContext);
@@ -40,7 +40,7 @@ const PositionProvider = React.forwardRef(function PositionProvider(
     y: 0,
   };
 
-  const startEnd = getLastValue(value.endPoint, prevVal, "prevVal", (context) => context?.value.endPoint) ?? {
+  const endPoint = getLastValue(value.endPoint, prevVal, "prevVal", (context) => context?.value.endPoint) ?? {
     x: 0,
     y: 0,
   };
@@ -54,7 +54,16 @@ const PositionProvider = React.forwardRef(function PositionProvider(
   );
 
   return (
-    <PositionProviderContext.Provider value={{ value: { startPoint: startPoint, endPoint: startEnd }, prevVal, imperativeRef }}>
+    <PositionProviderContext.Provider
+      value={{
+        value: {
+          startPoint: { ...prevVal.value.startPoint, ...startPoint },
+          endPoint: { ...prevVal.value.endPoint, ...endPoint },
+        },
+        prevVal,
+        imperativeRef,
+      }}
+    >
       {(children && React.isValidElement(children) && React.cloneElement(children, { ref } as any)) || children}
     </PositionProviderContext.Provider>
   );

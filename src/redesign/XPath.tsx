@@ -4,7 +4,7 @@ import { getRelativeSizeValue } from "shared/utils";
 import { Dir, Vector } from "./path/vector";
 import { PositionProviderImperativeProps, usePositionProvider } from "./providers/PositionProvider";
 import { useBestPath } from "./BestPath";
-import { PositionProvider, usePathProvider } from "./index";
+import { PositionProvider, useHeadProvider, usePathProvider } from "./index";
 import { usePointsProvider } from "./providers/PointsProvider";
 import HeadProvider from "./providers/HeadProvider";
 
@@ -28,8 +28,11 @@ export const XPath = React.forwardRef((props: XPathProps, ref: React.ForwardedRe
   // const positionProvider = usePositionProvider();
   const { points } = usePointsProvider();
   const { pointsToPath } = usePathProvider();
+  // const headProvider = useHeadProvider();
+  // console.log(headProvider?.size);
   // let { points = pointsProvider.points, pointToPath, endDir } = useBestPath();
   // console.log(points);
+
   const d = pointsToPath?.(points);
 
   // const positionProviderRef = React.useRef<PositionProviderImperativeProps>(null);

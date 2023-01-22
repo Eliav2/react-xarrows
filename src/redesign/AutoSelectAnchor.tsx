@@ -9,20 +9,31 @@ import React from "react";
 import { useEnsureContext } from "./internal/hooks";
 import PositionProvider from "./providers/PositionProvider";
 import HeadProvider from "./providers/HeadProvider";
+import PointsProvider from "./providers/PointsProvider";
+
+const xDirs = [
+  { x: 1, y: 0 },
+  { x: -1, y: 0 },
+];
+const yDirs = [
+  { x: 0, y: 1 },
+  { x: 0, y: -1 },
+];
+const xyDirs = [...xDirs, ...yDirs];
 
 const cStartAnchorsMap: { [key in AnchorName]: AnchorCustom } = {
-  middle: { x: "50%", y: "50%", trailingDir: [{ x: 0, y: 0 }] },
-  left: { x: "0%", y: "50%", trailingDir: [{ x: -1, y: 0 }] },
-  right: { x: "100%", y: "50%", trailingDir: [{ x: 1, y: 0 }] },
-  top: { x: "50%", y: "0%", trailingDir: [{ x: 0, y: -1 }] },
-  bottom: { x: "50%", y: "100%", trailingDir: [{ x: 0, y: 1 }] },
+  middle: { x: "50%", y: "50%", trailingDir: xyDirs },
+  left: { x: "0%", y: "50%", trailingDir: xDirs },
+  right: { x: "100%", y: "50%", trailingDir: xDirs },
+  top: { x: "50%", y: "0%", trailingDir: yDirs },
+  bottom: { x: "50%", y: "100%", trailingDir: yDirs },
 };
 const cEndAnchorsMap: { [key in AnchorName]: AnchorCustom } = {
-  middle: { x: "50%", y: "50%", trailingDir: [{ x: 0, y: 0 }] },
-  left: { x: "0%", y: "50%", trailingDir: [{ x: 1, y: 0 }] },
-  right: { x: "100%", y: "50%", trailingDir: [{ x: -1, y: 0 }] },
-  top: { x: "50%", y: "0%", trailingDir: [{ x: 0, y: 1 }] },
-  bottom: { x: "50%", y: "100%", trailingDir: [{ x: 0, y: -1 }] },
+  middle: { x: "50%", y: "50%", trailingDir: xyDirs },
+  left: { x: "0%", y: "50%", trailingDir: xDirs },
+  right: { x: "100%", y: "50%", trailingDir: xDirs },
+  top: { x: "50%", y: "0%", trailingDir: yDirs },
+  bottom: { x: "50%", y: "100%", trailingDir: yDirs },
 };
 
 export type AnchorName = "middle" | NamedDirection;
@@ -79,7 +90,11 @@ function findBestPoint(
   endPoints: { x: number; y: number; trailingDir: AnchorDirection }[]
 ) {
   // find the shortest distance between the start and end points
-  let bestPoint = { startPoint: startPoints[0], endPoint: endPoints[0], distance: Infinity };
+  let bestPoint = {
+    startPoint: startPoints[0],
+    endPoint: endPoints[0],
+    distance: Infinity,
+  };
   for (const startPoint of startPoints) {
     for (const endPoint of endPoints) {
       const distance = Math.sqrt((startPoint.x - endPoint.x) ** 2 + (startPoint.y - endPoint.y) ** 2);
@@ -118,6 +133,8 @@ export const autoSelectAnchor = (
   return {
     startPoint: new Vector(parsePossiblyDirectedVector(startPoint)),
     endPoint: new Vector(parsePossiblyDirectedVector(endPoint)),
+    startAnchors: startPoints,
+    endAnchors: endPoints,
   };
 };
 
@@ -138,10 +155,12 @@ const AutoSelectAnchor = React.forwardRef(function AutoSelectAnchor(
   // const { points, endDir } = getBestPath(startPoint, endPoint, { zBreakPoint: breakPoint });
   return (
     <PositionProvider value={v}>
-      <HeadProvider value={{ pos: v.endPoint }}>
-        {/* pass ref to the inner children if possible (if a single ReactElement, and not array,string,number,etc) */}
-        {(children && React.isValidElement(children) && React.cloneElement(children, { ref } as any)) || children}
-      </HeadProvider>
+      <PointsProvider>
+        <HeadProvider value={{ pos: v.endPoint }}>
+          {/* pass ref to the inner children if possible (if a single ReactElement, and not array,string,number,etc) */}
+          {(children && React.isValidElement(children) && React.cloneElement(children, { ref } as any)) || children}
+        </HeadProvider>
+      </PointsProvider>
     </PositionProvider>
   );
 });
