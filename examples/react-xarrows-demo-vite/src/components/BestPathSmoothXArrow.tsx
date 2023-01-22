@@ -25,7 +25,7 @@ const SmoothPathWithHead = (props: SmoothPathProps) => {
   return (
     <>
       <path d={v} stroke="white" strokeWidth={3} />
-      <ArrowHead sharpness={headSharpness} size={headSize} pos={endPoint.add(endDir.mul(headOffset))} dir={endDir} />
+      {/*<ArrowHead sharpness={headSharpness} size={headSize} pos={endPoint.add(endDir.mul(headOffset))} dir={endDir} />*/}
     </>
   );
 };

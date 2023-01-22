@@ -5,10 +5,12 @@ import { useXWrapperRegister } from "./XWrapper";
 import { getElementByPropGiven } from "./utils";
 import { IPoint, isPoint, XElemRef } from "./types";
 import { useEnsureContext } from "./internal/hooks";
-import { Rectangle } from "./path";
-import PositionProvider from "./PositionProvider";
+import { pointsToCurves, Rectangle } from "./path";
+import PositionProvider from "./providers/PositionProvider";
 import { usePassRef } from "shared/hooks/usePassChildrenRef";
-import { HeadProvider } from "./XHead";
+import PointsProvider from "./providers/PointsProvider";
+import PathProvider from "./providers/PathProvider";
+import HeadProvider from "./providers/HeadProvider";
 
 export interface XArrowProps {
   // children is a jsx elements of type svg like <circle .../> or <path .../>
@@ -124,7 +126,11 @@ export const XArrow = React.forwardRef(function XArrow(props: XArrowProps, forwa
       >
         <XArrowContext.Provider value={{ startRect, endRect, __mounted: true }}>
           <PositionProvider value={{ startPoint, endPoint }}>
-            <HeadProvider value={{ color: "cornflowerblue", rotate: 0, size: 30 }}>{props.children}</HeadProvider>
+            <PointsProvider>
+              <PathProvider value={{ pointsToPath: pointsToCurves }}>
+                <HeadProvider value={{ color: "cornflowerblue", rotate: 0, size: 30 }}>{props.children}</HeadProvider>
+              </PathProvider>
+            </PointsProvider>
           </PositionProvider>
         </XArrowContext.Provider>
       </svg>

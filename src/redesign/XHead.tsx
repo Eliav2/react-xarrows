@@ -3,9 +3,8 @@ import { svgElemStrType } from "../types";
 import { IDir, IPoint } from "./types/types";
 import { getBBox } from "./NormalizedGSvg";
 import { Dir } from "./path";
-import { usePositionProvider } from "./PositionProvider";
 import { BasicHeadShape1 } from "./shapes";
-import { getLastValue } from "./utils";
+import { useHeadProvider } from "./providers/HeadProvider";
 
 export interface XHeadProps {
   children?: React.ReactNode; // a jsx element of type svg like <circle .../> or <path .../>
@@ -33,18 +32,21 @@ export interface XHeadProps {
 }
 
 const XHead = React.forwardRef<SVGGElement, XHeadProps>(function XEdge(props, forwardRef) {
-  const { endPoint } = usePositionProvider();
   const headProvider = useHeadProvider();
+  // const { endPoint } = usePositionProvider();
   let {
     children = <BasicHeadShape1 />,
     containerRef,
-    pos = endPoint ?? { x: 0, y: 0 },
+    // pos = endPoint ?? { x: 0, y: 0 },
+    pos = headProvider?.pos ?? { x: 0, y: 0 },
     dir = headProvider?.dir ?? { x: 0, y: 0 },
     rotate = headProvider?.rotate ?? 0,
     color = headProvider?.color ?? "cornflowerblue",
     size = headProvider?.size ?? 30,
   } = props;
   // const
+
+  // console.log(dir);
 
   const _dir = new Dir(dir);
   // const dir = pos._chosenFaceDir;
@@ -93,46 +95,4 @@ export const getXHeadSize = (ref: React.RefObject<any>) => {
   // const bbox = useGetBBox(ref);
   // console.log(bbox);
   return getBBox(ref.current);
-};
-
-export interface HeadProviderProps {
-  children: React.ReactNode;
-  value: {
-    // override the given position of the start element, optional
-    dir?: IDir | ((startDir: IDir) => IDir);
-    pos?: IPoint | ((pos: IPoint) => IPoint);
-    color?: string;
-    rotate?: number | ((rotate: number) => number);
-    size?: number | ((size: number) => number);
-  };
-}
-
-export const HeadProvider = React.forwardRef(function HeadProvider({ children, value }: HeadProviderProps, forwardRef) {
-  const prevVal = React.useContext(HeadProviderContext);
-  const dir = getLastValue(value.dir, prevVal, "prevVal", (context) => context?.value.dir) ?? { x: 0, y: 0 };
-  const pos = getLastValue(value.pos, prevVal, "prevVal", (context) => context?.value.pos) ?? { x: 0, y: 0 };
-  const color = getLastValue(value.color, prevVal, "prevVal", (context) => context?.value.color) ?? "cornflowerblue";
-  const rotate = getLastValue(value.rotate, prevVal, "prevVal", (context) => context?.value.rotate) ?? 0;
-  const size = getLastValue(value.size, prevVal, "prevVal", (context) => context?.value.size) ?? 30;
-
-  return (
-    <HeadProviderContext.Provider value={{ value: { dir, pos, color, rotate, size }, prevVal }}>
-      {(children && React.isValidElement(children) && React.cloneElement(children, { ref: forwardRef } as any)) || children}
-    </HeadProviderContext.Provider>
-  );
-});
-
-type HeadProviderContextProps = {
-  value: { dir?: IDir; pos?: IPoint; color?: string; rotate?: number; size?: number };
-  prevVal: HeadProviderContextProps | undefined;
-};
-
-const HeadProviderContext = React.createContext<HeadProviderContextProps>({
-  value: {},
-  prevVal: undefined,
-});
-
-export const useHeadProvider = () => {
-  const val = React.useContext(HeadProviderContext);
-  return val?.value;
 };

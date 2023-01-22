@@ -18,6 +18,8 @@ import {
   XHead,
   NormalizedGSvg,
   BasicHeadShape1,
+  XPath,
+  BestPath,
 } from "react-xarrows";
 import BasicHead1 from "react-xarrows/components/BasicHead1";
 import { AutoAnchorWithHeadXArrow } from "./components/AutoAnchorWithHeadXArrow";
@@ -113,11 +115,41 @@ const DemoXWrapper = () => {
         {/*</AutoSelectAnchor>*/}
 
         <AutoSelectAnchor>
-          <XLine stripEnd={22.5} color={"yellow"}>
-            <XHead />
-          </XLine>
-          {/*<XHead />*/}
+          <BestPath>
+            <XPath />
+          </BestPath>
         </AutoSelectAnchor>
+
+        {/*<AutoSelectAnchor>*/}
+        {/*  /!*<XLine stripEnd={22.5} color={"yellow"}>*!/*/}
+        {/*  /!*  <XHead />*!/*/}
+        {/*  /!*</XLine>*!/*/}
+        {/*  /!*<PositionProvider value={{ endPoint: (e) => ({ ...e, x: e.x - 60 }) }}>*!/*/}
+        {/*  /!*<BestPath>*!/*/}
+        {/*  <PositionProvider*/}
+        {/*    value={{*/}
+        {/*      endPoint: (e) => {*/}
+        {/*        // console.log("PositionProvider", e);*/}
+        {/*        return { ...e, x: e.x - 30 };*/}
+        {/*      },*/}
+        {/*    }}*/}
+        {/*  >*/}
+        {/*    /!*<XLine stripEnd={22.5} color={"yellow"}>*!/*/}
+        {/*    /!*  <XHead />*!/*/}
+        {/*    /!*</XLine>*!/*/}
+
+        {/*    <XPath />*/}
+        {/*    /!*<XPath>*!/*/}
+        {/*    /!*  /!*<HeadProvider value={{ pos: { y: 1, x: 0 }, rotate: 30 }}>*!/*!/*/}
+        {/*    /!*  <XHead />*!/*/}
+        {/*    /!*  /!*</HeadProvider>*!/*!/*/}
+        {/*    /!*</XPath>*!/*/}
+        {/*  </PositionProvider>*/}
+        {/*  /!*</BestPath>*!/*/}
+        {/*  /!*</PositionProvider>*!/*/}
+
+        {/*  /!*<XHead />*!/*/}
+        {/*</AutoSelectAnchor>*/}
       </XArrow>
       {/*<svg*/}
       {/*  style={{*/}

@@ -15,12 +15,17 @@ export { default as AutoSelectAnchor } from "./AutoSelectAnchor";
 
 export * from "./path";
 
-export * from "./shapes";
+export * from "./providers";
 
-export * from "./PositionProvider";
-export { default as PositionProvider } from "./PositionProvider";
+export * from "./shapes";
 
 export * from "./NormalizedGSvg";
 export { default as NormalizedGSvg } from "./NormalizedGSvg";
-export { evalIfFunc } from "./utils";
-export { getLastValue } from "./utils";
+
+export * from "./utils";
+
+export * from "./XPath";
+export { default as XPath } from "./XPath";
+
+export * from "./BestPath";
+export { default as BestPath } from "./BestPath";

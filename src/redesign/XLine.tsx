@@ -3,8 +3,8 @@ import { RelativeSize } from "shared/types";
 import { getRelativeSizeValue } from "shared/utils";
 import { Dir, Vector } from "./path/vector";
 import { Line } from "./path/line";
-import { usePositionProvider } from "./PositionProvider";
-import { HeadProvider } from "./XHead";
+import { usePositionProvider } from "./providers/PositionProvider";
+import HeadProvider from "./providers/HeadProvider";
 
 export interface XLineProps extends React.SVGProps<SVGLineElement> {
   children?: React.ReactNode;
@@ -12,7 +12,6 @@ export interface XLineProps extends React.SVGProps<SVGLineElement> {
   stripStart?: RelativeSize; // how much of the start of the line should be removed
   component?: React.ElementType<XLineProps>;
   color?: string;
-  strokeWidth?: number;
 }
 
 export const XLine = React.forwardRef((props: XLineProps, ref: React.ForwardedRef<SVGElement>) => {
@@ -64,7 +63,7 @@ export const XLine = React.forwardRef((props: XLineProps, ref: React.ForwardedRe
         strokeWidth={strokeWidth}
         {...p}
       />
-      <HeadProvider value={{ dir: new Dir(endPoint.x - startPoint.x, endPoint.y - startPoint.y), color }}>{props.children}</HeadProvider>
+      <HeadProvider value={{ dir: { x: endPoint.x - startPoint.x, y: endPoint.y - startPoint.y }, color }}>{props.children}</HeadProvider>
     </>
   );
 });

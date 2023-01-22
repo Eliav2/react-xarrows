@@ -1,5 +1,5 @@
 // const pathMargin = 15;
-import { Contains, OneOrMore, parseDirection, PossiblyDirectedVector } from "../types";
+import { Contains, IVector, OneOrMore, parseDirection, PossiblyDirectedVector } from "../types";
 import { toArray } from "../utils";
 import { deg2Rad, eq, math_operators, operatorFunc, round } from "./mathUtils";
 
@@ -51,25 +51,25 @@ class _Vector<T extends TrailingDir> {
     return new Dir(this.x, this.y);
   }
 
-  notEq(p: Vector<any>): boolean {
+  notEq(p: IVector): boolean {
     return !eq(p.x, this.x) || !eq(p.y, this.y);
   }
 
-  add<T extends Vector<any>>(this: T, p: Vector<any> | number, self = false): T {
-    return operatorFunc(this, p, math_operators.add, self) as T;
+  add<T extends IVector>(this: T, p: IVector | number, self = false): T {
+    return operatorFunc(this, p, math_operators.add, self) as any;
   }
 
-  sub<T extends Vector<any>>(this: T, p: Vector<any> | number, self = false): T {
-    return operatorFunc(this, p, math_operators.sub, self) as T;
+  sub<T extends IVector>(this: T, p: IVector | number, self = false): T {
+    return operatorFunc(this, p, math_operators.sub, self) as any;
   }
 
-  // mul(p: Vector | number,self=false) {
-  mul<T extends Vector<any>>(this: T, p: Vector<any> | number, self = false): T {
-    return operatorFunc(this, p, math_operators.mul, self) as T;
+  // mul(p: IVectorself=false) {
+  mul<T extends IVector>(this: T, p: IVector | number, self = false): T {
+    return operatorFunc(this, p, math_operators.mul, self) as any;
   }
 
-  dev<T extends Vector<any>>(this: T, p: Vector<any> | number, self = false): T {
-    return operatorFunc(this, p, math_operators.dev, self) as T;
+  dev<T extends IVector>(this: T, p: IVector | number, self = false): T {
+    return operatorFunc(this, p, math_operators.dev, self) as any;
   }
 
   absSize() {

@@ -10,6 +10,7 @@ const deltaPoints = (p1: [number, number], p2: [number, number], factor = 0.5): 
  * receives a list of points and returns a string that that represents curves intersections when used as the 'd' attribute of svg path element
  */
 export const pointsToCurves = (points: IVector[]) => {
+  if (points.length == 0) return "";
   const p0 = points[0];
   let path = `M ${p0.x} ${p0.y} `;
   if (points.length == 1) return path;

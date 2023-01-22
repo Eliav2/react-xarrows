@@ -1,6 +1,6 @@
-import React from "react";
-import { IPoint } from "./types";
-import { getLastValue } from "./utils";
+import React, { useImperativeHandle, useState } from "react";
+import { IPoint } from "../types";
+import { getLastValue } from "../utils";
 
 export interface PositionProviderProps {
   children: React.ReactNode;
@@ -10,11 +10,8 @@ export interface PositionProviderProps {
     // override the given position of the end element, optional
     endPoint?: IPoint | ((startPoint: IPoint) => IPoint);
   };
+  imperativeRef?: React.Ref<any>;
 }
-
-const reducePoint = (acc: IPoint, val: IPoint) => {
-  return { x: acc.x + val.x, y: acc.y + val.y };
-};
 
 /**
  * This component is used to provide the start and end points of the arrow.
@@ -25,27 +22,57 @@ const reducePoint = (acc: IPoint, val: IPoint) => {
  * the start and end points can be provided as absolute positions (x,y) or as a function that receives the previous
  * position and returns the new position.
  */
-const PositionProvider = React.forwardRef(function PositionProvider({ children, value }: PositionProviderProps, ref) {
+const PositionProvider = React.forwardRef(function PositionProvider(
+  { children, value, imperativeRef }: PositionProviderProps,
+  ref: React.ForwardedRef<any>
+) {
   const prevVal = React.useContext(PositionProviderContext);
 
-  const startPoint = getLastValue(value.startPoint, prevVal, "prevVal", (context) => context?.value.startPoint) ?? { x: 0, y: 0 };
-  const startEnd = getLastValue(value.endPoint, prevVal, "prevVal", (context) => context?.value.endPoint) ?? { x: 0, y: 0 };
+  // const [startPoint, setStartPoint] = useState(
+  //   getLastValue(value.startPoint, prevVal, "prevVal", (context) => context?.value.startPoint) ?? {
+  //     x: 0,
+  //     y: 0,
+  //   }
+  // );
+
+  const startPoint = getLastValue(value.startPoint, prevVal, "prevVal", (context) => context?.value.startPoint) ?? {
+    x: 0,
+    y: 0,
+  };
+
+  const startEnd = getLastValue(value.endPoint, prevVal, "prevVal", (context) => context?.value.endPoint) ?? {
+    x: 0,
+    y: 0,
+  };
+
+  useImperativeHandle<any, PositionProviderImperativeProps>(
+    imperativeRef,
+    () => {
+      return { sayHello: () => console.log("hello") };
+    },
+    []
+  );
 
   return (
-    <PositionProviderContext.Provider value={{ value: { startPoint: startPoint, endPoint: startEnd }, prevVal }}>
+    <PositionProviderContext.Provider value={{ value: { startPoint: startPoint, endPoint: startEnd }, prevVal, imperativeRef }}>
       {(children && React.isValidElement(children) && React.cloneElement(children, { ref } as any)) || children}
     </PositionProviderContext.Provider>
   );
 });
 export default PositionProvider;
 
+export type PositionProviderImperativeProps = {
+  sayHello: () => void;
+};
+
 type PositionProviderContextProps = {
   value: PositionProviderVal;
   prevVal?: PositionProviderContextProps;
+  imperativeRef?: React.Ref<any>;
 };
 
 type PosPoint = IPoint | ((startPoint: IPoint) => PosPoint);
-type PositionProviderVal = {
+export type PositionProviderVal = {
   startPoint: IPoint;
   endPoint: IPoint;
 };
@@ -56,6 +83,7 @@ const PositionProviderContext = React.createContext<PositionProviderContextProps
     endPoint: { x: 0, y: 0 },
   },
   prevVal: undefined,
+  imperativeRef: null,
 });
 
 export const usePositionProvider = () => {

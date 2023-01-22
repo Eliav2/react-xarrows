@@ -7,7 +7,8 @@ import { toArray } from "./utils";
 import { Dir, getBestPath, Vector } from "./path";
 import React from "react";
 import { useEnsureContext } from "./internal/hooks";
-import PositionProvider from "./PositionProvider";
+import PositionProvider from "./providers/PositionProvider";
+import HeadProvider from "./providers/HeadProvider";
 
 const cStartAnchorsMap: { [key in AnchorName]: AnchorCustom } = {
   middle: { x: "50%", y: "50%", trailingDir: [{ x: 0, y: 0 }] },
@@ -137,8 +138,10 @@ const AutoSelectAnchor = React.forwardRef(function AutoSelectAnchor(
   // const { points, endDir } = getBestPath(startPoint, endPoint, { zBreakPoint: breakPoint });
   return (
     <PositionProvider value={v}>
-      {/* pass ref to the inner children if possible (if a single ReactElement, and not array,string,number,etc) */}
-      {(children && React.isValidElement(children) && React.cloneElement(children, { ref } as any)) || children}
+      <HeadProvider value={{ pos: v.endPoint }}>
+        {/* pass ref to the inner children if possible (if a single ReactElement, and not array,string,number,etc) */}
+        {(children && React.isValidElement(children) && React.cloneElement(children, { ref } as any)) || children}
+      </HeadProvider>
     </PositionProvider>
   );
 });

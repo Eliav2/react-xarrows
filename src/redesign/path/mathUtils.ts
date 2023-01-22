@@ -1,4 +1,5 @@
 import { Vector } from "./vector";
+import { IVector } from "../types";
 
 export const math_operators = {
   add: (x, y) => x + y,
@@ -11,7 +12,7 @@ export const math_operators = {
   smallerEqual: (x, y) => x <= y,
 };
 
-export const operatorFunc = <P extends Vector>(p: P, p2: Vector | number, operator, self = false): Vector => {
+export const operatorFunc = <P extends IVector>(p: P, p2: IVector | number, operator, self = false): Vector => {
   let _p2;
   if (typeof p2 === "number") _p2 = { x: p2, y: p2 };
   else _p2 = p2;
