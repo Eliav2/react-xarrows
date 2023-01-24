@@ -50,17 +50,20 @@ const XHead = React.forwardRef<SVGGElement, XHeadProps>(function XHead(props, fo
 
   // console.log(dir);
 
-  useEffect(() => {
-    console.log("XHead useEffect");
-    return () => console.log("XHead useEffect clean");
-  }, []);
+  // useEffect(() => {
+  //   console.log("XHead useEffect");
+  //   return () => console.log("XHead useEffect clean");
+  // }, []);
 
   const _dir = new Dir(dir);
+  // console.log(_dir);
 
   usePositionProviderRegister((pos) => {
-    console.log("usePositionProviderRegister passed function call");
-    const newPos = { ...pos, endPoint: { x: pos.endPoint.x, y: pos.endPoint.y - 60 } };
-    return newPos;
+    // console.log("usePositionProviderRegister passed function call");
+    pos.endPoint.x -= 30;
+    return pos;
+    // const newPos = { ...pos, endPoint: { x: pos.endPoint.x, y: pos.endPoint.y - 30 } };
+    // return newPos;
   });
 
   // const dir = pos._chosenFaceDir;

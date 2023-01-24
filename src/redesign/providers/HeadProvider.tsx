@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { PositionProviderImperativeProps, usePositionProvider } from "./PositionProvider";
 import { getLastValue } from "../utils";
 import { IDir, IPoint } from "../types";
@@ -14,14 +14,6 @@ type HeadProviderValueProp = {
 export interface HeadProviderProps {
   children: React.ReactNode;
   value: HeadProviderValueProp | ((prevVal: HeadProviderValueProp) => HeadProviderValueProp);
-  // value: {
-  //   // override the given position of the start element, optional
-  //   dir?: IDir | ((startDir: IDir) => IDir);
-  //   pos?: IPoint | ((pos: IPoint) => IPoint);
-  //   color?: string;
-  //   rotate?: number | ((rotate: number) => number);
-  //   size?: number | ((size: number) => number);
-  // };
   locationProvider?: React.RefObject<PositionProviderImperativeProps>; // can be used to offset the target location
 }
 
@@ -51,6 +43,7 @@ const HeadProviderContext = React.createContext<HeadProviderContextProps>({
 export const useHeadProvider = () => {
   const headProvider = React.useContext(HeadProviderContext);
   const posProvider = usePositionProvider();
+  console.log("posProvider", posProvider);
   headProvider.value.pos ??= posProvider.endPoint;
   return headProvider?.value;
 };

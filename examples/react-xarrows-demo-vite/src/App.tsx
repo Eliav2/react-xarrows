@@ -147,9 +147,15 @@ const DemoXWrapper = () => {
       {/*<BasicDemo />*/}
 
       <XArrow start={box1Ref} end={box2Ref}>
-        <XLine>
-          <XHead color={"red"} />
-        </XLine>
+        <AutoSelectAnchor>
+          <BestPath>
+            <XPath></XPath>
+            <XHead color={"red"} />
+            {/*<XLine>*/}
+            {/*  <XHead color={"red"} />*/}
+            {/*</XLine>*/}
+          </BestPath>
+        </AutoSelectAnchor>
       </XArrow>
 
       {/*<Comp1>*/}
@@ -266,16 +272,4 @@ const LeftToRightXLine = () => {
   const { startRect, endRect } = context;
   if (!startRect || !endRect) return null;
   return <XLine x1={startRect.right} y1={startRect.top + startRect.height / 2} x2={endRect.left} y2={endRect.top + endRect.height / 2} />;
-};
-
-const AutoAnchorXLine = ({ startAnchor, endAnchor }: { startAnchor?: Anchor; endAnchor?: Anchor }) => {
-  // const autoSelectAnchor = useAutoSelectAnchor(props);
-  const context = useXArrow();
-  const { startRect, endRect } = context;
-  if (!startRect || !endRect) return null;
-  const {
-    startPoint: { x: x1, y: y1 },
-    endPoint: { x: x2, y: y2 },
-  } = autoSelectAnchor({ startRect, endRect, startAnchor, endAnchor });
-  return <XLine {...{ x1, y1, x2, y2 }} />;
 };

@@ -1,18 +1,20 @@
-import React, { useImperativeHandle, useLayoutEffect, useRef, useState } from "react";
+import React, { useImperativeHandle, useLayoutEffect, useRef } from "react";
 import { IPoint } from "../types";
 import { getLastValue } from "../utils";
 import { useEnsureContext } from "../internal/hooks";
-import { useXWrapperContext } from "../XWrapper";
 import { RegisteredManager } from "../internal/RegisteredManager";
+import { cloneDeepNoFunction } from "shared/utils";
+
+type PositionProviderValueProp = {
+  // override the given position of the start element, optional
+  startPoint?: IPoint | ((startPoint: IPoint) => IPoint);
+  // override the given position of the end element, optional
+  endPoint?: IPoint | ((startPoint: IPoint) => IPoint);
+};
 
 export interface PositionProviderProps {
   children: React.ReactNode;
-  value: {
-    // override the given position of the start element, optional
-    startPoint?: IPoint | ((startPoint: IPoint) => IPoint);
-    // override the given position of the end element, optional
-    endPoint?: IPoint | ((startPoint: IPoint) => IPoint);
-  };
+  value: PositionProviderValueProp | ((prevVal: PositionProviderValueProp) => PositionProviderValueProp);
   imperativeRef?: React.Ref<any>;
 }
 
@@ -31,18 +33,15 @@ const PositionProvider = React.forwardRef(function PositionProvider(
 ) {
   const prevVal = React.useContext(PositionProviderContext);
 
-  const startPoint = getLastValue(value.startPoint, prevVal, "prevVal", (context) => context?.value.startPoint) ?? {
-    x: 0,
-    y: 0,
-  };
-
-  const endPoint = getLastValue(value.endPoint, prevVal, "prevVal", (context) => context?.value.endPoint) ?? {
-    x: 0,
-    y: 0,
-  };
-
+  const val = getLastValue(value, prevVal, "prevVal", (context) => context?.value);
   const HeadsManager = useRef(new RegisteredManager<PositionChange>());
-  console.log(HeadsManager.current.registered);
+  // clone only the startPoint and endPoint, and not the whole value because of performance concerns
+  let alteredVal = { ...val };
+  alteredVal.startPoint = cloneDeepNoFunction(val.startPoint);
+  alteredVal.endPoint = cloneDeepNoFunction(val.endPoint);
+  Object.values(HeadsManager.current.registered).forEach((change) => {
+    alteredVal = change(alteredVal);
+  });
 
   useImperativeHandle<any, PositionProviderImperativeProps>(
     imperativeRef,
@@ -55,10 +54,7 @@ const PositionProvider = React.forwardRef(function PositionProvider(
   return (
     <PositionProviderContext.Provider
       value={{
-        value: {
-          startPoint: { ...prevVal.value.startPoint, ...startPoint },
-          endPoint: { ...prevVal.value.endPoint, ...endPoint },
-        },
+        value: { ...prevVal.value, ...alteredVal },
         prevVal,
         imperativeRef,
         __mounted: true,
@@ -110,14 +106,11 @@ export const usePositionProviderRegister = (func: (pos: PositionProviderVal) => 
   const positionProvider = React.useContext(PositionProviderContext);
   const HeadId = useRef<number>(null as unknown as number); // the id would be received from the PositionProvider wrapper
   const mounted = useEnsureContext(positionProvider, "PositionProvider", "usePositionProviderRegister", { noWarn });
-  // console.log(positionProvider, mounted);
   useLayoutEffect(() => {
     if (!mounted) return;
     HeadId.current = positionProvider.HeadsManager!.register(func);
-    console.log("usePositionProviderRegister effect", HeadId.current);
     return () => {
       if (!mounted) return;
-      console.log("usePositionProviderRegister exit effect", HeadId.current);
       positionProvider.HeadsManager!.unregister(HeadId.current);
     };
   }, []);
