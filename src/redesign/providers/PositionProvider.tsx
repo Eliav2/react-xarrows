@@ -1,6 +1,9 @@
-import React, { useImperativeHandle, useState } from "react";
+import React, { useImperativeHandle, useLayoutEffect, useRef, useState } from "react";
 import { IPoint } from "../types";
 import { getLastValue } from "../utils";
+import { useEnsureContext } from "../internal/hooks";
+import { useXWrapperContext } from "../XWrapper";
+import { RegisteredManager } from "../internal/RegisteredManager";
 
 export interface PositionProviderProps {
   children: React.ReactNode;
@@ -28,13 +31,6 @@ const PositionProvider = React.forwardRef(function PositionProvider(
 ) {
   const prevVal = React.useContext(PositionProviderContext);
 
-  // const [startPoint, setStartPoint] = useState(
-  //   getLastValue(value.startPoint, prevVal, "prevVal", (context) => context?.value.startPoint) ?? {
-  //     x: 0,
-  //     y: 0,
-  //   }
-  // );
-
   const startPoint = getLastValue(value.startPoint, prevVal, "prevVal", (context) => context?.value.startPoint) ?? {
     x: 0,
     y: 0,
@@ -44,6 +40,9 @@ const PositionProvider = React.forwardRef(function PositionProvider(
     x: 0,
     y: 0,
   };
+
+  const HeadsManager = useRef(new RegisteredManager<PositionChange>());
+  console.log(HeadsManager.current.registered);
 
   useImperativeHandle<any, PositionProviderImperativeProps>(
     imperativeRef,
@@ -62,6 +61,8 @@ const PositionProvider = React.forwardRef(function PositionProvider(
         },
         prevVal,
         imperativeRef,
+        __mounted: true,
+        HeadsManager: HeadsManager.current,
       }}
     >
       {(children && React.isValidElement(children) && React.cloneElement(children, { ref } as any)) || children}
@@ -74,10 +75,13 @@ export type PositionProviderImperativeProps = {
   sayHello: () => void;
 };
 
+type PositionChange = (pos: PositionProviderVal) => PositionProviderVal;
 type PositionProviderContextProps = {
   value: PositionProviderVal;
   prevVal?: PositionProviderContextProps;
   imperativeRef?: React.Ref<any>;
+  __mounted: boolean;
+  HeadsManager: RegisteredManager<PositionChange> | null;
 };
 
 type PosPoint = IPoint | ((startPoint: IPoint) => PosPoint);
@@ -93,9 +97,28 @@ const PositionProviderContext = React.createContext<PositionProviderContextProps
   },
   prevVal: undefined,
   imperativeRef: null,
+  __mounted: false,
+  HeadsManager: null,
 });
 
 export const usePositionProvider = () => {
   const val = React.useContext(PositionProviderContext);
   return val?.value;
+};
+
+export const usePositionProviderRegister = (func: (pos: PositionProviderVal) => PositionProviderVal, noWarn = false) => {
+  const positionProvider = React.useContext(PositionProviderContext);
+  const HeadId = useRef<number>(null as unknown as number); // the id would be received from the PositionProvider wrapper
+  const mounted = useEnsureContext(positionProvider, "PositionProvider", "usePositionProviderRegister", { noWarn });
+  // console.log(positionProvider, mounted);
+  useLayoutEffect(() => {
+    if (!mounted) return;
+    HeadId.current = positionProvider.HeadsManager!.register(func);
+    console.log("usePositionProviderRegister effect", HeadId.current);
+    return () => {
+      if (!mounted) return;
+      console.log("usePositionProviderRegister exit effect", HeadId.current);
+      positionProvider.HeadsManager!.unregister(HeadId.current);
+    };
+  }, []);
 };

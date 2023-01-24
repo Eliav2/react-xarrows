@@ -34,12 +34,22 @@ const mapAllFilesInDir = (baseDir, output) => {
   }, {});
 };
 
-// find subdirectories in the current directory
-const listAllSubDirectories = (baseDir) => {
-  const files = readdirSync(baseDir);
-  const directories = files.reduce((acc, file) => {
+//regex for string that does not contain a dot (not a file)
+const NOT_DOT_REG = `((?!.).)*`;
+
+// find subdirectories in the current directory, that have suffix .ts or .tsx
+const listAllSubDirectories = (baseDir, suffixRegex = "ts|tsx") => {
+  const dirs = readdirSync(baseDir);
+  // filter suffixes(only for files)
+  const filteredDirs = dirs.filter((file) => file.match(new RegExp(`\.(${suffixRegex})|${NOT_DOT_REG}$`)));
+
+  const directories = filteredDirs.reduce((acc, file) => {
     const name = `${baseDir}/${file}`;
     const isDirectory = fs.statSync(name).isDirectory();
+    // if(isDirectory){
+    //   return [...acc, name, ...listAllSubDirectories(name)];
+    // }else
+    //   return acc;
     return isDirectory ? [...acc, name, ...listAllSubDirectories(name)] : acc;
   }, []);
   return directories;
@@ -134,7 +144,7 @@ export default defineConfig({
       formats: ["cjs", "es"],
     },
     // todo: to this only in prod mode
-    // sourcemap: true,
+    sourcemap: true,
   },
   plugins: [
     dts({ entryRoot: "src", outputDir: "dist/lib/types", tsConfigFilePath: "tsconfig.json" }),

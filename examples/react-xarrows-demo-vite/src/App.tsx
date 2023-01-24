@@ -1,5 +1,5 @@
 import "./App.css";
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { Box } from "./components/Box";
 import useRerender from "shared/hooks/useRerender";
 import { BestPathSmoothXArrow } from "./components/BestPathSmoothXArrow";
@@ -26,15 +26,15 @@ import BasicHead1 from "react-xarrows/components/BasicHead1";
 import { AutoAnchorWithHeadXArrow } from "./components/AutoAnchorWithHeadXArrow";
 import { BestPathGridXArrow } from "./components/BestPathGridXArrow";
 import SnakeXArrow from "./components/SnakeXArrow";
+import Comp1 from "./Comp1";
+import Comp2 from "./Comp2";
 
 function App() {
   return (
-    // <React.StrictMode>
     <div className="App">
       <DemoXWrapper />
       {/*<DemoXWrapper />*/}
     </div>
-    // </React.StrictMode>
   );
 }
 
@@ -77,12 +77,48 @@ const sayHello = () => {
   console.log("hello");
 };
 
+const boxStyle = {
+  border: "solid",
+  borderRadius: 12,
+  padding: 8,
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "center",
+  alignItems: "center",
+  overflow: "hidden",
+} as const;
+
+function BasicDemo() {
+  const box1Ref = useRef(null);
+  const box2Ref = useRef(null);
+  return (
+    <div style={{ display: "flex", justifyContent: "space-evenly" }}>
+      <div ref={box1Ref} style={boxStyle}>
+        Box1
+      </div>
+      <div ref={box2Ref} style={boxStyle}>
+        Box2
+      </div>
+      <XArrow start={box1Ref} end={box2Ref}>
+        <XLine />
+
+        <XHead />
+      </XArrow>
+    </div>
+  );
+}
+
 const DemoXWrapper = () => {
   // console.log("DemoXWrapper");
   const render = useRerender();
   const box1Ref = useRef<HTMLDivElement>(null);
   const box2Ref = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    console.log("DemoXWrapper useEffect");
+  }, []);
+
+  // PositionProvider -> HeadProvider -> PositionProvider
   return (
     <XWrapper>
       <Paper>
@@ -108,55 +144,65 @@ const DemoXWrapper = () => {
       </div>
       <div style={{ height: 50 }} />
 
+      {/*<BasicDemo />*/}
+
       <XArrow start={box1Ref} end={box2Ref}>
-        {/*<AutoSelectAnchor>*/}
-        {/*  <text fill={"red"} x="65" y="55" className="Rrrrr">*/}
-        {/*    Grumpy!*/}
-        {/*  </text>*/}
-        {/*</AutoSelectAnchor>*/}
-
-        <AutoSelectAnchor>
-          <BestPath>
-            {/*todo: provide a way to use the selected anchor dir and offset endpoint*/}
-            {/*todo: create a generic XProvider component*/}
-            <PositionProvider>
-              <XPath />
-            </PositionProvider>
-            <XHead />
-          </BestPath>
-        </AutoSelectAnchor>
-
-        {/*<AutoSelectAnchor>*/}
-        {/*  /!*<XLine stripEnd={22.5} color={"yellow"}>*!/*/}
-        {/*  /!*  <XHead />*!/*/}
-        {/*  /!*</XLine>*!/*/}
-        {/*  /!*<PositionProvider value={{ endPoint: (e) => ({ ...e, x: e.x - 60 }) }}>*!/*/}
-        {/*  /!*<BestPath>*!/*/}
-        {/*  <PositionProvider*/}
-        {/*    value={{*/}
-        {/*      endPoint: (e) => {*/}
-        {/*        // console.log("PositionProvider", e);*/}
-        {/*        return { ...e, x: e.x - 30 };*/}
-        {/*      },*/}
-        {/*    }}*/}
-        {/*  >*/}
-        {/*    /!*<XLine stripEnd={22.5} color={"yellow"}>*!/*/}
-        {/*    /!*  <XHead />*!/*/}
-        {/*    /!*</XLine>*!/*/}
-
-        {/*    <XPath />*/}
-        {/*    /!*<XPath>*!/*/}
-        {/*    /!*  /!*<HeadProvider value={{ pos: { y: 1, x: 0 }, rotate: 30 }}>*!/*!/*/}
-        {/*    /!*  <XHead />*!/*/}
-        {/*    /!*  /!*</HeadProvider>*!/*!/*/}
-        {/*    /!*</XPath>*!/*/}
-        {/*  </PositionProvider>*/}
-        {/*  /!*</BestPath>*!/*/}
-        {/*  /!*</PositionProvider>*!/*/}
-
-        {/*  /!*<XHead />*!/*/}
-        {/*</AutoSelectAnchor>*/}
+        <XLine>
+          <XHead color={"red"} />
+        </XLine>
       </XArrow>
+
+      {/*<Comp1>*/}
+      {/*  <Comp2/>*/}
+      {/*</Comp1>*/}
+
+      {/*<AutoSelectAnchor>*/}
+      {/*  <text fill={"red"} x="65" y="55" className="Rrrrr">*/}
+      {/*    Grumpy!*/}
+      {/*  </text>*/}
+      {/*</AutoSelectAnchor>*/}
+
+      {/*<AutoSelectAnchor>*/}
+      {/*  <BestPath>*/}
+      {/*todo: provide a way to use the selected anchor dir and offset endpoint*/}
+      {/*todo: create a generic XProvider component*/}
+      {/*<PositionProvider>*/}
+      {/*</PositionProvider>*/}
+      {/*<XPath />*/}
+      {/*<XHead />*/}
+      {/*</BestPath>*/}
+      {/*</AutoSelectAnchor>*/}
+
+      {/*<AutoSelectAnchor>*/}
+      {/*  /!*<XLine stripEnd={22.5} color={"yellow"}>*!/*/}
+      {/*  /!*  <XHead />*!/*/}
+      {/*  /!*</XLine>*!/*/}
+      {/*  /!*<PositionProvider value={{ endPoint: (e) => ({ ...e, x: e.x - 60 }) }}>*!/*/}
+      {/*  /!*<BestPath>*!/*/}
+      {/*  <PositionProvider*/}
+      {/*    value={{*/}
+      {/*      endPoint: (e) => {*/}
+      {/*        // console.log("PositionProvider", e);*/}
+      {/*        return { ...e, x: e.x - 30 };*/}
+      {/*      },*/}
+      {/*    }}*/}
+      {/*  >*/}
+      {/*    /!*<XLine stripEnd={22.5} color={"yellow"}>*!/*/}
+      {/*    /!*  <XHead />*!/*/}
+      {/*    /!*</XLine>*!/*/}
+
+      {/*    <XPath />*/}
+      {/*    /!*<XPath>*!/*/}
+      {/*    /!*  /!*<HeadProvider value={{ pos: { y: 1, x: 0 }, rotate: 30 }}>*!/*!/*/}
+      {/*    /!*  <XHead />*!/*/}
+      {/*    /!*  /!*</HeadProvider>*!/*!/*/}
+      {/*    /!*</XPath>*!/*/}
+      {/*  </PositionProvider>*/}
+      {/*  /!*</BestPath>*!/*/}
+      {/*  /!*</PositionProvider>*!/*/}
+
+      {/*  /!*<XHead />*!/*/}
+      {/*</AutoSelectAnchor>*/}
       {/*<svg*/}
       {/*  style={{*/}
       {/*    overflow: "visible",*/}

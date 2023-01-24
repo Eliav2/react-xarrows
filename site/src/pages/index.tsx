@@ -3,7 +3,9 @@ import Layout from "@theme/Layout";
 import Link from "@docusaurus/Link";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import styles from "./index.module.css";
-import React from "react";
+import React, { useRef } from "react";
+import { Typography } from "@mui/material";
+import { XHead, XArrow, XLine } from "react-xarrows";
 
 const Badges = () => {
   return (
@@ -70,6 +72,31 @@ const BoxStyle = {
   overflow: "hidden",
 } as const;
 
+function BasicDemo() {
+  const box1Ref = useRef(null);
+  const box2Ref = useRef(null);
+  return (
+    <div style={{ display: "flex", justifyContent: "space-evenly" }}>
+      <div ref={box1Ref} style={BoxStyle}>
+        Box1
+      </div>
+      <div ref={box2Ref} style={BoxStyle}>
+        Box2
+      </div>
+      <XArrow start={box1Ref} end={box2Ref}>
+        {/*<XLine />*/}
+        <XLine>
+          <XHead color={"red"} />
+        </XLine>
+      </XArrow>
+    </div>
+  );
+}
 function Demo() {
-  return <section style={{ textAlign: "center" }}>here the demo will be</section>;
+  return (
+    <section style={{ textAlign: "center" }}>
+      <Typography>here the demo will be</Typography>
+      <BasicDemo />
+    </section>
+  );
 }

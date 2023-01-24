@@ -25,6 +25,7 @@ export const XLine = React.forwardRef((props: XLineProps, ref: React.ForwardedRe
     y2,
     color = "cornflowerblue",
     strokeWidth = 3,
+    children,
     ...p
   } = props;
 
@@ -63,7 +64,7 @@ export const XLine = React.forwardRef((props: XLineProps, ref: React.ForwardedRe
         strokeWidth={strokeWidth}
         {...p}
       />
-      <HeadProvider value={{ dir: { x: endPoint.x - startPoint.x, y: endPoint.y - startPoint.y }, color }}>{props.children}</HeadProvider>
+      <HeadProvider value={{ dir: { x: endPoint.x - startPoint.x, y: endPoint.y - startPoint.y }, color }}>{children}</HeadProvider>
     </>
   );
 });

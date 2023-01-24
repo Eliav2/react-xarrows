@@ -1,9 +1,10 @@
 import React, { useLayoutEffect, useRef } from "react";
 import { useEnsureContext } from "./internal/hooks";
+import { RegisteredManager } from "./internal/RegisteredManager";
 
 export const XWrapper = React.forwardRef(({ children }: XWrapperProps, forwardedRef) => {
   // console.log("XWrapper");
-  const xWrapperManager = useRef(new XWrapperManager());
+  const xWrapperManager = useRef(new RegisteredManager());
   const update = () => {
     // updates all XArrows under this XWrapper
     for (let XArrowUpdate of Object.values(xWrapperManager.current.registered)) {
@@ -22,7 +23,7 @@ const XWrapperContextDefault = {
   update: () => {},
   xWrapperXArrowsManager: null,
   __mounted: false,
-} as { update: () => void; xWrapperXArrowsManager: XWrapperManager | null; __mounted: boolean };
+} as { update: () => void; xWrapperXArrowsManager: RegisteredManager | null; __mounted: boolean };
 
 const XWrapperContext = React.createContext(XWrapperContextDefault);
 export const useXWrapperContext = ({ noWarn = false } = {}) => {
@@ -46,50 +47,17 @@ export const useUpdateXWrapper = () => {
   return val.update;
 };
 
-/**
- * this class holds the registered XArrows and their render functions.
- * whenever an update is requested on a XWrapper, it will call all the registered XArrows render functions.
- */
-class XWrapperManager {
-  registered: { [key: string]: () => void } = {};
-  private missingIndexes = new Set<number>();
-  private countRegisteredXArrows = 0;
-
-  constructor() {
-    this.registered = {};
-  }
-
-  private getAvailableIndex(): number {
-    //returns the next available index.
-    if (this.missingIndexes.size === 0) return this.countRegisteredXArrows;
-    else return this.missingIndexes.values().next().value;
-  }
-
-  register(render): number {
-    const id = this.getAvailableIndex();
-    this.missingIndexes.delete(id);
-    this.registered[id] = render;
-    this.countRegisteredXArrows++;
-    return id;
-  }
-
-  unregister(id: number) {
-    delete this.registered[id];
-    this.missingIndexes.add(id);
-    this.countRegisteredXArrows--;
-  }
-}
-
 interface XWrapperProps {
   children: React.ReactNode;
 }
 
 /**
  * receives a function(usually render a function) that would be executed whenever the XWrapper is updated.
+ * whenever an update is requested on a XWrapper, it will call all the registered XArrows render functions.
  */
 export const useXWrapperRegister = (render, noWarn = false) => {
   const xWrapperContext = useXWrapperContext({ noWarn });
-  const XArrowId = useRef(0);
+  const XArrowId = useRef<number>(null as unknown as number); // the id would be received from the XWrapper wrapper
   const mounted = useEnsureContext(xWrapperContext, "XWrapper", "useXWrapperRegister", { noWarn });
   useLayoutEffect(() => {
     if (!mounted) return;

@@ -1,10 +1,11 @@
-import React, { LegacyRef } from "react";
+import React, { LegacyRef, useEffect } from "react";
 import { svgElemStrType } from "../types";
 import { IDir, IPoint } from "./types/types";
 import { getBBox } from "./NormalizedGSvg";
 import { Dir } from "./path";
 import { BasicHeadShape1 } from "./shapes";
 import { useHeadProvider } from "./providers/HeadProvider";
+import { usePositionProviderRegister } from "./providers";
 
 export interface XHeadProps {
   children?: React.ReactNode; // a jsx element of type svg like <circle .../> or <path .../>
@@ -31,7 +32,8 @@ export interface XHeadProps {
   pos?: IPoint;
 }
 
-const XHead = React.forwardRef<SVGGElement, XHeadProps>(function XEdge(props, forwardRef) {
+const XHead = React.forwardRef<SVGGElement, XHeadProps>(function XHead(props, forwardRef) {
+  // console.log("XHead render");
   const headProvider = useHeadProvider();
   // const { endPoint } = usePositionProvider();
   let {
@@ -48,7 +50,19 @@ const XHead = React.forwardRef<SVGGElement, XHeadProps>(function XEdge(props, fo
 
   // console.log(dir);
 
+  useEffect(() => {
+    console.log("XHead useEffect");
+    return () => console.log("XHead useEffect clean");
+  }, []);
+
   const _dir = new Dir(dir);
+
+  usePositionProviderRegister((pos) => {
+    console.log("usePositionProviderRegister passed function call");
+    const newPos = { ...pos, endPoint: { x: pos.endPoint.x, y: pos.endPoint.y - 60 } };
+    return newPos;
+  });
+
   // const dir = pos._chosenFaceDir;
   // const endEdgeRef = useRef();
   // let edgeBbox = useGetBBox(endEdgeRef, deps);
