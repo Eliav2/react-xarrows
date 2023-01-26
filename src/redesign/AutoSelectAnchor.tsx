@@ -5,11 +5,12 @@ import { getRelativeSizeValue } from "shared/utils";
 import { Direction, IRect, NamedDirection, parseIRect, parsePossiblyDirectedVector } from "./types/types";
 import { toArray } from "./utils";
 import { Dir, getBestPath, Vector } from "./path";
-import React from "react";
+import React, { ForwardRefExoticComponent } from "react";
 import { useEnsureContext } from "./internal/hooks";
 import PositionProvider from "./providers/PositionProvider";
 import HeadProvider from "./providers/HeadProvider";
 import PointsProvider from "./providers/PointsProvider";
+import { childrenRenderer } from "./internal/Children";
 
 const xDirs = [
   { x: 1, y: 0 },
@@ -139,7 +140,7 @@ export const autoSelectAnchor = (
 };
 
 export type AutoSelectAnchorProps = {
-  children: React.ReactNode;
+  children: React.ReactNode | ForwardRefExoticComponent<any>;
   startAnchor?: Anchor;
   endAnchor?: Anchor;
 };
@@ -148,17 +149,24 @@ const AutoSelectAnchor = React.forwardRef(function AutoSelectAnchor(
   { startAnchor = "auto", endAnchor = "auto", children }: AutoSelectAnchorProps,
   ref: React.ForwardedRef<SVGElement>
 ) {
+  // console.log("AutoSelectAnchor");
   const context = useXArrow();
   let { startRect, endRect } = context;
   if (!startRect || !endRect) return null;
   const v = autoSelectAnchor(startRect, endRect, { startAnchor, endAnchor });
   // const { points, endDir } = getBestPath(startPoint, endPoint, { zBreakPoint: breakPoint });
+  // console.log(!!(children && React.isValidElement(children)));
+  // const child = ;
+  // console.log(child);
+
+  // return (children && React.isValidElement(children) && React.cloneElement(children, { ref } as any)) || children;
   return (
     <PositionProvider value={v}>
       <PointsProvider>
         <HeadProvider value={{ pos: v.endPoint }}>
-          {/* pass ref to the inner children if possible (if a single ReactElement, and not array,string,number,etc) */}
-          {(children && React.isValidElement(children) && React.cloneElement(children, { ref } as any)) || children}
+          {/*{children}*/}
+          {/*{(children && ref && React.isValidElement(children) && React.cloneElement(children, { ref })) || children}*/}
+          {childrenRenderer(children, context, ref)}
         </HeadProvider>
       </PointsProvider>
     </PositionProvider>

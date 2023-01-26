@@ -1,11 +1,13 @@
-import React, { LegacyRef, useEffect } from "react";
+import React, { LegacyRef, ReactNode, useEffect } from "react";
 import { svgElemStrType } from "../types";
 import { IDir, IPoint } from "./types/types";
 import { getBBox } from "./NormalizedGSvg";
 import { Dir } from "./path";
 import { BasicHeadShape1 } from "./shapes";
-import { useHeadProvider } from "./providers/HeadProvider";
+import { useHeadProvider, useHeadProviderRegister } from "./providers/HeadProvider";
 import { usePositionProviderRegister } from "./providers";
+import { MapNonNullable, RemoveChildren } from "shared/types";
+import { childrenRenderer } from "./internal/Children";
 
 export interface XHeadProps {
   children?: React.ReactNode; // a jsx element of type svg like <circle .../> or <path .../>
@@ -15,9 +17,6 @@ export interface XHeadProps {
   // the color of the svg shape
   // default to use always 'fill' and not 'stroke' so svg normalization would work as expected
   color?: string;
-
-  // show the svg ?
-  show?: boolean;
 
   // the size (width X height) in pixels
   size?: number;
@@ -36,16 +35,24 @@ const XHead = React.forwardRef<SVGGElement, XHeadProps>(function XHead(props, fo
   // console.log("XHead render");
   const headProvider = useHeadProvider();
   // const { endPoint } = usePositionProvider();
-  let {
-    children = <BasicHeadShape1 />,
-    containerRef,
-    // pos = endPoint ?? { x: 0, y: 0 },
-    pos = headProvider?.pos ?? { x: 0, y: 0 },
-    dir = headProvider?.dir ?? { x: 0, y: 0 },
-    rotate = headProvider?.rotate ?? 0,
-    color = headProvider?.color ?? "cornflowerblue",
-    size = headProvider?.size ?? 30,
-  } = props;
+  let { children, ...propsNoChildren } = props;
+  const propsWithDefault = Object.assign(
+    {
+      pos: headProvider?.pos ?? { x: 0, y: 0 },
+      dir: headProvider?.dir ?? { x: 0, y: 0 },
+      rotate: headProvider?.rotate ?? 0,
+      color: headProvider?.color ?? "cornflowerblue",
+      size: headProvider?.size ?? 30,
+      props: {},
+      containerRef: null,
+    },
+    propsNoChildren
+  );
+  const { dir, pos, rotate, color, size, containerRef } = propsWithDefault;
+
+  // let children = <DefaultChildren />;
+  children ??= childrenRenderer(DefaultChildren, propsWithDefault, forwardRef);
+
   // const
 
   // console.log(dir);
@@ -57,14 +64,6 @@ const XHead = React.forwardRef<SVGGElement, XHeadProps>(function XHead(props, fo
 
   const _dir = new Dir(dir);
   // console.log(_dir);
-
-  usePositionProviderRegister((pos) => {
-    // console.log("usePositionProviderRegister passed function call");
-    pos.endPoint.x -= 30;
-    return pos;
-    // const newPos = { ...pos, endPoint: { x: pos.endPoint.x, y: pos.endPoint.y - 30 } };
-    // return newPos;
-  });
 
   // const dir = pos._chosenFaceDir;
   // const endEdgeRef = useRef();
@@ -107,6 +106,34 @@ const XHead = React.forwardRef<SVGGElement, XHeadProps>(function XHead(props, fo
 // };
 
 export default XHead;
+
+// const DefaultChildren = (props: NonNullableProps<RemoveChildren<XHeadProps>>) => {
+const DefaultChildren = (props: Omit<Required<XHeadProps>, "children">) => {
+  // console.log("DefaultChildren render", props);
+  const offSet = props.size * 0.75;
+  usePositionProviderRegister((pos) => {
+    // console.log("usePositionProviderRegister passed function call");
+    // pos.endPoint.x -= 30;
+    // pos.endPoint.y -= 30;
+    return pos;
+    // const newPos = { ...pos, endPoint: { x: pos.endPoint.x, y: pos.endPoint.y - 30 } };
+    // return newPos;
+  });
+  useHeadProviderRegister((val) => {
+    // console.log("usePositionProviderRegister passed function call");
+    // pos.endPoint.x -= 30;
+    // if (val.pos) val.pos.y += 30;
+    const newpos = { ...val.pos };
+    if (newpos?.y) newpos.y += 30;
+    // console.log(val.pos, newpos);
+    val.pos = newpos;
+    return val;
+    // const newPos = { ...pos, endPoint: { x: pos.endPoint.x, y: pos.endPoint.y - 30 } };
+    // return newPos;
+  });
+
+  return <BasicHeadShape1 />;
+};
 
 export const getXHeadSize = (ref: React.RefObject<any>) => {
   // const bbox = useGetBBox(ref);

@@ -1,6 +1,7 @@
 import React from "react";
 import { IVector } from "../types";
 import { PositionProviderVal, usePositionProvider } from "./PositionProvider";
+import { childrenRenderer } from "../internal/Children";
 
 export type PointsProps = {
   children?: React.ReactNode;
@@ -13,9 +14,11 @@ const PointsProvider = React.forwardRef(function PointsProvider(props: PointsPro
   // if (props.positionProviderVal) startPoint = props.positionProviderVal.startPoint;
   // if (props.positionProviderVal) endPoint = props.positionProviderVal.endPoint;
   const { children, value: { points = [] } = {} } = props;
+  const val = { points };
   return (
-    <PointsProviderContext.Provider value={{ points }}>
-      {(children && React.isValidElement(children) && React.cloneElement(children, { ref: forwardedRef } as any)) || children}
+    <PointsProviderContext.Provider value={val}>
+      {childrenRenderer(children, val, forwardedRef)}
+      {/*{(children && React.isValidElement(children) && React.cloneElement(children, { ref: forwardedRef } as any)) || children}*/}
     </PointsProviderContext.Provider>
   );
 });

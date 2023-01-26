@@ -28,6 +28,7 @@ import { BestPathGridXArrow } from "./components/BestPathGridXArrow";
 import SnakeXArrow from "./components/SnakeXArrow";
 import Comp1 from "./Comp1";
 import Comp2 from "./Comp2";
+import TestPassRef from "./components/TestPassRef";
 
 function App() {
   return (
@@ -145,6 +146,8 @@ const DemoXWrapper = () => {
       <div style={{ height: 50 }} />
 
       {/*<BasicDemo />*/}
+
+      <TestPassRef />
 
       <XArrow start={box1Ref} end={box2Ref}>
         <AutoSelectAnchor>

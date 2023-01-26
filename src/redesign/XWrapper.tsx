@@ -1,6 +1,6 @@
 import React, { useLayoutEffect, useRef } from "react";
 import { useEnsureContext } from "./internal/hooks";
-import { RegisteredManager } from "./internal/RegisteredManager";
+import { RegisteredManager, useRegisteredManager } from "./internal/RegisteredManager";
 
 export const XWrapper = React.forwardRef(({ children }: XWrapperProps, forwardedRef) => {
   // console.log("XWrapper");
@@ -57,14 +57,7 @@ interface XWrapperProps {
  */
 export const useXWrapperRegister = (render, noWarn = false) => {
   const xWrapperContext = useXWrapperContext({ noWarn });
-  const XArrowId = useRef<number>(null as unknown as number); // the id would be received from the XWrapper wrapper
   const mounted = useEnsureContext(xWrapperContext, "XWrapper", "useXWrapperRegister", { noWarn });
-  useLayoutEffect(() => {
-    if (!mounted) return;
-    XArrowId.current = xWrapperContext.xWrapperXArrowsManager!.register(render);
-    return () => {
-      if (!mounted) return;
-      xWrapperContext.xWrapperXArrowsManager!.unregister(XArrowId.current);
-    };
-  }, []);
+  const XArrowId = useRegisteredManager(xWrapperContext.xWrapperXArrowsManager!, mounted, render);
+  return XArrowId;
 };
