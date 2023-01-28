@@ -2,10 +2,10 @@ import React, { LegacyRef, ReactNode, useEffect } from "react";
 import { svgElemStrType } from "../types";
 import { IDir, IPoint } from "./types/types";
 import { getBBox } from "./NormalizedGSvg";
-import { Dir } from "./path";
+import { Dir, Vector } from "./path";
 import { BasicHeadShape1 } from "./shapes";
 import { useHeadProvider, useHeadProviderRegister } from "./providers/HeadProvider";
-import { usePositionProviderRegister } from "./providers";
+import { usePositionProvider, usePositionProviderRegister } from "./providers";
 import { MapNonNullable, RemoveChildren } from "shared/types";
 import { childrenRenderer } from "./internal/Children";
 
@@ -38,8 +38,8 @@ const XHead = React.forwardRef<SVGGElement, XHeadProps>(function XHead(props, fo
   let { children, ...propsNoChildren } = props;
   const propsWithDefault = Object.assign(
     {
-      pos: headProvider?.pos ?? { x: 0, y: 0 },
-      dir: headProvider?.dir ?? { x: 0, y: 0 },
+      pos: new Vector(headProvider?.pos ?? { x: 0, y: 0 }),
+      dir: new Dir(headProvider?.dir ?? { x: 0, y: 0 }),
       rotate: headProvider?.rotate ?? 0,
       color: headProvider?.color ?? "cornflowerblue",
       size: headProvider?.size ?? 30,
@@ -50,6 +50,7 @@ const XHead = React.forwardRef<SVGGElement, XHeadProps>(function XHead(props, fo
   );
   const { dir, pos, rotate, color, size, containerRef } = propsWithDefault;
 
+  // console.log("XHead", headProvider?.dir);
   // let children = <DefaultChildren />;
   children ??= childrenRenderer(DefaultChildren, propsWithDefault, forwardRef);
 
@@ -61,8 +62,6 @@ const XHead = React.forwardRef<SVGGElement, XHeadProps>(function XHead(props, fo
   //   console.log("XHead useEffect");
   //   return () => console.log("XHead useEffect clean");
   // }, []);
-
-  const _dir = new Dir(dir);
   // console.log(_dir);
 
   // const dir = pos._chosenFaceDir;
@@ -81,7 +80,7 @@ const XHead = React.forwardRef<SVGGElement, XHeadProps>(function XHead(props, fo
         style={{
           transformBox: "fill-box",
           transformOrigin: "center",
-          transform: `translate(${-_dir.x * 50}%,${-_dir.y * 50}%) rotate(${_dir.toDegree() + rotate}deg) `,
+          transform: `translate(${-dir.x * 50}%,${-dir.y * 50}%) rotate(${dir.toDegree() + rotate}deg) `,
           fill: color,
           pointerEvents: "auto",
         }}
@@ -108,29 +107,44 @@ const XHead = React.forwardRef<SVGGElement, XHeadProps>(function XHead(props, fo
 export default XHead;
 
 // const DefaultChildren = (props: NonNullableProps<RemoveChildren<XHeadProps>>) => {
-const DefaultChildren = (props: Omit<Required<XHeadProps>, "children">) => {
+interface DefaultChildrenProps extends RemoveChildren<Required<XHeadProps>> {
+  dir: Dir;
+  pos: Vector;
+}
+
+const DefaultChildren = (props: DefaultChildrenProps) => {
   // console.log("DefaultChildren render", props);
   const offSet = props.size * 0.75;
-  usePositionProviderRegister((pos) => {
-    // console.log("usePositionProviderRegister passed function call");
-    // pos.endPoint.x -= 30;
-    // pos.endPoint.y -= 30;
-    return pos;
-    // const newPos = { ...pos, endPoint: { x: pos.endPoint.x, y: pos.endPoint.y - 30 } };
-    // return newPos;
-  });
+  // const _props = { ...props };
+  // console.log(props.dir.mul(offSet));
+  // const dir = { ...props.dir };
+  // console.log("render", dir);
+  // const myVal = 10;
+  // console.log("myVal", myVal);
+  // const { dir } = useHeadProvider();
   useHeadProviderRegister((val) => {
-    // console.log("usePositionProviderRegister passed function call");
-    // pos.endPoint.x -= 30;
-    // if (val.pos) val.pos.y += 30;
-    const newpos = { ...val.pos };
-    if (newpos?.y) newpos.y += 30;
-    // console.log(val.pos, newpos);
-    val.pos = newpos;
+    if (val.dir) val.pos = val.pos?.add(val.dir?.mul(offSet));
     return val;
     // const newPos = { ...pos, endPoint: { x: pos.endPoint.x, y: pos.endPoint.y - 30 } };
     // return newPos;
   });
+
+  // console.log(offSet);
+
+  usePositionProviderRegister(
+    (pos) => {
+      // console.log(props.dir);
+      // console.log(offSet);
+
+      if (pos.endPoint) pos.endPoint = new Vector(pos.endPoint.sub(props.dir.mul(offSet)));
+      // console.log(pos.endPoint, pos.endPoint.add(30));
+      return pos;
+      // const newPos = { ...pos, endPoint: { x: pos.endPoint.x, y: pos.endPoint.y - 30 } };
+      // return newPos;
+    },
+    false,
+    [props.dir.x, props.dir.y]
+  );
 
   return <BasicHeadShape1 />;
 };

@@ -12,8 +12,13 @@ export const math_operators = {
   smallerEqual: (x, y) => x <= y,
 };
 
-export const operatorFunc = <P extends IVector>(p: P, p2: IVector | number, operator, self = false): Vector => {
-  let _p2;
+export const operatorFunc = <P extends Vector>(
+  p: P, // the first vector
+  p2: IVector | number, // the second vector or number
+  operator, // the operator function
+  self = false // should the operation be done on the original vector instead of creating a new one
+): Vector => {
+  let _p2: IVector;
   if (typeof p2 === "number") _p2 = { x: p2, y: p2 };
   else _p2 = p2;
   // let v = new T(operator(p.x, _p2.x), operator(p.y, _p2.y));
@@ -22,8 +27,15 @@ export const operatorFunc = <P extends IVector>(p: P, p2: IVector | number, oper
     const n = new Vector(operator(p.x, _p2.x), operator(p.y, _p2.y)) as any;
     p.x = n.x;
     p.y = n.y;
+    return p;
   }
-  let v = new Vector(operator(p.x, _p2.x), operator(p.y, _p2.y));
+  // let v = new Vector(operator(p.x, _p2.x), operator(p.y, _p2.y));
+  let v = new Vector(p);
+  // console.log(p.x, _p2.x);
+  v.x = operator(p.x, _p2.x);
+  v.y = operator(p.y, _p2.y);
+  // console.log(v);
+
   // handle 0/0 = NaN instead of 0
   if (isNaN(v.x)) v.x = 0;
   if (isNaN(v.y)) v.y = 0;

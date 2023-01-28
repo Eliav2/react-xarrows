@@ -5,6 +5,7 @@ import { useEnsureContext } from "../internal/hooks";
 import { RegisteredManager, useRegisteredManager } from "../internal/RegisteredManager";
 import { cloneDeepNoFunction } from "shared/utils";
 import { childrenRenderer } from "../internal/Children";
+import { Vector } from "../path";
 
 type PositionProviderValueProp = {
   // override the given position of the start element, optional
@@ -41,8 +42,8 @@ const PositionProvider = React.forwardRef(function PositionProvider(
   // console.log(HeadsManager.current.registered);
   // clone only the startPoint and endPoint, and not the whole value because of performance concerns
   let alteredVal = { ...val };
-  alteredVal.startPoint = cloneDeepNoFunction(val.startPoint);
-  alteredVal.endPoint = cloneDeepNoFunction(val.endPoint);
+  if (val.startPoint) alteredVal.startPoint = new Vector(val.startPoint);
+  if (val.endPoint) alteredVal.endPoint = new Vector(val.endPoint);
   Object.values(HeadsManager.current.registered).forEach((change) => {
     alteredVal = change(alteredVal);
   });
@@ -55,10 +56,13 @@ const PositionProvider = React.forwardRef(function PositionProvider(
     []
   );
 
+  const finalVal = { ...prevVal.value, ...alteredVal };
+  // console.log(finalVal);
+
   return (
     <PositionProviderContext.Provider
       value={{
-        value: { ...prevVal.value, ...alteredVal },
+        value: finalVal,
         prevVal,
         imperativeRef,
         __mounted: true,
@@ -87,14 +91,16 @@ type PositionProviderContextProps = {
 
 type PosPoint = IPoint | ((startPoint: IPoint) => PosPoint);
 export type PositionProviderVal = {
-  startPoint: IPoint;
-  endPoint: IPoint;
+  startPoint: Vector | undefined;
+  endPoint: Vector | undefined;
 };
 
 const PositionProviderContext = React.createContext<PositionProviderContextProps>({
   value: {
-    startPoint: { x: 0, y: 0 },
-    endPoint: { x: 0, y: 0 },
+    startPoint: undefined,
+    endPoint: undefined,
+    // startPoint: new Vector({ x: 0, y: 0 }),
+    // endPoint: new Vector({ x: 0, y: 0 }),
   },
   prevVal: undefined,
   imperativeRef: null,
@@ -107,7 +113,11 @@ export const usePositionProvider = () => {
   return val?.value;
 };
 
-export const usePositionProviderRegister = (func: (pos: PositionProviderVal) => PositionProviderVal, noWarn = false) => {
+export const usePositionProviderRegister = (
+  func: (pos: PositionProviderVal) => PositionProviderVal,
+  noWarn = false,
+  dependencies: any[] = []
+) => {
   const positionProvider = React.useContext(PositionProviderContext);
   const mounted = useEnsureContext(positionProvider, "PositionProvider", "usePositionProviderRegister", { noWarn });
   // const HeadId = useRef<number>(null as unknown as number); // the id would be received from the PositionProvider wrapper
@@ -119,6 +129,6 @@ export const usePositionProviderRegister = (func: (pos: PositionProviderVal) => 
   //     positionProvider.HeadsManager!.unregister(HeadId.current);
   //   };
   // }, []);
-  const HeadId = useRegisteredManager(positionProvider.HeadsManager, mounted, func);
+  const HeadId = useRegisteredManager(positionProvider.HeadsManager, mounted, func, dependencies);
   return HeadId;
 };

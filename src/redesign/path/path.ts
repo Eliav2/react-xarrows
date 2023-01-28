@@ -102,17 +102,28 @@ export const getBestPath = <S extends PossiblyDirectedVector, E extends Possibly
   const { zBreakPoint = 0.5 } = options;
   const startVector = new Vector(parsePossiblyDirectedVector(startPoint));
   const endVector = new Vector(parsePossiblyDirectedVector(endPoint));
+
+  const forwardDir = endVector.sub(startVector).dir();
+  const startDir = startVector.chooseDir(forwardDir);
+  if (startDir) startVector.trailingDir = [startDir];
+  const endDir = endVector.chooseDir(forwardDir);
+  if (endDir) endVector.trailingDir = [endDir];
+
   const zDir = startVector.canZTurnTo(endVector);
-  if (zDir)
+  if (zDir) {
+    // console.log("zDir", zDir);
+    // console.log(startDir);
     return {
-      points: zTurn(startVector, endVector, { dir: zDir.toCloserAxis(), breakPoint: zBreakPoint }),
+      points: zTurn(startVector, endVector, { dir: zDir.getCloserAxisName(), breakPoint: zBreakPoint }),
       // todo: fix types issues
-      startDir: zDir,
+      startDir: startDir,
       endDir: zDir,
     };
+  }
+  // console.log(startVector, endVector);
   const rDir = startVector.canRTurnTo(endVector);
   if (rDir) {
-    const points = rTurn(startVector, endVector, { dir: rDir[0].toCloserAxis() });
+    const points = rTurn(startVector, endVector, { dir: rDir[0].getCloserAxisName() });
     return {
       points,
       startDir: rDir[0],

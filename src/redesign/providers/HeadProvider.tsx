@@ -7,10 +7,12 @@ import { cloneDeepNoFunction } from "shared/utils";
 import { useEnsureContext } from "../internal/hooks";
 import usePassChildrenRef from "shared/hooks/usePassChildrenRef";
 import Children, { childrenRenderer } from "../internal/Children";
+import { Dir, Vector } from "../path";
+import produce from "immer";
 
 type HeadProviderVal = {
-  dir?: IDir;
-  pos?: IPoint;
+  dir?: Dir;
+  pos?: Vector;
   color?: string;
   rotate?: number;
   size?: number;
@@ -20,28 +22,39 @@ export interface HeadProviderProps {
   children: React.ReactNode;
   value: HeadProviderVal | ((prevVal: HeadProviderVal) => HeadProviderVal);
   // locationProvider?: React.RefObject<PositionProviderImperativeProps>; // can be used to offset the target location
-  // HeadsManager?: RegisteredManager<HeadProviderValChange> | null;
 }
 
 const HeadProvider = React.forwardRef(function HeadProvider({ children, value }: HeadProviderProps, forwardRef) {
-  const prevVal = React.useContext(HeadProviderContext);
-  // const { endPoint } = usePositionProvider();
-  const val = getLastValue(value, prevVal, "prevVal", (context) => context?.value);
+  const prevVal = useInternalHeadProvider();
+  const prevValWithDefault = prevVal.value;
+  let val = { ...getLastValue(value, prevVal, "prevVal", (context) => context?.value), ...prevValWithDefault };
+  if (val.pos) val.pos = new Vector(val.pos);
+  if (val.dir) val.dir = new Dir(val.dir);
 
-  const HeadsManager = useRef(new RegisteredManager<HeadProviderValChange>());
-  // clone only the startPoint and endPoint, and not the whole value because of performance concerns
-  let alteredVal = { ...val };
   // alteredVal.startPoint = cloneDeepNoFunction(val.startPoint);
   // alteredVal.endPoint = cloneDeepNoFunction(val.endPoint);
+  // const posProvider = usePositionProvider();
+  // console.log(posProvider);
   // console.log(val);
-  // todo: consider using immer instead of cloneDeepNoFunction
-  Object.values(HeadsManager.current.registered).forEach((change) => {
-    alteredVal = change(alteredVal);
+  // console.log(value.dir, val.dir);
+  // Object.values(HeadsManager.current.registered).forEach((change) => {
+  //   alteredVal = change(alteredVal as HeadProviderVal);
+  // });
+  const HeadsManager = useRef(new RegisteredManager<HeadProviderValChange>());
+  console.log(HeadsManager.current.registered);
+  // use immer to update the value with all registered functions
+  let alteredVal = { ...val };
+  alteredVal = produce(alteredVal, (draft) => {
+    Object.values(HeadsManager.current.registered).forEach((change) => {
+      // console.log("before change", alteredVal);
+      alteredVal = change(draft as HeadProviderVal);
+      // console.log("After change", alteredVal.dir);
+    });
   });
+
+  // console.log(alteredVal.dir.eq(value.dir));
+
   const finalVal = { ...prevVal.value, ...alteredVal };
-  // const childRef = usePassChildrenRef(children);
-  // console.log("HeadProvider", childRef, forwardRef);
-  // console.log("HeadProvider", children, React.isValidElement(children));
   return (
     <HeadProviderContext.Provider
       value={{
@@ -68,17 +81,26 @@ type HeadProviderContextProps = {
   __mounted: boolean;
   HeadsManager: RegisteredManager<HeadProviderValChange> | null;
 };
+
 const HeadProviderContext = React.createContext<HeadProviderContextProps>({
   value: {},
   prevVal: undefined,
   __mounted: false,
   HeadsManager: null,
 });
-export const useHeadProvider = () => {
+
+const useInternalHeadProvider = () => {
   const headProvider = React.useContext(HeadProviderContext);
   const posProvider = usePositionProvider();
-  // console.log("posProvider", posProvider);
-  headProvider.value.pos ??= posProvider.endPoint;
+  const headProviderCopy = produce(headProvider, (draftState) => {
+    draftState.value.pos ??= posProvider.endPoint;
+    if (posProvider.endPoint && posProvider.startPoint) draftState.value.dir ??= posProvider.endPoint.sub(posProvider.startPoint).dir();
+  });
+  return headProviderCopy;
+};
+
+export const useHeadProvider = () => {
+  const headProvider = useInternalHeadProvider();
   return headProvider?.value;
 };
 

@@ -125,13 +125,11 @@ const createPackageJson = (packageJson, esmBuildDir, cjsBuildDir, typesDir) => {
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  // plugins: [react()]
   build: {
     minify: false,
     outDir: "dist",
-    emptyOutDir: false,
     rollupOptions: {
-      external: ["react", "react-dom", "prop-types", "@types/prop-types"],
+      external: ["react", "react-dom", "prop-types", "@types/prop-types", "immer"],
       // output: { dir: "dist/lib/build" }
       output: [
         { dir: "dist/lib/build/esm", format: "esm" },
@@ -143,8 +141,6 @@ export default defineConfig({
       name: "react-xarrows",
       formats: ["cjs", "es"],
     },
-    // todo: to this only in prod mode
-    sourcemap: true,
   },
   plugins: [
     dts({ entryRoot: "src", outputDir: "dist/lib/types", tsConfigFilePath: "tsconfig.json" }),

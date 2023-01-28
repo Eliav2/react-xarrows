@@ -32,8 +32,10 @@ const PointsProviderContext = React.createContext<PointsProviderContextProps>({ 
 export const usePointsProvider = () => {
   let { startPoint, endPoint } = usePositionProvider();
   const pointsProvider = React.useContext(PointsProviderContext);
-  pointsProvider.points[0] ||= startPoint;
-  pointsProvider.points[1] ||= endPoint;
+  if (startPoint && endPoint) {
+    pointsProvider.points[0] ||= startPoint;
+    pointsProvider.points[1] ||= endPoint;
+  }
   // console.log("usePointsProvider", pointsProvider.points);
   return pointsProvider;
 };

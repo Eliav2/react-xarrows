@@ -17,7 +17,7 @@ const BestPath = React.forwardRef(function BestPath(props: BestPathProps, forwar
   const { children, pointToPath = pointsToCurves } = props;
   const { startPoint, endPoint } = usePositionProvider();
   const { points, endDir } = getBestPath(startPoint, endPoint);
-  // console.log(points);
+  // console.log(endDir);
   return (
     <PointsProvider value={{ points }}>
       <PathProvider value={{ pointsToPath: pointToPath }}>

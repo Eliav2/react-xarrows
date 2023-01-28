@@ -7,7 +7,7 @@
   "module": "src/index.ts",
   "scripts": {
     "build:nocheck": "vite build && tsc",
-    "build": "tsc -p tsconfig.check.json && vite build && tsc",
+    "build": "vite build",
     "build:watch": "vite build --config ./vite.config.watch.ts",
     "prepublishOnly": "pnpm run build"
   },
@@ -20,7 +20,8 @@
   "dependencies": {
     "@types/prop-types": "^15.7.3",
     "prop-types": "^15.7.2",
-    "react-fast-compare": "^3.2.0"
+    "react-fast-compare": "^3.2.0",
+    "immer": "^9.0.0"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0 || ^18.0.0 || >=18.0.0"

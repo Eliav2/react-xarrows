@@ -75,8 +75,8 @@ export const XArrow = React.forwardRef(function XArrow(props: XArrowProps, forwa
       height: 0,
     };
 
-  let startPoint = { x: 0, y: 0 };
-  let endPoint = { x: 0, y: 0 };
+  let startPoint: IPoint | undefined = undefined;
+  let endPoint: IPoint | undefined = undefined;
   if (rootPosition) {
     if (startPosition) {
       // offset by the root div position
@@ -107,6 +107,7 @@ export const XArrow = React.forwardRef(function XArrow(props: XArrowProps, forwa
 
   const startRect = startPosition && new Rectangle(startPosition);
   const endRect = endPosition && new Rectangle(endPosition);
+  console.log(endPoint);
 
   return (
     <div

@@ -7,9 +7,11 @@ export default defineConfig({
   ...defaultViteConfig,
   build: {
     ...(defaultViteConfig as any).build,
+    emptyOutDir: false,
     watch: {
       include: ["src/**/*"],
       clearScreen: false,
     },
+    sourcemap: true,
   },
 });

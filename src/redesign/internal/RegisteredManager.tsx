@@ -23,11 +23,16 @@ export class RegisteredManager<Func = () => void> {
   }
 
   //returns the id of the registered component.
-  register(render): number {
-    const id = this.getAvailableIndex();
-    this.missingIndexes.delete(id);
-    this.registered[id] = render;
-    this.countRegistered++;
+  register(render, id): number {
+    id ??= this.getAvailableIndex();
+    if (id in this.registered) {
+      // if id is already registered, update with the new render function.
+      this.registered[id] = render;
+    } else {
+      this.registered[id] = render;
+      this.missingIndexes.delete(id);
+      this.countRegistered++;
+    }
     return id;
   }
 
@@ -43,18 +48,23 @@ export class RegisteredManager<Func = () => void> {
  *  registers a function to a manager, and unregisters it when the component is unmounted.
  *  once a function is registered, it can be called by the parent component.
  */
-export const useRegisteredManager = <T extends any>(manager: RegisteredManager<T> | null, isProviderMounted: boolean, func) => {
+export const useRegisteredManager = <T extends any>(
+  manager: RegisteredManager<T> | null,
+  isProviderMounted: boolean,
+  func,
+  dependencies: any[] = []
+) => {
   const id = useRef<number>(null as unknown as number); // the id would be received from the Provider wrapper
   const reRender = useRerender();
   useLayoutEffect(() => {
     reRender(); // this is needed to make sure any function that is registered on first render will accessible.
     if (!isProviderMounted) return;
-    id.current = manager!.register(func);
+    id.current = manager!.register(func, id.current);
     return () => {
       if (!isProviderMounted) return;
       manager!.unregister(id.current);
     };
-  }, []);
+  }, dependencies);
   return id;
 };
 

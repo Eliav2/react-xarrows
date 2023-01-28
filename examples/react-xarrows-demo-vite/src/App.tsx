@@ -22,7 +22,6 @@ import {
   BestPath,
   HeadProvider,
 } from "react-xarrows";
-import BasicHead1 from "react-xarrows/components/BasicHead1";
 import { AutoAnchorWithHeadXArrow } from "./components/AutoAnchorWithHeadXArrow";
 import { BestPathGridXArrow } from "./components/BestPathGridXArrow";
 import SnakeXArrow from "./components/SnakeXArrow";
@@ -35,76 +34,6 @@ function App() {
     <div className="App">
       <DemoXWrapper />
       {/*<DemoXWrapper />*/}
-    </div>
-  );
-}
-
-export default App;
-
-const SimpleLineXArrow = (props: Omit<XArrowProps, "children">) => {
-  const { start, end } = props;
-  return (
-    <XArrow start={start} end={end}>
-      <XLine />
-    </XArrow>
-  );
-};
-
-// const AutoAnchorLeftXArrow = (props: Omit<XArrowProps, "children">) => {
-//   const { start, end } = props;
-//   return (
-//     <XArrow start={start} end={end}>
-//       <ProvideXContext>
-//         {(context) => {
-//           let { startRect, endRect } = context;
-//           if (!startRect || !endRect) return null;
-//           endRect = endRect.expand(headOffset);
-//           const { startPoint, endPoint } = autoSelectAnchor(startRect, endRect, { startAnchor, endAnchor });
-//           const { points, endDir } = getBestPath(startPoint, endPoint, { breakPoint });
-//           const v = pointsToCurves(points);
-//           return (
-//             <>
-//               <path d={v} stroke="white" strokeWidth={3} />
-//               <ArrowHead sharpness={arrowHeadSharpness} size={arrowHeadSize} pos={endPoint.add(endDir.mul(headOffset))} dir={endDir} />
-//             </>
-//           );
-//         }}
-//       </ProvideXContext>
-//     </XArrow>
-//   );
-// };
-
-const sayHello = () => {
-  console.log("hello");
-};
-
-const boxStyle = {
-  border: "solid",
-  borderRadius: 12,
-  padding: 8,
-  display: "flex",
-  flexDirection: "column",
-  justifyContent: "center",
-  alignItems: "center",
-  overflow: "hidden",
-} as const;
-
-function BasicDemo() {
-  const box1Ref = useRef(null);
-  const box2Ref = useRef(null);
-  return (
-    <div style={{ display: "flex", justifyContent: "space-evenly" }}>
-      <div ref={box1Ref} style={boxStyle}>
-        Box1
-      </div>
-      <div ref={box2Ref} style={boxStyle}>
-        Box2
-      </div>
-      <XArrow start={box1Ref} end={box2Ref}>
-        <XLine />
-
-        <XHead />
-      </XArrow>
     </div>
   );
 }
@@ -150,15 +79,15 @@ const DemoXWrapper = () => {
       <TestPassRef />
 
       <XArrow start={box1Ref} end={box2Ref}>
-        <AutoSelectAnchor>
-          <BestPath>
-            <XPath></XPath>
-            <XHead color={"red"} />
-            {/*<XLine>*/}
-            {/*  <XHead color={"red"} />*/}
-            {/*</XLine>*/}
-          </BestPath>
-        </AutoSelectAnchor>
+        {/*<AutoSelectAnchor startAnchor={"left"} endAnchor={"left"}>*/}
+        {/*<BestPath>*/}
+        <XHead color={"red"} />
+        <XPath />
+        {/*<XLine>*/}
+        {/*  <XHead color={"red"} />*/}
+        {/*</XLine>*/}
+        {/*</BestPath>*/}
+        {/*</AutoSelectAnchor>*/}
       </XArrow>
 
       {/*<Comp1>*/}
@@ -231,6 +160,76 @@ const DemoXWrapper = () => {
     </XWrapper>
   );
 };
+
+export default App;
+
+const SimpleLineXArrow = (props: Omit<XArrowProps, "children">) => {
+  const { start, end } = props;
+  return (
+    <XArrow start={start} end={end}>
+      <XLine />
+    </XArrow>
+  );
+};
+
+// const AutoAnchorLeftXArrow = (props: Omit<XArrowProps, "children">) => {
+//   const { start, end } = props;
+//   return (
+//     <XArrow start={start} end={end}>
+//       <ProvideXContext>
+//         {(context) => {
+//           let { startRect, endRect } = context;
+//           if (!startRect || !endRect) return null;
+//           endRect = endRect.expand(headOffset);
+//           const { startPoint, endPoint } = autoSelectAnchor(startRect, endRect, { startAnchor, endAnchor });
+//           const { points, endDir } = getBestPath(startPoint, endPoint, { breakPoint });
+//           const v = pointsToCurves(points);
+//           return (
+//             <>
+//               <path d={v} stroke="white" strokeWidth={3} />
+//               <ArrowHead sharpness={arrowHeadSharpness} size={arrowHeadSize} pos={endPoint.add(endDir.mul(headOffset))} dir={endDir} />
+//             </>
+//           );
+//         }}
+//       </ProvideXContext>
+//     </XArrow>
+//   );
+// };
+
+const sayHello = () => {
+  console.log("hello");
+};
+
+const boxStyle = {
+  border: "solid",
+  borderRadius: 12,
+  padding: 8,
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "center",
+  alignItems: "center",
+  overflow: "hidden",
+} as const;
+
+function BasicDemo() {
+  const box1Ref = useRef(null);
+  const box2Ref = useRef(null);
+  return (
+    <div style={{ display: "flex", justifyContent: "space-evenly" }}>
+      <div ref={box1Ref} style={boxStyle}>
+        Box1
+      </div>
+      <div ref={box2Ref} style={boxStyle}>
+        Box2
+      </div>
+      <XArrow start={box1Ref} end={box2Ref}>
+        <XLine />
+
+        <XHead />
+      </XArrow>
+    </div>
+  );
+}
 
 const MyArrows = () => {
   console.log("MyArrows render");
