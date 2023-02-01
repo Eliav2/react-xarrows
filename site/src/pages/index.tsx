@@ -85,9 +85,7 @@ function BasicDemo() {
       </div>
       <XArrow start={box1Ref} end={box2Ref}>
         {/*<XLine />*/}
-        <XLine>
-          <XHead color={"red"} />
-        </XLine>
+        <XLine>{/*<XHead color={"red"} />*/}</XLine>
       </XArrow>
     </div>
   );

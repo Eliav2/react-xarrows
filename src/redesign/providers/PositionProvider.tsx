@@ -1,11 +1,13 @@
 import React, { useImperativeHandle, useLayoutEffect, useRef } from "react";
 import { IPoint } from "../types";
-import { getLastValue } from "../utils";
+import { aggregateValues } from "../utils";
 import { useEnsureContext } from "../internal/hooks";
 import { RegisteredManager, useRegisteredManager } from "../internal/RegisteredManager";
 import { cloneDeepNoFunction } from "shared/utils";
 import { childrenRenderer } from "../internal/Children";
 import { Vector } from "../path";
+import produce from "immer";
+import { instanceOf } from "prop-types";
 
 type PositionProviderValueProp = {
   // override the given position of the start element, optional
@@ -16,7 +18,7 @@ type PositionProviderValueProp = {
 
 export interface PositionProviderProps {
   children: React.ReactNode;
-  value: PositionProviderValueProp | ((prevVal: PositionProviderValueProp) => PositionProviderValueProp);
+  value: PositionProviderValueProp | ((prevVal: PositionProviderVal) => PositionProviderVal);
   imperativeRef?: React.Ref<any>;
 }
 
@@ -33,37 +35,46 @@ const PositionProvider = React.forwardRef(function PositionProvider(
   { children, value = {}, imperativeRef }: PositionProviderProps,
   ref: React.ForwardedRef<any>
 ) {
-  // console.log("PositionProvider");
-  const prevVal = React.useContext(PositionProviderContext);
+  const prevContext = React.useContext(PositionProviderContext);
 
-  const val = getLastValue(value, prevVal, "prevVal", (context) => context?.value);
+  const val = aggregateValues(value, prevContext, "prevVal", (context) => context?.value);
 
   const HeadsManager = useRef(new RegisteredManager<PositionProviderValChange>());
-  // console.log(HeadsManager.current.registered);
   // clone only the startPoint and endPoint, and not the whole value because of performance concerns
-  let alteredVal = { ...val };
+  let alteredVal = { ...prevContext.value, ...val };
   if (val.startPoint) alteredVal.startPoint = new Vector(val.startPoint);
   if (val.endPoint) alteredVal.endPoint = new Vector(val.endPoint);
-  Object.values(HeadsManager.current.registered).forEach((change) => {
-    alteredVal = change(alteredVal);
+  // console.log(HeadsManager.current.registered);
+  // console.log("before change", val.endPoint?.y);
+
+  alteredVal = produce(alteredVal, (draft) => {
+    Object.values(HeadsManager.current.registered).forEach((change) => {
+      // console.log("!!!");
+      alteredVal = change(draft);
+    });
   });
+  // console.log(val, alteredVal);
+  // Object.values(HeadsManager.current.registered).forEach((change) => {
+  //   alteredVal = change(alteredVal);
+  // });
 
-  useImperativeHandle<any, PositionProviderImperativeProps>(
-    imperativeRef,
-    () => {
-      return { sayHello: () => console.log("hello") };
-    },
-    []
-  );
+  // useImperativeHandle<any, PositionProviderImperativeProps>(
+  //   imperativeRef,
+  //   () => {
+  //     return { sayHello: () => console.log("hello") };
+  //   },
+  //   []
+  // );
 
-  const finalVal = { ...prevVal.value, ...alteredVal };
+  const finalVal = alteredVal;
+  // console.log("after change", finalVal.endPoint?.y);
   // console.log(finalVal);
 
   return (
     <PositionProviderContext.Provider
       value={{
         value: finalVal,
-        prevVal,
+        prevVal: prevContext,
         imperativeRef,
         __mounted: true,
         HeadsManager: HeadsManager.current,

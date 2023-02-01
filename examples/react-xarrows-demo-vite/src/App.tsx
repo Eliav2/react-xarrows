@@ -8,12 +8,12 @@ import { ArrowHead } from "./components/ArrowHead";
 import {
   XArrow,
   XArrowProps,
-  autoSelectAnchor,
+  autoAnchor,
   Anchor,
   useXArrow,
   XWrapper,
   XLine,
-  AutoSelectAnchor,
+  AutoAnchor,
   PositionProvider,
   XHead,
   NormalizedGSvg,
@@ -76,31 +76,81 @@ const DemoXWrapper = () => {
 
       {/*<BasicDemo />*/}
 
-      <TestPassRef />
+      {/*<TestPassRef />*/}
+      {/*<PositionProvider value={{ a: 1, b: 2 }}>*/}
+      {/*  /!*  <PositionProvider value={{ b: 3 }}>*!/*/}
+      {/*  <PositionProvider*/}
+      {/*    value={(v) => {*/}
+      {/*      return { b: 10, c: 30 };*/}
+      {/*    }}*/}
+      {/*  >*/}
+      {/*    <PositionProvider value={{ c: 100 }}></PositionProvider>*/}
+      {/*  </PositionProvider>*/}
+      {/*  /!*</PositionProvider>*!/*/}
+      {/*</PositionProvider>*/}
 
       <XArrow start={box1Ref} end={box2Ref}>
-        {/*<AutoSelectAnchor startAnchor={"left"} endAnchor={"left"}>*/}
-        {/*<BestPath>*/}
-        <XHead color={"red"} />
-        <XPath />
-        {/*<XLine>*/}
-        {/*  <XHead color={"red"} />*/}
-        {/*</XLine>*/}
-        {/*</BestPath>*/}
-        {/*</AutoSelectAnchor>*/}
+        <AutoAnchor>
+          <BestPath>
+            <XHead color={"yellow"} />
+            <XPath color={"red"} />
+          </BestPath>
+        </AutoAnchor>
       </XArrow>
+      {/*<XArrow start={box1Ref} end={box2Ref}>*/}
+      {/*  <AutoAnchor>*/}
+      {/*    /!*<BestPath>*!/*/}
+      {/*    <XHead color={"purple"} />*/}
+      {/*    <XPath color={"yellow"} />*/}
+      {/*    /!*</BestPath>*!/*/}
+      {/*  </AutoAnchor>*/}
+      {/*</XArrow>*/}
+
+      {/*<XArrow start={box1Ref} end={box2Ref}>*/}
+      {/*  /!*<HeadProvider*!/*/}
+      {/*  /!*  value={(val) => {*!/*/}
+      {/*  /!*    if (val.pos) val.pos.y += 30;*!/*/}
+      {/*  /!*    return val;*!/*/}
+      {/*  /!*  }}*!/*/}
+      {/*  /!*>*!/*/}
+      {/*  /!*  <HeadProvider*!/*/}
+      {/*  /!*    value={(val) => {*!/*/}
+      {/*  /!*      if (val.pos) val.pos.x += 30;*!/*/}
+      {/*  /!*      return val;*!/*/}
+      {/*  /!*    }}*!/*/}
+      {/*  /!*  >*!/*/}
+      {/*  <XHead color={"blue"} />*/}
+
+      {/*  <XPath />*/}
+      {/*  /!*</HeadProvider>*!/*/}
+      {/*  /!*</HeadProvider>*!/*/}
+      {/*</XArrow>*/}
+
+      {/*<XArrow start={box1Ref} end={box2Ref}>*/}
+      {/*  <AutoAnchor startAnchor={"left"} endAnchor={"left"}>*/}
+      {/*    /!*<BestPath>*!/*/}
+      {/*    /!*<HeadProvider value={{ dir: { x: 1, y: 0 } }}>*!/*/}
+      {/*    <XHead color={"red"} />*/}
+      {/*    <XPath />*/}
+      {/*    /!*</HeadProvider>*!/*/}
+      {/*    /!*<XLine>*!/*/}
+      {/*    /!*  <XHead color={"red"} />*!/*/}
+      {/*    /!*</XLine>*!/*/}
+      {/*    /!*</BestPath>*!/*/}
+      {/*  </AutoAnchor>*/}
+      {/*</XArrow>*/}
 
       {/*<Comp1>*/}
       {/*  <Comp2/>*/}
       {/*</Comp1>*/}
 
-      {/*<AutoSelectAnchor>*/}
+      {/*<AutoAnchor>*/}
       {/*  <text fill={"red"} x="65" y="55" className="Rrrrr">*/}
       {/*    Grumpy!*/}
       {/*  </text>*/}
-      {/*</AutoSelectAnchor>*/}
+      {/*</AutoAnchor>*/}
 
-      {/*<AutoSelectAnchor>*/}
+      {/*<AutoAnchor>*/}
       {/*  <BestPath>*/}
       {/*todo: provide a way to use the selected anchor dir and offset endpoint*/}
       {/*todo: create a generic XProvider component*/}
@@ -109,9 +159,9 @@ const DemoXWrapper = () => {
       {/*<XPath />*/}
       {/*<XHead />*/}
       {/*</BestPath>*/}
-      {/*</AutoSelectAnchor>*/}
+      {/*</AutoAnchor>*/}
 
-      {/*<AutoSelectAnchor>*/}
+      {/*<AutoAnchor>*/}
       {/*  /!*<XLine stripEnd={22.5} color={"yellow"}>*!/*/}
       {/*  /!*  <XHead />*!/*/}
       {/*  /!*</XLine>*!/*/}
@@ -140,7 +190,7 @@ const DemoXWrapper = () => {
       {/*  /!*</PositionProvider>*!/*/}
 
       {/*  /!*<XHead />*!/*/}
-      {/*</AutoSelectAnchor>*/}
+      {/*</AutoAnchor>*/}
       {/*<svg*/}
       {/*  style={{*/}
       {/*    overflow: "visible",*/}
@@ -181,7 +231,7 @@ const SimpleLineXArrow = (props: Omit<XArrowProps, "children">) => {
 //           let { startRect, endRect } = context;
 //           if (!startRect || !endRect) return null;
 //           endRect = endRect.expand(headOffset);
-//           const { startPoint, endPoint } = autoSelectAnchor(startRect, endRect, { startAnchor, endAnchor });
+//           const { startPoint, endPoint } = autoAnchor(startRect, endRect, { startAnchor, endAnchor });
 //           const { points, endDir } = getBestPath(startPoint, endPoint, { breakPoint });
 //           const v = pointsToCurves(points);
 //           return (

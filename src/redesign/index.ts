@@ -10,8 +10,8 @@ export { default as XLine } from "./XLine";
 export * from "./XWrapper";
 export { default as XWrapper } from "./XWrapper";
 
-export * from "./AutoSelectAnchor";
-export { default as AutoSelectAnchor } from "./AutoSelectAnchor";
+export * from "./AutoAnchor";
+export { default as AutoAnchor } from "./AutoAnchor";
 
 export * from "./path";
 

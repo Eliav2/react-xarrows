@@ -4,9 +4,9 @@ import { OneOrMore } from "./types/typeUtils";
 import { getRelativeSizeValue } from "shared/utils";
 import { Direction, IRect, NamedDirection, parseIRect, parsePossiblyDirectedVector } from "./types/types";
 import { toArray } from "./utils";
-import { Vector } from "./path";
+import { Dir, Vector } from "./path";
 import React, { ForwardRefExoticComponent } from "react";
-import PositionProvider from "./providers/PositionProvider";
+import PositionProvider, { PositionProviderProps, PositionProviderVal } from "./providers/PositionProvider";
 import HeadProvider from "./providers/HeadProvider";
 import PointsProvider from "./providers/PointsProvider";
 import { childrenRenderer } from "./internal/Children";
@@ -116,7 +116,7 @@ function findBestPoint(
 //   //
 // }
 
-export const autoSelectAnchor = (
+export const autoAnchor = (
   startRect: IRect,
   endRect: IRect,
   {
@@ -138,37 +138,68 @@ export const autoSelectAnchor = (
   };
 };
 
-export type AutoSelectAnchorProps = {
+export type AutoAnchorProps = {
   children: React.ReactNode | ForwardRefExoticComponent<any>;
   startAnchor?: Anchor;
   endAnchor?: Anchor;
 };
 
-const AutoSelectAnchor = React.forwardRef(function AutoSelectAnchor(
-  { startAnchor = "auto", endAnchor = "auto", children }: AutoSelectAnchorProps,
+const AutoAnchor = React.forwardRef(function AutoAnchor(
+  { startAnchor = "auto", endAnchor = "auto", children }: AutoAnchorProps,
   ref: React.ForwardedRef<SVGElement>
 ) {
-  // console.log("AutoSelectAnchor");
+  // console.log("AutoAnchor");
   const context = useXArrow();
   let { startRect, endRect } = context;
   if (!startRect || !endRect) return null;
-  const v = autoSelectAnchor(startRect, endRect, { startAnchor, endAnchor });
+  const v = autoAnchor(startRect, endRect, { startAnchor, endAnchor });
   // const { points, endDir } = getBestPath(startPoint, endPoint, { zBreakPoint: breakPoint });
   // console.log(!!(children && React.isValidElement(children)));
   // const child = ;
   // console.log(child);
 
   // return (children && React.isValidElement(children) && React.cloneElement(children, { ref } as any)) || children;
+  // console.log(v.endPoint);
+
   return (
-    <PositionProvider value={v}>
-      <PointsProvider>
-        <HeadProvider value={{ pos: v.endPoint }}>
-          {/*{children}*/}
-          {/*{(children && ref && React.isValidElement(children) && React.cloneElement(children, { ref })) || children}*/}
-          {childrenRenderer(children, context, ref)}
-        </HeadProvider>
-      </PointsProvider>
-    </PositionProvider>
+    <AutoAnchorProvider value={v}>
+      <PositionProvider value={v}>
+        <PointsProvider>
+          <HeadProvider value={{ pos: v.endPoint, dir: v.endPoint?.sub(v.startPoint).dir() }}>
+            {/*{children}*/}
+            {/*{(children && ref && React.isValidElement(children) && React.cloneElement(children, { ref })) || children}*/}
+            {childrenRenderer(children, context, ref)}
+          </HeadProvider>
+        </PointsProvider>
+      </PositionProvider>
+    </AutoAnchorProvider>
   );
 });
-export default AutoSelectAnchor;
+export default AutoAnchor;
+
+interface AutoAnchorProviderProps {
+  children: React.ReactNode;
+  value: {
+    startPoint: Vector<Dir[]>;
+    endPoint: Vector<Dir[]>;
+    startAnchors: Required<AnchorCustom>[];
+    endAnchors: Required<AnchorCustom>[];
+  } | null;
+}
+
+const AutoAnchorProvider = React.forwardRef(function AutoAnchorProvider(
+  { children, value }: AutoAnchorProviderProps,
+  ref: React.ForwardedRef<any>
+) {
+  return <AutoAnchorProviderContext.Provider value={value}>{childrenRenderer(children, value, ref)}</AutoAnchorProviderContext.Provider>;
+});
+
+const AutoAnchorProviderContext = React.createContext<AutoAnchorProviderProps["value"] | null>(null);
+
+export const useAutoAnchorProvider = () => {
+  const context = React.useContext(AutoAnchorProviderContext);
+  if (context === undefined) {
+    throw new Error("useAutoAnchorProvider must be used within a AutoAnchor");
+  }
+  return context;
+};

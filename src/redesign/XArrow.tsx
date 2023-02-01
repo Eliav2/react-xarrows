@@ -5,7 +5,7 @@ import { useXWrapperRegister } from "./XWrapper";
 import { getElementByPropGiven } from "./utils";
 import { IPoint, isPoint, XElemRef } from "./types";
 import { useEnsureContext } from "./internal/hooks";
-import { pointsToCurves, Rectangle } from "./path";
+import { pointsToCurves, Rectangle, Vector } from "./path";
 import PositionProvider from "./providers/PositionProvider";
 import { usePassRef } from "shared/hooks/usePassChildrenRef";
 import PointsProvider from "./providers/PointsProvider";
@@ -105,9 +105,12 @@ export const XArrow = React.forwardRef(function XArrow(props: XArrowProps, forwa
     }
   }
 
+  const startVector = startPoint && new Vector(startPoint);
+  const endVector = endPoint && new Vector(endPoint);
+  const headDir = startVector && endVector?.sub(startVector).dir();
+
   const startRect = startPosition && new Rectangle(startPosition);
   const endRect = endPosition && new Rectangle(endPosition);
-  console.log(endPoint);
 
   return (
     <div
@@ -129,7 +132,16 @@ export const XArrow = React.forwardRef(function XArrow(props: XArrowProps, forwa
           <PositionProvider value={{ startPoint, endPoint }}>
             <PointsProvider>
               <PathProvider value={{ pointsToPath: pointsToCurves }}>
-                <HeadProvider value={{ color: "cornflowerblue", rotate: 0, size: 30 }}>{props.children}</HeadProvider>
+                <HeadProvider
+                  value={
+                    // (val) => {
+                    //   return { color: "cornflowerblue", rotate: 0, size: 30 };
+                    // }
+                    { color: "cornflowerblue", rotate: 0, size: 30, pos: endPoint, dir: headDir }
+                  }
+                >
+                  {props.children}
+                </HeadProvider>
               </PathProvider>
             </PointsProvider>
           </PositionProvider>

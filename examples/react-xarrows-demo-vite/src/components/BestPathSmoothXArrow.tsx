@@ -1,6 +1,6 @@
 import React from "react";
 import { ArrowHead } from "./ArrowHead";
-import { autoSelectAnchor } from "react-xarrows/AutoSelectAnchor";
+import { autoAnchor } from "react-xarrows/AutoAnchor";
 import { XArrow, ProvideXArrow, getBestPath, pointsToCurves, useXArrow, Vector } from "react-xarrows";
 import type { Anchor, XArrowProps } from "react-xarrows";
 
@@ -19,7 +19,7 @@ const SmoothPathWithHead = (props: SmoothPathProps) => {
   let { startRect, endRect } = context;
   if (!startRect || !endRect) return null;
   endRect = endRect.expand(headOffset); // expand the endRect to make room for the arrow head
-  const { startPoint, endPoint } = autoSelectAnchor(startRect, endRect, { startAnchor, endAnchor });
+  const { startPoint, endPoint } = autoAnchor(startRect, endRect, { startAnchor, endAnchor });
   const { points, endDir } = getBestPath(startPoint, endPoint, { zBreakPoint: breakPoint });
   const v = pointsToCurves(points);
   return (
@@ -44,11 +44,11 @@ export const BestPathSmoothXArrow = (props: BestPathSmoothXArrowProps) => {
 //   const { start, end, ...smoothPathProps } = props;
 //   return (
 //     <XArrow start={start} end={end}>
-//       <AutoSelectAnchor>
+//       <AutoAnchor>
 //          <BestPath>
 //            <SmoothPathWithHead {...smoothPathProps} />
 //          </BestPath>
-//       </AutoSelectAnchor>
+//       </AutoAnchor>
 //     </XArrow>
 //   );
 // };

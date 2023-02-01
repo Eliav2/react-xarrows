@@ -52,6 +52,7 @@ export const XLine = React.forwardRef((props: XLineProps, ref: React.ForwardedRe
       y1 = l.root.y;
     }
   }
+  if (!endPoint || !startPoint) return null;
   return (
     <>
       <Component

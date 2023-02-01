@@ -2,12 +2,12 @@ import React, { forwardRef, useRef } from "react";
 import {
   XArrow,
   XArrowProps,
-  autoSelectAnchor,
+  autoAnchor,
   Anchor,
   useXArrow,
   XWrapper,
   XLine,
-  AutoSelectAnchor,
+  AutoAnchor,
   PositionProvider,
   XHead,
   NormalizedGSvg,
@@ -53,12 +53,12 @@ const TestPassRef = () => {
       <Box ref={box2Ref}>box2</Box>
 
       <Comp>
-        <AutoSelectAnchor>
+        <AutoAnchor>
           {/*{<ChildComp />}*/}
           {/*{<ChildComp />}*/}
           {/*{ChildComp}*/}
           {ChildComp}
-        </AutoSelectAnchor>
+        </AutoAnchor>
       </Comp>
     </XArrow>
   );

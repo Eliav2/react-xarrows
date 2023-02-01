@@ -1,6 +1,5 @@
 import React from "react";
 import { ProvideXArrow, XArrow, XArrowProps } from "react-xarrows/XArrow";
-import { autoSelectAnchor } from "react-xarrows/AutoSelectAnchor";
 import { Dir } from "react-xarrows/path";
 import XLine from "react-xarrows/XLine";
 import { ArrowHead } from "./ArrowHead";
@@ -22,7 +21,7 @@ export const AutoAnchorWithHeadXArrow = (props: AutoAnchorWithHeadXArrowProps) =
           const {
             startPoint: { x: x1, y: y1 },
             endPoint: { x: x2, y: y2 },
-          } = autoSelectAnchor(startRect, endRect);
+          } = autoAnchor(startRect, endRect);
           const dir = new Dir(x2 - x1, y2 - y1);
           return (
             <>

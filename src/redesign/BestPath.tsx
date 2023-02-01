@@ -5,6 +5,7 @@ import { usePositionProvider } from "./providers/PositionProvider";
 import PointsProvider from "./providers/PointsProvider";
 import PathProvider from "./providers/PathProvider";
 import HeadProvider from "./providers/HeadProvider";
+import { childrenRenderer } from "./internal/Children";
 
 export type BestPathProps = {
   children?: React.ReactNode;
@@ -21,8 +22,9 @@ const BestPath = React.forwardRef(function BestPath(props: BestPathProps, forwar
   return (
     <PointsProvider value={{ points }}>
       <PathProvider value={{ pointsToPath: pointToPath }}>
-        <HeadProvider value={{ dir: endDir, pos: endPoint }}>
-          {(children && React.isValidElement(children) && React.cloneElement(children, { ref: forwardedRef } as any)) || children}
+        <HeadProvider value={{ dir: endDir }}>
+          {/*{(children && React.isValidElement(children) && React.cloneElement(children, { ref: forwardedRef } as any)) || children}*/}
+          {childrenRenderer(children, { points, endDir }, forwardedRef)}
         </HeadProvider>
       </PathProvider>
     </PointsProvider>

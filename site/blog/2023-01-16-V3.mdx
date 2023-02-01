@@ -71,14 +71,15 @@ notice that single component is responsible to create the arrow body, the head, 
 in v3, you would need to create an `Head` component, and pass it the color you want to use.
 ```js
 <XArrow
-  start="a"
-  end="b"
+  start={aRef}
+  end={bRef}
 >
-  <Head color="red" size={10} />
+  <XLine />
+  <Head/>
 </XArrow>
 ```
 
-import { XArrow, useXArrow, autoSelectAnchor, XHead, NormalizedGSvg,XLine } from "react-xarrows"
+import { XArrow, useXArrow, autoAnchor, XHead, NormalizedGSvg,XLine,AutoSelectAnchor } from "react-xarrows"
 
 export const Head = ({ color, size }) => {
   const context = useXArrow();
@@ -87,7 +88,7 @@ export const Head = ({ color, size }) => {
   const {
     startPoint: { x: x1, y: y1 },
     endPoint: { x: x2, y: y2 },
-  } = autoSelectAnchor(startRect, endRect);
+  } = autoAnchor(startRect, endRect);
   return (
     <XHead pos={{ x: x2, y: y2 }} dir={{ x1: x2 - x1, y: y2 - y1 }} size={size}>
       <NormalizedGSvg>
@@ -108,8 +109,10 @@ export const ExampleV3 = () => {
         start={aRef}
         end={bRef}
       >
-        <XLine {...{ x1, y1, x2, y2 }}/>
-        <Head color="red" size={100} />
+      <AutoSelectAnchor>
+        <XLine />
+        <XHead/>
+        </AutoSelectAnchor>
       </XArrow>
     </div>
   )

@@ -18,6 +18,7 @@ export const childrenRenderer = <C extends React.ReactNode = React.ReactNode, Pr
   }
   // handle forwardRef components
   if (isReactForwardRef(children)) {
+    // @ts-ignore
     return children.render(props, ref);
   }
 

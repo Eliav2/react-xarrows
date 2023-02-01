@@ -1,5 +1,8 @@
 // export const cAnchorEdge = ["middle", "left", "right", "top", "bottom", "auto"] as const;
 import { IPoint, isPoint, RemoveFunctions, XElemRef } from "./types";
+import produce from "immer";
+import { cloneDeepNoFunction } from "shared/utils";
+import { AnyObj } from "shared/types";
 
 export const getElementByPropGiven = (ref: XElemRef): HTMLElement | null | IPoint => {
   if (typeof ref === "string") {
@@ -28,6 +31,9 @@ export const evalIfFunc = <C extends { [key in Key]: any } & { [key: string]: an
   const val = getVal(context);
   if (typeof val === "function") {
     const res = evalIfFunc(context[prevContextKey], prevContextKey, val as any);
+    // return produce(res, (draft) => {
+    //   return val(draft);
+    // }) as any;
     return val(res);
   }
 
@@ -38,24 +44,55 @@ export const evalIfFunc = <C extends { [key in Key]: any } & { [key: string]: an
 /**
  * this utility function is used to get the accumulated value of the given value from the upper contexts in the tree
  */
-export const getLastValue = <
-  CurVal,
+export const aggregateValues = <
+  AggVal,
   CFields extends string,
   C extends ({ [key in CFields]: any } & { [key: string]: any }) | null,
   Key extends CFields,
-  V extends any
+  V extends AnyObj
 >(
-  curVal: CurVal,
+  aggVal: AggVal = {} as any,
   context: C,
   prevContextKey: Key, // the key name of the field in the context that points to the previous context
   getVal: (context: C) => V
 ): RemoveFunctions<V> => {
-  let finalVal = curVal;
+  const val = getVal(context);
+  let prevVal = {};
   if (context) {
-    if (typeof curVal === "function" || typeof curVal === "undefined") {
-      const accCurPoint = evalIfFunc(context, prevContextKey, getVal);
-      finalVal = curVal ? curVal(accCurPoint) : accCurPoint;
-    }
+    prevVal = aggregateValues(val, context[prevContextKey], prevContextKey, getVal);
   }
-  return finalVal as any;
+  if (typeof aggVal === "function") {
+    aggVal = aggVal(prevVal);
+  }
+  return { ...prevVal, ...aggVal } as any;
 };
+
+// /**
+//  * this utility function is used to get the accumulated value of the given value from the upper contexts in the tree
+//  */
+// export const aggregateValues = <
+//   CFields extends string,
+//   C extends ({ [key in CFields]: any } & { [key: string]: any }) | null,
+//   Key extends CFields,
+//   V extends AnyObj
+// >(
+//   aggVal: AnyObj = {},
+//   context: C,
+//   prevContextKey: Key, // the key name of the field in the context that points to the previous context
+//   getVal: (context: C) => V
+// ): RemoveFunctions<V> => {
+//   let finalVal = aggVal;
+//   if (context) {
+//     if (typeof aggVal === "function" || typeof aggVal === "undefined") {
+//       const accCurPoint = evalIfFunc(context, prevContextKey, getVal);
+//       finalVal = aggVal ? aggVal(cloneDeepNoFunction(accCurPoint)) : accCurPoint;
+//       // finalVal = curVal ? curVal((accCurPoint)) : accCurPoint;
+//       // finalVal = curVal
+//       //   ? (produce(accCurPoint, (draft) => {
+//       //       curVal(draft);
+//       //     }) as any)
+//       //   : accCurPoint;
+//     }
+//   }
+//   return finalVal as any;
+// };

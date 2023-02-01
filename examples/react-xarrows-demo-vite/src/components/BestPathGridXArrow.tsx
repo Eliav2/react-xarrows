@@ -1,6 +1,6 @@
 import React from "react";
 import { ArrowHead } from "./ArrowHead";
-import { autoSelectAnchor } from "react-xarrows/useAutoSelectAnchor";
+import { autoAnchor } from "react-xarrows/useAutoSelectAnchor";
 import { XArrow, ProvideXContext, getBestPath, pointsToCurves, useXContext, Vector, pointsToLines } from "react-xarrows";
 import type { Anchor, XArrowProps } from "react-xarrows";
 
@@ -19,7 +19,7 @@ const GridPathWithHead = (props: GridPathProps) => {
   let { startRect, endRect } = context;
   if (!startRect || !endRect) return null;
   endRect = endRect.expand(headOffset); // expand the endRect to make room for the arrow head
-  const { startPoint, endPoint } = autoSelectAnchor(startRect, endRect, { startAnchor, endAnchor });
+  const { startPoint, endPoint } = autoAnchor(startRect, endRect, { startAnchor, endAnchor });
   const { points, endDir } = getBestPath(startPoint, endPoint, { breakPoint });
   const v = pointsToLines(points);
   return (

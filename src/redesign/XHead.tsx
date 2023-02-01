@@ -32,10 +32,10 @@ export interface XHeadProps {
 }
 
 const XHead = React.forwardRef<SVGGElement, XHeadProps>(function XHead(props, forwardRef) {
-  // console.log("XHead render");
+  // console.log("XHead");
   const headProvider = useHeadProvider();
   // const { endPoint } = usePositionProvider();
-  let { children, ...propsNoChildren } = props;
+  let { children = DefaultChildren, ...propsNoChildren } = props;
   const propsWithDefault = Object.assign(
     {
       pos: new Vector(headProvider?.pos ?? { x: 0, y: 0 }),
@@ -48,28 +48,8 @@ const XHead = React.forwardRef<SVGGElement, XHeadProps>(function XHead(props, fo
     },
     propsNoChildren
   );
+  propsWithDefault.dir = new Dir(propsWithDefault.dir);
   const { dir, pos, rotate, color, size, containerRef } = propsWithDefault;
-
-  // console.log("XHead", headProvider?.dir);
-  // let children = <DefaultChildren />;
-  children ??= childrenRenderer(DefaultChildren, propsWithDefault, forwardRef);
-
-  // const
-
-  // console.log(dir);
-
-  // useEffect(() => {
-  //   console.log("XHead useEffect");
-  //   return () => console.log("XHead useEffect clean");
-  // }, []);
-  // console.log(_dir);
-
-  // const dir = pos._chosenFaceDir;
-  // const endEdgeRef = useRef();
-  // let edgeBbox = useGetBBox(endEdgeRef, deps);
-  // let offset = dir.reverse().mul((edgeBbox?.width ?? 0) * svgElem.offsetForward);
-  // props.state[`${vName}Offset`] = offset;
-  // if (!show) offset = offset.mul(0);
 
   // the reason there are 3 nested g elements is to allow the user to override props of the inner children svg element
 
@@ -91,7 +71,7 @@ const XHead = React.forwardRef<SVGGElement, XHeadProps>(function XHead(props, fo
             pointerEvents: "auto",
           }}
         >
-          {children}
+          {childrenRenderer(DefaultChildren, propsWithDefault, forwardRef)}
         </g>
       </g>
     </g>
@@ -113,44 +93,19 @@ interface DefaultChildrenProps extends RemoveChildren<Required<XHeadProps>> {
 }
 
 const DefaultChildren = (props: DefaultChildrenProps) => {
-  // console.log("DefaultChildren render", props);
-  const offSet = props.size * 0.75;
-  // const _props = { ...props };
-  // console.log(props.dir.mul(offSet));
-  // const dir = { ...props.dir };
-  // console.log("render", dir);
-  // const myVal = 10;
-  // console.log("myVal", myVal);
-  // const { dir } = useHeadProvider();
-  useHeadProviderRegister((val) => {
-    if (val.dir) val.pos = val.pos?.add(val.dir?.mul(offSet));
-    return val;
-    // const newPos = { ...pos, endPoint: { x: pos.endPoint.x, y: pos.endPoint.y - 30 } };
-    // return newPos;
-  });
-
-  // console.log(offSet);
-
+  const offSet = props.size * 0.75; // this shape of arrow head has 25% of its size as a tail
   usePositionProviderRegister(
     (pos) => {
-      // console.log(props.dir);
-      // console.log(offSet);
-
       if (pos.endPoint) pos.endPoint = new Vector(pos.endPoint.sub(props.dir.mul(offSet)));
-      // console.log(pos.endPoint, pos.endPoint.add(30));
       return pos;
-      // const newPos = { ...pos, endPoint: { x: pos.endPoint.x, y: pos.endPoint.y - 30 } };
-      // return newPos;
     },
     false,
     [props.dir.x, props.dir.y]
   );
+  // useHeadProviderRegister((head) => {
+  //   head.pos = new Vector(head.pos.sub(props.dir.mul(offSet)));
+  //   return head;
+  // });
 
   return <BasicHeadShape1 />;
-};
-
-export const getXHeadSize = (ref: React.RefObject<any>) => {
-  // const bbox = useGetBBox(ref);
-  // console.log(bbox);
-  return getBBox(ref.current);
 };
