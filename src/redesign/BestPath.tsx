@@ -17,6 +17,7 @@ export type BestPathProps = {
 const BestPath = React.forwardRef(function BestPath(props: BestPathProps, forwardedRef) {
   const { children, pointToPath = pointsToCurves } = props;
   const { startPoint, endPoint } = usePositionProvider();
+  if (!startPoint || !endPoint) return null;
   const { points, endDir } = getBestPath(startPoint, endPoint);
   // console.log(endDir);
   return (

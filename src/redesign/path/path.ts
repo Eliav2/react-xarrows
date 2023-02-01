@@ -106,7 +106,7 @@ export const getBestPath = <S extends PossiblyDirectedVector, E extends Possibly
   const forwardDir = endVector.sub(startVector).dir();
   const startDir = startVector.chooseDir(forwardDir);
   if (startDir) startVector.trailingDir = [startDir];
-  const endDir = endVector.chooseDir(forwardDir);
+  let endDir = endVector.chooseDir(forwardDir);
   if (endDir) endVector.trailingDir = [endDir];
 
   const zDir = startVector.canZTurnTo(endVector);
@@ -133,7 +133,7 @@ export const getBestPath = <S extends PossiblyDirectedVector, E extends Possibly
   // if no turn is possible, return a straight line
   return {
     points: [startVector, endVector],
-    startDir: startVector.trailingDir?.[0],
-    endDir: endVector.trailingDir?.[0],
+    startDir: startVector.trailingDir?.[0] ?? forwardDir,
+    endDir: endVector.trailingDir?.[0] ?? forwardDir,
   };
 };

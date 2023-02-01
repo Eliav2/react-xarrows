@@ -90,12 +90,12 @@ const DemoXWrapper = () => {
       {/*</PositionProvider>*/}
 
       <XArrow start={box1Ref} end={box2Ref}>
-        <AutoAnchor>
-          <BestPath>
-            <XHead color={"yellow"} />
-            <XPath color={"red"} />
-          </BestPath>
-        </AutoAnchor>
+        <BestPath>
+          {/*<AutoAnchor>*/}
+          <XHead color={"yellow"} />
+          <XPath color={"red"} />
+          {/*</AutoAnchor>*/}
+        </BestPath>
       </XArrow>
       {/*<XArrow start={box1Ref} end={box2Ref}>*/}
       {/*  <AutoAnchor>*/}
