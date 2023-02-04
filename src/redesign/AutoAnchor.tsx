@@ -1,7 +1,7 @@
 import { useXArrow } from "./XArrow";
-import { RelativeSize } from "shared/types";
+import { makeWriteable, RelativeSize, Writeable } from "shared/types";
 import { OneOrMore } from "./types/typeUtils";
-import { getRelativeSizeValue } from "shared/utils";
+import { cloneDeepNoFunction, getRelativeSizeValue } from "shared/utils";
 import { Direction, IRect, NamedDirection, parseIRect, parsePossiblyDirectedVector } from "./types/types";
 import { toArray } from "./utils";
 import { Dir, Vector } from "./path";
@@ -11,29 +11,29 @@ import HeadProvider from "./providers/HeadProvider";
 import PointsProvider from "./providers/PointsProvider";
 import { childrenRenderer } from "./internal/Children";
 
-const xDirs = [
+export const xDirs = [
   { x: 1, y: 0 },
   { x: -1, y: 0 },
-];
-const yDirs = [
+] as const;
+export const yDirs = [
   { x: 0, y: 1 },
   { x: 0, y: -1 },
-];
-const xyDirs = [...xDirs, ...yDirs];
+] as const;
+export const xyDirs = [...xDirs, ...yDirs] as const;
 
 const cStartAnchorsMap: { [key in AnchorName]: AnchorCustom } = {
-  middle: { x: "50%", y: "50%", trailingDir: xyDirs },
-  left: { x: "0%", y: "50%", trailingDir: xDirs },
-  right: { x: "100%", y: "50%", trailingDir: xDirs },
-  top: { x: "50%", y: "0%", trailingDir: yDirs },
-  bottom: { x: "50%", y: "100%", trailingDir: yDirs },
+  middle: { x: "50%", y: "50%", trailingDir: makeWriteable(xyDirs) },
+  left: { x: "0%", y: "50%", trailingDir: makeWriteable(xDirs) },
+  right: { x: "100%", y: "50%", trailingDir: makeWriteable(xDirs) },
+  top: { x: "50%", y: "0%", trailingDir: makeWriteable(yDirs) },
+  bottom: { x: "50%", y: "100%", trailingDir: makeWriteable(yDirs) },
 };
 const cEndAnchorsMap: { [key in AnchorName]: AnchorCustom } = {
-  middle: { x: "50%", y: "50%", trailingDir: xyDirs },
-  left: { x: "0%", y: "50%", trailingDir: xDirs },
-  right: { x: "100%", y: "50%", trailingDir: xDirs },
-  top: { x: "50%", y: "0%", trailingDir: yDirs },
-  bottom: { x: "50%", y: "100%", trailingDir: yDirs },
+  middle: { x: "50%", y: "50%", trailingDir: makeWriteable(xyDirs) },
+  left: { x: "0%", y: "50%", trailingDir: makeWriteable(xDirs) },
+  right: { x: "100%", y: "50%", trailingDir: makeWriteable(xDirs) },
+  top: { x: "50%", y: "0%", trailingDir: makeWriteable(yDirs) },
+  bottom: { x: "50%", y: "100%", trailingDir: makeWriteable(yDirs) },
 };
 
 export type AnchorName = "middle" | NamedDirection;

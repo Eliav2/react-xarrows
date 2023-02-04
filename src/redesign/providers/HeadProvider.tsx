@@ -115,6 +115,7 @@ export const useHeadProvider = () => {
 export const useHeadProviderRegister = (func: HeadProviderValChangePrepared, noWarn = false) => {
   const headProvider = React.useContext(HeadProviderContext);
   const mounted = useEnsureContext(headProvider, "HeadProvider", "useHeadProviderRegister", { noWarn });
-  const HeadId = useRegisteredManager(headProvider.HeadsManager, mounted, func);
+  // const HeadId = useRegisteredManager(headProvider.HeadsManager, mounted, func);
+  const HeadId = useRegisteredManager(headProvider.HeadsManager, func);
   return HeadId;
 };

@@ -96,11 +96,11 @@ const DefaultChildren = (props: DefaultChildrenProps) => {
   const offSet = props.size * 0.75; // this shape of arrow head has 25% of its size as a tail
   usePositionProviderRegister(
     (pos) => {
-      if (pos.endPoint) pos.endPoint = new Vector(pos.endPoint.sub(props.dir.mul(offSet)));
+      // if (pos.endPoint) pos.endPoint = new Vector(pos.endPoint.sub(props.dir.mul(offSet)));
       return pos;
     },
     false,
-    [props.dir.x, props.dir.y]
+    [props.dir.x, props.dir.y, props.size]
   );
   // useHeadProviderRegister((head) => {
   //   head.pos = new Vector(head.pos.sub(props.dir.mul(offSet)));

@@ -60,7 +60,7 @@ const DemoXWrapper = () => {
         style={{
           display: "flex",
           justifyContent: "space-around",
-          flexDirection: "column",
+          // flexDirection: "column",
           height: 400,
           alignItems: "center",
         }}
@@ -90,12 +90,22 @@ const DemoXWrapper = () => {
       {/*</PositionProvider>*/}
 
       <XArrow start={box1Ref} end={box2Ref}>
-        <BestPath>
-          {/*<AutoAnchor>*/}
-          <XHead color={"yellow"} />
-          <XPath color={"red"} />
-          {/*</AutoAnchor>*/}
-        </BestPath>
+        {/*<XLine color={"red"} />*/}
+
+        <PositionProvider
+          value={(pos) => {
+            // if (pos.startPoint) pos.startPoint.trailingDir = { x: 1, y: 0 };
+            return pos;
+          }}
+        >
+          <AutoAnchor startAnchor={"right"} endAnchor={"middle"}>
+            <BestPath>
+              <XHead color={"yellow"} size={50} />
+              <XPath color={"red"} />
+              {/*<XLine />*/}
+            </BestPath>
+          </AutoAnchor>
+        </PositionProvider>
       </XArrow>
       {/*<XArrow start={box1Ref} end={box2Ref}>*/}
       {/*  <AutoAnchor>*/}

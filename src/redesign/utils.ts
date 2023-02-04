@@ -66,33 +66,3 @@ export const aggregateValues = <
   }
   return { ...prevVal, ...aggVal } as any;
 };
-
-// /**
-//  * this utility function is used to get the accumulated value of the given value from the upper contexts in the tree
-//  */
-// export const aggregateValues = <
-//   CFields extends string,
-//   C extends ({ [key in CFields]: any } & { [key: string]: any }) | null,
-//   Key extends CFields,
-//   V extends AnyObj
-// >(
-//   aggVal: AnyObj = {},
-//   context: C,
-//   prevContextKey: Key, // the key name of the field in the context that points to the previous context
-//   getVal: (context: C) => V
-// ): RemoveFunctions<V> => {
-//   let finalVal = aggVal;
-//   if (context) {
-//     if (typeof aggVal === "function" || typeof aggVal === "undefined") {
-//       const accCurPoint = evalIfFunc(context, prevContextKey, getVal);
-//       finalVal = aggVal ? aggVal(cloneDeepNoFunction(accCurPoint)) : accCurPoint;
-//       // finalVal = curVal ? curVal((accCurPoint)) : accCurPoint;
-//       // finalVal = curVal
-//       //   ? (produce(accCurPoint, (draft) => {
-//       //       curVal(draft);
-//       //     }) as any)
-//       //   : accCurPoint;
-//     }
-//   }
-//   return finalVal as any;
-// };

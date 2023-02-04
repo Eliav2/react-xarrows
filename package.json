@@ -9,7 +9,8 @@
     "build:nocheck": "vite build && tsc",
     "build": "vite build",
     "build:watch": "vite build --config ./vite.config.watch.ts",
-    "prepublishOnly": "pnpm run build"
+    "prepublishOnly": "pnpm run build",
+    "test": "vitest"
   },
   "homepage": "https://eliav2.github.io/react-xarrows/",
   "repository": {
@@ -19,9 +20,9 @@
   "bugs": "https://github.com/Eliav2/react-xarrows/issues",
   "dependencies": {
     "@types/prop-types": "^15.7.3",
+    "immer": "^9.0.0",
     "prop-types": "^15.7.2",
-    "react-fast-compare": "^3.2.0",
-    "immer": "^9.0.0"
+    "react-fast-compare": "^3.2.0"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0 || ^18.0.0 || >=18.0.0"
@@ -37,7 +38,8 @@
     "vite": "^3.2.3",
     "vite-plugin-dts": "^1.7.1",
     "vite-plugin-generate-file": "^0.0.3",
-    "vite-plugin-static-copy": "^0.13.0"
+    "vite-plugin-static-copy": "^0.13.0",
+    "vitest": "^0.28.3"
   },
   "funding": {
     "type": "individual",

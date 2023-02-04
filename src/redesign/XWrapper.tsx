@@ -58,6 +58,7 @@ interface XWrapperProps {
 export const useXWrapperRegister = (render, noWarn = false) => {
   const xWrapperContext = useXWrapperContext({ noWarn });
   const mounted = useEnsureContext(xWrapperContext, "XWrapper", "useXWrapperRegister", { noWarn });
-  const XArrowId = useRegisteredManager(xWrapperContext.xWrapperXArrowsManager!, mounted, render);
+  // const XArrowId = useRegisteredManager(xWrapperContext.xWrapperXArrowsManager!, mounted, render);
+  const XArrowId = useRegisteredManager(xWrapperContext.xWrapperXArrowsManager, render);
   return XArrowId;
 };

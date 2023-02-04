@@ -53,6 +53,8 @@ const PositionProvider = React.forwardRef(function PositionProvider(
       alteredVal = change(draft);
     });
   });
+
+  // console.log("after change", HeadsManager.current.registered, alteredVal.endPoint?.x);
   // console.log(val, alteredVal);
   // Object.values(HeadsManager.current.registered).forEach((change) => {
   //   alteredVal = change(alteredVal);
@@ -140,6 +142,7 @@ export const usePositionProviderRegister = (
   //     positionProvider.HeadsManager!.unregister(HeadId.current);
   //   };
   // }, []);
-  const HeadId = useRegisteredManager(positionProvider.HeadsManager, mounted, func, dependencies);
+  // const HeadId = useRegisteredManager(positionProvider.HeadsManager, mounted, func, dependencies);
+  const HeadId = useRegisteredManager(positionProvider.HeadsManager, func, dependencies);
   return HeadId;
 };

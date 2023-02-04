@@ -38,7 +38,7 @@ export const XLine = React.forwardRef((props: XLineProps, ref: React.ForwardedRe
     x2 = endPoint.x;
     y2 = endPoint.y;
   }
-  console.log({ startPoint, endPoint });
+  // console.log({ startPoint, endPoint });
   if (props.stripEnd || props.stripStart) {
     let l = new Line(new Vector(Number(x1), Number(y1)), new Vector(Number(x2), Number(y2)));
     if (props.stripEnd) {

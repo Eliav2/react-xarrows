@@ -2,8 +2,9 @@
 import { Contains, IVector, OneOrMore, parseDirection, PossiblyDirectedVector } from "../types";
 import { toArray } from "../utils";
 import { deg2Rad, eq, math_operators, operatorFunc, round } from "./mathUtils";
+import { DirArr } from "./vectorArr";
 
-type TrailingDir = Dir[] | undefined;
+export type TrailingDir = Dir[] | undefined;
 
 class _Vector<T extends TrailingDir> {
   // _tmp: T;
@@ -14,6 +15,7 @@ class _Vector<T extends TrailingDir> {
 
   // vector going outside from the end of this vector must be in a direction in this list
   trailingDir!: T;
+  // trailingDir!: DirArr;
 
   // trailingDir: withDir extends true ? Dir[] : undefined;
 
@@ -57,20 +59,20 @@ class _Vector<T extends TrailingDir> {
     return !eq(p.x, this.x) || !eq(p.y, this.y);
   }
 
-  add<T extends Vector>(this: T, p: IVector | number, self = false): T {
+  add<T extends Vector>(this: T, p: IVector | number, self = false): Vector {
     return operatorFunc(this, p, math_operators.add, self) as any;
   }
 
-  sub<T extends Vector>(this: T, p: IVector | number, self = false): T {
+  sub<T extends Vector>(this: T, p: IVector | number, self = false): Vector {
     return operatorFunc(this, p, math_operators.sub, self) as any;
   }
 
   // mul(p: IVectorself=false) {
-  mul<T extends Vector>(this: T, p: IVector | number, self = false): T {
+  mul<T extends Vector>(this: T, p: IVector | number, self = false): Vector {
     return operatorFunc(this, p, math_operators.mul, self) as any;
   }
 
-  dev<T extends Vector>(this: T, p: IVector | number, self = false): T {
+  dev<T extends Vector>(this: T, p: IVector | number, self = false): Vector {
     return operatorFunc(this, p, math_operators.dev, self) as any;
   }
 
@@ -95,22 +97,17 @@ class _Vector<T extends TrailingDir> {
     return new contextClass(round(this.x * Math.cos(rad) - this.y * Math.sin(rad)), round(this.x * Math.sin(rad) + this.y * Math.cos(rad)));
   }
 
-  projection<T extends Vector<any>>(this: T, v: Vector<any>): T {
-    // return new Vector(this.dir().mul(v));
-    // return this.mul(Math.atan2(this.size(), v.size()));
-    // return this.mul(v)
-    //   .dev(v.size() ** 2)
-    //   .mul(v);
-    // return this.mul(v).dev(v.mul(v)).mul(v)  ;
-    // return this.mul(v).dev(v.mul(v)).mul(v);
-    return this.mul(v).dev(v.mul(v));
-    // return this.mul(v)
-    //   .dev(Math.abs(v.size()) ** 2)
-    //   .mul(v);
+  projection<T extends Vector<any>>(this: T, v: Vector<any>): Vector {
+    // return this.mul(v).dev(v.absSize() ** 2).mul(v);
+    return v.mul(this.mul(v).size() * v.absSize() ** 2);
   }
 
   projectionSize(v: Vector<any>) {
     return this.projection(v).size();
+  }
+
+  projectionSizeAbs(v: Vector<any>) {
+    return this.projection(v).absSize();
   }
 
   round() {
@@ -119,75 +116,45 @@ class _Vector<T extends TrailingDir> {
     return this;
   }
 
-  // to establish zTurn, 2 vectors must be in the same direction
-  // this method check of there is a direction that is allowed in both vectors, and if so return it
-  canZTurnTo<T extends TrailingDir>(v: Vector<T>): T extends Dir[] ? Dir : undefined {
-    // console.log("canZTurnTo", this.trailingDir, v.trailingDir, v.sub(this).dir().getCloserAxisName());
-    // console.log("canZTurnTo2", v.dir(), v.sub(this).dir().getCloserAxis());
-    const res = this.trailingDir?.find((d) => v.trailingDir?.some((d2) => d.eq(d2)));
-    return res as T extends Dir[] ? Dir : undefined;
-  }
+  // // to establish zTurn, 2 vectors must be in the same direction
+  // // this method returns all starting directions that can be used as starting direction for a zTurn
+  // canZTurnTo<T extends TrailingDir>(v: Vector<T>): T extends Dir[] ? Dir : undefined {
+  //   const forwardVector = v.sub(this);
+  //   const forwardDir = forwardVector.dir();
+  //   let trailingDirInForwardDirection =
+  //     this.trailingDir?.filter(
+  //       (d) =>
+  //         v.trailingDir?.some((d2) => d.eq(d2)) && // same direction (so it could be pretty zTurn)
+  //         d.projection(forwardVector).dir().eq(forwardDir) // their projection is in the target direction (and not opposite)
+  //     ) ?? [];
+  //   trailingDirInForwardDirection.sort((a, b) => b.projectionSizeAbs(forwardVector) - a.projectionSizeAbs(forwardVector));
+  //   return trailingDirInForwardDirection[0] as T extends Dir[] ? Dir : undefined;
+  // }
 
   // chooses one trailingDir from the list of trailingDir, based on a given direction
   // the chosen trailingDir is the one that is the closest projection to the given direction
   chooseDir(dir: Dir) {
     if (!this.trailingDir) return;
-    // const testTrailingDirs = [
-    //   new Dir(1, 0),
-    //   // new Dir(1, 1),
-    //   new Dir(0, 1),
-    //   // new Dir(-1, 1),
-    //   new Dir(-1, 0),
-    //   // new Dir(-1, -1),
-    //   new Dir(0, -1),
-    //   // new Dir(1, -1),
-    // ];
-    // console.log(
-    //   "chooseDir",
-    //   this.trailingDir.map((d) => dir.projection(d))
-    // );
-    // console.log(dir);
-    const sorted = [...this.trailingDir];
-    sorted.sort((a, b) => {
-      // console.log("sort", b.projection(dir), a.projection(dir));
-      // console.log("sort", round(b.projection(dir).size()), round(a.projection(dir).size()));
-      // console.log("sort", a.x, b.x);
-      return b.projection(dir).size() - a.projection(dir).size();
+    const forward = this.trailingDir.filter((d) => d.projection(dir).dir().eq(dir));
+    forward.sort((a, b) => {
+      return b.projection(dir).absSize() - a.projection(dir).absSize();
     });
-    // console.log(
-    //   this.trailingDir.map((d) => d.x),
-    //   sorted.map((d) => d.x)
-    // );
-    // console.log(
-    //   "chooseDir",
-    //   sorted,
-    //   this.trailingDir.map((d) => d.projection(dir).size()),
-    //   sorted[0]
-    // );
-    return sorted[0];
-
-    // testTrailingDirs.forEach((d) => {
-    //   console.log("chooseDir", d, dir, this.mul(dir.projection(d)));
-    //   // d.chooseDir(dir);
-    // });
-    // const res = this.trailingDir.sort((a, b) => b. - a.p.size());
-    // console.log("chooseDir", res);
-    // return "?";
+    return forward[0];
   }
 
-  // to establish rTurn, the second vector must be in 90 degree or -90 degrees to the direction of the first vector
-  // this method check of there is a pair of directions that are allowed in both vectors, and if so return it
-  canRTurnTo(v: Vector<T>): [Dir, Dir] | undefined {
-    for (const d of this.trailingDir ?? []) {
-      for (const d2 of v.trailingDir ?? []) {
-        if (d.eq(d2.rotate(90)) || d.eq(d2.rotate(-90))) return [d, d2];
-      }
-    }
-  }
+  // // to establish rTurn, the second vector must be in 90 degree or -90 degrees to the direction of the first vector
+  // // this method check of there is a pair of directions that are allowed in both vectors, and if so return it
+  // canRTurnTo(v: Vector<T>): [Dir, Dir] | undefined {
+  //   for (const d of this.trailingDir ?? []) {
+  //     for (const d2 of v.trailingDir ?? []) {
+  //       if (d.eq(d2.rotate(90)) || d.eq(d2.rotate(-90))) return [d, d2];
+  //     }
+  //   }
+  // }
 }
 
 // this is a trick to handle typescript generics in classes https://stackoverflow.com/questions/47867918/declare-a-constructor-to-correctly-infer-generic-type-from-keyof-argument-in-t
-export interface Vector<T extends TrailingDir = any> extends _Vector<T> {}
+export interface Vector<T extends TrailingDir = TrailingDir> extends _Vector<T> {}
 
 interface VectorConstructor {
   new (x: number, y: number): Vector<undefined>;
@@ -213,6 +180,7 @@ export const fQ2 = (x, y) => {
 /**
  * normalized direction
  */
+// export class Dir extends weakenClassTypes(Vector) {
 export class Dir extends Vector {
   constructor(xDiff: number | Vector<any> | { x: number; y: number }, yDiff?: number) {
     if (xDiff instanceof Vector || typeof xDiff === "object") [xDiff, yDiff] = [xDiff.x, xDiff.y];
@@ -250,6 +218,7 @@ export class Dir extends Vector {
 
   // returns 'x' if x is bigger, 'y' if y is bigger, 'x' if x and y are equal
   getCloserAxisName(): "x" | "y" {
+    // return Math.abs(this.x) >= Math.abs(this.y) ? "y" : "x";
     return Math.abs(this.x) >= Math.abs(this.y) ? "x" : "y";
   }
 
@@ -257,6 +226,18 @@ export class Dir extends Vector {
     const closerAxis = this.getCloserAxisName();
     console.log(this.x);
     return new Dir(closerAxis === "x" ? (this.x > 0 ? 1 : -1) : 0, closerAxis === "y" ? (this.y > 0 ? 1 : -1) : 0);
+  }
+
+  // to establish zTurn, 2 vectors must be in the same direction
+  // this method check of there is a direction that allows zTurn in both vectors, and if so return it
+  canZTurnTo(v: Dir): boolean {
+    return this.eq(v);
+  }
+
+  // to establish rTurn, the second vector must be in 90 degree or -90 degrees to the direction of the first vector
+  // this method check of there is a pair of directions that are allowed in both vectors, and if so return it
+  canRTurnTo(v: Dir): boolean {
+    return this.eq(v.rotate(90)) || this.eq(v.rotate(-90));
   }
 
   // projectOnCloserAxis() {
@@ -267,4 +248,25 @@ export class Dir extends Vector {
   //rotate a point around the root (0,0) point
 }
 
-const tmp = new Vector({ x: 10, y: 10 });
+// class A {
+//   method(): string {
+//     return "1";
+//   }
+//   method2(): string {
+//     return "1";
+//   }
+// }
+
+// // we can have a helper/utility for suppressing error for unrelated types for method override
+// function weakenClass(klass: { new (...args: any[]): any }, key: string) {
+//   return class extends klass {};
+// }
+//
+// class B extends weaken(A, "") {
+//   method(): number {
+//     return 1;
+//   }
+//   method2(): number {
+//     return 1;
+//   }
+// }

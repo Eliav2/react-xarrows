@@ -1,11 +1,13 @@
 import React from "react";
-import { getBestPath, pointsToCurves } from "./path";
+import { Dir, getBestPath, pointsToCurves, Vector } from "./path";
 import { IDir, IVector } from "./types";
 import { usePositionProvider } from "./providers/PositionProvider";
 import PointsProvider from "./providers/PointsProvider";
 import PathProvider from "./providers/PathProvider";
 import HeadProvider from "./providers/HeadProvider";
 import { childrenRenderer } from "./internal/Children";
+import { xyDirs } from "./AutoAnchor";
+import { makeWriteable, makeWriteableDeep } from "shared/types";
 
 export type BestPathProps = {
   children?: React.ReactNode;
@@ -18,6 +20,7 @@ const BestPath = React.forwardRef(function BestPath(props: BestPathProps, forwar
   const { children, pointToPath = pointsToCurves } = props;
   const { startPoint, endPoint } = usePositionProvider();
   if (!startPoint || !endPoint) return null;
+  // const { points, endDir } = getBestPath({ ...startPoint, trailingDir: xyDirs }, { ...endPoint, trailingDir: xyDirs });
   const { points, endDir } = getBestPath(startPoint, endPoint);
   // console.log(endDir);
   return (
