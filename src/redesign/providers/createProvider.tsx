@@ -32,91 +32,82 @@ export const providerContextDefaultVal = {
  *
  * this function is just a utility function to reduce code duplication in creation of providers
  */
-export const createProvider = <
-  Val extends AnyObj = any,
-  ValPrepared extends Val = any
-
-  // Val extends AnyObj = any,
-  // ValChange = (prevVal: Val) => Val,
-  // ValPrepared extends Val = any,
-  // ValPreparedChange = (prevVal: ValPrepared) => ValPrepared,
-  // RegisterFunc extends (arg: any) => any = (prevVal: ValPrepared) => ValPrepared
->(
+export const createProvider = <Val extends AnyObj = any, ValPrepared extends Val = any>(
   name: string,
   { prepareValue, defaultVal = {} as ValPrepared }: { prepareValue?: (val: Val) => ValPrepared; defaultVal?: ValPrepared }
-) =>
-  // value: Val
-  {
-    type RegisterFunc = (prevVal: ValPrepared) => ValPrepared;
+) => {
+  type RegisterFunc = (prevVal: ValPrepared) => ValPrepared;
 
-    // this context value is provided to this provider's children
-    const ProviderContext = React.createContext<ProviderContextProps<Val, RegisterFunc>>({
-      ...providerContextDefaultVal,
-      value: { ...providerContextDefaultVal.value, ...defaultVal },
+  // this context value is provided to this provider's children
+  const ProviderContext = React.createContext<ProviderContextProps<Val, RegisterFunc>>({
+    ...providerContextDefaultVal,
+    value: { ...providerContextDefaultVal.value, ...defaultVal },
+  });
+
+  // a hook that can be used to use the provider value
+  const useProvider = () => {
+    const providerContextVal = React.useContext(ProviderContext);
+    return providerContextVal?.value;
+  };
+
+  // a React Context Component that provides the provider value
+  function Component(
+    {
+      value,
+      children,
+    }: {
+      value?: Val | ((prevVal: Val) => Val);
+      children: React.ReactNode;
+    },
+    forwardRef: React.ForwardedRef<unknown>
+  ) {
+    // get the previous provider value(if exists)
+    const prevVal = React.useContext(ProviderContext);
+
+    // aggregate the value with the previous providers
+    let val = aggregateValues(value, prevVal, "prevVal", (context) => context?.value);
+
+    // a manager to handle registered functions
+    const providerManager = useRef(new RegisteredManager<RegisterFunc>());
+
+    // prepare the value to a more developer friendly value
+    const preparedValue: ValPrepared = prepareValue ? prepareValue(val) : (val as unknown as ValPrepared);
+
+    // use immer to update the provided value by calling all registered functions
+    let alteredVal = { ...preparedValue };
+    alteredVal = produce(alteredVal, (draft) => {
+      Object.values(providerManager.current.registered).forEach((change) => {
+        alteredVal = change(current(draft) as ValPrepared);
+      });
     });
 
-    // a hook that can be used to use the provider value
-    const useProvider = () => {
-      const providerContextVal = React.useContext(ProviderContext);
-      return providerContextVal?.value;
-    };
+    return (
+      <ProviderContext.Provider
+        value={{
+          value: alteredVal,
+          prevVal,
+          __mounted: true,
+          providerManager: providerManager.current,
+        }}
+      >
+        {childrenRenderer(children, value, forwardRef)}
+      </ProviderContext.Provider>
+    );
+  }
 
-    // a React Context Component that provides the provider value
-    function Component(
-      {
-        value,
-        children,
-      }: {
-        value?: Val | ((prevVal: Val) => Val);
-        children: React.ReactNode;
-      },
-      forwardRef: React.ForwardedRef<unknown>
-    ) {
-      // get the previous provider value(if exists)
-      const prevVal = React.useContext(ProviderContext);
+  // define name for the component in the React DevTools
+  Object.defineProperty(Component, "name", { value: name, writable: false });
 
-      // aggregate the value with the previous providers
-      let val = aggregateValues(value, prevVal, "prevVal", (context) => context?.value);
-
-      // a manager to handle registered functions
-      const providerManager = useRef(new RegisteredManager<RegisterFunc>());
-
-      // prepare the value to a more developer friendly value
-      const preparedValue: ValPrepared = prepareValue ? prepareValue(val) : (val as unknown as ValPrepared);
-
-      // use immer to update the provided value by calling all registered functions
-      let alteredVal = { ...preparedValue };
-      alteredVal = produce(alteredVal, (draft) => {
-        Object.values(providerManager.current.registered).forEach((change) => {
-          alteredVal = change(current(draft) as ValPrepared);
-        });
-      });
-
-      return (
-        <ProviderContext.Provider
-          value={{
-            value: alteredVal,
-            prevVal,
-            __mounted: true,
-            providerManager: providerManager.current,
-          }}
-        >
-          {childrenRenderer(children, value, forwardRef)}
-        </ProviderContext.Provider>
-      );
-    }
-
-    // define name for the component in the React DevTools
-    Object.defineProperty(Component, "name", { value: name, writable: false });
-
-    const useProviderRegister = (func: (prevVal: ValPrepared) => ValPrepared, noWarn = false, dependencies: any[] = []) => {
-      const provider = React.useContext(ProviderContext);
-      const mounted = useEnsureContext(provider, name, `use${name}Register`, { noWarn });
-      // const HeadId = useRegisteredManager(headProvider.HeadsManager, mounted, func);
-      const regId = useRegisteredManager(provider.providerManager, func, dependencies);
-      return regId;
-    };
-
-    const ProviderFRef = React.forwardRef(Component);
-    return { Provider: ProviderFRef, useProvider, useProviderRegister };
+  // a hook that can be used to register a function to the provider
+  const useProviderRegister = (func: (prevVal: ValPrepared) => ValPrepared, noWarn = false, dependencies: any[] = []) => {
+    const provider = React.useContext(ProviderContext);
+    useEnsureContext(provider, name, `use${name}Register`, { noWarn });
+    // const HeadId = useRegisteredManager(headProvider.HeadsManager, mounted, func);
+    const regId = useRegisteredManager(provider.providerManager, func, dependencies);
+    return regId;
   };
+
+  // forward the ref to the component (correctly handle ref forwarding)
+  const ProviderFRef = React.forwardRef(Component);
+  return { Provider: ProviderFRef, useProvider, useProviderRegister };
+};

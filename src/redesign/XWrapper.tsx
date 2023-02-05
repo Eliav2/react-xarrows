@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useRef } from "react";
+import React, { useRef } from "react";
 import { useEnsureContext } from "./internal/hooks";
 import { RegisteredManager, useRegisteredManager } from "./internal/RegisteredManager";
 

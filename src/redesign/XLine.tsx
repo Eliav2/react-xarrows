@@ -3,7 +3,7 @@ import { RelativeSize } from "shared/types";
 import { getRelativeSizeValue } from "shared/utils";
 import { Dir, Vector } from "./path/vector";
 import { Line } from "./path/line";
-import { usePositionProvider, usePositionProvider } from "./providers/PositionProvider";
+import { usePositionProvider } from "./providers/PositionProvider";
 import HeadProvider from "./providers/HeadProvider";
 
 export interface XLineProps extends React.SVGProps<SVGLineElement> {
@@ -14,7 +14,7 @@ export interface XLineProps extends React.SVGProps<SVGLineElement> {
   color?: string;
 }
 
-export const XLine = React.forwardRef((props: XLineProps, ref: React.ForwardedRef<SVGElement>) => {
+export const XLine = React.forwardRef(function XLine(props: XLineProps, ref: React.ForwardedRef<SVGElement>) {
   let {
     component: Component = "line" as const,
     stripEnd,
