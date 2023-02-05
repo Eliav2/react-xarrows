@@ -17,6 +17,7 @@ export interface XPathProps extends React.SVGProps<SVGPathElement> {
 }
 
 export const XPath = React.forwardRef((props: XPathProps, ref: React.ForwardedRef<SVGElement>) => {
+  // console.log("XPath");
   let {
     component: Component = "path" as const,
     // stripEnd,
@@ -28,6 +29,7 @@ export const XPath = React.forwardRef((props: XPathProps, ref: React.ForwardedRe
   // const positionProvider = usePositionProvider();
   const { points } = usePointsProvider();
   const { pointsToPath } = usePathProvider();
+  // console.log(points?.at(-1)?.x);
   // const headProvider = useHeadProvider();
   // console.log(headProvider?.size);
   // let { points = pointsProvider.points, pointToPath, endDir } = useBestPath();

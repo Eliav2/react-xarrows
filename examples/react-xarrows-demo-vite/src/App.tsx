@@ -90,21 +90,15 @@ const DemoXWrapper = () => {
       {/*</PositionProvider>*/}
 
       <XArrow start={box1Ref} end={box2Ref}>
-        {/*<XLine color={"red"} />*/}
-
         <PositionProvider
-          value={(pos) => {
-            // if (pos.startPoint) pos.startPoint.trailingDir = { x: 1, y: 0 };
-            return pos;
+          value={(prevPos) => {
+            // console.log("prevPos", prevPos);
+            // if (prevPos.endPoint) prevPos.endPoint.x += 30;
+            return prevPos;
           }}
         >
-          <AutoAnchor startAnchor={"right"} endAnchor={"middle"}>
-            <BestPath>
-              <XHead color={"yellow"} size={50} />
-              <XPath color={"red"} />
-              {/*<XLine />*/}
-            </BestPath>
-          </AutoAnchor>
+          <XHead />
+          <XLine color={"red"} />
         </PositionProvider>
       </XArrow>
       {/*<XArrow start={box1Ref} end={box2Ref}>*/}

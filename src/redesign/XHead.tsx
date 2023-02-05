@@ -5,9 +5,9 @@ import { getBBox } from "./NormalizedGSvg";
 import { Dir, Vector } from "./path";
 import { BasicHeadShape1 } from "./shapes";
 import { useHeadProvider, useHeadProviderRegister } from "./providers/HeadProvider";
-import { usePositionProvider, usePositionProviderRegister } from "./providers";
 import { MapNonNullable, RemoveChildren } from "shared/types";
 import { childrenRenderer } from "./internal/Children";
+import { usePositionProviderRegister } from "./providers";
 
 export interface XHeadProps {
   children?: React.ReactNode; // a jsx element of type svg like <circle .../> or <path .../>
@@ -34,6 +34,8 @@ export interface XHeadProps {
 const XHead = React.forwardRef<SVGGElement, XHeadProps>(function XHead(props, forwardRef) {
   // console.log("XHead");
   const headProvider = useHeadProvider();
+  // const headProvider = useHeadProvider();
+  // console.log("headProvider?.dir", headProvider?.dir);
   // const { endPoint } = usePositionProvider();
   let { children = DefaultChildren, ...propsNoChildren } = props;
   const propsWithDefault = Object.assign(
@@ -50,7 +52,6 @@ const XHead = React.forwardRef<SVGGElement, XHeadProps>(function XHead(props, fo
   );
   propsWithDefault.dir = new Dir(propsWithDefault.dir);
   const { dir, pos, rotate, color, size, containerRef } = propsWithDefault;
-
   // the reason there are 3 nested g elements is to allow the user to override props of the inner children svg element
 
   return (
@@ -93,15 +94,39 @@ interface DefaultChildrenProps extends RemoveChildren<Required<XHeadProps>> {
 }
 
 const DefaultChildren = (props: DefaultChildrenProps) => {
+  // console.log("DefaultChildren");
   const offSet = props.size * 0.75; // this shape of arrow head has 25% of its size as a tail
+  // console.log("props.dir", props.dir);
+  // console.log("props.pos.x", props.pos.x);
   usePositionProviderRegister(
     (pos) => {
-      // if (pos.endPoint) pos.endPoint = new Vector(pos.endPoint.sub(props.dir.mul(offSet)));
+      // console.log("registered function");
+      // console.log("props.dir", props.dir);
+      // console.log(pos);
+      if (pos.endPoint) {
+        // console.log("making change to pos.endPoint");
+        pos.endPoint = new Vector(pos.endPoint.sub(props.dir.mul(offSet)));
+      }
       return pos;
     },
     false,
+    // [props.dir]
     [props.dir.x, props.dir.y, props.size]
   );
+  // usePositionProviderRegister(
+  //   (pos) => {
+  //     console.log("registered function");
+  //     console.log("props.dir", props.dir);
+  //     if (pos.endPoint) {
+  //       console.log("making change to pos.endPoint");
+  //       pos.endPoint = new Vector(pos.endPoint.sub(props.dir.mul(offSet)));
+  //     }
+  //     return pos;
+  //   },
+  //   false,
+  //   // [props.dir]
+  //   [props.dir.x, props.dir.y, props.size]
+  // );
   // useHeadProviderRegister((head) => {
   //   head.pos = new Vector(head.pos.sub(props.dir.mul(offSet)));
   //   return head;

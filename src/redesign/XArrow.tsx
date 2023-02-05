@@ -132,14 +132,7 @@ export const XArrow = React.forwardRef(function XArrow(props: XArrowProps, forwa
           <PositionProvider value={{ startPoint, endPoint }}>
             <PointsProvider>
               <PathProvider value={{ pointsToPath: pointsToCurves }}>
-                <HeadProvider
-                  value={
-                    // (val) => {
-                    //   return { color: "cornflowerblue", rotate: 0, size: 30 };
-                    // }
-                    { color: "cornflowerblue", rotate: 0, size: 30, pos: endPoint, dir: headDir }
-                  }
-                >
+                <HeadProvider value={{ color: "cornflowerblue", rotate: 0, size: 30, pos: endPoint, dir: headDir }}>
                   {props.children}
                 </HeadProvider>
               </PathProvider>

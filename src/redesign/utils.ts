@@ -1,6 +1,6 @@
 // export const cAnchorEdge = ["middle", "left", "right", "top", "bottom", "auto"] as const;
 import { IPoint, isPoint, RemoveFunctions, XElemRef } from "./types";
-import produce from "immer";
+import produce, { current } from "immer";
 import { cloneDeepNoFunction } from "shared/utils";
 import { AnyObj } from "shared/types";
 
@@ -62,7 +62,10 @@ export const aggregateValues = <
     prevVal = aggregateValues(val, context[prevContextKey], prevContextKey, getVal);
   }
   if (typeof aggVal === "function") {
-    aggVal = aggVal(prevVal);
+    aggVal = produce(prevVal, (draft) => {
+      aggVal = (aggVal as any)(current(draft));
+    }) as any;
+    // aggVal = aggVal(prevVal);
   }
   return { ...prevVal, ...aggVal } as any;
 };

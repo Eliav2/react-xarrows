@@ -29,13 +29,6 @@ const XWrapperContext = React.createContext(XWrapperContextDefault);
 export const useXWrapperContext = ({ noWarn = false } = {}) => {
   const val = React.useContext(XWrapperContext);
   useEnsureContext(val, "XWrapper", "useXWrapperContext", { noWarn });
-  // const warn = useXArrowWarn();
-  // if (!val.__mounted) {
-  //   warn(
-  //     "useXArrowContext is only available inside XArrow, wrap your component with XArrow to use it.\n" +
-  //       `Check ${new Error().stack?.split("at ")[2].trim()}\n\n`
-  //   );
-  // }
 
   return val;
 };

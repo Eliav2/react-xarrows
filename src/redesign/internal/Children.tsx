@@ -3,8 +3,8 @@ import usePassChildrenRef from "shared/hooks/usePassChildrenRef";
 import { isReactForwardRef } from "shared/utils";
 
 /**
- * receives a children(which can be jsx or react component) and props and returns the jsx element to
- * if children is a function, it will be called with props and the result will be returned
+ * receives a children(which can be jsx or react component) and props and returns jsx element.
+ * if children is a function, it will be called with props and the result will be returned (render children pattern).
  */
 export const childrenRenderer = <C extends React.ReactNode = React.ReactNode, Props extends any = any>(
   children: C | ((props: Props) => C) | React.ForwardRefExoticComponent<any>,

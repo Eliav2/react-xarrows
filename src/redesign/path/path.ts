@@ -103,12 +103,11 @@ export const getBestPath = (
   const startVector = new Vector(parsePossiblyDirectedVector(startPoint));
   const endVector = new Vector(parsePossiblyDirectedVector(endPoint));
   // console.log("startVector", startVector.trailingDir);
+  // console.log("endPoint", endPoint.x);
 
   const forwardDir = endVector.sub(startVector).dir();
   const startDir = startVector.chooseDir(forwardDir);
   let endDir = endVector.chooseDir(forwardDir);
-  console.log(endVector.trailingDir);
-  console.log(startDir, endDir);
 
   if (startDir && endDir && startDir.canZTurnTo(endDir)) {
     console.log("Z turn");

@@ -17,12 +17,12 @@ export type BestPathProps = {
 };
 
 const BestPath = React.forwardRef(function BestPath(props: BestPathProps, forwardedRef) {
+  console.log("BestPath");
   const { children, pointToPath = pointsToCurves } = props;
   const { startPoint, endPoint } = usePositionProvider();
   if (!startPoint || !endPoint) return null;
-  // const { points, endDir } = getBestPath({ ...startPoint, trailingDir: xyDirs }, { ...endPoint, trailingDir: xyDirs });
   const { points, endDir } = getBestPath(startPoint, endPoint);
-  // console.log(endDir);
+  console.log("endDir", endDir);
   return (
     <PointsProvider value={{ points }}>
       <PathProvider value={{ pointsToPath: pointToPath }}>

@@ -10,13 +10,13 @@ interface BoxProps extends React.HTMLProps<HTMLDivElement> {
 }
 
 export const Box = React.forwardRef(function Box({ children, style, small, ...props }: BoxProps, forwardRef) {
-  const updateXArrow = useUpdateXWrapper();
+  const updateXArrows = useUpdateXWrapper();
   const ref = usePassRef<HTMLDivElement>(forwardRef);
   return (
     <Draggable
       nodeRef={ref}
       onDrag={() => {
-        updateXArrow();
+        updateXArrows();
       }}
     >
       <div
