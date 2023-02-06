@@ -85,6 +85,8 @@ export const createProvider = <Val extends AnyObj = any, ValPrepared extends Val
     // get the previous provider value(if exists)
     const prevVal = React.useContext(ProviderContext);
 
+    const [valState, setValState] = useState(value);
+
     // console_debug("prevVal", prevVal);
     // aggregate the value with the previous providers
     let val = aggregateValues(value, prevVal, "prevVal", (context) => context?.value);
@@ -108,6 +110,7 @@ export const createProvider = <Val extends AnyObj = any, ValPrepared extends Val
 
     // use immer to update the provided value by calling all registered functions
     let alteredVal = { ...preparedValue };
+    console_debug("alteredVal", alteredVal);
     // let alteredVal = { ...alteredValState };
     // alteredVal = produce(alteredVal, (draft) => {
     //   Object.values(providerManager.current.registered).forEach((change) => {

@@ -54,6 +54,7 @@ export const XLine = React.forwardRef(function XLine(props: XLineProps, ref: Rea
     }
   }
   if (!endPoint || !startPoint) return null;
+  console.log("XLine", { startPoint, endPoint });
   return (
     <>
       <Component

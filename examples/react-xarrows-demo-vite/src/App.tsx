@@ -28,6 +28,8 @@ import SnakeXArrow from "./components/SnakeXArrow";
 import Comp1 from "./Comp1";
 import Comp2 from "./Comp2";
 import TestPassRef from "./components/TestPassRef";
+import { usePositionProvider } from "../../../src";
+import { expect } from "vitest";
 
 function App() {
   return (
@@ -88,27 +90,28 @@ const DemoXWrapper = () => {
       {/*  /!*</PositionProvider>*!/*/}
       {/*</PositionProvider>*/}
 
-      <PositionProvider value={{ x: 0, y: 1 }}>
-        <PositionProvider>
-          {(val) => {
-            console.log("val", val);
-            return <div></div>;
-          }}
-        </PositionProvider>
-      </PositionProvider>
-
-      {/*<XArrow start={box1Ref} end={box2Ref}>*/}
-      {/*  <PositionProvider*/}
-      {/*    value={(prevPos) => {*/}
-      {/*      // console.log("prevPos", prevPos);*/}
-      {/*      if (prevPos.endPoint) prevPos.endPoint.x -= 30;*/}
-      {/*      return prevPos;*/}
+      {/*<PositionProvider value={{ x: 3, y: 1 }}>*/}
+      {/*  <PositionProvider>*/}
+      {/*    {(val) => {*/}
+      {/*      // console.log("val", val);*/}
+      {/*      val.x += 10;*/}
+      {/*      return <div>{val.x}</div>;*/}
       {/*    }}*/}
-      {/*  >*/}
-      {/*    <XHead />*/}
-      {/*    <XLine color={"red"} />*/}
       {/*  </PositionProvider>*/}
-      {/*</XArrow>*/}
+      {/*</PositionProvider>*/}
+
+      <XArrow start={box1Ref} end={box2Ref}>
+        <PositionProvider
+          value={(prevPos) => {
+            if (prevPos.endPoint) prevPos.endPoint.x -= 30;
+            console.log("prevPos.endPoint.x", prevPos.endPoint?.x);
+            return prevPos;
+          }}
+        >
+          <XHead />
+          <XLine color={"red"} />
+        </PositionProvider>
+      </XArrow>
 
       {/*<XArrow start={box1Ref} end={box2Ref}>*/}
       {/*  <AutoAnchor>*/}
@@ -225,6 +228,13 @@ const DemoXWrapper = () => {
 };
 
 export default App;
+
+const SomeComponent = () => {
+  console.log("SomeComponent");
+  const val = usePositionProvider();
+  // console.log("val", val);
+  return <div></div>;
+};
 
 const SimpleLineXArrow = (props: Omit<XArrowProps, "children">) => {
   const { start, end } = props;
