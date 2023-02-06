@@ -53,7 +53,6 @@ const DemoXWrapper = () => {
     <XWrapper>
       <Paper>
         <Button onClick={render}>render</Button>
-        <Button onClick={sayHello}>hello</Button>
       </Paper>
       {/* my boxes */}
       <div
@@ -89,18 +88,28 @@ const DemoXWrapper = () => {
       {/*  /!*</PositionProvider>*!/*/}
       {/*</PositionProvider>*/}
 
-      <XArrow start={box1Ref} end={box2Ref}>
-        <PositionProvider
-          value={(prevPos) => {
-            // console.log("prevPos", prevPos);
-            // if (prevPos.endPoint) prevPos.endPoint.x += 30;
-            return prevPos;
+      <PositionProvider value={{ x: 0, y: 1 }}>
+        <PositionProvider>
+          {(val) => {
+            console.log("val", val);
+            return <div></div>;
           }}
-        >
-          <XHead />
-          <XLine color={"red"} />
         </PositionProvider>
-      </XArrow>
+      </PositionProvider>
+
+      {/*<XArrow start={box1Ref} end={box2Ref}>*/}
+      {/*  <PositionProvider*/}
+      {/*    value={(prevPos) => {*/}
+      {/*      // console.log("prevPos", prevPos);*/}
+      {/*      if (prevPos.endPoint) prevPos.endPoint.x -= 30;*/}
+      {/*      return prevPos;*/}
+      {/*    }}*/}
+      {/*  >*/}
+      {/*    <XHead />*/}
+      {/*    <XLine color={"red"} />*/}
+      {/*  </PositionProvider>*/}
+      {/*</XArrow>*/}
+
       {/*<XArrow start={box1Ref} end={box2Ref}>*/}
       {/*  <AutoAnchor>*/}
       {/*    /!*<BestPath>*!/*/}
@@ -225,7 +234,6 @@ const SimpleLineXArrow = (props: Omit<XArrowProps, "children">) => {
     </XArrow>
   );
 };
-
 // const AutoAnchorLeftXArrow = (props: Omit<XArrowProps, "children">) => {
 //   const { start, end } = props;
 //   return (

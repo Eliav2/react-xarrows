@@ -3,6 +3,16 @@ import { createProvider } from "./createProvider";
 import { IPoint } from "../types";
 import { Vector } from "../path";
 
+interface PositionProviderVal {
+  startPoint?: IPoint;
+  endPoint?: IPoint;
+}
+
+interface PositionProviderValPrepared {
+  startVector?: Vector;
+  endPoint?: Vector;
+}
+
 const {
   /**
    * This component is used to provide the start and end points of the arrow.
@@ -24,22 +34,13 @@ const {
    * This hook is used to register a function that will be called in order to change the start and end points of the arrow.
    */
   useProviderRegister: usePositionProviderRegister,
-} = createProvider<
-  {
-    startPoint?: IPoint;
-    endPoint?: IPoint;
-  },
-  {
-    startPoint: Vector;
-    endPoint: Vector;
-  }
->("PositionProvider", {
+} = createProvider<PositionProviderVal, PositionProviderValPrepared>("PositionProvider", {
   prepareValue: (val) => {
-    return {
-      startPoint: new Vector(val.startPoint ?? { x: 0, y: 0 }),
-      endPoint: new Vector(val.endPoint ?? { x: 0, y: 0 }),
-    };
+    if (val.startPoint) val.startPoint = new Vector(val.startPoint);
+    if (val.endPoint) val.endPoint = new Vector(val.endPoint);
+    return val as PositionProviderValPrepared;
   },
+  debug: true,
 });
 
 export { PositionProvider, usePositionProvider, usePositionProviderRegister };

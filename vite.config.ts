@@ -166,4 +166,7 @@ export default defineConfig({
       ],
     }),
   ],
+  test: {
+    environment: "happy-dom", // or 'jsdom', 'node'
+  },
 });

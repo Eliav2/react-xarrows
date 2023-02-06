@@ -1,10 +1,11 @@
 import { RegisteredManager, useRegisteredManager } from "../internal/RegisteredManager";
 import { AnyObj } from "shared/types";
-import React, { useRef } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { aggregateValues } from "../utils";
 import { childrenRenderer } from "../internal/Children";
 import { useEnsureContext } from "../internal/hooks";
 import produce, { current } from "immer";
+import useRerender from "shared/hooks/useRerender";
 
 export type ProviderContextProps<Val, RegisterFunc> = {
   value: Val;
@@ -22,19 +23,34 @@ export const providerContextDefaultVal = {
   providerManager: null,
 };
 
+const _debug = (enable?: boolean) => (enable ? console.log : () => {});
+
 /**
  * this function creates a provider(a React Component which provides context) ,a hook to use the provider value,
  * and a hook to register a function to the provider(which can be used to alter the provider value)
  *
- * providers provide an aggregated value from all previous providers from the same type.
+ * providers provide an aggregated merged(shallowly) value from all previous providers from the same type.
  * for example: if there are 2 HeadProvider components in the tree, the value of the deeper HeadProvider will be merged
  * with the value of the first HeadProvider.
  *
  * this function is just a utility function to reduce code duplication in creation of providers
  */
 export const createProvider = <Val extends AnyObj = any, ValPrepared extends Val = any>(
+  // the provider name, used for debugging and React DevTools
   name: string,
-  { prepareValue, defaultVal = {} as ValPrepared }: { prepareValue?: (val: Val) => ValPrepared; defaultVal?: ValPrepared }
+  // options
+  {
+    prepareValue,
+    defaultVal = {} as ValPrepared,
+    ...options
+  }: {
+    // an optional function that can be used to prepare the value before it is provided to the children
+    prepareValue?: (val: Val) => ValPrepared;
+    // an optional default value for the provider
+    defaultVal?: ValPrepared;
+    // can be used to debug the provider
+    debug?: boolean;
+  }
 ) => {
   type RegisterFunc = (prevVal: ValPrepared) => ValPrepared;
 
@@ -56,30 +72,48 @@ export const createProvider = <Val extends AnyObj = any, ValPrepared extends Val
       value,
       children,
     }: {
+      // the value to provide (this value will be merged with the previous providers values, and can be altered by registered functions)
       value?: Val | ((prevVal: Val) => Val);
-      children: React.ReactNode;
+      // children: React.ReactNode;
+      children: React.ReactNode | ((props: Val) => React.ReactNode) | React.ForwardRefExoticComponent<any>;
     },
     forwardRef: React.ForwardedRef<unknown>
   ) {
+    const console_debug = _debug(options?.debug); // should be here to avoid double logging on React StrictMode
+    console_debug(name);
+
     // get the previous provider value(if exists)
     const prevVal = React.useContext(ProviderContext);
 
+    // console_debug("prevVal", prevVal);
     // aggregate the value with the previous providers
     let val = aggregateValues(value, prevVal, "prevVal", (context) => context?.value);
+    // console_debug("val", val);
 
     // a manager to handle registered functions
     const providerManager = useRef(new RegisteredManager<RegisterFunc>());
 
     // prepare the value to a more developer friendly value
     const preparedValue: ValPrepared = prepareValue ? prepareValue(val) : (val as unknown as ValPrepared);
+    // console.log("preparedValue", preparedValue);
+
+    // const [alteredValState, setAlteredValState] = useState(preparedValue);
+    // useEffect(() => {
+    //   console_debug("useEffect");
+    //
+    //   setAlteredValState(preparedValue);
+    // }, [value]);
+    // debug(alteredValState);
+    // debug("!");
 
     // use immer to update the provided value by calling all registered functions
     let alteredVal = { ...preparedValue };
-    alteredVal = produce(alteredVal, (draft) => {
-      Object.values(providerManager.current.registered).forEach((change) => {
-        alteredVal = change(current(draft) as ValPrepared);
-      });
-    });
+    // let alteredVal = { ...alteredValState };
+    // alteredVal = produce(alteredVal, (draft) => {
+    //   Object.values(providerManager.current.registered).forEach((change) => {
+    //     alteredVal = change(current(draft) as ValPrepared);
+    //   });
+    // });
 
     return (
       <ProviderContext.Provider
@@ -90,7 +124,7 @@ export const createProvider = <Val extends AnyObj = any, ValPrepared extends Val
           providerManager: providerManager.current,
         }}
       >
-        {childrenRenderer(children, value, forwardRef)}
+        {childrenRenderer(children, alteredVal, forwardRef)}
       </ProviderContext.Provider>
     );
   }
@@ -111,3 +145,10 @@ export const createProvider = <Val extends AnyObj = any, ValPrepared extends Val
   const ProviderFRef = React.forwardRef(Component);
   return { Provider: ProviderFRef, useProvider, useProviderRegister };
 };
+
+// const MyReactComponent = (value = 10) => {
+//   let valuePrepared = value;
+//   valuePrepared = valuePrepared + 1;
+//
+//   return <div>{valuePrepared}</div>;
+// };

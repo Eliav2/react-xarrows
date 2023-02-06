@@ -29,9 +29,12 @@
   },
   "devDependencies": {
     "@rollup/plugin-typescript": "^8.3.3",
+    "@testing-library/react": "^13.4.0",
     "@types/react": "^18.0.0",
     "concurrently": "^7.2.1",
-    "react": "^17.0.2",
+    "happy-dom": "^8.2.6",
+    "react": "^18.0.2",
+    "react-dom": "^18.0.0",
     "rollup": "^3.7.5",
     "rollup-plugin-delete": "^2.0.0",
     "shared": "workspace:*",
