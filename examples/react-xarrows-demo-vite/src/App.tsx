@@ -30,7 +30,7 @@ import Comp2 from "./Comp2";
 import TestPassRef from "./components/TestPassRef";
 import { usePositionProvider } from "../../../src";
 import { expect } from "vitest";
-import produce from "immer";
+import produce, { current } from "immer";
 import { deepFreeze } from "shared/utils";
 
 function App() {
@@ -141,79 +141,18 @@ const DemoXWrapper = () => {
       </div>
       <div style={{ height: 50 }} />
 
-      {/*<PositionProvider value={{ endPoint: { x: 0, y: 0 } }}>*/}
-      {/*  <PositionProvider*/}
-      {/*    value={(val) => {*/}
-      {/*      const newVal = produce(val, (draft) => {*/}
-      {/*        if (draft.endPoint) draft.endPoint.x = 10;*/}
-      {/*      });*/}
-      {/*      return newVal;*/}
-      {/*    }}*/}
-      {/*  ></PositionProvider>*/}
-      {/*</PositionProvider>*/}
-
-      {/*<PositionProvider value={{ endPoint: { x: 10, y: 10 } }}>*/}
-      {/*  <PositionProvider*/}
-      {/*    value={(val) => {*/}
-      {/*      const newVal = produce(val, (draft) => {*/}
-      {/*        draft.endPoint && (draft.endPoint.x -= 30);*/}
-      {/*      });*/}
-      {/*      return newVal;*/}
-      {/*    }}*/}
-      {/*  ></PositionProvider>*/}
-      {/*</PositionProvider>*/}
-
-      <XArrow start={box1Ref} end={box2Ref}>
-        <PositionProvider
-          value={(prevPos) => {
-            if (prevPos.endPoint) prevPos.endPoint.x -= 30;
-            return prevPos;
-          }}
-        >
-          <XHead />
-          <XLine color={"red"} />
-        </PositionProvider>
-      </XArrow>
-
       {/*<BasicDemo />*/}
 
       {/*<TestPassRef />*/}
-      {/*<PositionProvider value={{ a: 1, b: 2 }}>*/}
-      {/*  /!*  <PositionProvider value={{ b: 3 }}>*!/*/}
-      {/*  <PositionProvider*/}
-      {/*    value={(v) => {*/}
-      {/*      return { b: 10, c: 30 };*/}
-      {/*    }}*/}
-      {/*  >*/}
-      {/*    <PositionProvider value={{ c: 100 }}></PositionProvider>*/}
-      {/*  </PositionProvider>*/}
-      {/*  /!*</PositionProvider>*!/*/}
-      {/*</PositionProvider>*/}
 
-      {/*<PositionProvider value={{ x: 12, y: 10 }}>*/}
-      {/*  <PositionProvider value={{ y: 2 }}>*/}
-      {/*    {(val) => {*/}
-      {/*      // console.log("val", val);*/}
-      {/*      return (*/}
-      {/*        <PositionProvider*/}
-      {/*          value={(val) => {*/}
-      {/*            console.log("val", val);*/}
-      {/*            return <div></div>;*/}
-      {/*          }}*/}
-      {/*        ></PositionProvider>*/}
-      {/*      );*/}
-      {/*    }}*/}
-      {/*  </PositionProvider>*/}
-      {/*</PositionProvider>*/}
-
-      {/*<XArrow start={box1Ref} end={box2Ref}>*/}
-      {/*  <AutoAnchor>*/}
-      {/*    /!*<BestPath>*!/*/}
-      {/*    <XHead color={"purple"} />*/}
-      {/*    <XPath color={"yellow"} />*/}
-      {/*    /!*</BestPath>*!/*/}
-      {/*  </AutoAnchor>*/}
-      {/*</XArrow>*/}
+      <XArrow start={box1Ref} end={box2Ref}>
+        <AutoAnchor>
+          <BestPath>
+            <XHead color={"purple"} />
+            <XPath color={"yellow"} />
+          </BestPath>
+        </AutoAnchor>
+      </XArrow>
 
       {/*<XArrow start={box1Ref} end={box2Ref}>*/}
       {/*  /!*<HeadProvider*!/*/}
@@ -402,9 +341,9 @@ const MyArrows = () => {
   return (
     <>
       {/* AutoAnchor arrow */}
-      <XArrow start={"box1"} end={"box2"}>
-        <AutoAnchorXLine startAnchor={["left", "right", { x: "25%", y: "50%" }]} />
-      </XArrow>
+      {/*<XArrow start={"box1"} end={"box2"}>*/}
+      {/*  <AutoAnchorXLine startAnchor={["left", "right", { x: "25%", y: "50%" }]} />*/}
+      {/*</XArrow>*/}
 
       {/*/!* simple arrow left to right *!/*/}
       {/*<XArrow start={"box1"} end={"box2"}>*/}

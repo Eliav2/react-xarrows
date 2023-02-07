@@ -6,7 +6,7 @@ import { Direction, IRect, NamedDirection, parseIRect, parsePossiblyDirectedVect
 import { toArray } from "./utils";
 import { Dir, Vector } from "./path";
 import React, { ForwardRefExoticComponent } from "react";
-import PositionProvider, { PositionProviderProps, PositionProviderVal } from "./providers/PositionProvider";
+import PositionProvider from "./providers/PositionProvider";
 import HeadProvider from "./providers/HeadProvider";
 import PointsProvider from "./providers/PointsProvider";
 import { childrenRenderer } from "./internal/Children";

@@ -100,19 +100,18 @@ const DefaultChildren = (props: DefaultChildrenProps) => {
   // console.log("props.pos.x", props.pos.x);
   usePositionProviderRegister(
     (pos) => {
-      // console.log("registered function");
-      // console.log("props.dir", props.dir);
-      // console.log(pos);
-      if (pos.endPoint) {
-        // console.log("making change to pos.endPoint");
-        pos.endPoint = new Vector(pos.endPoint.sub(props.dir.mul(offSet)));
-      }
-      return pos;
+      if (pos.endPoint) pos.endPoint = new Vector(pos.endPoint.sub(props.dir.mul(offSet)));
     },
     false,
-    // [props.dir]
-    [props.dir.x, props.dir.y, props.size]
+    [props.dir.x, props.dir.y, props.size, props.pos.x, props.pos.y]
   );
+  // usePositionProviderRegister(
+  //   (pos) => {
+  //     if (pos.endPoint) pos.endPoint = new Vector(pos.endPoint.sub(props.dir.mul(offSet)));
+  //   },
+  //   false,
+  //   [props.dir.x, props.dir.y, props.size, props.pos.x, props.pos.y]
+  // );
   // usePositionProviderRegister(
   //   (pos) => {
   //     console.log("registered function");

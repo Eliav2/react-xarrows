@@ -54,6 +54,7 @@ export const useRegisteredManager = <T extends any>(
   func,
   dependencies: any[] = []
 ) => {
+  // console.log("useRegisteredManager", manager?.registered.length);
   const id = useRef<number>(null as unknown as number); // the id would be received from the Provider wrapper
   const reRender = useRerender();
   useLayoutEffect(() => {
@@ -65,6 +66,12 @@ export const useRegisteredManager = <T extends any>(
       manager.unregister(id.current);
     };
   }, dependencies);
+  // useLayoutEffect(() => {
+  //   // reRender();
+  //   console.log("manager?.registered.length", Object.keys(manager?.registered ?? {}).length);
+  //   console.log("rerender!");
+  // }, [Object.keys(manager?.registered ?? {}).length]);
+
   return id;
 };
 

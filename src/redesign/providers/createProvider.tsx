@@ -1,17 +1,17 @@
 import { RegisteredManager, useRegisteredManager } from "../internal/RegisteredManager";
 import { AnyObj } from "shared/types";
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { aggregateValues } from "../utils";
 import { childrenRenderer } from "../internal/Children";
 import { useEnsureContext } from "../internal/hooks";
-import produce, { current } from "immer";
+import produce, { createDraft, current } from "immer";
 import useRerender from "shared/hooks/useRerender";
 import { deepFreeze } from "shared/utils";
 import { log } from "../../../../archive/oldArchietecutre/XarrowCore";
 import { Logger } from "concurrently";
 
 export type ProviderContextProps<Val, RegisterFunc> = {
-  value: Val;
+  readonly value: Val;
   prevVal: ProviderContextProps<Val, RegisterFunc> | undefined;
   __mounted: boolean;
 
@@ -55,6 +55,8 @@ export const createProvider = <Val extends AnyObj = any, ValPrepared extends Val
     debug?: boolean;
   }
 ) => {
+  const console_debug = _debug(options?.debug); // should be here to avoid double logging on React StrictMode
+
   type RegisterFunc = (prevVal: ValPrepared) => ValPrepared;
 
   // this context value is provided to this provider's children
@@ -81,9 +83,9 @@ export const createProvider = <Val extends AnyObj = any, ValPrepared extends Val
     },
     forwardRef: React.ForwardedRef<unknown>
   ) {
-    const console_debug = _debug(options?.debug); // should be here to avoid double logging on React StrictMode
     console_debug(name);
 
+    const reRender = useRerender();
     // get the previous provider value(if exists)
     const prevVal = React.useContext(ProviderContext);
 
@@ -115,12 +117,28 @@ export const createProvider = <Val extends AnyObj = any, ValPrepared extends Val
     // debug("!");
 
     // use immer to update the provided value by calling all registered functions
-    let alteredVal = { ...preparedValue };
-    // console_debug("alteredVal", alteredVal);
-    // let alteredVal = { ...alteredValState };
-    // alteredVal = produce(alteredVal, (draft) => {
+    // let alteredVal = { ...preparedValue };
+    // console_debug("alteredVal before", preparedValue);
+    const alteredVal = produce(preparedValue, (draft) => {
+      Object.values(providerManager.current.registered).forEach((change) => {
+        const res = change(draft as ValPrepared);
+        if (res) {
+          draft = { ...draft, ...res };
+        }
+      });
+    });
+
+    // re-render the provider when a new function is registered or unregistered
+    useLayoutEffect(() => {
+      reRender();
+    }, [Object.keys(providerManager.current?.registered ?? {}).length]);
+
+    // console_debug("alteredVal after", alteredVal);
+
+    // let preparedValueDraft = createDraft(preparedValue);
     //   Object.values(providerManager.current.registered).forEach((change) => {
-    //     alteredVal = change(current(draft) as ValPrepared);
+    //     const res = change(preparedValueDraft as ValPrepared);
+    //     if
     //   });
     // });
 
@@ -142,7 +160,8 @@ export const createProvider = <Val extends AnyObj = any, ValPrepared extends Val
   Object.defineProperty(Component, "name", { value: name, writable: false });
 
   // a hook that can be used to register a function to the provider
-  const useProviderRegister = (func: (prevVal: ValPrepared) => ValPrepared, noWarn = false, dependencies: any[] = []) => {
+  const useProviderRegister = (func: (prevVal: ValPrepared) => ValPrepared | void, noWarn = false, dependencies: any[] = []) => {
+    console_debug("useProviderRegister");
     const provider = React.useContext(ProviderContext);
     useEnsureContext(provider, name, `use${name}Register`, { noWarn });
     // const HeadId = useRegisteredManager(headProvider.HeadsManager, mounted, func);

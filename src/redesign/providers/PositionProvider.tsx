@@ -37,18 +37,13 @@ const {
   useProviderRegister: usePositionProviderRegister,
 } = createProvider<PositionProviderVal, PositionProviderValPrepared>("PositionProvider", {
   prepareValue: (val) => {
-    // produce(val, (draft) => {
-    //   if (val.startPoint) val.startPoint = new Vector(val.startPoint);
-    //   if (val.endPoint) val.endPoint = new Vector(val.endPoint);
-    // }) as PositionProviderValPrepared;
     const newVal = produce(val, (draft) => {
       if (val.startPoint) draft.startPoint = new Vector(val.startPoint);
       if (val.endPoint) draft.endPoint = new Vector(val.endPoint);
     });
-    // if (val.endPoint) val.endPoint = { ...val.endPoint };
     return newVal as PositionProviderValPrepared;
   },
-  debug: true,
+  // debug: true,
 });
 
 export { PositionProvider, usePositionProvider, usePositionProviderRegister };
