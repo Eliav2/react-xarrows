@@ -95,33 +95,37 @@ export const zTurn = (
  * todo: add pTurn option
  */
 export const getBestPath = (
-  startPoint: Vector,
-  endPoint: Vector,
-  options: { zBreakPoint: number } = { zBreakPoint: 0.5 }
+  startPoint: IVector,
+  endPoint: IVector,
+  {
+    // the break point of the zTurn path
+    zBreakPoint = 0.5,
+    // the start point from which the direction would be counted(can be used to alter the shape of the path)
+    startDirPoint = startPoint,
+    // the end point from which the direction would be counted(can be used to alter the shape of the path)
+    endDirPoint = endPoint,
+  }
 ): { points: IVector[]; startDir: Dir; endDir: Dir } => {
-  const { zBreakPoint = 0.5 } = options;
   const startVector = new Vector(parsePossiblyDirectedVector(startPoint));
   const endVector = new Vector(parsePossiblyDirectedVector(endPoint));
-  // console.log("startVector", startVector.trailingDir);
-  // console.log("endPoint", endPoint.x);
+  const startDirVector = new Vector(parsePossiblyDirectedVector(startDirPoint));
+  const endDirVector = new Vector(parsePossiblyDirectedVector(endDirPoint));
 
-  const forwardDir = endVector.sub(startVector).dir();
-  const startDir = startVector.chooseDir(forwardDir);
+  const forwardDir = endDirVector.sub(startDirVector).dir();
+  const startDir = startDirVector.chooseDir(forwardDir);
   let endDir = endVector.chooseDir(forwardDir);
 
   if (startDir && endDir && startDir.canZTurnTo(endDir)) {
-    console.log("Z turn");
+    // console.log("Z turn");
     return {
       // points: zTurn(startVector, endVector, { dir: zDir.getCloserAxisName(), breakPoint: zBreakPoint }),
       points: zTurn(startVector, endVector, { dir: endDir.getCloserAxisName(), breakPoint: zBreakPoint }),
-      // todo: fix types issues
       startDir,
       endDir,
     };
   }
-  // console.log(startVector, endVector);
   if (startDir && endDir && startDir.canRTurnTo(endDir)) {
-    console.log("R turn");
+    // console.log("R turn");
     const points = rTurn(startVector, endVector, { dir: startDir.getCloserAxisName() });
     return {
       points,
@@ -129,7 +133,7 @@ export const getBestPath = (
       endDir,
     };
   }
-  // if no turn is possible, return a straight line
+  // if no special path is possible, return a straight line
   return {
     points: [startVector, endVector],
     startDir: startVector.trailingDir?.[0] ?? forwardDir,

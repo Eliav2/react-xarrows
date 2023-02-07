@@ -146,10 +146,10 @@ const DemoXWrapper = () => {
       {/*<TestPassRef />*/}
 
       <XArrow start={box1Ref} end={box2Ref}>
-        <AutoAnchor>
+        <AutoAnchor startAnchor={"right"} endAnchor={"left"}>
           <BestPath>
-            <XHead color={"purple"} />
             <XPath color={"yellow"} />
+            <XHead color={"purple"} size={100} />
           </BestPath>
         </AutoAnchor>
       </XArrow>

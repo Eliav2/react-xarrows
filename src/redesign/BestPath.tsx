@@ -1,10 +1,10 @@
 import React from "react";
 import { Dir, getBestPath, pointsToCurves, Vector } from "./path";
 import { IDir, IVector } from "./types";
-import { usePositionProvider } from "./providers/PositionProvider";
+import { PositionProvider, usePositionProvider } from "./providers/PositionProvider";
 import PointsProvider from "./providers/PointsProvider";
 import PathProvider from "./providers/PathProvider";
-import HeadProvider from "./providers/HeadProvider";
+import HeadProvider, { useHeadProvider } from "./providers/HeadProvider";
 import { childrenRenderer } from "./internal/Children";
 import { xyDirs } from "./AutoAnchor";
 import { makeWriteable, makeWriteableDeep } from "shared/types";
@@ -20,10 +20,13 @@ const BestPath = React.forwardRef(function BestPath(props: BestPathProps, forwar
   // console.log("BestPath");
   const { children, pointToPath = pointsToCurves } = props;
   const { startPoint, endPoint } = usePositionProvider();
+  const { pos: HeadPos } = useHeadProvider();
   if (!startPoint || !endPoint) return null;
-  const { points, endDir } = getBestPath(startPoint, endPoint);
+  const { points, endDir } = getBestPath(startPoint, endPoint, { endDirPoint: HeadPos });
+  points[points.length - 1] = endPoint;
   // console.log("endDir", endDir);
   return (
+    // <PositionProvider value={{ startPoint: points[0], endPoint: points.at(-1) }}>
     <PointsProvider value={{ points }}>
       <PathProvider value={{ pointsToPath: pointToPath }}>
         <HeadProvider value={{ dir: endDir }}>
@@ -32,6 +35,7 @@ const BestPath = React.forwardRef(function BestPath(props: BestPathProps, forwar
         </HeadProvider>
       </PathProvider>
     </PointsProvider>
+    // </PositionProvider>
   );
 });
 
