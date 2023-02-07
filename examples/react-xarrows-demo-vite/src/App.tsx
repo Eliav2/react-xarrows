@@ -166,12 +166,8 @@ const DemoXWrapper = () => {
       <XArrow start={box1Ref} end={box2Ref}>
         <PositionProvider
           value={(prevPos) => {
-            // if (prevPos.endPoint) prevPos.endPoint.x -= 30;
-            // console.log("prevPos.endPoint.x", prevPos.endPoint?.x);
-            let newPos = produce(prevPos, (draft) => {
-              if (draft.endPoint) draft.endPoint.x -= 30;
-            });
-            return newPos;
+            if (prevPos.endPoint) prevPos.endPoint.x -= 30;
+            return prevPos;
           }}
         >
           <XHead />

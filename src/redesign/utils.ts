@@ -20,48 +20,64 @@ export const toArray = <T>(value: T | T[]): [T] extends [undefined] ? [] : Array
 };
 export const omitAttrs = <T, K extends keyof T>(Class: new () => T, keys: K[]): new () => Omit<T, typeof keys[number]> => Class;
 
-/**
- * this function can be used to walk through contexts above in the tree and calculate accumulated values of a given value
- */
-export const evalIfFunc = <C extends { [key in Key]: any } & { [key: string]: any }, Key extends string, V extends any>(
-  context: C,
-  prevContextKey: Key,
-  getVal: (context: C) => V // function to get the value from the context
-): RemoveFunctions<V> => {
-  const val = getVal(context);
-  if (typeof val === "function") {
-    const res = evalIfFunc(context[prevContextKey], prevContextKey, val as any);
-    // return produce(res, (draft) => {
-    //   return val(draft);
-    // }) as any;
-    return val(res);
-  }
-
-  // stop condition (when the value is not a function)
-  return val as RemoveFunctions<V>;
-};
+// /**
+//  * this function can be used to walk through contexts above in the tree and calculate accumulated values of a given value
+//  */
+// export const evalIfFunc = <C extends { [key in Key]: any } & { [key: string]: any }, Key extends string, V extends any>(
+//   context: C,
+//   prevContextKey: Key,
+//   getVal: (context: C) => V // function to get the value from the context
+// ): RemoveFunctions<V> => {
+//   const val = getVal(context);
+//   if (typeof val === "function") {
+//     const res = evalIfFunc(context[prevContextKey], prevContextKey, val as any);
+//     // return produce(res, (draft) => {
+//     //   return val(draft);
+//     // }) as any;
+//     return val(res);
+//   }
+//
+//   // stop condition (when the value is not a function)
+//   return val as RemoveFunctions<V>;
+// };
 
 /**
  * this utility function is used to get the accumulated value of the given value from the upper contexts in the tree
  */
+// export const aggregateValues = <
+//   AggVal,
+//   CFields extends string,
+//   C extends ({ [key in CFields]: any } & { [key: string]: any }) | null,
+//   Key extends CFields,
+//   V extends AnyObj
+// >(
+//   aggVal: AggVal = {} as any,
+//   context: C,
+//   prevContextKey: Key, // the key name of the field in the context that points to the previous context
+//   getVal: (context: C) => V
+// ): RemoveFunctions<V> => {
+
 export const aggregateValues = <
-  AggVal,
-  CFields extends string,
-  C extends ({ [key in CFields]: any } & { [key: string]: any }) | null,
-  Key extends CFields,
-  V extends AnyObj
+  Context extends AnyObj,
+  PrevContextKey extends keyof Context,
+  Val extends AnyObj,
+  PrevVal extends AnyObj
+  // PrevContextKey extends ContextKeys,
 >(
-  aggVal: AggVal = {} as any,
-  context: C,
-  prevContextKey: Key, // the key name of the field in the context that points to the previous context
-  getVal: (context: C) => V
-): RemoveFunctions<V> => {
+  aggVal: Val | ((prevVal: Val) => AnyObj | void) = {} as any,
+  context: Context,
+  prevContextKey: PrevContextKey, // the key name of the field in the context that points to the previous context
+  getVal: (context: Context) => PrevVal
+): PrevVal => {
   const val = getVal(context);
   if (!context) return {} as any;
   const prevVal = aggregateValues(val, context![prevContextKey], prevContextKey, getVal);
   let newVal = aggVal;
   if (typeof aggVal === "function") {
-    newVal = aggVal(prevVal);
+    newVal = produce(prevVal, (draft: any) => {
+      return aggVal(draft);
+    }) as any;
+    // newVal = aggVal(prevVal);
   }
   return { ...prevVal, ...newVal } as any;
 };

@@ -42,8 +42,8 @@ const {
     //   if (val.endPoint) val.endPoint = new Vector(val.endPoint);
     // }) as PositionProviderValPrepared;
     const newVal = produce(val, (draft) => {
-      if (draft.startPoint) draft.startPoint = new Vector(val.startPoint);
-      if (draft.endPoint) draft.endPoint = new Vector(val.endPoint);
+      if (val.startPoint) draft.startPoint = new Vector(val.startPoint);
+      if (val.endPoint) draft.endPoint = new Vector(val.endPoint);
     });
     // if (val.endPoint) val.endPoint = { ...val.endPoint };
     return newVal as PositionProviderValPrepared;

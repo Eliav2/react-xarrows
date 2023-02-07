@@ -76,8 +76,7 @@ export const createProvider = <Val extends AnyObj = any, ValPrepared extends Val
       children,
     }: {
       // the value to provide (this value will be merged with the previous providers values, and can be altered by registered functions)
-      value?: Val | ((prevVal: Val) => Val);
-      // children: React.ReactNode;
+      value?: Val | ((prevVal: Val) => Val | void); //void is allowed because immer is used
       children: React.ReactNode | ((props: Val) => React.ReactNode) | React.ForwardRefExoticComponent<any>;
     },
     forwardRef: React.ForwardedRef<unknown>
@@ -88,7 +87,8 @@ export const createProvider = <Val extends AnyObj = any, ValPrepared extends Val
     // get the previous provider value(if exists)
     const prevVal = React.useContext(ProviderContext);
 
-    let val = aggregateValues(value, prevVal, "prevVal", (context) => context?.value);
+    let val = aggregateValues(value, prevVal, "prevVal" as const, (context) => context?.value);
+
     // let val = value;
     // if (typeof value === "function") {
     // console.log('function!!!!');
@@ -115,7 +115,7 @@ export const createProvider = <Val extends AnyObj = any, ValPrepared extends Val
     // debug("!");
 
     // use immer to update the provided value by calling all registered functions
-    // let alteredVal = { ...preparedValue };
+    let alteredVal = { ...preparedValue };
     // console_debug("alteredVal", alteredVal);
     // let alteredVal = { ...alteredValState };
     // alteredVal = produce(alteredVal, (draft) => {
@@ -127,16 +127,13 @@ export const createProvider = <Val extends AnyObj = any, ValPrepared extends Val
     return (
       <ProviderContext.Provider
         value={{
-          // value: Object.freeze(alteredVal),
-          value: deepFreeze(preparedValue),
-          // value: deepFreeze(alteredVal),
+          value: deepFreeze(alteredVal),
           prevVal,
           __mounted: true,
           providerManager: providerManager.current,
         }}
       >
-        {children}
-        {/*{childrenRenderer(children, alteredVal, forwardRef)}*/}
+        {childrenRenderer(children, alteredVal, forwardRef)}
       </ProviderContext.Provider>
     );
   }
