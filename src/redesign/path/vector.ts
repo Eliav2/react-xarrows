@@ -3,10 +3,12 @@ import { Contains, IVector, OneOrMore, parseDirection, PossiblyDirectedVector } 
 import { toArray } from "../utils";
 import { deg2Rad, eq, math_operators, operatorFunc, round } from "./mathUtils";
 import { DirArr } from "./vectorArr";
+import { immerable } from "immer";
 
 export type TrailingDir = Dir[] | undefined;
 
 class _Vector<T extends TrailingDir> {
+  [immerable] = true;
   // _tmp: T;
   x: number;
   y: number;

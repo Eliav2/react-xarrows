@@ -16,9 +16,9 @@ describe("Provider", () => {
               <div>
                 <PositionProvider value={{ z: 10 }}>
                   <HeadProvider value={{ x: 10, y: 10, z: 10 }}>
-                    <PositionProvider value={{ x: 3 }}>
+                    <PositionProvider>
                       {(val) => {
-                        expect(val).toEqual({ x: 3, y: 2, z: 10 });
+                        expect(val).toEqual({ x: 1, y: 2, z: 10 });
                         return <div></div>;
                       }}
                     </PositionProvider>

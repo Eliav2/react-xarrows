@@ -1,11 +1,14 @@
 import { RegisteredManager, useRegisteredManager } from "../internal/RegisteredManager";
 import { AnyObj } from "shared/types";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { aggregateValues } from "../utils";
 import { childrenRenderer } from "../internal/Children";
 import { useEnsureContext } from "../internal/hooks";
 import produce, { current } from "immer";
 import useRerender from "shared/hooks/useRerender";
+import { deepFreeze } from "shared/utils";
+import { log } from "../../../../archive/oldArchietecutre/XarrowCore";
+import { Logger } from "concurrently";
 
 export type ProviderContextProps<Val, RegisterFunc> = {
   value: Val;
@@ -85,12 +88,15 @@ export const createProvider = <Val extends AnyObj = any, ValPrepared extends Val
     // get the previous provider value(if exists)
     const prevVal = React.useContext(ProviderContext);
 
-    const [valState, setValState] = useState(value);
-
-    // console_debug("prevVal", prevVal);
-    // aggregate the value with the previous providers
     let val = aggregateValues(value, prevVal, "prevVal", (context) => context?.value);
-    // console_debug("val", val);
+    // let val = value;
+    // if (typeof value === "function") {
+    // console.log('function!!!!');
+    // aggVal = produce(prevVal, (draft) => {
+    //   aggVal = (aggVal as any)(current(draft));
+    // }) as any;
+    // val = value(prevVal?.value);
+    // }
 
     // a manager to handle registered functions
     const providerManager = useRef(new RegisteredManager<RegisterFunc>());
@@ -109,8 +115,8 @@ export const createProvider = <Val extends AnyObj = any, ValPrepared extends Val
     // debug("!");
 
     // use immer to update the provided value by calling all registered functions
-    let alteredVal = { ...preparedValue };
-    console_debug("alteredVal", alteredVal);
+    // let alteredVal = { ...preparedValue };
+    // console_debug("alteredVal", alteredVal);
     // let alteredVal = { ...alteredValState };
     // alteredVal = produce(alteredVal, (draft) => {
     //   Object.values(providerManager.current.registered).forEach((change) => {
@@ -121,13 +127,16 @@ export const createProvider = <Val extends AnyObj = any, ValPrepared extends Val
     return (
       <ProviderContext.Provider
         value={{
-          value: alteredVal,
+          // value: Object.freeze(alteredVal),
+          value: deepFreeze(preparedValue),
+          // value: deepFreeze(alteredVal),
           prevVal,
           __mounted: true,
           providerManager: providerManager.current,
         }}
       >
-        {childrenRenderer(children, alteredVal, forwardRef)}
+        {children}
+        {/*{childrenRenderer(children, alteredVal, forwardRef)}*/}
       </ProviderContext.Provider>
     );
   }

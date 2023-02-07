@@ -57,15 +57,11 @@ export const aggregateValues = <
   getVal: (context: C) => V
 ): RemoveFunctions<V> => {
   const val = getVal(context);
-  let prevVal = {};
-  if (context) {
-    prevVal = aggregateValues(val, context[prevContextKey], prevContextKey, getVal);
-  }
+  if (!context) return {} as any;
+  const prevVal = aggregateValues(val, context![prevContextKey], prevContextKey, getVal);
+  let newVal = aggVal;
   if (typeof aggVal === "function") {
-    aggVal = produce(prevVal, (draft) => {
-      aggVal = (aggVal as any)(current(draft));
-    }) as any;
-    // aggVal = aggVal(prevVal);
+    newVal = aggVal(prevVal);
   }
-  return { ...prevVal, ...aggVal } as any;
+  return { ...prevVal, ...newVal } as any;
 };

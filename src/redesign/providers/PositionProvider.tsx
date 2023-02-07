@@ -2,6 +2,7 @@ import React from "react";
 import { createProvider } from "./createProvider";
 import { IPoint } from "../types";
 import { Vector } from "../path";
+import produce, { current } from "immer";
 
 interface PositionProviderVal {
   startPoint?: IPoint;
@@ -36,9 +37,16 @@ const {
   useProviderRegister: usePositionProviderRegister,
 } = createProvider<PositionProviderVal, PositionProviderValPrepared>("PositionProvider", {
   prepareValue: (val) => {
-    if (val.startPoint) val.startPoint = new Vector(val.startPoint);
-    if (val.endPoint) val.endPoint = new Vector(val.endPoint);
-    return val as PositionProviderValPrepared;
+    // produce(val, (draft) => {
+    //   if (val.startPoint) val.startPoint = new Vector(val.startPoint);
+    //   if (val.endPoint) val.endPoint = new Vector(val.endPoint);
+    // }) as PositionProviderValPrepared;
+    const newVal = produce(val, (draft) => {
+      if (draft.startPoint) draft.startPoint = new Vector(val.startPoint);
+      if (draft.endPoint) draft.endPoint = new Vector(val.endPoint);
+    });
+    // if (val.endPoint) val.endPoint = { ...val.endPoint };
+    return newVal as PositionProviderValPrepared;
   },
   debug: true,
 });

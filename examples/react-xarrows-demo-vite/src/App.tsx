@@ -1,5 +1,5 @@
 import "./App.css";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Box } from "./components/Box";
 import useRerender from "shared/hooks/useRerender";
 import { BestPathSmoothXArrow } from "./components/BestPathSmoothXArrow";
@@ -30,21 +30,87 @@ import Comp2 from "./Comp2";
 import TestPassRef from "./components/TestPassRef";
 import { usePositionProvider } from "../../../src";
 import { expect } from "vitest";
+import produce from "immer";
+import { deepFreeze } from "shared/utils";
 
 function App() {
   return (
     <div className="App">
+      {/*<TestImmer />*/}
       <DemoXWrapper />
-      {/*<DemoXWrapper />*/}
     </div>
   );
 }
+
+function changeVal(val: { val: number }) {
+  val.val += 1;
+  return val;
+}
+
+const TestImmerChild = ({ value }: { value: { val: number } }) => {
+  console.log("TestImmerChild");
+  const val = value;
+  const [valState, valSetState] = useState(value);
+  // const newVal = changeVal(val);
+  const newVal = produce(val, (draft) => {
+    changeVal(draft);
+  });
+  useEffect(() => {
+    console.log("TestImmerChild effect");
+
+    // valSetState({ val: valState.val + 1 });
+    valSetState({ val: value.val + 1 });
+    return () => {
+      console.log("TestImmerChild effect cleanup");
+    };
+  }, [value]);
+
+  return (
+    <div>
+      val: {newVal.val} valState: {valState.val}
+    </div>
+  );
+};
+const TestImmer = () => {
+  // const [state, setState] = useState<{ val: number }>(Object.freeze({ val: 0 }));
+  const [state, setState] = useState({ val: 0 });
+  const render = useRerender();
+  const v = produce({ asd: 10 }, (draft) => {});
+
+  return (
+    <div>
+      <Button onClick={render}>render</Button>
+      <Button
+        onClick={() => {
+          setState((s) => {
+            // s = produce(s, (draft) => {
+            //   draft.val += 1;
+            // });
+            return { val: s.val + 1 };
+          });
+        }}
+      >
+        Increment parrent state
+      </Button>
+      <div>
+        {state.val}
+        <TestImmerChild value={state} />
+      </div>
+    </div>
+  );
+};
 
 const DemoXWrapper = () => {
   // console.log("DemoXWrapper");
   const render = useRerender();
   const box1Ref = useRef<HTMLDivElement>(null);
   const box2Ref = useRef<HTMLDivElement>(null);
+
+  // const obj = deepFreeze({ a: { ab: { abc: 1 } } });
+  // const newObj = produce(obj, (draft) => {
+  //   draft.a.ab.abc += 1;
+  // });
+  // console.log(newObj);
 
   useEffect(() => {
     console.log("DemoXWrapper useEffect");
@@ -75,6 +141,44 @@ const DemoXWrapper = () => {
       </div>
       <div style={{ height: 50 }} />
 
+      {/*<PositionProvider value={{ endPoint: { x: 0, y: 0 } }}>*/}
+      {/*  <PositionProvider*/}
+      {/*    value={(val) => {*/}
+      {/*      const newVal = produce(val, (draft) => {*/}
+      {/*        if (draft.endPoint) draft.endPoint.x = 10;*/}
+      {/*      });*/}
+      {/*      return newVal;*/}
+      {/*    }}*/}
+      {/*  ></PositionProvider>*/}
+      {/*</PositionProvider>*/}
+
+      {/*<PositionProvider value={{ endPoint: { x: 10, y: 10 } }}>*/}
+      {/*  <PositionProvider*/}
+      {/*    value={(val) => {*/}
+      {/*      const newVal = produce(val, (draft) => {*/}
+      {/*        draft.endPoint && (draft.endPoint.x -= 30);*/}
+      {/*      });*/}
+      {/*      return newVal;*/}
+      {/*    }}*/}
+      {/*  ></PositionProvider>*/}
+      {/*</PositionProvider>*/}
+
+      <XArrow start={box1Ref} end={box2Ref}>
+        <PositionProvider
+          value={(prevPos) => {
+            // if (prevPos.endPoint) prevPos.endPoint.x -= 30;
+            // console.log("prevPos.endPoint.x", prevPos.endPoint?.x);
+            let newPos = produce(prevPos, (draft) => {
+              if (draft.endPoint) draft.endPoint.x -= 30;
+            });
+            return newPos;
+          }}
+        >
+          <XHead />
+          <XLine color={"red"} />
+        </PositionProvider>
+      </XArrow>
+
       {/*<BasicDemo />*/}
 
       {/*<TestPassRef />*/}
@@ -90,28 +194,21 @@ const DemoXWrapper = () => {
       {/*  /!*</PositionProvider>*!/*/}
       {/*</PositionProvider>*/}
 
-      {/*<PositionProvider value={{ x: 3, y: 1 }}>*/}
-      {/*  <PositionProvider>*/}
+      {/*<PositionProvider value={{ x: 12, y: 10 }}>*/}
+      {/*  <PositionProvider value={{ y: 2 }}>*/}
       {/*    {(val) => {*/}
       {/*      // console.log("val", val);*/}
-      {/*      val.x += 10;*/}
-      {/*      return <div>{val.x}</div>;*/}
+      {/*      return (*/}
+      {/*        <PositionProvider*/}
+      {/*          value={(val) => {*/}
+      {/*            console.log("val", val);*/}
+      {/*            return <div></div>;*/}
+      {/*          }}*/}
+      {/*        ></PositionProvider>*/}
+      {/*      );*/}
       {/*    }}*/}
       {/*  </PositionProvider>*/}
       {/*</PositionProvider>*/}
-
-      <XArrow start={box1Ref} end={box2Ref}>
-        <PositionProvider
-          value={(prevPos) => {
-            if (prevPos.endPoint) prevPos.endPoint.x -= 30;
-            console.log("prevPos.endPoint.x", prevPos.endPoint?.x);
-            return prevPos;
-          }}
-        >
-          <XHead />
-          <XLine color={"red"} />
-        </PositionProvider>
-      </XArrow>
 
       {/*<XArrow start={box1Ref} end={box2Ref}>*/}
       {/*  <AutoAnchor>*/}
