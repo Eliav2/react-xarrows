@@ -14,6 +14,7 @@ export const Box = React.forwardRef(function Box({ children, style, small, ...pr
   const ref = usePassRef<HTMLDivElement>(forwardRef);
   return (
     <Draggable
+      grid={[5, 5]}
       nodeRef={ref}
       onDrag={() => {
         updateXArrows();

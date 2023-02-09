@@ -1,8 +1,10 @@
 import React, { useRef } from "react";
 import { useEnsureContext } from "./internal/hooks";
 import { RegisteredManager, useRegisteredManager } from "./internal/RegisteredManager";
+import useRerender from "shared/hooks/useRerender";
 
 export const XWrapper = React.forwardRef(({ children }: XWrapperProps, forwardedRef) => {
+  // todo: consider using createProvider
   // console.log("XWrapper");
   const xWrapperManager = useRef(new RegisteredManager());
   const update = () => {
@@ -49,9 +51,10 @@ interface XWrapperProps {
  * whenever an update is requested on a XWrapper, it will call all the registered XArrows render functions.
  */
 export const useXWrapperRegister = (render, noWarn = false) => {
+  const reRender = useRerender();
   const xWrapperContext = useXWrapperContext({ noWarn });
   const mounted = useEnsureContext(xWrapperContext, "XWrapper", "useXWrapperRegister", { noWarn });
   // const XArrowId = useRegisteredManager(xWrapperContext.xWrapperXArrowsManager!, mounted, render);
-  const XArrowId = useRegisteredManager(xWrapperContext.xWrapperXArrowsManager, render);
+  const XArrowId = useRegisteredManager(xWrapperContext.xWrapperXArrowsManager, render, undefined, reRender);
   return XArrowId;
 };

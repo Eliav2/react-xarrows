@@ -43,7 +43,7 @@ const {
     });
     return newVal as PositionProviderValPrepared;
   },
-  // debug: true,
+  debug: true,
 });
 
 export { PositionProvider, usePositionProvider, usePositionProviderRegister };

@@ -32,6 +32,8 @@ export interface XHeadProps {
 }
 
 const XHead = React.forwardRef<SVGGElement, XHeadProps>(function XHead(props, forwardRef) {
+  //todo: fix register functions does not work in first render
+
   // console.log("XHead");
   const headProvider = useHeadProvider();
   // const headProvider = useHeadProvider();
@@ -102,8 +104,8 @@ const DefaultChildren = (props: DefaultChildrenProps) => {
     (pos) => {
       if (pos.endPoint) pos.endPoint = new Vector(pos.endPoint.sub(props.dir.mul(offSet)));
     },
-    false,
-    [props.dir.x, props.dir.y, props.size, props.pos.x, props.pos.y]
+    [props.dir.x, props.dir.y, props.size, props.pos.x, props.pos.y],
+    { noWarn: false }
   );
   // usePositionProviderRegister(
   //   (pos) => {

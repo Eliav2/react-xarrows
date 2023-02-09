@@ -28,7 +28,8 @@ export interface XArrowProps {
 }
 
 export const XArrow = React.forwardRef(function XArrow(props: XArrowProps, forwardedRef: React.ForwardedRef<SVGSVGElement>) {
-  // console.log("XArrow");
+  // todo: consider using createProvider
+  console.log("XArrow");
   const render = useRerender();
 
   useXWrapperRegister(render, true);
@@ -128,7 +129,7 @@ export const XArrow = React.forwardRef(function XArrow(props: XArrowProps, forwa
         ref={svgCanvasRef}
         {...props.svgCanvasProps}
       >
-        <XArrowContext.Provider value={{ startRect, endRect, __mounted: true }}>
+        <XArrowContext.Provider value={{ startRect, endRect, __mounted: true, render }}>
           <PositionProvider value={{ startPoint, endPoint }}>
             <PointsProvider>
               <PathProvider value={{ pointsToPath: pointsToCurves }}>
@@ -151,12 +152,14 @@ const XArrowContext = React.createContext<{
   // startPoint: IPoint;
   // endPoint: IPoint;
   __mounted: boolean;
+  render: () => void;
 }>({
   startRect: null,
   endRect: null,
   // startPoint: { x: 0, y: 0 },
   // endPoint: { x: 0, y: 0 },
   __mounted: false,
+  render: () => {},
 });
 export const useXArrow = () => {
   const val = React.useContext(XArrowContext);

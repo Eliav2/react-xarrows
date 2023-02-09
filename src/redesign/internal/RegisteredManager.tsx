@@ -51,17 +51,23 @@ export class RegisteredManager<Func = () => void> {
 export const useRegisteredManager = <T extends any>(
   manager: RegisteredManager<T> | null,
   // isProviderMounted: boolean,
-  func,
-  dependencies: any[] = []
+  registeredFunc,
+  dependencies: any[] = [],
+  afterRegister?: () => void
 ) => {
   const id = useRef<number>(null as unknown as number); // the id would be received from the Provider wrapper
-  const reRender = useRerender();
+  // const reRender = useRerender();
   useLayoutEffect(() => {
-    reRender(); // this is needed to make sure any function that is registered will be accessible.
+    // reRender(); // this is needed to make sure any function that is registered will be accessible.
     if (!manager) return;
-    id.current = manager.register(func, id.current);
+    id.current = manager.register(registeredFunc, id.current);
+    afterRegister?.();
     return () => {
+      console.log("unregistering", id.current);
       if (!manager) return;
+      afterRegister?.();
+
+      // reRender();
       manager.unregister(id.current);
     };
   }, dependencies);

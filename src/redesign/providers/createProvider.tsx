@@ -9,6 +9,7 @@ import useRerender from "shared/hooks/useRerender";
 import { deepFreeze } from "shared/utils";
 import { log } from "../../../../archive/oldArchietecutre/XarrowCore";
 import { Logger } from "concurrently";
+import { useXArrow } from "../XArrow";
 
 export type ProviderContextProps<Val, RegisterFunc> = {
   readonly value: Val;
@@ -86,6 +87,7 @@ export const createProvider = <Val extends AnyObj = any, ValPrepared extends Val
     console_debug(name);
 
     const reRender = useRerender();
+    const { render: renderXArrow } = useXArrow();
     // get the previous provider value(if exists)
     const prevVal = React.useContext(ProviderContext);
 
@@ -130,7 +132,9 @@ export const createProvider = <Val extends AnyObj = any, ValPrepared extends Val
 
     // re-render the provider when a new function is registered or unregistered
     useLayoutEffect(() => {
-      reRender();
+      // reRender();
+      console.log("number of registered changed", Object.keys(providerManager.current?.registered ?? {}).length);
+      renderXArrow();
     }, [Object.keys(providerManager.current?.registered ?? {}).length]);
 
     // console_debug("alteredVal after", alteredVal);
@@ -141,6 +145,7 @@ export const createProvider = <Val extends AnyObj = any, ValPrepared extends Val
     //     if
     //   });
     // });
+    // console.log(typeof children, React.Children.count(children));
 
     return (
       <ProviderContext.Provider
@@ -160,12 +165,14 @@ export const createProvider = <Val extends AnyObj = any, ValPrepared extends Val
   Object.defineProperty(Component, "name", { value: name, writable: false });
 
   // a hook that can be used to register a function to the provider
-  const useProviderRegister = (func: (prevVal: ValPrepared) => ValPrepared | void, noWarn = false, dependencies: any[] = []) => {
+  const useProviderRegister = (func: (prevVal: ValPrepared) => ValPrepared | void, dependencies: any[] = [], { noWarn = false }) => {
     console_debug("useProviderRegister");
+    // const reRender = useRerender();
+    const { render: renderXArrow } = useXArrow();
     const provider = React.useContext(ProviderContext);
     useEnsureContext(provider, name, `use${name}Register`, { noWarn });
     // const HeadId = useRegisteredManager(headProvider.HeadsManager, mounted, func);
-    const regId = useRegisteredManager(provider.providerManager, func, dependencies);
+    const regId = useRegisteredManager(provider.providerManager, func, dependencies, renderXArrow);
     return regId;
   };
 
