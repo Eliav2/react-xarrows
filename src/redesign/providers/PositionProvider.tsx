@@ -35,6 +35,9 @@ const {
    * This hook is used to register a function that will be called in order to change the start and end points of the arrow.
    */
   useProviderRegister: usePositionProviderRegister,
+
+  // should be used only by internal components(or for advanced users)
+  Context: PositionProviderContext,
 } = createProvider<PositionProviderVal, PositionProviderValPrepared>("PositionProvider", {
   prepareValue: (val) => {
     const newVal = produce(val, (draft) => {
@@ -43,10 +46,10 @@ const {
     });
     return newVal as PositionProviderValPrepared;
   },
-  debug: true,
+  // debug: true,
 });
 
-export { PositionProvider, usePositionProvider, usePositionProviderRegister };
+export { PositionProvider, usePositionProvider, usePositionProviderRegister, PositionProviderContext };
 export default PositionProvider;
 
 // type PositionProviderValueProp = {

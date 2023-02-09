@@ -11,6 +11,7 @@ import { usePassRef } from "shared/hooks/usePassChildrenRef";
 import PointsProvider from "./providers/PointsProvider";
 import PathProvider from "./providers/PathProvider";
 import HeadProvider from "./providers/HeadProvider";
+import { createProvider } from "./providers/createProvider";
 
 export interface XArrowProps {
   // children is a jsx elements of type svg like <circle .../> or <path .../>
@@ -175,3 +176,42 @@ export const ProvideXArrow = (props: ProvideXContextProps) => {
   const val = useXArrow();
   return <>{props.children(val)}</>;
 };
+/////////////////////////////////////////
+export const {
+  Provider: XArrowProvider,
+  useProvider: useXArrowProvider,
+  useProviderRegister: useXArrowProviderRegister,
+  Context: XArrowProviderContext,
+} = createProvider<{ startRect: Rectangle | null; endRect: Rectangle | null }>("XArrowProvider", {
+  debug: true,
+});
+
+// const XArrowContext = React.createContext<{
+//   startRect: Rectangle | null;
+//   endRect: Rectangle | null;
+//   // startPoint: IPoint;
+//   // endPoint: IPoint;
+//   __mounted: boolean;
+//   render: () => void;
+// }>({
+//   startRect: null,
+//   endRect: null,
+//   // startPoint: { x: 0, y: 0 },
+//   // endPoint: { x: 0, y: 0 },
+//   __mounted: false,
+//   render: () => {},
+// });
+// export const useXArrow = () => {
+//   const val = React.useContext(XArrowContext);
+//   useEnsureContext(val, "XArrow", "useXContext");
+//   return val;
+// };
+//
+// interface ProvideXContextProps {
+//   children: (context: ReturnType<typeof useXArrow>) => React.ReactNode;
+// }
+//
+// export const ProvideXArrow = (props: ProvideXContextProps) => {
+//   const val = useXArrow();
+//   return <>{props.children(val)}</>;
+// };

@@ -178,7 +178,13 @@ export const createProvider = <Val extends AnyObj = any, ValPrepared extends Val
 
   // forward the ref to the component (correctly handle ref forwarding)
   const ProviderFRef = React.forwardRef(Component);
-  return { Provider: ProviderFRef, useProvider, useProviderRegister };
+  return {
+    Provider: ProviderFRef,
+    useProvider,
+    useProviderRegister,
+    // for internal components(or advanced users)
+    Context: ProviderContext,
+  };
 };
 
 // const MyReactComponent = (value = 10) => {
