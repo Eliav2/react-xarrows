@@ -29,8 +29,7 @@ export interface XArrowProps {
 }
 
 export const XArrow = React.forwardRef(function XArrow(props: XArrowProps, forwardedRef: React.ForwardedRef<SVGSVGElement>) {
-  // todo: consider using createProvider
-  console.log("XArrow");
+  // console.log("XArrow");
   const render = useRerender();
 
   useXWrapperRegister(render, true);

@@ -29,3 +29,6 @@ export { default as XPath } from "./XPath";
 
 export * from "./BestPath";
 export { default as BestPath } from "./BestPath";
+
+// re-export immer 'current' function
+export { current } from "immer";

@@ -6,7 +6,7 @@ import { Direction, IRect, NamedDirection, parseIRect, parsePossiblyDirectedVect
 import { toArray } from "./utils";
 import { Dir, Vector } from "./path";
 import React, { ForwardRefExoticComponent } from "react";
-import PositionProvider from "./providers/PositionProvider";
+import PositionProvider, { usePositionProvider } from "./providers/PositionProvider";
 import HeadProvider from "./providers/HeadProvider";
 import PointsProvider from "./providers/PointsProvider";
 import { childrenRenderer } from "./internal/Children";
@@ -148,6 +148,7 @@ const AutoAnchor = React.forwardRef(function AutoAnchor(
   { startAnchor = "auto", endAnchor = "auto", children }: AutoAnchorProps,
   ref: React.ForwardedRef<SVGElement>
 ) {
+  // console.log(usePositionProvider());
   // console.log("AutoAnchor");
   const context = useXArrow();
   let { startRect, endRect } = context;

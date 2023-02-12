@@ -14,10 +14,11 @@ export const math_operators = {
 
 export const operatorFunc = <P extends Vector>(
   p: P, // the first vector
-  p2: IVector | number, // the second vector or number
+  p2: IVector | number | undefined, // the second vector or number
   operator, // the operator function
   self = false // should the operation be done on the original vector instead of creating a new one
 ): Vector => {
+  if (p2 === undefined) return p;
   let _p2: IVector;
   if (typeof p2 === "number") _p2 = { x: p2, y: p2 };
   else _p2 = p2;

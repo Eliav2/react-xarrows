@@ -8,9 +8,10 @@ import { useHeadProvider, useHeadProviderRegister } from "./providers/HeadProvid
 import { MapNonNullable, RemoveChildren } from "shared/types";
 import { childrenRenderer } from "./internal/Children";
 import { usePositionProviderRegister } from "./providers";
+import { assignDefaults, omit } from "shared/utils";
 
 export interface XHeadProps {
-  children?: React.ReactNode; // a jsx element of type svg like <circle .../> or <path .../>
+  element?: JSX.Element; // a jsx element of type svg like <circle .../> or <path .../>
 
   dir?: IDir;
 
@@ -31,6 +32,11 @@ export interface XHeadProps {
   pos?: IPoint;
 }
 
+export interface XHeadPropsWithDefaults extends XHeadProps {
+  dir: Dir;
+  pos: Vector;
+}
+
 const XHead = React.forwardRef<SVGGElement, XHeadProps>(function XHead(props, forwardRef) {
   //todo: fix register functions does not work in first render
 
@@ -39,21 +45,32 @@ const XHead = React.forwardRef<SVGGElement, XHeadProps>(function XHead(props, fo
   // const headProvider = useHeadProvider();
   // console.log("headProvider?.dir", headProvider?.dir);
   // const { endPoint } = usePositionProvider();
-  let { children = DefaultChildren, ...propsNoChildren } = props;
-  const propsWithDefault = Object.assign(
-    {
-      pos: new Vector(headProvider?.pos ?? { x: 0, y: 0 }),
-      dir: new Dir(headProvider?.dir ?? { x: 0, y: 0 }),
-      rotate: headProvider?.rotate ?? 0,
-      color: headProvider?.color ?? "cornflowerblue",
-      size: headProvider?.size ?? 30,
-      props: {},
-      containerRef: null,
-    },
-    propsNoChildren
-  );
+  const propsWithDefault = assignDefaults(props, {
+    pos: new Vector(headProvider?.pos ?? { x: 0, y: 0 }),
+    dir: new Dir(headProvider?.dir ?? { x: 0, y: 0 }),
+    rotate: headProvider?.rotate ?? 0,
+    color: headProvider?.color ?? "cornflowerblue",
+    size: headProvider?.size ?? 30,
+    props: {},
+    containerRef: null,
+  });
+  //@ts-ignore
+  let { element = (<DefaultChildren />) as any } = props;
+
+  const elementWithProps = React.cloneElement(element, propsWithDefault);
+
   propsWithDefault.dir = new Dir(propsWithDefault.dir);
   const { dir, pos, rotate, color, size, containerRef } = propsWithDefault;
+
+  // const offSet = propsWithDefault.size * 0.75; // this shape of arrow head has 25% of its size as a tail
+  // usePositionProviderRegister(
+  //   (pos) => {
+  //     if (pos.endPoint) pos.endPoint = new Vector(pos.endPoint.sub(propsWithDefault.dir.mul(offSet)));
+  //   },
+  //   [propsWithDefault.dir.x, propsWithDefault.dir.y, propsWithDefault.size, propsWithDefault.pos.x, propsWithDefault.pos.y]
+  // );
+
+  // console.log(props.pos, propsWithDefault.pos);
   // the reason there are 3 nested g elements is to allow the user to override props of the inner children svg element
 
   return (
@@ -74,64 +91,29 @@ const XHead = React.forwardRef<SVGGElement, XHeadProps>(function XHead(props, fo
             pointerEvents: "auto",
           }}
         >
-          {childrenRenderer(DefaultChildren, propsWithDefault, forwardRef)}
+          {childrenRenderer(elementWithProps, propsWithDefault, forwardRef)}
         </g>
       </g>
     </g>
   );
 });
-// XHead.defaultProps = {
-//   size: 30,
-//   // children: arrowShapes.arrow1.svgElem,
-//   color: "cornflowerBlue",
-//   rotate: 0,
-// };
 
 export default XHead;
 
 // const DefaultChildren = (props: NonNullableProps<RemoveChildren<XHeadProps>>) => {
-interface DefaultChildrenProps extends RemoveChildren<Required<XHeadProps>> {
+interface DefaultChildrenProps extends Omit<Required<XHeadProps>, "element"> {
   dir: Dir;
   pos: Vector;
 }
 
 const DefaultChildren = (props: DefaultChildrenProps) => {
-  // console.log("DefaultChildren");
+  // console.log("DefaultChildren", props);
   const offSet = props.size * 0.75; // this shape of arrow head has 25% of its size as a tail
-  // console.log("props.dir", props.dir);
-  // console.log("props.pos.x", props.pos.x);
   usePositionProviderRegister(
     (pos) => {
       if (pos.endPoint) pos.endPoint = new Vector(pos.endPoint.sub(props.dir.mul(offSet)));
     },
-    [props.dir.x, props.dir.y, props.size, props.pos.x, props.pos.y],
-    { noWarn: false }
+    [props.dir.x, props.dir.y, props.size, props.pos.x, props.pos.y]
   );
-  // usePositionProviderRegister(
-  //   (pos) => {
-  //     if (pos.endPoint) pos.endPoint = new Vector(pos.endPoint.sub(props.dir.mul(offSet)));
-  //   },
-  //   false,
-  //   [props.dir.x, props.dir.y, props.size, props.pos.x, props.pos.y]
-  // );
-  // usePositionProviderRegister(
-  //   (pos) => {
-  //     console.log("registered function");
-  //     console.log("props.dir", props.dir);
-  //     if (pos.endPoint) {
-  //       console.log("making change to pos.endPoint");
-  //       pos.endPoint = new Vector(pos.endPoint.sub(props.dir.mul(offSet)));
-  //     }
-  //     return pos;
-  //   },
-  //   false,
-  //   // [props.dir]
-  //   [props.dir.x, props.dir.y, props.size]
-  // );
-  // useHeadProviderRegister((head) => {
-  //   head.pos = new Vector(head.pos.sub(props.dir.mul(offSet)));
-  //   return head;
-  // });
-
   return <BasicHeadShape1 />;
 };

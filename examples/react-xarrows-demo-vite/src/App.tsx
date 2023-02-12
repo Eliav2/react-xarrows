@@ -1,5 +1,5 @@
 import "./App.css";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Box } from "./components/Box";
 import useRerender from "shared/hooks/useRerender";
 import { BestPathSmoothXArrow } from "./components/BestPathSmoothXArrow";
@@ -21,6 +21,12 @@ import {
   XPath,
   BestPath,
   HeadProvider,
+  usePositionProvider,
+  usePositionProviderRegister,
+  useHeadProvider,
+  current,
+  Dir,
+  Vector,
 } from "react-xarrows";
 import { AutoAnchorWithHeadXArrow } from "./components/AutoAnchorWithHeadXArrow";
 import { BestPathGridXArrow } from "./components/BestPathGridXArrow";
@@ -28,10 +34,10 @@ import SnakeXArrow from "./components/SnakeXArrow";
 import Comp1 from "./Comp1";
 import Comp2 from "./Comp2";
 import TestPassRef from "./components/TestPassRef";
-import { usePositionProvider } from "../../../src";
 import { expect } from "vitest";
-import produce, { current } from "immer";
+// import produce  from "immer";
 import { deepFreeze } from "shared/utils";
+import { XHeadProps, XHeadPropsWithDefaults } from "../../../src";
 
 function App() {
   return (
@@ -47,58 +53,58 @@ function changeVal(val: { val: number }) {
   return val;
 }
 
-const TestImmerChild = ({ value }: { value: { val: number } }) => {
-  console.log("TestImmerChild");
-  const val = value;
-  const [valState, valSetState] = useState(value);
-  // const newVal = changeVal(val);
-  const newVal = produce(val, (draft) => {
-    changeVal(draft);
-  });
-  useEffect(() => {
-    console.log("TestImmerChild effect");
-
-    // valSetState({ val: valState.val + 1 });
-    valSetState({ val: value.val + 1 });
-    return () => {
-      console.log("TestImmerChild effect cleanup");
-    };
-  }, [value]);
-
-  return (
-    <div>
-      val: {newVal.val} valState: {valState.val}
-    </div>
-  );
-};
-const TestImmer = () => {
-  // const [state, setState] = useState<{ val: number }>(Object.freeze({ val: 0 }));
-  const [state, setState] = useState({ val: 0 });
-  const render = useRerender();
-  const v = produce({ asd: 10 }, (draft) => {});
-
-  return (
-    <div>
-      <Button onClick={render}>render</Button>
-      <Button
-        onClick={() => {
-          setState((s) => {
-            // s = produce(s, (draft) => {
-            //   draft.val += 1;
-            // });
-            return { val: s.val + 1 };
-          });
-        }}
-      >
-        Increment parrent state
-      </Button>
-      <div>
-        {state.val}
-        <TestImmerChild value={state} />
-      </div>
-    </div>
-  );
-};
+// const TestImmerChild = ({ value }: { value: { val: number } }) => {
+//   console.log("TestImmerChild");
+//   const val = value;
+//   const [valState, valSetState] = useState(value);
+//   // const newVal = changeVal(val);
+//   const newVal = produce(val, (draft) => {
+//     changeVal(draft);
+//   });
+//   useEffect(() => {
+//     console.log("TestImmerChild effect");
+//
+//     // valSetState({ val: valState.val + 1 });
+//     valSetState({ val: value.val + 1 });
+//     return () => {
+//       console.log("TestImmerChild effect cleanup");
+//     };
+//   }, [value]);
+//
+//   return (
+//     <div>
+//       val: {newVal.val} valState: {valState.val}
+//     </div>
+//   );
+// };
+// const TestImmer = () => {
+//   // const [state, setState] = useState<{ val: number }>(Object.freeze({ val: 0 }));
+//   const [state, setState] = useState({ val: 0 });
+//   const render = useRerender();
+//   const v = produce({ asd: 10 }, (draft) => {});
+//
+//   return (
+//     <div>
+//       <Button onClick={render}>render</Button>
+//       <Button
+//         onClick={() => {
+//           setState((s) => {
+//             // s = produce(s, (draft) => {
+//             //   draft.val += 1;
+//             // });
+//             return { val: s.val + 1 };
+//           });
+//         }}
+//       >
+//         Increment parrent state
+//       </Button>
+//       <div>
+//         {state.val}
+//         <TestImmerChild value={state} />
+//       </div>
+//     </div>
+//   );
+// };
 
 const DemoXWrapper = () => {
   // console.log("DemoXWrapper");
@@ -145,109 +151,18 @@ const DemoXWrapper = () => {
 
       {/*<TestPassRef />*/}
       <XArrow start={box1Ref} end={box2Ref}>
+        {/*<XHead color={"red"} />*/}
+        <CustomTailHead size={30} />
+        <XLine />
         {/*<AutoAnchor startAnchor={"auto"} endAnchor={"auto"}>*/}
-        {/*<BestPath>*/}
-        {/*{[<XHead color={"purple"} size={100} />, <XPath color={"yellow"} />]}*/}
-        <XHead color={"purple"} size={100} />
-        <XPath color={"yellow"} />
-        {/*</BestPath>*/}
+        {/*  <BestPath>*/}
+        {/*    /!*<CustomTailHead />*!/*/}
+        {/*    /!*<XHead color={"purple"} size={30} element={<BasicHeadShape1 />} />*!/*/}
+
+        {/*    /!*<XPath color={"yellow"} />*!/*/}
+        {/*  </BestPath>*/}
         {/*</AutoAnchor>*/}
       </XArrow>
-
-      {/*<XArrow start={box1Ref} end={box2Ref}>*/}
-      {/*  /!*<HeadProvider*!/*/}
-      {/*  /!*  value={(val) => {*!/*/}
-      {/*  /!*    if (val.pos) val.pos.y += 30;*!/*/}
-      {/*  /!*    return val;*!/*/}
-      {/*  /!*  }}*!/*/}
-      {/*  /!*>*!/*/}
-      {/*  /!*  <HeadProvider*!/*/}
-      {/*  /!*    value={(val) => {*!/*/}
-      {/*  /!*      if (val.pos) val.pos.x += 30;*!/*/}
-      {/*  /!*      return val;*!/*/}
-      {/*  /!*    }}*!/*/}
-      {/*  /!*  >*!/*/}
-      {/*  <XHead color={"blue"} />*/}
-
-      {/*  <XPath />*/}
-      {/*  /!*</HeadProvider>*!/*/}
-      {/*  /!*</HeadProvider>*!/*/}
-      {/*</XArrow>*/}
-
-      {/*<XArrow start={box1Ref} end={box2Ref}>*/}
-      {/*  <AutoAnchor startAnchor={"left"} endAnchor={"left"}>*/}
-      {/*    /!*<BestPath>*!/*/}
-      {/*    /!*<HeadProvider value={{ dir: { x: 1, y: 0 } }}>*!/*/}
-      {/*    <XHead color={"red"} />*/}
-      {/*    <XPath />*/}
-      {/*    /!*</HeadProvider>*!/*/}
-      {/*    /!*<XLine>*!/*/}
-      {/*    /!*  <XHead color={"red"} />*!/*/}
-      {/*    /!*</XLine>*!/*/}
-      {/*    /!*</BestPath>*!/*/}
-      {/*  </AutoAnchor>*/}
-      {/*</XArrow>*/}
-
-      {/*<Comp1>*/}
-      {/*  <Comp2/>*/}
-      {/*</Comp1>*/}
-
-      {/*<AutoAnchor>*/}
-      {/*  <text fill={"red"} x="65" y="55" className="Rrrrr">*/}
-      {/*    Grumpy!*/}
-      {/*  </text>*/}
-      {/*</AutoAnchor>*/}
-
-      {/*<AutoAnchor>*/}
-      {/*  <BestPath>*/}
-      {/*todo: provide a way to use the selected anchor dir and offset endpoint*/}
-      {/*todo: create a generic XProvider component*/}
-      {/*<PositionProvider>*/}
-      {/*</PositionProvider>*/}
-      {/*<XPath />*/}
-      {/*<XHead />*/}
-      {/*</BestPath>*/}
-      {/*</AutoAnchor>*/}
-
-      {/*<AutoAnchor>*/}
-      {/*  /!*<XLine stripEnd={22.5} color={"yellow"}>*!/*/}
-      {/*  /!*  <XHead />*!/*/}
-      {/*  /!*</XLine>*!/*/}
-      {/*  /!*<PositionProvider value={{ endPoint: (e) => ({ ...e, x: e.x - 60 }) }}>*!/*/}
-      {/*  /!*<BestPath>*!/*/}
-      {/*  <PositionProvider*/}
-      {/*    value={{*/}
-      {/*      endPoint: (e) => {*/}
-      {/*        // console.log("PositionProvider", e);*/}
-      {/*        return { ...e, x: e.x - 30 };*/}
-      {/*      },*/}
-      {/*    }}*/}
-      {/*  >*/}
-      {/*    /!*<XLine stripEnd={22.5} color={"yellow"}>*!/*/}
-      {/*    /!*  <XHead />*!/*/}
-      {/*    /!*</XLine>*!/*/}
-
-      {/*    <XPath />*/}
-      {/*    /!*<XPath>*!/*/}
-      {/*    /!*  /!*<HeadProvider value={{ pos: { y: 1, x: 0 }, rotate: 30 }}>*!/*!/*/}
-      {/*    /!*  <XHead />*!/*/}
-      {/*    /!*  /!*</HeadProvider>*!/*!/*/}
-      {/*    /!*</XPath>*!/*/}
-      {/*  </PositionProvider>*/}
-      {/*  /!*</BestPath>*!/*/}
-      {/*  /!*</PositionProvider>*!/*/}
-
-      {/*  /!*<XHead />*!/*/}
-      {/*</AutoAnchor>*/}
-      {/*<svg*/}
-      {/*  style={{*/}
-      {/*    overflow: "visible",*/}
-      {/*  }}*/}
-      {/*>*/}
-      {/*  <line x1={0} y1={0} x2={100} y2={100} stroke={"red"}>*/}
-      {/*    <XHead color={"red"} />*/}
-      {/*  </line>*/}
-      {/*</svg>*/}
 
       {/* my arrows */}
       {/*<BestPathSmoothXArrow start={box1Ref} end={box2Ref} headSharpness={0.25} />*/}
@@ -257,6 +172,25 @@ const DemoXWrapper = () => {
       {/*<SimpleLineXArrow start={box1Ref} end={box2Ref} />*/}
     </XWrapper>
   );
+};
+const CustomTailHead = (props) => {
+  // console.log("CustomHead", props);
+  const pos = usePositionProvider();
+  const headProvider = useHeadProvider();
+  // console.log("headProvider", headProvider.dir);
+
+  const dir = pos?.startPoint?.sub(pos?.endPoint);
+  usePositionProviderRegister(
+    (pos) => {
+      console.log("usePositionProviderRegister", props.size);
+      // console.log("usePositionProviderRegister", pos.startPoint && current(pos.startPoint), pos.startPoint?.sub(headProvider.dir?.mul(30)));
+      if (pos.startPoint) pos.startPoint = pos.startPoint?.add(headProvider.dir?.mul(props.size));
+      // if (pos.startPoint) pos.startPoint = pos.startPoint?.add(new Dir(1, 0).mul(30));
+    },
+    [headProvider.dir?.x, headProvider.dir?.y, props.size]
+  );
+  // console.log(pos);
+  return <XHead element={<BasicHeadShape1 />} pos={pos.startPoint} dir={dir} color={"red"} />;
 };
 
 export default App;

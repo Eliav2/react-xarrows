@@ -61,20 +61,20 @@ class _Vector<T extends TrailingDir> {
     return !eq(p.x, this.x) || !eq(p.y, this.y);
   }
 
-  add<T extends Vector>(this: T, p: IVector | number, self = false): Vector {
+  add<T extends Vector>(this: T, p: IVector | number | undefined, self = false): Vector {
     return operatorFunc(this, p, math_operators.add, self) as any;
   }
 
-  sub<T extends Vector>(this: T, p: IVector | number, self = false): Vector {
+  sub<T extends Vector>(this: T, p: IVector | number | undefined, self = false): Vector {
     return operatorFunc(this, p, math_operators.sub, self) as any;
   }
 
   // mul(p: IVectorself=false) {
-  mul<T extends Vector>(this: T, p: IVector | number, self = false): Vector {
+  mul<T extends Vector>(this: T, p: IVector | number | undefined, self = false): Vector {
     return operatorFunc(this, p, math_operators.mul, self) as any;
   }
 
-  dev<T extends Vector>(this: T, p: IVector | number, self = false): Vector {
+  dev<T extends Vector>(this: T, p: IVector | number | undefined, self = false): Vector {
     return operatorFunc(this, p, math_operators.dev, self) as any;
   }
 

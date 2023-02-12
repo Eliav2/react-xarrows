@@ -58,13 +58,13 @@ export const useRegisteredManager = <T extends any>(
   const id = useRef<number>(null as unknown as number); // the id would be received from the Provider wrapper
   // const reRender = useRerender();
   useLayoutEffect(() => {
-    // reRender(); // this is needed to make sure any function that is registered will be accessible.
     if (!manager) return;
     id.current = manager.register(registeredFunc, id.current);
+    // console.log("registering", id.current);
     afterRegister?.();
     return () => {
-      console.log("unregistering", id.current);
       if (!manager) return;
+      // console.log("unregistering", id.current);
       afterRegister?.();
 
       // reRender();

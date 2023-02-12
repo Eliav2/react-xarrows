@@ -10,7 +10,7 @@ interface PositionProviderVal {
 }
 
 interface PositionProviderValPrepared {
-  startVector?: Vector;
+  startPoint?: Vector;
   endPoint?: Vector;
 }
 

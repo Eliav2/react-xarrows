@@ -14,10 +14,12 @@ export const childrenRenderer = <C extends React.ReactNode = React.ReactNode, Pr
   if (Array.isArray(children)) return children;
 
   if (typeof children === "function") {
+    // console.log("childrenRenderer renders function");
     return childrenPassRef(children(props), ref);
   }
   // handle forwardRef components
   if (isReactForwardRef(children)) {
+    // console.log("childrenRenderer renders isReactForwardRef");
     // @ts-ignore
     return children.render(props, ref);
   }
@@ -32,19 +34,19 @@ export const childrenPassRef = (children: React.ReactNode, ref?: LegacyRef<any>)
   // return children;
 };
 
-interface ChildrenProps {
-  children?: React.ReactNode;
-
-  // [key: string]: any;
-}
-
-const Children = React.forwardRef(function Children({ children }: ChildrenProps, forwardRef) {
-  const childRef = usePassChildrenRef(children);
-
-  const c = childrenRenderer(children, forwardRef ?? childRef);
-  console.log(c);
-  return c as any;
-  // return <>{c}</>; // ts: why is this needed?
-});
-
-export default Children;
+// interface ChildrenProps {
+//   children?: React.ReactNode;
+//
+//   // [key: string]: any;
+// }
+//
+// const Children = React.forwardRef(function Children({ children }: ChildrenProps, forwardRef) {
+//   const childRef = usePassChildrenRef(children);
+//
+//   const c = childrenRenderer(children, forwardRef ?? childRef);
+//   console.log(c);
+//   return c as any;
+//   // return <>{c}</>; // ts: why is this needed?
+// });
+//
+// export default Children;

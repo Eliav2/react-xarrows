@@ -4,7 +4,6 @@ import { RegisteredManager, useRegisteredManager } from "./internal/RegisteredMa
 import useRerender from "shared/hooks/useRerender";
 
 export const XWrapper = React.forwardRef(({ children }: XWrapperProps, forwardedRef) => {
-  // todo: consider using createProvider
   // console.log("XWrapper");
   const xWrapperManager = useRef(new RegisteredManager());
   const update = () => {
