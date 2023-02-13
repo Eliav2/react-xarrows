@@ -42,17 +42,17 @@ const XArrowEnd = React.forwardRef<SVGGElement, XArrowEndProps>(function XArrowE
 
   // console.log("XArrowEnd");
 
-  const headProvider = useHeadProvider();
+  // const headProvider = useHeadProvider();
   // const headProvider = useHeadProvider();
   // console.log("headProvider?.dir", headProvider?.dir);
   // const { endPoint } = usePositionProvider();
   const propsWithDefault = assignDefaults(props, {
     // pos: new Vector(headProvider?.pos ?? { x: 0, y: 0 }),
     pos: new Vector({ x: 0, y: 0 }),
-    dir: new Dir(headProvider?.dir ?? { x: 0, y: 0 }),
-    rotate: headProvider?.rotate ?? 0,
-    color: headProvider?.color ?? "cornflowerblue",
-    size: headProvider?.size ?? 30,
+    dir: new Dir({ x: 0, y: 0 }),
+    rotate: 0,
+    color: "cornflowerblue",
+    size: 30,
     props: {},
     containerRef: null,
   });

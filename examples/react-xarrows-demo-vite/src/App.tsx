@@ -196,9 +196,9 @@ const XArrowHeadAndTail = (props: XArrowHeadAndTailProps) => {
         <XLocator location={"100%"}>
           <XArrowEnd size={props.headSize} color={"red"} />
         </XLocator>
-        {/*<XLocator>*/}
-        {/*  <XArrowEnd size={props.headSize} />*/}
-        {/*</XLocator>*/}
+        <XLocator>
+          <XArrowEnd size={props.headSize} />
+        </XLocator>
       </XLine>
     </XArrow>
   );
