@@ -39,6 +39,12 @@ export class Line {
   // the vector connecting start and end
   diff() {
     return this.end.sub(this.root);
+    // return new Vector(this.end.x - this.root.x, this.end.y - this.root.y);
+  }
+
+  //
+  length() {
+    return ((this.end.x - this.root.x) ** 2 + (this.end.y - this.root.y) ** 2) ** 0.5;
   }
 
   //return form of y = ax+b form

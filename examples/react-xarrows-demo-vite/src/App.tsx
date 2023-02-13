@@ -27,6 +27,7 @@ import {
   current,
   Dir,
   Vector,
+  XLocator,
 } from "react-xarrows";
 import { AutoAnchorWithHeadXArrow } from "./components/AutoAnchorWithHeadXArrow";
 import { BestPathGridXArrow } from "./components/BestPathGridXArrow";
@@ -38,7 +39,6 @@ import { expect } from "vitest";
 // import produce  from "immer";
 import { deepFreeze } from "shared/utils";
 import { XArrowEndProps, XArrowEndPropsWithDefaults } from "../../../src";
-import XLocator from "../../../src/redesign/XLocator";
 
 function App() {
   return (
@@ -152,7 +152,7 @@ const DemoXWrapper = () => {
 
       {/*<TestPassRef />*/}
 
-      {/*<XArrowHeadAndTail start={box1Ref} end={box2Ref} />*/}
+      <XArrowHeadAndTail start={box1Ref} end={box2Ref} />
 
       {/*<XArrow start={box1Ref} end={box2Ref}>*/}
       {/*  <XArrowEnd color={"red"} />*/}
@@ -193,8 +193,8 @@ const XArrowHeadAndTail = (props: XArrowHeadAndTailProps) => {
   return (
     <XArrow start={props.start} end={props.end}>
       <XLine>
-        <XLocator>
-          <XArrowEnd size={props.headSize} />
+        <XLocator location={"100%"}>
+          <XArrowEnd size={props.headSize} color={"red"} />
         </XLocator>
         {/*<XLocator>*/}
         {/*  <XArrowEnd size={props.headSize} />*/}

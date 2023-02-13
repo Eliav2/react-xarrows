@@ -18,3 +18,6 @@ export { default as PathProvider } from "./PathProvider";
 
 export * from "./PointsProvider";
 export { default as PointsProvider } from "./PointsProvider";
+
+export * from "./LocatorProvider";
+export { default as LocatorProvider } from "./LocatorProvider";

@@ -44,19 +44,6 @@ export const omitAttrs = <T, K extends keyof T>(Class: new () => T, keys: K[]): 
 /**
  * this utility function is used to get the accumulated value of the given value from the upper contexts in the tree
  */
-// export const aggregateValues = <
-//   AggVal,
-//   CFields extends string,
-//   C extends ({ [key in CFields]: any } & { [key: string]: any }) | null,
-//   Key extends CFields,
-//   V extends AnyObj
-// >(
-//   aggVal: AggVal = {} as any,
-//   context: C,
-//   prevContextKey: Key, // the key name of the field in the context that points to the previous context
-//   getVal: (context: C) => V
-// ): RemoveFunctions<V> => {
-
 export const aggregateValues = <
   Context extends AnyObj,
   PrevContextKey extends keyof Context,

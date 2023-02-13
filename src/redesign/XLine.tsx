@@ -44,12 +44,12 @@ export const XLine = React.forwardRef(function XLine(props: XLineProps, ref: Rea
   if (props.stripEnd || props.stripStart) {
     let l = new Line(new Vector(Number(x1), Number(y1)), new Vector(Number(x2), Number(y2)));
     if (props.stripEnd) {
-      l = l.stripEnd(getRelativeSizeValue(props.stripEnd, l.diff().size()));
+      l = l.stripEnd(getRelativeSizeValue(props.stripEnd, l.length()));
       x2 = l.end.x;
       y2 = l.end.y;
     }
     if (props.stripStart) {
-      l = l.stripStart(getRelativeSizeValue(props.stripStart, l.diff().size()));
+      l = l.stripStart(getRelativeSizeValue(props.stripStart, l.length()));
       x1 = l.root.x;
       y1 = l.root.y;
     }
@@ -60,7 +60,7 @@ export const XLine = React.forwardRef(function XLine(props: XLineProps, ref: Rea
     const v1 = new Vector(Number(x1), Number(y1));
     const v2 = new Vector(Number(x2), Number(y2));
     const line = new Line(v1, v2);
-    const lineTotalLength = line.diff().size();
+    const lineTotalLength = line.length();
     const dir = line.dir();
     const p = getRelativeSizeValue(location, lineTotalLength);
     return { pos: v1.add(dir.mul(p)), dir: dir };

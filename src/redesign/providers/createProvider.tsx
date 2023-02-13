@@ -41,7 +41,7 @@ const _debug = (enable?: boolean) => (enable ? console.log : () => {});
  *
  * this function is just a utility function to reduce code duplication in creation of providers
  */
-export const createProvider = <Val extends AnyObj = any, ValPrepared extends AnyObj = any>(
+export const createProvider = <Val extends AnyObj = any, ValPrepared extends AnyObj = Val>(
   // the provider name, used for debugging and React DevTools
   name: string,
   // options
@@ -90,7 +90,6 @@ export const createProvider = <Val extends AnyObj = any, ValPrepared extends Any
     console_debug(name);
 
     const reRender = useRerender();
-    const { render: renderXArrow } = useXArrow();
     // get the previous provider value(if exists)
     const prevVal = React.useContext(ProviderContext);
 

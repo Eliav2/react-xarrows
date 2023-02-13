@@ -27,6 +27,9 @@ export * from "./utils";
 export * from "./XPath";
 export { default as XPath } from "./XPath";
 
+export * from "./XLocator";
+export { default as XLocator } from "./XLocator";
+
 export * from "./BestPath";
 export { default as BestPath } from "./BestPath";
 
