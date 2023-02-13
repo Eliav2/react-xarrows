@@ -10,7 +10,7 @@ import { childrenRenderer } from "./internal/Children";
 import { usePositionProviderRegister } from "./providers";
 import { assignDefaults, omit } from "shared/utils";
 
-export interface XHeadProps {
+export interface XArrowEndProps {
   element?: JSX.Element; // a jsx element of type svg like <circle .../> or <path .../>
 
   dir?: IDir;
@@ -32,15 +32,16 @@ export interface XHeadProps {
   pos?: IPoint;
 }
 
-export interface XHeadPropsWithDefaults extends XHeadProps {
+export interface XArrowEndPropsWithDefaults extends XArrowEndProps {
   dir: Dir;
   pos: Vector;
 }
 
-const XHead = React.forwardRef<SVGGElement, XHeadProps>(function XHead(props, forwardRef) {
+const XArrowEnd = React.forwardRef<SVGGElement, XArrowEndProps>(function XArrowEnd(props, forwardRef) {
   //todo: fix register functions does not work in first render
 
-  // console.log("XHead");
+  // console.log("XArrowEnd");
+
   const headProvider = useHeadProvider();
   // const headProvider = useHeadProvider();
   // console.log("headProvider?.dir", headProvider?.dir);
@@ -98,10 +99,10 @@ const XHead = React.forwardRef<SVGGElement, XHeadProps>(function XHead(props, fo
   );
 });
 
-export default XHead;
+export default XArrowEnd;
 
-// const DefaultChildren = (props: NonNullableProps<RemoveChildren<XHeadProps>>) => {
-interface DefaultChildrenProps extends Omit<Required<XHeadProps>, "element"> {
+// const DefaultChildren = (props: NonNullableProps<RemoveChildren<XArrowEndProps>>) => {
+interface DefaultChildrenProps extends Omit<Required<XArrowEndProps>, "element"> {
   dir: Dir;
   pos: Vector;
 }
@@ -109,11 +110,11 @@ interface DefaultChildrenProps extends Omit<Required<XHeadProps>, "element"> {
 const DefaultChildren = (props: DefaultChildrenProps) => {
   // console.log("DefaultChildren", props);
   const offSet = props.size * 0.75; // this shape of arrow head has 25% of its size as a tail
-  usePositionProviderRegister(
-    (pos) => {
-      if (pos.endPoint) pos.endPoint = new Vector(pos.endPoint.sub(props.dir.mul(offSet)));
-    },
-    [props.dir.x, props.dir.y, props.size, props.pos.x, props.pos.y]
-  );
+  // usePositionProviderRegister(
+  //   (pos) => {
+  //     if (pos.endPoint) pos.endPoint = new Vector(pos.endPoint.sub(props.dir.mul(offSet)));
+  //   },
+  //   [props.dir.x, props.dir.y, props.size, props.pos.x, props.pos.y]
+  // );
   return <BasicHeadShape1 />;
 };

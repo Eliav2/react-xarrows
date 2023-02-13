@@ -1,14 +1,12 @@
 import { RegisteredManager, useRegisteredManager } from "../internal/RegisteredManager";
 import { AnyObj } from "shared/types";
-import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import React, { useRef } from "react";
 import { aggregateValues } from "../utils";
 import { childrenRenderer } from "../internal/Children";
 import { useEnsureContext } from "../internal/hooks";
-import produce, { createDraft, current } from "immer";
+import produce from "immer";
 import useRerender from "shared/hooks/useRerender";
 import { deepFreeze } from "shared/utils";
-import { log } from "../../../../archive/oldArchietecutre/XarrowCore";
-import { Logger } from "concurrently";
 import { useXArrow } from "../XArrow";
 
 export type ProviderContextProps<Val, RegisterFunc> = {
@@ -58,7 +56,7 @@ export const createProvider = <Val extends AnyObj = any, ValPrepared extends Any
     defaultVal?: ValPrepared;
     // can be used to debug the provider
     debug?: boolean;
-  }
+  } = {}
 ) => {
   const console_debug = _debug(options?.debug); // should be here to avoid double logging on React StrictMode
 
@@ -156,6 +154,7 @@ export const createProvider = <Val extends AnyObj = any, ValPrepared extends Any
     Context: ProviderContext,
   };
 };
+export default createProvider;
 
 // const MyReactComponent = (value = 10) => {
 //   let valuePrepared = value;

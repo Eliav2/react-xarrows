@@ -5,7 +5,7 @@ import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import styles from "./index.module.css";
 import React, { useRef } from "react";
 import { Typography } from "@mui/material";
-import { XHead, XArrow, XLine } from "react-xarrows";
+import { XArrowEnd, XArrow, XLine } from "react-xarrows";
 
 const Badges = () => {
   return (
@@ -85,7 +85,7 @@ function BasicDemo() {
       </div>
       <XArrow start={box1Ref} end={box2Ref}>
         {/*<XLine />*/}
-        <XLine>{/*<XHead color={"red"} />*/}</XLine>
+        <XLine>{/*<XArrowEnd color={"red"} />*/}</XLine>
       </XArrow>
     </div>
   );

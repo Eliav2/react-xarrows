@@ -17,6 +17,7 @@ export class RegisteredManager<Func = () => void> {
 
   //returns the first available index.
   private getAvailableIndex(): number {
+    // todo: consider using useId hook provided by react instead of this.
     //returns the next available index.
     if (this.missingIndexes.size === 0) return this.countRegistered;
     else return this.missingIndexes.values().next().value;

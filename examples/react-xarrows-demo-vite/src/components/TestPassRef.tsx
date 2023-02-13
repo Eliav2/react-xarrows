@@ -9,7 +9,7 @@ import {
   XLine,
   AutoAnchor,
   PositionProvider,
-  XHead,
+  XArrowEnd,
   NormalizedGSvg,
   BasicHeadShape1,
   XPath,

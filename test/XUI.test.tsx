@@ -9,7 +9,7 @@ import useRerender from "shared/hooks/useRerender";
 import { Box } from "../examples/react-xarrows-demo-vite/src/components/Box";
 import XWrapper from "../src/redesign/XWrapper";
 import { Button, Paper } from "@mui/material";
-import XHead from "../src/redesign/XHead";
+import XArrowEnd from "../src/redesign/XArrowEnd";
 import XLine from "../src/redesign/XLine";
 
 type DemoXWrapperProps = {
@@ -65,7 +65,7 @@ describe("XLine ", () => {
             return prevPos;
           }}
         >
-          <XHead />
+          <XArrowEnd />
           <XLine color={"red"} />
         </PositionProvider>
       </PositionProvider>
@@ -83,7 +83,7 @@ describe("XLine ", () => {
     //                 return prevPos;
     //               }}
     //             >
-    //               <XHead />
+    //               <XArrowEnd />
     //               <XLine color={"red"} />
     //             </PositionProvider>
     //           </XArrow>

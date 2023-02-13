@@ -1,10 +1,11 @@
 import React from "react";
 import { RelativeSize } from "shared/types";
-import { getRelativeSizeValue } from "shared/utils";
+import { getRelativeSizeValue, parseRelativeSize } from "shared/utils";
 import { Dir, Vector } from "./path/vector";
 import { Line } from "./path/line";
 import { usePositionProvider } from "./providers/PositionProvider";
 import HeadProvider from "./providers/HeadProvider";
+import LocatorProvider from "./providers/LocatorProvider";
 
 export interface XLineProps extends React.SVGProps<SVGLineElement> {
   children?: React.ReactNode;
@@ -55,6 +56,16 @@ export const XLine = React.forwardRef(function XLine(props: XLineProps, ref: Rea
   }
   if (!endPoint || !startPoint) return null;
   // console.log("XLine", { startPoint, endPoint });
+  const location = (location: RelativeSize) => {
+    const v1 = new Vector(Number(x1), Number(y1));
+    const v2 = new Vector(Number(x2), Number(y2));
+    const line = new Line(v1, v2);
+    const lineTotalLength = line.diff().size();
+    const dir = line.dir();
+    const p = getRelativeSizeValue(location, lineTotalLength);
+    return { pos: v1.add(dir.mul(p)), dir: dir };
+  };
+
   return (
     <>
       <Component
@@ -68,10 +79,12 @@ export const XLine = React.forwardRef(function XLine(props: XLineProps, ref: Rea
         strokeWidth={strokeWidth}
         {...p}
       />
-      <HeadProvider value={{ dir: { x: endPoint.x - startPoint.x, y: endPoint.y - startPoint.y }, color }}>{children}</HeadProvider>
+      <LocatorProvider value={{ getLocation: location }}>{children}</LocatorProvider>
+      {/*<HeadProvider value={{ dir: { x: endPoint.x - startPoint.x, y: endPoint.y - startPoint.y }, color }}>{children}</HeadProvider>*/}
     </>
   );
 });
+
 export default XLine;
 
 XLine.defaultProps = {

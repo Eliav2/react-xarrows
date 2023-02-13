@@ -15,7 +15,7 @@ import { createProvider } from "./providers/createProvider";
 
 export interface XArrowProps {
   // children is a jsx elements of type svg like <circle .../> or <path .../>
-  children: React.ReactNode;
+  children?: React.ReactNode;
 
   // a reference to the start element, can be a ref, an id or a (x,y) position
   start: XElemRef;

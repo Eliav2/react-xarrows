@@ -1,6 +1,6 @@
 import React from "react";
 import { IVector } from "../types";
-import { PositionProviderVal, usePositionProvider } from "./PositionProvider";
+import { usePositionProvider } from "./PositionProvider";
 import { childrenRenderer } from "../internal/Children";
 
 export type PointsProps = {

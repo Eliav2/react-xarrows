@@ -15,7 +15,7 @@ import {
   XLine,
   AutoAnchor,
   PositionProvider,
-  XHead,
+  XArrowEnd,
   NormalizedGSvg,
   BasicHeadShape1,
   XPath,
@@ -37,7 +37,8 @@ import TestPassRef from "./components/TestPassRef";
 import { expect } from "vitest";
 // import produce  from "immer";
 import { deepFreeze } from "shared/utils";
-import { XHeadProps, XHeadPropsWithDefaults } from "../../../src";
+import { XArrowEndProps, XArrowEndPropsWithDefaults } from "../../../src";
+import XLocator from "../../../src/redesign/XLocator";
 
 function App() {
   return (
@@ -150,19 +151,28 @@ const DemoXWrapper = () => {
       {/*<BasicDemo />*/}
 
       {/*<TestPassRef />*/}
-      <XArrow start={box1Ref} end={box2Ref}>
-        {/*<XHead color={"red"} />*/}
-        <CustomTailHead size={30} />
-        <XLine />
-        {/*<AutoAnchor startAnchor={"auto"} endAnchor={"auto"}>*/}
-        {/*  <BestPath>*/}
-        {/*    /!*<CustomTailHead />*!/*/}
-        {/*    /!*<XHead color={"purple"} size={30} element={<BasicHeadShape1 />} />*!/*/}
 
-        {/*    /!*<XPath color={"yellow"} />*!/*/}
-        {/*  </BestPath>*/}
-        {/*</AutoAnchor>*/}
-      </XArrow>
+      {/*<XArrowHeadAndTail start={box1Ref} end={box2Ref} />*/}
+
+      {/*<XArrow start={box1Ref} end={box2Ref}>*/}
+      {/*  <XArrowEnd color={"red"} />*/}
+      {/*  <CustomTailHead size={30} />*/}
+      {/*  <XLine />*/}
+      {/*  <foreignObject overflow={"visible"}>*/}
+      {/*    <div>*/}
+      {/*      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed mollis mollis mi ut ultricies. Nullam magna ipsum, porta vel dui*/}
+      {/*      convallis, rutrum imperdiet eros. Aliquam erat volutpat.*/}
+      {/*    </div>*/}
+      {/*  </foreignObject>*/}
+      {/*  /!*<AutoAnchor startAnchor={"auto"} endAnchor={"auto"}>*!/*/}
+      {/*  /!*  <BestPath>*!/*/}
+      {/*  /!*    /!*<CustomTailHead />*!/*!/*/}
+      {/*  /!*    /!*<XArrowEnd color={"purple"} size={30} element={<BasicHeadShape1 />} />*!/*!/*/}
+
+      {/*  /!*    /!*<XPath color={"yellow"} />*!/*!/*/}
+      {/*  /!*  </BestPath>*!/*/}
+      {/*  /!*</AutoAnchor>*!/*/}
+      {/*</XArrow>*/}
 
       {/* my arrows */}
       {/*<BestPathSmoothXArrow start={box1Ref} end={box2Ref} headSharpness={0.25} />*/}
@@ -173,6 +183,27 @@ const DemoXWrapper = () => {
     </XWrapper>
   );
 };
+
+interface XArrowHeadAndTailProps extends XArrowProps {
+  headSize?: number;
+  tailSize?: number;
+}
+
+const XArrowHeadAndTail = (props: XArrowHeadAndTailProps) => {
+  return (
+    <XArrow start={props.start} end={props.end}>
+      <XLine>
+        <XLocator>
+          <XArrowEnd size={props.headSize} />
+        </XLocator>
+        {/*<XLocator>*/}
+        {/*  <XArrowEnd size={props.headSize} />*/}
+        {/*</XLocator>*/}
+      </XLine>
+    </XArrow>
+  );
+};
+
 const CustomTailHead = (props) => {
   // console.log("CustomHead", props);
   const pos = usePositionProvider();
@@ -182,7 +213,7 @@ const CustomTailHead = (props) => {
   const dir = pos?.startPoint?.sub(pos?.endPoint);
   usePositionProviderRegister(
     (pos) => {
-      console.log("usePositionProviderRegister", props.size);
+      // console.log("usePositionProviderRegister", props.size);
       // console.log("usePositionProviderRegister", pos.startPoint && current(pos.startPoint), pos.startPoint?.sub(headProvider.dir?.mul(30)));
       if (pos.startPoint) pos.startPoint = pos.startPoint?.add(headProvider.dir?.mul(props.size));
       // if (pos.startPoint) pos.startPoint = pos.startPoint?.add(new Dir(1, 0).mul(30));
@@ -190,7 +221,7 @@ const CustomTailHead = (props) => {
     [headProvider.dir?.x, headProvider.dir?.y, props.size]
   );
   // console.log(pos);
-  return <XHead element={<BasicHeadShape1 />} pos={pos.startPoint} dir={dir} color={"red"} />;
+  return <XArrowEnd element={<BasicHeadShape1 />} pos={pos.startPoint} dir={dir} color={"red"} />;
 };
 
 export default App;
@@ -263,7 +294,7 @@ function BasicDemo() {
       <XArrow start={box1Ref} end={box2Ref}>
         <XLine />
 
-        <XHead />
+        <XArrowEnd />
       </XArrow>
     </div>
   );
