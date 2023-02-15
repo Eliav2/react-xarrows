@@ -1,8 +1,8 @@
-import { Writeable } from './../privateTypes';
-import { _faceDirType, anchorNamedType } from '../types';
-import { between } from '../utils';
-import _ from 'lodash';
-import { dimensionType, Mutable, removeReadOnly } from '../privateTypes';
+import { Writeable } from "./../privateTypes";
+import { _faceDirType, anchorNamedType } from "../types";
+import { between } from "../utils";
+import _ from "lodash";
+import { dimensionType, Mutable, removeReadOnly } from "../privateTypes";
 
 const MATH_PRECISION = 5;
 
@@ -33,7 +33,7 @@ const round = (num: number, level = MATH_PRECISION) => {
 
 const operatorFunc = (p: Vector, p2: Vector | number, operator) => {
   let _p2;
-  if (typeof p2 === 'number') _p2 = { x: p2, y: p2 };
+  if (typeof p2 === "number") _p2 = { x: p2, y: p2 };
   else _p2 = p2;
   // note - does not copy requiredFaceDir or chosenFaceDir
   let v = new Vector(operator(p.x, _p2.x), operator(p.y, _p2.y));
@@ -57,7 +57,7 @@ export class Vector {
     if (x instanceof Vector) {
       this.x = x.x;
       this.y = x.y;
-      if (typeof y === 'number') throw Error('illegal');
+      if (typeof y === "number") throw Error("illegal");
     } else {
       this.x = x;
       this.y = y as number;
@@ -127,10 +127,7 @@ export class Vector {
     const rad = deg2Rad(deg);
     // let v =
     const contextClass: any = this.constructor;
-    return new contextClass(
-      round(this.x * Math.cos(rad) - this.y * Math.sin(rad)),
-      round(this.x * Math.sin(rad) + this.y * Math.cos(rad))
-    );
+    return new contextClass(round(this.x * Math.cos(rad) - this.y * Math.sin(rad)), round(this.x * Math.sin(rad) + this.y * Math.cos(rad)));
   }
 
   projection(v: Vector) {
@@ -169,7 +166,7 @@ export class Dir extends Vector {
   // @ts-ignore
   constructor(xDiff: number | Vector, yDiff?: number) {
     if (xDiff instanceof Vector) [xDiff, yDiff] = [xDiff.x, xDiff.y];
-    if (typeof xDiff === 'number' && typeof yDiff !== 'number') throw Error('second argument should be number');
+    if (typeof xDiff === "number" && typeof yDiff !== "number") throw Error("second argument should be number");
     // unit circle -  max dir  [0.707,0.707]
     let [x, y] = fQ2(xDiff, yDiff);
     super(x, y);
@@ -372,7 +369,7 @@ const filterDirs = (dirs: Dir[], allowedDirs: Dir[]) => {
   return [pass, fail] as const;
 };
 
-type sidesType = 'top' | 'right' | 'bottom' | 'left';
+type sidesType = "top" | "right" | "bottom" | "left";
 
 export const gridDirs = {
   up: new Dir(0, -1), //270
@@ -383,16 +380,16 @@ export const gridDirs = {
 // export const pathAllowedDirs = Object.values(gridDirs)
 
 export const SAD = {
-  top: 'up',
-  right: 'right',
-  bottom: 'down',
-  left: 'left',
+  top: "up",
+  right: "right",
+  bottom: "down",
+  left: "left",
 } as const;
 export const EAD = {
-  top: 'down',
-  right: 'left',
-  bottom: 'up',
-  left: 'right',
+  top: "down",
+  right: "left",
+  bottom: "up",
+  left: "right",
 } as const;
 
 type condFuncType = (d1: Dir, d2: Dir, vf: Vector, vr: Vector, df: Dir, dr: Dir) => boolean;
@@ -503,8 +500,8 @@ export const chooseSimplestPath = (
   // );
 
   // prefer dirs with best projections on vse vector
-  svAllowedDirs = _.orderBy(svAllowedDirs, (d) => vse.projection(d).size(), 'desc');
-  evAllowedDirs = _.orderBy(evAllowedDirs, (d) => vse.projection(d).size(), 'desc');
+  svAllowedDirs = _.orderBy(svAllowedDirs, (d) => vse.projection(d).size(), "desc");
+  evAllowedDirs = _.orderBy(evAllowedDirs, (d) => vse.projection(d).size(), "desc");
   // svAllowedDirs = _.orderBy(svAllowedDirs, (d) => d.projection(vse).size(), 'desc');
   // evAllowedDirs = _.orderBy(evAllowedDirs, (d) => d.projection(vse).size(), 'desc');
 
@@ -540,12 +537,7 @@ export const chooseSimplestPath = (
     // path can be connected directly
     // this check for performance - mostly true, will be true for normal gridDirs
     if (sv.x == ev.x || sv.y == ev.y) {
-      res = checkPath(
-        vse,
-        svAllowedDirs,
-        evAllowedDirs,
-        (svD, evD, vf, vr, df, dr) => svD.eq(evD) && svD.eq(df) && sv.add(vf).eq(ev)
-      );
+      res = checkPath(vse, svAllowedDirs, evAllowedDirs, (svD, evD, vf, vr, df, dr) => svD.eq(evD) && svD.eq(df) && sv.add(vf).eq(ev));
       if (res) return res;
     }
 
@@ -579,7 +571,7 @@ export class SmartGrid {
   pathMargin: number;
   rects: dimensionType[];
   private allowedDirs: Dir[];
-  private prevCurve = '';
+  private prevCurve = "";
 
   constructor(
     sv: Vector,
@@ -699,7 +691,7 @@ export class SmartGrid {
         // console.log('end margin');
         let chosenFaceDir = _.maxBy(ev.faceDirs, (d) => sev.projection(d));
         this.pushTarget(ev.sub(chosenFaceDir.mul(this.pathMargin)));
-        this.prevCurve = 'outside';
+        this.prevCurve = "outside";
         return this.drawToTarget();
       } else ed = sev.dir;
     }
@@ -708,12 +700,12 @@ export class SmartGrid {
         // console.log('start margin');
         let chosenFaceDir = _.maxBy(sv.faceDirs, (d) => sev.projection(d));
         this.pushSource(sv.add(chosenFaceDir.mul(this.pathMargin)));
-        this.prevCurve = 'outside';
+        this.prevCurve = "outside";
         return this.drawToTarget();
       } else sd = sev.dir;
     }
     //direction and vectors of rectangle
-    let curve = '';
+    let curve = "";
     let svf = sd.mul(sd.abs().mul(sev.abs()).size()).round();
     let svr = sev.sub(svf).round();
 
@@ -733,7 +725,7 @@ export class SmartGrid {
 
     if (!svNext && sd.eq(ed) && svr.absSize() > 0) {
       // console.log('Z curve');
-      curve = 'z';
+      curve = "z";
       svNext = sv.add(svf.mul(this.options.zGridBreak.relative)).add(sdf.mul(this.options.zGridBreak.abs));
       // svNext = svNext.setDirs([sdr]);
       svNext2 = svNext.add(svr);
@@ -742,7 +734,7 @@ export class SmartGrid {
     // r curve
     if (!svNext && sd.abs().eq(ed.mirror().abs())) {
       // console.log('r curve');
-      curve = 'r';
+      curve = "r";
       svNext = sv.add(svf);
     }
 
@@ -764,13 +756,13 @@ export class SmartGrid {
         return this.drawToTarget();
       }
       // console.log('path connected');
-      curve = 'connect';
+      curve = "connect";
       svNext = ev;
     }
 
     // console.log(svr.absSize(), svf.absSize());
     // too small margins
-    if (curve == 'r' && svr.absSize() < this.pathMargin) {
+    if (curve == "r" && svr.absSize() < this.pathMargin) {
       // console.log('end margin because small');
       this.pushTarget(ev.sub(sdr.mul(this.pathMargin)));
       return this.drawToTarget();
@@ -799,7 +791,7 @@ export class SmartGrid {
     if (
       l.diff.absSize() < this.pathMargin &&
       svr.absSize() > this.pathMargin &&
-      (this.sources.length == 1 || this.prevCurve == 'outside')
+      (this.sources.length == 1 || this.prevCurve == "outside")
     ) {
       // console.log('start marin because too small start vector on first curve');
       this.pushSource(sv.add(sdf.mul(this.pathMargin)));
@@ -817,7 +809,7 @@ export class SmartGrid {
     // if (!res && svNext2) res = rect?.getAvoidVector(new Line(sv, svNext2));
     // console.log(sv, svNext, res, this.rectsManager.rects);
     if (res && !avoidR.isInside(ev)) {
-      console.log('countered avoidable rect! adjusting path ');
+      console.log("countered avoidable rect! adjusting path ");
       // console.log(avoidV);
       // if (!svNext.eq(ev)) {
       //   this.pushSource(avoidV.setDir(sdr));
@@ -911,9 +903,7 @@ class RectanglesManager {
   rects: Rectangle[];
 
   constructor(rects: dimensionType[]) {
-    this.rects = rects.map(
-      (r) => new Rectangle(new Vector(r.x - 10, r.y - 10), new Vector(r.right + 10, r.bottom + 10))
-    );
+    this.rects = rects.map((r) => new Rectangle(new Vector(r.x - 10, r.y - 10), new Vector(r.right + 10, r.bottom + 10)));
   }
 
   getCuts(l: Line) {
@@ -962,21 +952,16 @@ class RectanglesManager {
   }
 }
 
-export const points2Vector = (
-  x1: number,
-  y1: number,
-  anchorName: anchorNamedType,
-  dirNames: Exclude<_faceDirType, 'auto'>[]
-): Vector => {
+export const points2Vector = (x1: number, y1: number, anchorName: anchorNamedType, dirNames: Exclude<_faceDirType, "auto">[]): Vector => {
   let sd: Dir[];
   //if middle all dirs allowed
-  let _dirNames: Exclude<_faceDirType, 'auto'>[];
-  if (anchorName === 'middle') {
+  let _dirNames: Exclude<_faceDirType, "auto">[];
+  if (anchorName === "middle") {
     _dirNames = Object.keys(gridDirs) as Array<keyof typeof gridDirs>;
   } else
     _dirNames = dirNames.map((dirName) => {
-      if (dirName === 'inwards') return EAD[anchorName];
-      else if (dirName === 'outwards') return SAD[anchorName];
+      if (dirName === "inwards") return EAD[anchorName];
+      else if (dirName === "outwards") return SAD[anchorName];
       else return dirName;
     });
   sd = _dirNames.map((dirName) => gridDirs[dirName]);

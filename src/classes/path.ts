@@ -1,7 +1,7 @@
-import { between, deg2Rad, math_operators, operatorFunc, round } from '../utils/mathUtils';
-import { Contains, dimensionType, removeReadOnly } from '../privateTypes';
-import _ from 'lodash';
-import { _faceDirType, anchorNamedType } from '../types';
+import { between, deg2Rad, math_operators, operatorFunc, round } from "../utils/mathUtils";
+import { Contains, dimensionType, removeReadOnly } from "../privateTypes";
+import _ from "lodash";
+import { _faceDirType, anchorNamedType } from "../types";
 
 export const MATH_PRECISION = 5;
 
@@ -34,10 +34,10 @@ export class Vector {
   constructor(v: Contains<{ x: number; y: number }>);
   // constructor(x: number | Vector | Contains<{ x: number; y: number }>, y?: number) {
   constructor(x, y?) {
-    if (x instanceof Vector || typeof x === 'object') {
+    if (x instanceof Vector || typeof x === "object") {
       this.x = x.x;
       this.y = x.y;
-      if (typeof y === 'number') throw Error('illegal');
+      if (typeof y === "number") throw Error("illegal");
     } else {
       this.x = x;
       this.y = y;
@@ -109,10 +109,7 @@ export class Vector {
     const rad = deg2Rad(deg);
     // let v =
     const contextClass: any = this.constructor;
-    return new contextClass(
-      round(this.x * Math.cos(rad) - this.y * Math.sin(rad)),
-      round(this.x * Math.sin(rad) + this.y * Math.cos(rad))
-    );
+    return new contextClass(round(this.x * Math.cos(rad) - this.y * Math.sin(rad)), round(this.x * Math.sin(rad) + this.y * Math.cos(rad)));
   }
 
   projection<T extends Vector>(this: T, v: Vector): Vector {
@@ -150,8 +147,8 @@ const fQ2 = (x, y) => {
 export class Dir extends Vector {
   // @ts-ignore
   constructor(xDiff: number | Vector | { x: number; y: number }, yDiff?: number) {
-    if (xDiff instanceof Vector || typeof xDiff === 'object') [xDiff, yDiff] = [xDiff.x, xDiff.y];
-    if (typeof xDiff === 'number' && typeof yDiff !== 'number') throw Error('second argument should be number');
+    if (xDiff instanceof Vector || typeof xDiff === "object") [xDiff, yDiff] = [xDiff.x, xDiff.y];
+    if (typeof xDiff === "number" && typeof yDiff !== "number") throw Error("second argument should be number");
     // unit circle -  max dir  [0.707,0.707]
     let [x, y] = fQ2(xDiff, yDiff);
     super(x, y);
@@ -210,11 +207,7 @@ export class Line {
   private readonly startIncluded: boolean;
   private readonly endIncluded: boolean;
 
-  constructor(
-    start: Vector,
-    end: Vector,
-    { startIncluded = true, endIncluded = false } = { startIncluded: true, endIncluded: false }
-  ) {
+  constructor(start: Vector, end: Vector, { startIncluded = true, endIncluded = false } = { startIncluded: true, endIncluded: false }) {
     this.root = start;
     this.end = end;
     let [a, b] = this.getAB();

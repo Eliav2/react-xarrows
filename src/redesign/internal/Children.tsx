@@ -11,6 +11,7 @@ export const childrenRenderer = <C extends React.ReactNode = React.ReactNode, Pr
   props: Props = {} as any,
   ref?: LegacyRef<any>
 ): React.ReactNode => {
+  // console.log("childrenRenderer");
   if (Array.isArray(children)) return children;
 
   if (typeof children === "function") {

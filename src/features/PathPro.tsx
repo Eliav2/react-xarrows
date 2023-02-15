@@ -1,6 +1,6 @@
-import { createFeature, XarrowFeature } from '../components/XarrowBuilder';
-import { AnchorsStateChange } from './Anchors';
-import { pathType, relativeOrAbsStr } from '../types';
+import { createFeature, XarrowFeature } from "../components/XarrowBuilder";
+import { AnchorsStateChange } from "./Anchors";
+import { pathType, relativeOrAbsStr } from "../types";
 import {
   calcFromStartToEnd,
   chooseSimplestPath,
@@ -11,19 +11,19 @@ import {
   pointsToCurves,
   pointsToLines,
   Vector,
-} from '../classes/pathPro';
+} from "../classes/pathPro";
 // import { anchorsInwardOffset } from '../components/XarrowAnchors';
-import { choosenAnchorType, getShortestLine, xStr2absRelative } from '../utils';
-import React from 'react';
-import PT from 'prop-types';
-import { cPaths } from '../constants';
-import { CoreStateChange } from './Core';
-import { anchorsInwardOffset } from '../utils/XarrowUtils';
-import { EdgesStateChange } from './Edges';
-import _ from 'lodash';
+import { choosenAnchorType, getShortestLine, xStr2absRelative } from "../utils";
+import React from "react";
+import PT from "prop-types";
+import { cPaths } from "../constants";
+import { CoreStateChange } from "./Core";
+import { anchorsInwardOffset } from "../utils/XarrowUtils";
+import { EdgesStateChange } from "./Edges";
+import _ from "lodash";
 
-export const cFacingDir = ['auto', 'inwards', 'outwards', 'left', 'right', 'up', 'down'] as const;
-export type _faceDirType = typeof cFacingDir[number];
+export const cFacingDir = ["auto", "inwards", "outwards", "left", "right", "up", "down"] as const;
+export type _faceDirType = (typeof cFacingDir)[number];
 
 export interface PathStateChange extends Partial<AnchorsStateChange> {}
 
@@ -43,7 +43,7 @@ const PathPro: XarrowFeature<
   void,
   { gridBreak: { abs: number; relative: number }; curveness: { abs: number; relative: number } }
 > = {
-  name: 'PathPro',
+  name: "PathPro",
   propTypes: {
     path: PT.oneOf(cPaths),
     gridBreak: PT.oneOfType([PT.string as any, PT.number]),
@@ -51,9 +51,9 @@ const PathPro: XarrowFeature<
     _debug: PT.bool,
   },
   defaultProps: {
-    path: 'smooth',
-    gridBreak: '50%',
-    curveness: '0%',
+    path: "smooth",
+    gridBreak: "50%",
+    curveness: "0%",
     _debug: false,
     pathMargin: 20,
   },
@@ -69,23 +69,23 @@ const PathPro: XarrowFeature<
     let sSides = chosenStart.anchor.facingDir as _faceDirType[],
       eSides = chosenEnd.anchor.facingDir as _faceDirType[];
 
-    sSides = sSides.map((side) => (side === 'auto' ? 'outwards' : side));
-    eSides = eSides.map((side) => (side === 'auto' ? 'inwards' : side));
+    sSides = sSides.map((side) => (side === "auto" ? "outwards" : side));
+    eSides = eSides.map((side) => (side === "auto" ? "inwards" : side));
     let allowedDirs = Object.values(gridDirs);
     // figure the different possibilities to connect
     sv = points2Vector(
       posSt.start.x - state.rootElem.position.x,
       posSt.start.y - state.rootElem.position.y,
       chosenStart.anchor.position,
-      sSides as Exclude<_faceDirType, 'auto'>[]
+      sSides as Exclude<_faceDirType, "auto">[]
     );
     ev = points2Vector(
       posSt.end.x - state.rootElem.position.x,
       posSt.end.y - state.rootElem.position.y,
       chosenEnd.anchor.position,
-      eSides as Exclude<_faceDirType, 'auto'>[]
+      eSides as Exclude<_faceDirType, "auto">[]
     );
-    if (props.path == 'straight') {
+    if (props.path == "straight") {
       sv.faceDirs = [];
       ev.faceDirs = [];
       allowedDirs = [];

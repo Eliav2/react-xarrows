@@ -1,5 +1,5 @@
 // const pathMargin = 15;
-import { Contains, IVector, OneOrMore, parseDirection, PossiblyDirectedVector } from "../types";
+import { Contains, IDir, IVector, OneOrMore, parseDirection, PossiblyDirectedVector } from "../types";
 import { toArray } from "../utils";
 import { deg2Rad, eq, math_operators, operatorFunc, round } from "./mathUtils";
 import { DirArr } from "./vectorArr";
@@ -179,16 +179,26 @@ export const fQ2 = (x, y) => {
   return [xDir, yDir];
 };
 
+export type DirInitiator = IDir | `${number}deg`;
+
 /**
  * normalized direction
  */
 // export class Dir extends weakenClassTypes(Vector) {
 export class Dir extends Vector {
-  constructor(xDiff: number | Vector<any> | { x: number; y: number }, yDiff?: number) {
+  constructor(x: number, y: number);
+  constructor(v: IVector);
+  constructor(s: `${number}deg`);
+  constructor(xDiff: number | Vector<any> | IVector | `${number}deg`, yDiff?: number) {
     if (xDiff instanceof Vector || typeof xDiff === "object") [xDiff, yDiff] = [xDiff.x, xDiff.y];
     if (typeof xDiff === "number" && typeof yDiff !== "number") throw Error("second argument should be number");
     // unit circle -  max dir  [0.707,0.707]
-    let [x, y] = fQ2(xDiff, yDiff);
+    let x, y;
+    if (typeof xDiff === "string") {
+      const deg = parseFloat(xDiff);
+      x = Math.cos((deg * Math.PI) / 180);
+      y = Math.sin((deg * Math.PI) / 180);
+    } else [x, y] = fQ2(xDiff, yDiff);
     super(x, y);
     // // @ts-ignore
     // delete this.trailingDir;

@@ -184,22 +184,49 @@ const DemoXWrapper = () => {
   );
 };
 
+const SVGShape = (props) => {
+  return (
+    <svg width="120" height="240" version="1.1" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="RadialGradient1">
+          <stop offset="0%" stopColor="red" />
+          <stop offset="100%" stopColor="blue" />
+        </radialGradient>
+        <radialGradient id="RadialGradient2" cx="0.25" cy="0.25" r="0.25">
+          <stop offset="0%" stopColor="red" />
+          <stop offset="100%" stopColor="blue" />
+        </radialGradient>
+      </defs>
+
+      <rect x="10" y="10" rx="15" ry="15" width="100" height="100" fill="url(#RadialGradient1)" />
+      <rect x="10" y="120" rx="15" ry="15" width="100" height="100" fill="url(#RadialGradient2)" />
+    </svg>
+  );
+};
+
 interface XArrowHeadAndTailProps extends XArrowProps {
   headSize?: number;
   tailSize?: number;
 }
 
+const Check = (props) => {
+  return <path></path>;
+};
+
 const XArrowHeadAndTail = (props: XArrowHeadAndTailProps) => {
+  const { headSize = 20, tailSize = 20 } = props;
   return (
     <XArrow start={props.start} end={props.end}>
-      <XLine>
-        <XLocator location={"100%"}>
-          <XArrowEnd size={props.headSize} color={"red"} />
-        </XLocator>
-        <XLocator>
-          <XArrowEnd size={props.headSize} />
-        </XLocator>
-      </XLine>
+      <AutoAnchor>
+        <XLine stripEnd={headSize * 0.75} stripStart={tailSize * 0.75}>
+          <XLocator location={"100%"}>
+            <XArrowEnd size={headSize} color={"red"} offsetForward={headSize * 0.25} />
+          </XLocator>
+          <XLocator location={"0"}>
+            <XArrowEnd size={tailSize} rotation={"180deg"} offsetForward={-tailSize * 0.25} color={"purple"} />
+          </XLocator>
+        </XLine>
+      </AutoAnchor>
     </XArrow>
   );
 };
