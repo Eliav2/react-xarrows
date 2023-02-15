@@ -236,7 +236,7 @@ const XArrowPathHeadAndTail = (props: XArrowHeadAndTailProps) => {
       <AutoAnchor startAnchor={"right"}>
         <BestPath>
           <XPath>
-            <XLocator location={"0%"}>
+            <XLocator location={"30%"}>
               <XArrowEnd size={headSize} color={"red"} offsetForward={headSize * 0.25} />
             </XLocator>
             {/*<XLocator location={"0"}>*/}

@@ -20,14 +20,14 @@ export interface XLocatorProps extends SVGProps<SVGForeignObjectElement> {
 }
 
 const XLocator = (props: XLocatorProps) => {
-  console.log("XLocator");
+  // console.log("XLocator");
   const { getLocation } = useLocatorProvider();
   let posOffset: Vector = new Vector({ x: 0, y: 0 });
   let dirOffset: Dir = new Dir({ x: 0, y: 0 });
   if (getLocation) {
     ({ pos: posOffset = new Vector({ x: 0, y: 0 }), dir: dirOffset = new Dir({ x: 0, y: 0 }) } = getLocation?.(props.location) ?? {});
   }
-  console.log(posOffset);
+  // console.log(dirOffset);
   const {
     allowHtmlElements = false,
     component: Component = allowHtmlElements ? "foreignObject" : "g",

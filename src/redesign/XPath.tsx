@@ -12,6 +12,7 @@ import { usePassRef } from "shared/hooks/usePassChildrenRef";
 import useRerender from "shared/hooks/useRerender";
 import isEqual from "react-fast-compare";
 import { positionType } from "shared/hooks/usePosition";
+import useStableUIValue from "shared/hooks/useStableUIValue";
 
 export interface XPathProps extends React.SVGProps<SVGPathElement> {
   children?: React.ReactNode;
@@ -46,47 +47,35 @@ export const XPath = React.forwardRef((props: XPathProps, forwardRef: React.Forw
 
   // console.log("Xpath");
   const pathRef = usePassRef(forwardRef);
+
+  const [pathLength, setPathLength] = useState<number | null>(null);
   useLayoutEffect(() => {
-    reRender();
-    console.log(pathRef.current?.getTotalLength());
-  }, [pathRef.current]);
+    const currentLength = pathRef.current?.getTotalLength();
+    if (!isEqual(pathLength, currentLength)) {
+      setPathLength(currentLength);
+    }
+  });
 
-  // const [pathLength, setPathLength] = useState<number | null>(null);
-  const prevPathLength = React.useRef<number | null>(null);
-
-  // useLayoutEffect(() => {
-  //   const currentLength = pathRef.current?.getTotalLength();
-  //
-  //   // console.log(currentPos);
-  //   if (!isEqual(pathLength, currentLength)) {
-  //     setPathLength(currentLength);
-  //   }
-  // }, [pathRef.current, pathLength]);
-
-  // const { render: renderXArrow } = useXArrow();
-
-  // useLayoutEffect(() => {
-  //   renderXArrow();
-  // }, [pathRef.current?.getTotalLength()]);
+  function getDirectionOnPath(length, delta = 1) {
+    const point = pathRef.current.getPointAtLength(length);
+    const nextPoint = pathRef.current.getPointAtLength(length + delta);
+    const deltaX = nextPoint.x - point.x;
+    const deltaY = nextPoint.y - point.y;
+    const angleInDegrees = (Math.atan2(deltaY, deltaX) * 180) / Math.PI;
+    console.log("?", length, point, nextPoint);
+    // console.log("angleInDegrees", deltaX, deltaY, angleInDegrees);
+    return angleInDegrees;
+  }
 
   const getLocation = (location: RelativeSize) => {
+    if (!pathRef.current) return { pos: undefined, dir: new Dir("0deg") };
     const currentLength = pathRef.current?.getTotalLength() ?? 0;
-    // if (prevPathLength.current !== currentLength) {
-    //   prevPathLength.current = currentLength;
-    //   // renderXArrow();
-    // }
-    console.log("getLocation", currentLength);
     const l = getRelativeSizeValue(location, currentLength ?? 0);
-    return { pos: pathRef.current?.getPointAtLength(l) };
+    return {
+      pos: pathRef.current?.getPointAtLength(l),
+      dir: new Dir(`${getDirectionOnPath(l)}deg`),
+    };
   };
-
-  // const positionProviderRef = React.useRef<PositionProviderImperativeProps>(null);
-  // // console.log(positionProviderRef);
-  //
-  // useEffect(() => {
-  //   // console.log("XPath useEffect");
-  //   positionProviderRef?.current?.sayHello();
-  // }, []);
 
   return (
     <>
