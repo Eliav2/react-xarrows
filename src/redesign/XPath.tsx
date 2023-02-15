@@ -23,7 +23,7 @@ export interface XPathProps extends React.SVGProps<SVGPathElement> {
 }
 
 export const XPath = React.forwardRef((props: XPathProps, forwardRef: React.ForwardedRef<SVGElement>) => {
-  console.log("XPath");
+  // console.log("XPath");
   let {
     component: Component = "path" as const,
     // stripEnd,
@@ -62,9 +62,7 @@ export const XPath = React.forwardRef((props: XPathProps, forwardRef: React.Forw
     const deltaX = nextPoint.x - point.x;
     const deltaY = nextPoint.y - point.y;
     const angleInDegrees = (Math.atan2(deltaY, deltaX) * 180) / Math.PI;
-    console.log("?", length, point, nextPoint);
-    // console.log("angleInDegrees", deltaX, deltaY, angleInDegrees);
-    return angleInDegrees;
+    return new Dir(`${angleInDegrees}deg`);
   }
 
   const getLocation = (location: RelativeSize) => {
@@ -73,7 +71,7 @@ export const XPath = React.forwardRef((props: XPathProps, forwardRef: React.Forw
     const l = getRelativeSizeValue(location, currentLength ?? 0);
     return {
       pos: pathRef.current?.getPointAtLength(l),
-      dir: new Dir(`${getDirectionOnPath(l)}deg`),
+      dir: getDirectionOnPath(l),
     };
   };
 
