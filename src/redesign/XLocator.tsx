@@ -24,7 +24,7 @@ const XLocator = (props: XLocatorProps) => {
   let posOffset: Vector = new Vector({ x: 0, y: 0 });
   let dirOffset: Dir = new Dir({ x: 0, y: 0 });
   if (getLocation) {
-    ({ pos: posOffset, dir: dirOffset } = getLocation?.(props.location));
+    ({ pos: posOffset = new Vector({ x: 0, y: 0 }), dir: dirOffset = new Dir({ x: 0, y: 0 }) } = getLocation?.(props.location) ?? {});
   }
   const {
     allowHtmlElements = false,

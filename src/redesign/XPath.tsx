@@ -1,12 +1,15 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useLayoutEffect } from "react";
 import { RelativeSize } from "shared/types";
 import { getRelativeSizeValue } from "shared/utils";
 import { Dir, Vector } from "./path/vector";
-import { PositionProviderImperativeProps, usePositionProvider } from "./providers/PositionProvider";
+import { usePositionProvider } from "./providers/PositionProvider";
 import { useBestPath } from "./BestPath";
 import { PositionProvider, useHeadProvider, usePathProvider } from "./index";
 import { usePointsProvider } from "./providers/PointsProvider";
 import HeadProvider from "./providers/HeadProvider";
+import LocatorProvider from "./providers/LocatorProvider";
+import { usePassRef } from "shared/hooks/usePassChildrenRef";
+import useRerender from "shared/hooks/useRerender";
 
 export interface XPathProps extends React.SVGProps<SVGPathElement> {
   children?: React.ReactNode;
@@ -16,8 +19,8 @@ export interface XPathProps extends React.SVGProps<SVGPathElement> {
   color?: string;
 }
 
-export const XPath = React.forwardRef((props: XPathProps, ref: React.ForwardedRef<SVGElement>) => {
-  // console.log("XPath");
+export const XPath = React.forwardRef((props: XPathProps, forwardRef: React.ForwardedRef<SVGElement>) => {
+  console.log("XPath");
   let {
     component: Component = "path" as const,
     // stripEnd,
@@ -27,6 +30,8 @@ export const XPath = React.forwardRef((props: XPathProps, ref: React.ForwardedRe
     ...p
   } = props;
   // const positionProvider = usePositionProvider();
+
+  const reRender = useRerender();
   const { points } = usePointsProvider();
   const { pointsToPath } = usePathProvider();
   // console.log(points?.at(-1)?.x);
@@ -36,6 +41,19 @@ export const XPath = React.forwardRef((props: XPathProps, ref: React.ForwardedRe
   // console.log(points);
 
   const d = pointsToPath?.(points);
+
+  // console.log("Xpath");
+  const pathRef = usePassRef(forwardRef);
+  useLayoutEffect(() => {
+    reRender();
+    console.log(pathRef.current?.getTotalLength());
+  }, [pathRef.current, pathRef.current?.getTotalLength()]);
+
+  const getLocation = (location: RelativeSize) => {
+    console.log("getLocation");
+    const l = getRelativeSizeValue(location, pathRef.current?.getTotalLength() ?? 0);
+    return { pos: pathRef.current?.getPointAtLength(l) };
+  };
 
   // const positionProviderRef = React.useRef<PositionProviderImperativeProps>(null);
   // // console.log(positionProviderRef);
@@ -48,7 +66,7 @@ export const XPath = React.forwardRef((props: XPathProps, ref: React.ForwardedRe
   return (
     <>
       <Component
-        ref={ref as React.ForwardedRef<SVGPathElement>}
+        ref={pathRef as React.ForwardedRef<SVGPathElement>}
         d={d}
         color={color}
         fill="transparent"
@@ -56,28 +74,7 @@ export const XPath = React.forwardRef((props: XPathProps, ref: React.ForwardedRe
         strokeWidth={strokeWidth}
         {...p}
       />
-      {/*<HeadProvider*/}
-      {/*  // value={{*/}
-      {/*  //   dir: endDir,*/}
-      {/*  //   color,*/}
-      {/*  //   // pos: (pos) => {*/}
-      {/*  //   //   // console.log("XPath HeadProvider pos", pos);*/}
-      {/*  //   //   return { ...pos, x: pos.x - 37.5 };*/}
-      {/*  //   // },*/}
-      {/*  // }}*/}
-      {/*  value={(val) => {*/}
-      {/*    // console.log(val);*/}
-      {/*    // if (val.pos) val.pos.y += 10;*/}
-      {/*    // val.dir = { x: pos?.endPoint.x - pos?.startPoint.x, y: pos?.endPoint.y - pos?.startPoint.y };*/}
-      {/*    val.dir = endDir;*/}
-      {/*    // if (endDir) val.pos = new Vector(val.pos).sub(new Dir(endDir).mul(30));*/}
-      {/*    return val;*/}
-      {/*  }}*/}
-      {/*  // locationProvider={positionProviderRef}*/}
-      {/*>*/}
-      {props.children}
-      {/*</HeadProvider>*/}
-      {/*</PositionProvider>*/}
+      <LocatorProvider value={{ getLocation: getLocation }}>{props.children}</LocatorProvider>
     </>
   );
 });

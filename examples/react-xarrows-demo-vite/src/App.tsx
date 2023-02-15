@@ -38,7 +38,6 @@ import TestPassRef from "./components/TestPassRef";
 import { expect } from "vitest";
 // import produce  from "immer";
 import { deepFreeze } from "shared/utils";
-import { XArrowEndProps, XArrowEndPropsWithDefaults } from "../../../src";
 
 function App() {
   return (
@@ -152,7 +151,7 @@ const DemoXWrapper = () => {
 
       {/*<TestPassRef />*/}
 
-      <XArrowHeadAndTail start={box1Ref} end={box2Ref} />
+      <XArrowPathHeadAndTail start={box1Ref} end={box2Ref} />
 
       {/*<XArrow start={box1Ref} end={box2Ref}>*/}
       {/*  <XArrowEnd color={"red"} />*/}
@@ -217,7 +216,7 @@ const XArrowHeadAndTail = (props: XArrowHeadAndTailProps) => {
   const { headSize = 20, tailSize = 20 } = props;
   return (
     <XArrow start={props.start} end={props.end}>
-      <AutoAnchor>
+      <AutoAnchor startAnchor={"right"}>
         <XLine stripEnd={headSize * 0.75} stripStart={tailSize * 0.75}>
           <XLocator location={"100%"}>
             <XArrowEnd size={headSize} color={"red"} offsetForward={headSize * 0.25} />
@@ -226,6 +225,25 @@ const XArrowHeadAndTail = (props: XArrowHeadAndTailProps) => {
             <XArrowEnd size={tailSize} rotation={"180deg"} offsetForward={-tailSize * 0.25} color={"purple"} />
           </XLocator>
         </XLine>
+      </AutoAnchor>
+    </XArrow>
+  );
+};
+const XArrowPathHeadAndTail = (props: XArrowHeadAndTailProps) => {
+  const { headSize = 20, tailSize = 20 } = props;
+  return (
+    <XArrow start={props.start} end={props.end}>
+      <AutoAnchor startAnchor={"right"}>
+        <BestPath>
+          <XPath>
+            <XLocator location={"100%"}>
+              <XArrowEnd size={headSize} color={"red"} offsetForward={headSize * 0.25} />
+            </XLocator>
+            {/*<XLocator location={"0"}>*/}
+            {/*  <XArrowEnd size={tailSize} rotation={"180deg"} offsetForward={-tailSize * 0.25} color={"purple"} />*/}
+            {/*</XLocator>*/}
+          </XPath>
+        </BestPath>
       </AutoAnchor>
     </XArrow>
   );
