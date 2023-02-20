@@ -1,16 +1,16 @@
 // @ts-ignore
 import React, { useEffect, useRef } from "react";
 import { expect, test, describe } from "vitest";
-import PositionProvider, { usePositionProvider, usePositionProviderRegister } from "../src/redesign/providers/PositionProvider";
+import PositionProvider, { usePositionProvider, usePositionProviderRegister } from "../src/providers/PositionProvider";
 import { render } from "@testing-library/react";
 import { HeadProvider } from "../src";
-import XArrow from "../src/redesign/XArrow";
+import XArrow from "../src/XArrow";
 import useRerender from "shared/hooks/useRerender";
 import { Box } from "../examples/react-xarrows-demo-vite/src/components/Box";
-import XWrapper from "../src/redesign/XWrapper";
+import XWrapper from "../src/XWrapper";
 import { Button, Paper } from "@mui/material";
-import XArrowEnd from "../src/redesign/XArrowEnd";
-import XLine from "../src/redesign/XLine";
+import XArrowEnd from "../src/XArrowEnd";
+import XLine from "../src/XLine";
 
 type DemoXWrapperProps = {
   children: (box1Ref: React.MutableRefObject<HTMLDivElement>, box2Ref: React.MutableRefObject<HTMLDivElement>) => JSX.Element;

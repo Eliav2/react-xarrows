@@ -1,7 +1,0 @@
-//only used to check that the src does not contain typescript errors
-{
-  "extends": "./tsconfig.json",
-  "compilerOptions": {
-    "noEmit": true,
-  },
-}

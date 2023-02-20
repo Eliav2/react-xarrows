@@ -1,3 +1,7 @@
+# V3
+## react-xarrows v3.0.0
+
+
 ## 2.0.2
 
 - prop suggestions did not appear on IDE's because wrong package.json.types path.

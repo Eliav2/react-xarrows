@@ -1,7 +1,7 @@
 // @ts-ignore
 import React from "react";
 import { expect, test, describe } from "vitest";
-import PositionProvider, { usePositionProvider, usePositionProviderRegister } from "../src/redesign/providers/PositionProvider";
+import PositionProvider, { usePositionProvider, usePositionProviderRegister } from "../src/providers/PositionProvider";
 import { render } from "@testing-library/react";
 import { HeadProvider } from "../src";
 

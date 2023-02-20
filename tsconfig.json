@@ -30,11 +30,6 @@
   "exclude": [
     "node_modules"
   ],
-//  "paths": {
-//    "./*": [
-//      "src/redesign/*"
-//    ]
-//  },
   "references": [
     {
       "path": "./tsconfig.node.json"

@@ -1,5 +1,5 @@
 import { assert, expect, test } from "vitest";
-import { Dir, Vector } from "../src/redesign/path/vector";
+import { Dir, Vector } from "../src/path/vector";
 
 test("Vector initialization", () => {
   const v1 = new Vector(1, 2);

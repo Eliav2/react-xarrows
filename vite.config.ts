@@ -55,7 +55,7 @@ const listAllSubDirectories = (baseDir, suffixRegex = "ts|tsx") => {
   return directories;
 };
 
-const SOURCE_ENTRY = "src/redesign";
+const SOURCE_ENTRY = "src";
 // generate 'exports' and 'typesVersions' fields for package.json based on the source directory
 const createEntryPoints = (baseDir, esmBuildDir, cjsBuildDir, typesDir) => {
   const dirs = listAllSubDirectories(baseDir);
@@ -137,7 +137,7 @@ export default defineConfig({
       ],
     },
     lib: {
-      entry: mapAllFilesInDir("src/redesign", "js"),
+      entry: mapAllFilesInDir("src", "js"),
       name: "react-xarrows",
       formats: ["cjs", "es"],
     },
@@ -149,7 +149,7 @@ export default defineConfig({
       {
         type: "json",
         output: "./package.json",
-        data: createPackageJson(packageJson, "./lib/build/esm/js", "./lib/build/cjs/js", "./lib/types/redesign"),
+        data: createPackageJson(packageJson, "./lib/build/esm/js", "./lib/build/cjs/js", "./lib/types"),
       },
     ]),
     viteStaticCopy({
