@@ -11,7 +11,7 @@ import { usePassRef } from "shared/hooks/usePassChildrenRef";
 import PointsProvider from "./providers/PointsProvider";
 import PathProvider from "./providers/PathProvider";
 import HeadProvider from "./providers/HeadProvider";
-import { createProvider } from "./providers/createProvider";
+import { createProvider } from  "./providers/createProvider";
 
 export interface XArrowProps {
   // children is a jsx elements of type svg like <circle .../> or <path .../>

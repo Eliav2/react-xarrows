@@ -79,7 +79,7 @@ in v3, you would need to create an `Head` component, and pass it the color you w
 </XArrow>
 ```
 
-import { XArrow, useXArrow, autoAnchor, XArrowEnd, NormalizedGSvg,XLine,AutoSelectAnchor } from "react-xarrows"
+import { XArrow, useXArrow, autoAnchor, XArrowEnd, NormalizedGSvg,XLine,AutoAnchor } from "react-xarrows"
 
 export const Head = ({ color, size }) => {
   const context = useXArrow();
@@ -109,10 +109,10 @@ export const ExampleV3 = () => {
         start={aRef}
         end={bRef}
       >
-      <AutoSelectAnchor>
+      <AutoAnchor>
         <XLine />
         <XArrowEnd/>
-        </AutoSelectAnchor>
+        </AutoAnchor>
       </XArrow>
     </div>
   )

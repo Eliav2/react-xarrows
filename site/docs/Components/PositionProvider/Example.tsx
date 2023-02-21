@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import { Box } from "@site/src/components/Box";
-import { XArrow, XWrapper, XLine, AutoSelectAnchor, PositionProvider } from "react-xarrows";
+import { XArrow, XWrapper, XLine, AutoAnchor, PositionProvider } from "react-xarrows";
 
 export const DemoXWrapper = () => {
   // console.log("DemoXWrapper");
@@ -27,9 +27,9 @@ export const DemoXWrapper = () => {
       <div style={{ height: 50 }} />
       <XArrow start={box1Ref} end={box2Ref}>
         <XLine color={"red"} />
-        <AutoSelectAnchor>
+        <AutoAnchor>
           <XLine />
-        </AutoSelectAnchor>
+        </AutoAnchor>
         <PositionProvider value={{ startPoint: (prevS) => ({ ...prevS, x: prevS.x + 50 }) }}>
           <XLine color={"green"} />
         </PositionProvider>

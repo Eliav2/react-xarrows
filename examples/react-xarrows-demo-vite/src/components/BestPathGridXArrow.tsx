@@ -1,6 +1,6 @@
 import React from "react";
 import { ArrowHead } from "./ArrowHead";
-import { autoAnchor } from "react-xarrows/useAutoSelectAnchor";
+import { autoAnchor } from "react-xarrows/AutoAnchor";
 import { XArrow, ProvideXContext, getBestPath, pointsToCurves, useXContext, Vector, pointsToLines } from "react-xarrows";
 import type { Anchor, XArrowProps } from "react-xarrows";
 
