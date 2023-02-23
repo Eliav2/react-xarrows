@@ -12,6 +12,7 @@ import PointsProvider from "./providers/PointsProvider";
 import PathProvider from "./providers/PathProvider";
 import HeadProvider from "./providers/HeadProvider";
 import { createProvider } from  "./providers/createProvider";
+import XLine from "./XLine";
 
 export interface XArrowProps {
   // children is a jsx elements of type svg like <circle .../> or <path .../>
@@ -113,6 +114,7 @@ export const XArrow = React.forwardRef(function XArrow(props: XArrowProps, forwa
   const startRect = startPosition && new Rectangle(startPosition);
   const endRect = endPosition && new Rectangle(endPosition);
 
+  const { children=<DefaultChildren/> } = props
   return (
     <div
       ref={rootDivRef}
@@ -134,7 +136,7 @@ export const XArrow = React.forwardRef(function XArrow(props: XArrowProps, forwa
             <PointsProvider>
               <PathProvider value={{ pointsToPath: pointsToCurves }}>
                 <HeadProvider value={{ color: "cornflowerblue", rotate: 0, size: 30, pos: endPoint, dir: headDir }}>
-                  {props.children}
+                  {children}
                 </HeadProvider>
               </PathProvider>
             </PointsProvider>
@@ -145,6 +147,14 @@ export const XArrow = React.forwardRef(function XArrow(props: XArrowProps, forwa
   );
 });
 export default XArrow;
+
+const DefaultChildren = () => {
+  return (
+    <>
+      <XLine />
+    </>
+  );
+}
 
 const XArrowContext = React.createContext<{
   startRect: Rectangle | null;

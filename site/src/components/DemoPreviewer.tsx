@@ -1,19 +1,7 @@
 import React, { FC, useEffect, useLayoutEffect, useState } from "react";
 import Basic from "@site/src/demos/Basic";
 import DemoCodeBlock from "@site/src/components/DemoCodeBlock";
-import {
-  Box,
-  Button,
-  IconButton,
-  Menu,
-  MenuItem,
-  MenuList,
-  Paper,
-  Checkbox,
-  FormControlLabel,
-  Tooltip,
-  Switch,
-} from "@mui/material";
+import { Box, Button, IconButton, Menu, MenuItem, MenuList, Paper, Checkbox, FormControlLabel, Tooltip, Switch } from "@mui/material";
 import SettingsIcon from "@mui/icons-material/Settings";
 
 const useDynamicDemoImport = (name) => {
@@ -56,6 +44,8 @@ const useDynamicDemoImport = (name) => {
 interface DemoPreviewerProps {
   name: string;
   Comp: React.FC; // @react18
+  title?: string;
+  description?: string;
 }
 
 const RootDemoPreviewer: FC<DemoPreviewerProps> = (props) => {
@@ -67,11 +57,12 @@ const RootDemoPreviewer: FC<DemoPreviewerProps> = (props) => {
 };
 
 const DemoPreviewer: FC<DemoPreviewerProps> = (props) => {
+  const { name, title = name.charAt(0).toUpperCase() + name.slice(1), description } = props;
   const [
     // Comp, // @react18
     raw,
     rawSimple,
-  ] = useDynamicDemoImport(props.name);
+  ] = useDynamicDemoImport(name);
   const [shouldReset, setShouldReset] = useState(false);
   useLayoutEffect(() => {
     setShouldReset(false);
@@ -82,54 +73,58 @@ const DemoPreviewer: FC<DemoPreviewerProps> = (props) => {
 
   const settingButtonRef = React.useRef(null);
   return (
-    <Paper
-      sx={{
-        position: "relative",
-        // verticalAlign: "top",
-        // display: "flex",
-        // flexDirection: "column",
-      }}
-      elevation={5}
-    >
-      <Box sx={{ display: "flex" }}>
-        {/* reset button */}
-        <Box className={"button button--secondary"} onClick={() => setShouldReset(true)}>
-          reset
-        </Box>
-        <Box sx={{ flexGrow: 1 }} />
-        {/* settings button */}
-        <Tooltip title={"Demo Options"}>
-          <IconButton onClick={() => setShowSettings(true)} ref={settingButtonRef}>
-            <SettingsIcon />
-          </IconButton>
-        </Tooltip>
-        <Menu anchorEl={settingButtonRef.current} open={showSettings} onClose={() => setShowSettings(false)}>
-          <MenuList dense>
-            <MenuItem>
-              <FormControlLabel
-                control={<Checkbox checked={overflowHidden ?? true} onChange={(e, v) => setOverflowHidden(v)} />}
-                label={<code>overflow:"hidden"</code>}
-              />
-            </MenuItem>
-          </MenuList>
-        </Menu>
-      </Box>
-      {/* the rendered demo */}
-      <Box
+    <>
+      <h2>{title}</h2>
+      <p>{description}</p>
+      <Paper
         sx={{
           position: "relative",
-          m: 2,
-          overflow: overflowHidden ? "hidden" : "visible",
-          zIndex: overflowHidden ? 0 : 1,
+          // verticalAlign: "top",
+          // display: "flex",
+          // flexDirection: "column",
         }}
+        elevation={5}
       >
-        {!shouldReset && <props.Comp />}
-      </Box>
-      {/* the demo code preview */}
-      <Paper>
-        <DemoCodeBlock simpleSource={rawSimple} fullSource={raw} />
+        <Box sx={{ display: "flex" }}>
+          {/* reset button */}
+          <Box className={"button button--secondary"} onClick={() => setShouldReset(true)}>
+            reset
+          </Box>
+          <Box sx={{ flexGrow: 1 }} />
+          {/* settings button */}
+          <Tooltip title={"Demo Options"}>
+            <IconButton onClick={() => setShowSettings(true)} ref={settingButtonRef}>
+              <SettingsIcon />
+            </IconButton>
+          </Tooltip>
+          <Menu anchorEl={settingButtonRef.current} open={showSettings} onClose={() => setShowSettings(false)}>
+            <MenuList dense>
+              <MenuItem>
+                <FormControlLabel
+                  control={<Checkbox checked={overflowHidden ?? true} onChange={(e, v) => setOverflowHidden(v)} />}
+                  label={<code>overflow:"hidden"</code>}
+                />
+              </MenuItem>
+            </MenuList>
+          </Menu>
+        </Box>
+        {/* the rendered demo */}
+        <Box
+          sx={{
+            position: "relative",
+            m: 2,
+            overflow: overflowHidden ? "hidden" : "visible",
+            zIndex: overflowHidden ? 0 : 1,
+          }}
+        >
+          {!shouldReset && <props.Comp />}
+        </Box>
+        {/* the demo code preview */}
+        <Paper>
+          <DemoCodeBlock simpleSource={rawSimple} fullSource={raw} />
+        </Paper>
       </Paper>
-    </Paper>
+    </>
   );
 };
 

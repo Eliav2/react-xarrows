@@ -61,6 +61,16 @@ export default function Home() {
   );
 }
 
+
+function Demo() {
+  return (
+    <section style={{ textAlign: "center" }}>
+      <Typography>here the demo will be</Typography>
+      {/*<BasicComponent />*/}
+    </section>
+  );
+}
+
 const BoxStyle = {
   border: "solid",
   borderRadius: 12,
@@ -72,7 +82,7 @@ const BoxStyle = {
   overflow: "hidden",
 } as const;
 
-function BasicDemo() {
+function BasicComponent() {
   const box1Ref = useRef(null);
   const box2Ref = useRef(null);
   return (
@@ -83,18 +93,7 @@ function BasicDemo() {
       <div ref={box2Ref} style={BoxStyle}>
         Box2
       </div>
-      <XArrow start={box1Ref} end={box2Ref}>
-        {/*<XLine />*/}
-        <XLine>{/*<XArrowEnd color={"red"} />*/}</XLine>
-      </XArrow>
+      <XArrow start={box1Ref} end={box2Ref}/>
     </div>
-  );
-}
-function Demo() {
-  return (
-    <section style={{ textAlign: "center" }}>
-      <Typography>here the demo will be</Typography>
-      <BasicDemo />
-    </section>
   );
 }

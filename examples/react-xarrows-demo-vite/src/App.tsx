@@ -151,7 +151,9 @@ const DemoXWrapper = () => {
 
       {/*<TestPassRef />*/}
 
-      <XArrowPathHeadAndTail start={box1Ref} end={box2Ref} />
+      <XArrow start={box1Ref} end={box2Ref}></XArrow>
+
+      {/*<XArrowPathHeadAndTail start={box1Ref} end={box2Ref} />*/}
 
       {/*<XArrow start={box1Ref} end={box2Ref}>*/}
       {/*  <XArrowEnd color={"red"} />*/}

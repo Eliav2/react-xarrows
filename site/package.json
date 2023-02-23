@@ -17,8 +17,10 @@
   "dependencies": {
     "@algolia/client-search": "^4.14.3",
     "@babel/core": "^7.20.12",
-    "@docusaurus/core": "2.2.0",
-    "@docusaurus/preset-classic": "2.2.0",
+    "@docusaurus/core": "^2.3.1",
+    "@docusaurus/theme-common": "^2.3.1",
+    "@docusaurus/types": "^2.3.1",
+    "@docusaurus/preset-classic": "^2.3.1",
     "@emotion/react": "^11.9.0",
     "@emotion/styled": "^11.8.1",
     "@mdx-js/react": "^1.6.22",
@@ -38,8 +40,9 @@
     "react-xarrows-v2": "npm:react-xarrows@2.0.2"
   },
   "devDependencies": {
-    "@docusaurus/module-type-aliases": "2.2.0",
+    "@docusaurus/module-type-aliases": "2.3.1",
     "@tsconfig/docusaurus": "^1.0.5",
+    "@types/react": "17",
     "typescript": "^4.7.4"
   },
   "browserslist": {
