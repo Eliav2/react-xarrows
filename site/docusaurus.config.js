@@ -45,7 +45,7 @@ const config = {
           editUrl: "https://github.com/Eliav2/react-xarrows",
         },
         theme: {
-          customCss: require.resolve("./src/css/custom.css"),
+          customCss: [require.resolve("./src/css/custom.css"), require.resolve("./src/css/style.css")],
         },
       }),
     ],
