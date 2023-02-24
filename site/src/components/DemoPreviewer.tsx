@@ -57,7 +57,7 @@ const RootDemoPreviewer: FC<DemoPreviewerProps> = (props) => {
 };
 
 const DemoPreviewer: FC<DemoPreviewerProps> = (props) => {
-  const { name, title = name.charAt(0).toUpperCase() + name.slice(1), description } = props;
+  const { name, title, description } = props;
   const [
     // Comp, // @react18
     raw,
@@ -74,7 +74,7 @@ const DemoPreviewer: FC<DemoPreviewerProps> = (props) => {
   const settingButtonRef = React.useRef(null);
   return (
     <>
-      <h2>{title}</h2>
+      {title && <h2>{title}</h2>}
       <p>{description}</p>
       <Paper
         sx={{
