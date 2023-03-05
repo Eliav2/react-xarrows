@@ -29,10 +29,7 @@ const BestPath = React.forwardRef(function BestPath(props: BestPathProps, forwar
     // <PositionProvider value={{ startPoint: points[0], endPoint: points.at(-1) }}>
     <PointsProvider value={{ points }}>
       <PathProvider value={{ pointsToPath: pointToPath }}>
-        <HeadProvider value={{ dir: endDir }}>
-          {/*{(children && React.isValidElement(children) && React.cloneElement(children, { ref: forwardedRef } as any)) || children}*/}
-          {childrenRenderer(children, { points, endDir }, forwardedRef)}
-        </HeadProvider>
+        <HeadProvider value={{ dir: endDir }}>{childrenRenderer(children, { points, endDir }, forwardedRef)}</HeadProvider>
       </PathProvider>
     </PointsProvider>
     // </PositionProvider>

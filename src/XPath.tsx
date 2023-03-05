@@ -16,8 +16,8 @@ import useStableUIValue from "shared/hooks/useStableUIValue";
 
 export interface XPathProps extends React.SVGProps<SVGPathElement> {
   children?: React.ReactNode;
-  // stripEnd?: RelativeSize; // how much of the end of the line should be removed
-  // stripStart?: RelativeSize; // how much of the start of the line should be removed
+  offsetEnd?: RelativeSize; // how much of the end of the line should be removed
+  offsetStart?: RelativeSize; // how much of the start of the line should be removed
   component?: React.ElementType<XPathProps>;
   color?: string;
 }
@@ -30,6 +30,8 @@ export const XPath = React.forwardRef((props: XPathProps, forwardRef: React.Forw
     // stripStart,
     color = "cornflowerblue",
     strokeWidth = 3,
+    offsetEnd = 0,
+    offsetStart = 0,
     ...p
   } = props;
   // const positionProvider = usePositionProvider();

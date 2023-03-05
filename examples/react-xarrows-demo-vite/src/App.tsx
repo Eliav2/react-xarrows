@@ -102,8 +102,8 @@ const DemoXWrapper = () => {
       {/*  </AutoAnchor>*/}
       {/*</XArrow>*/}
 
-      <XArrowHeadAndTail start={box1Ref} end={box2Ref} />
-      {/*<XArrowPathHeadAndTail start={box1Ref} end={box2Ref} />*/}
+      {/*<XArrowHeadAndTail start={box1Ref} end={box2Ref} />*/}
+      <XArrowPathHeadAndTail start={box1Ref} end={box2Ref} />
 
       {/*<XArrow start={box1Ref} end={box2Ref}>*/}
       {/*  <XArrowEnd color={"red"} />*/}
@@ -181,20 +181,18 @@ const XArrowPathHeadAndTail = (props: XArrowHeadAndTailProps) => {
   const { headSize = 40, tailSize = 20 } = props;
   return (
     <XArrow start={props.start} end={props.end}>
-      <AutoAnchor startAnchor={"right"}>
-        <BestPath>
-          <XPath>
-            <XLocator location={"100%"}>
-              <XArrowEnd size={headSize} color={"red"} offsetForward={headSize * 0.25} />
-              {/*<SvgManipulator>*/}
-              {/*  <BasicHeadShape1 />*/}
-              {/*</SvgManipulator>*/}
-            </XLocator>
-            {/*<XLocator location={"0"}>*/}
-            {/*  <XArrowEnd size={tailSize} rotation={"180deg"} offsetForward={-tailSize * 0.25} color={"purple"} />*/}
-            {/*</XLocator>*/}
-          </XPath>
-        </BestPath>
+      <AutoAnchor startAnchor={"right"} endAnchor={"left"}>
+        {/*<BestPath>*/}
+        <XPath>
+          <XArrowEnd size={headSize} color={"red"} offsetForward={headSize * 0.25} />
+          {/*<SvgManipulator>*/}
+          {/*  <BasicHeadShape1 />*/}
+          {/*</SvgManipulator>*/}
+          {/*<XLocator location={"0"}>*/}
+          {/*  <XArrowEnd size={tailSize} rotation={"180deg"} offsetForward={-tailSize * 0.25} color={"purple"} />*/}
+          {/*</XLocator>*/}
+        </XPath>
+        {/*</BestPath>*/}
       </AutoAnchor>
     </XArrow>
   );
