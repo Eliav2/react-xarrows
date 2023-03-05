@@ -7,7 +7,7 @@ export default function DraggableExample() {
   const box2Ref = useRef(null);
   return (
     <XWrapper>
-      <div style={{ display: "flex", justifyContent: "space-evenly" }}>
+      <div style={{ display: "flex", justifyContent: "space-evenly", alignItems: "center", height: 150 }}>
         <DraggableBox ref={box1Ref}>Box1</DraggableBox>
         <DraggableBox ref={box2Ref}>Box2</DraggableBox>
         <XArrow start={box1Ref} end={box2Ref}>
@@ -37,6 +37,7 @@ export const BoxStyle = {
   border: "solid",
   borderRadius: 12,
   width: 120,
+  height: 30,
   display: "flex",
   flexDirection: "column",
   justifyContent: "center",
