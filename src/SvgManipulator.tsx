@@ -1,13 +1,11 @@
 import React, { LegacyRef } from "react";
-import { IPoint } from "./types/types";
+import { IPoint } from "./types";
 import { Dir, DirInitiator, Vector } from "./path";
-import { BasicHeadShape1 } from "./shapes";
 import { RelativeSize } from "shared/types";
-import { childrenRenderer } from "./internal/Children";
 import { assignDefaults, getRelativeSizeValue } from "shared/utils";
 
-export interface SvgManipulatorProps extends React.SVGProps<SVGGElement> {
-  element?: JSX.Element; // a jsx element of type svg like <circle .../> or <path .../>
+export interface SvgManipulatorProps {
+  children: JSX.Element; // a jsx element of type svg like <circle .../> or <path .../>
 
   // rotate the svg shape after normal positioning
   rotation?: DirInitiator;
@@ -24,6 +22,9 @@ export interface SvgManipulatorProps extends React.SVGProps<SVGGElement> {
 
   containerRef?: LegacyRef<SVGGElement>; // internal
   pos?: IPoint;
+
+  // props that will be passed to the host svg shape
+  hostProps?: React.SVGProps<SVGGElement>;
 }
 
 /**
@@ -43,13 +44,10 @@ const SvgManipulator = React.forwardRef<SVGGElement, SvgManipulatorProps>(functi
     offsetSidewards: "0" as RelativeSize,
   });
   //@ts-ignore
-  let { element = (<BasicHeadShape1 />) as any } = props;
-
-  // if react element is passed, pass the props, so it can be used in the children
-  element = React.cloneElement(element, propsWithDefault.props);
+  let { children } = props;
 
   propsWithDefault.rotation = new Dir(propsWithDefault.rotation);
-  const { rotation, pos, color, size, containerRef, offsetForward, offsetSidewards, ...gProps } = propsWithDefault;
+  const { rotation, pos, color, size, containerRef, offsetForward, offsetSidewards } = propsWithDefault;
 
   let newpos = pos.add(rotation.mul(getRelativeSizeValue(offsetForward, size)));
   newpos = newpos.add(rotation.rotate(90).mul(getRelativeSizeValue(offsetSidewards, size)));
@@ -59,7 +57,7 @@ const SvgManipulator = React.forwardRef<SVGGElement, SvgManipulatorProps>(functi
 
   // the reason there are 2 nested g elements is to allow the user to override props correctly
   return (
-    <g {...gProps} ref={forwardRef}>
+    <g {...props.hostProps} ref={forwardRef}>
       <g
         ref={containerRef}
         style={{
@@ -70,7 +68,7 @@ const SvgManipulator = React.forwardRef<SVGGElement, SvgManipulatorProps>(functi
           pointerEvents: "auto",
         }}
       >
-        {element}
+        {children}
       </g>
     </g>
   );

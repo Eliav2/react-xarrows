@@ -29,7 +29,7 @@ export interface NormalizedGSvgProps {
 /**
  * takes svg react element as children and normalizes it to be centered and have a size of 1
  */
-const NormalizedSvg = React.forwardRef(function NormalizedGSvg({ children, size = 1 }: NormalizedGSvgProps, forwardedRef) {
+const SvgNormalizer = React.forwardRef(function NormalizedGSvg({ children, size = 1 }: NormalizedGSvgProps, forwardedRef) {
   const ref = usePassRef<SVGGElement>(forwardedRef);
   const bbox = useGetBBox(ref, [ref.current]);
   let min = Math.min(bbox.height, bbox.width);
@@ -50,4 +50,4 @@ const NormalizedSvg = React.forwardRef(function NormalizedGSvg({ children, size 
     </g>
   );
 });
-export default NormalizedSvg;
+export default SvgNormalizer;

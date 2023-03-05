@@ -38,6 +38,7 @@ import TestPassRef from "./components/TestPassRef";
 import { expect } from "vitest";
 // import produce  from "immer";
 import { deepFreeze } from "shared/utils";
+import SvgManipulator from "react-xarrows/SvgManipulator";
 
 function App() {
   return (
@@ -47,64 +48,6 @@ function App() {
     </div>
   );
 }
-
-function changeVal(val: { val: number }) {
-  val.val += 1;
-  return val;
-}
-
-// const TestImmerChild = ({ value }: { value: { val: number } }) => {
-//   console.log("TestImmerChild");
-//   const val = value;
-//   const [valState, valSetState] = useState(value);
-//   // const newVal = changeVal(val);
-//   const newVal = produce(val, (draft) => {
-//     changeVal(draft);
-//   });
-//   useEffect(() => {
-//     console.log("TestImmerChild effect");
-//
-//     // valSetState({ val: valState.val + 1 });
-//     valSetState({ val: value.val + 1 });
-//     return () => {
-//       console.log("TestImmerChild effect cleanup");
-//     };
-//   }, [value]);
-//
-//   return (
-//     <div>
-//       val: {newVal.val} valState: {valState.val}
-//     </div>
-//   );
-// };
-// const TestImmer = () => {
-//   // const [state, setState] = useState<{ val: number }>(Object.freeze({ val: 0 }));
-//   const [state, setState] = useState({ val: 0 });
-//   const render = useRerender();
-//   const v = produce({ asd: 10 }, (draft) => {});
-//
-//   return (
-//     <div>
-//       <Button onClick={render}>render</Button>
-//       <Button
-//         onClick={() => {
-//           setState((s) => {
-//             // s = produce(s, (draft) => {
-//             //   draft.val += 1;
-//             // });
-//             return { val: s.val + 1 };
-//           });
-//         }}
-//       >
-//         Increment parrent state
-//       </Button>
-//       <div>
-//         {state.val}
-//         <TestImmerChild value={state} />
-//       </div>
-//     </div>
-//   );
-// };
 
 const DemoXWrapper = () => {
   // console.log("DemoXWrapper");
@@ -151,8 +94,15 @@ const DemoXWrapper = () => {
 
       {/*<TestPassRef />*/}
 
-      <XArrow start={box1Ref} end={box2Ref}></XArrow>
+      {/*<XArrow start={box1Ref} end={box2Ref}>*/}
+      {/*  <AutoAnchor>*/}
+      {/*    <BestPath>*/}
+      {/*      <XPath />*/}
+      {/*    </BestPath>*/}
+      {/*  </AutoAnchor>*/}
+      {/*</XArrow>*/}
 
+      <XArrowHeadAndTail start={box1Ref} end={box2Ref} />
       {/*<XArrowPathHeadAndTail start={box1Ref} end={box2Ref} />*/}
 
       {/*<XArrow start={box1Ref} end={box2Ref}>*/}
@@ -220,26 +170,25 @@ const XArrowHeadAndTail = (props: XArrowHeadAndTailProps) => {
     <XArrow start={props.start} end={props.end}>
       <AutoAnchor startAnchor={"right"}>
         <XLine stripEnd={headSize * 0.75} stripStart={tailSize * 0.75}>
-          <XLocator location={"100%"}>
-            <XArrowEnd size={headSize} color={"red"} offsetForward={headSize * 0.25} />
-          </XLocator>
-          <XLocator location={"0"}>
-            <XArrowEnd size={tailSize} rotation={"180deg"} offsetForward={-tailSize * 0.25} color={"purple"} />
-          </XLocator>
+          <XArrowEnd size={headSize} color={"red"} offsetForward={headSize * 0.25} />
+          <XArrowEnd size={tailSize} location={"0"} rotation={"180deg"} offsetForward={-tailSize * 0.25} color={"purple"} />
         </XLine>
       </AutoAnchor>
     </XArrow>
   );
 };
 const XArrowPathHeadAndTail = (props: XArrowHeadAndTailProps) => {
-  const { headSize = 20, tailSize = 20 } = props;
+  const { headSize = 40, tailSize = 20 } = props;
   return (
     <XArrow start={props.start} end={props.end}>
       <AutoAnchor startAnchor={"right"}>
         <BestPath>
           <XPath>
-            <XLocator location={"30%"}>
+            <XLocator location={"100%"}>
               <XArrowEnd size={headSize} color={"red"} offsetForward={headSize * 0.25} />
+              {/*<SvgManipulator>*/}
+              {/*  <BasicHeadShape1 />*/}
+              {/*</SvgManipulator>*/}
             </XLocator>
             {/*<XLocator location={"0"}>*/}
             {/*  <XArrowEnd size={tailSize} rotation={"180deg"} offsetForward={-tailSize * 0.25} color={"purple"} />*/}

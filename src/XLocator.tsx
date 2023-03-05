@@ -6,13 +6,13 @@ import { Dir, Vector } from "./path";
 export interface XLocatorProps extends SVGProps<SVGForeignObjectElement> {
   children: React.ReactNode;
 
-  // where to place the locator relatively to the parent
+  // where to place the locator relatively to the parent locator provider
   location: RelativeSize;
 
   // if true, html elements will be allowed, otherwise only svg elements will be allowed
   allowHtmlElements?: boolean;
 
-  // the type of the component to use as the locator, default to 'foreignObject'
+  // the type of the component to use as the locator, default to 'g' if allowHtmlElements is false(the default), otherwise default to 'foreignObject'
   component?: React.ElementType;
 
   //if true, the locator will be rotated to match the direction provided by the locator provider

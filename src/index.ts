@@ -19,8 +19,8 @@ export * from "./providers";
 
 export * from "./shapes";
 
-export * from "./NormalizedSvg";
-export { default as NormalizedGSvg } from "./NormalizedSvg";
+export * from "./SvgNormalizer";
+export { default as NormalizedGSvg } from "./SvgNormalizer";
 
 export * from "./utils";
 
