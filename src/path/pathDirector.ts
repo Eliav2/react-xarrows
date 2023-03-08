@@ -2,32 +2,83 @@ import { Dir, Vector } from "./vector";
 import { RelativeSize } from "shared/types";
 import { IDir } from "../types";
 
-interface Rule<Input, Result> {
-  instructions: (input: Input) => Result;
-  condition: () => boolean;
+export interface Rule<Context, Result> {
+  instruction: (context: Context) => Result;
+  condition: (context: Context) => boolean;
 }
 
-interface RuleDirector<Input, Result> {
-  rules: Rule<Input, Result>[];
+export interface RuleDirector<Input, Context, Result> {
+  rules: Rule<Context, Result>[];
+  context: Context | null;
 
-  constructor(rules: Rule<Input, Result>[]);
+  // constructor: new (rules: Rule<Context, Result>[]) => RuleDirector<any, any, any>;
 
-  resolve(context: Input): Result;
+  initContext(input: Input): void;
+
+  resolve(input: Input): Result | null;
 }
 
-class AnchorChooser implements RuleDirector<{ start: Vector; end: Vector }, { startDir: Dir; endDir: Dir }> {
-  rules: AnchorRole[];
+export class AnchorsDirector implements RuleDirector<EdgeVectors, AnchorChooserContext, EdgeDirs> {
+  rules: Rule<AnchorChooserContext, EdgeDirs>[];
+  context: AnchorChooserContext | null = null;
 
-  constructor(rules: Rule[]) {
+  constructor(rules: Rule<AnchorChooserContext, EdgeDirs>[]) {
     this.rules = rules;
   }
 
-  resolve(c: { start: Vector; end: Vector }) {
-    const rule = this.rules.find((rule) => rule.condition(args));
-    if (rule) return rule.instructions(args);
-    return null;
+  initContext(input: EdgeVectors) {
+    const { start, end } = input;
+    const forward = end.sub(start).dir();
+    const startDirOnForward = start.chooseDir(forward) ?? forward;
+    let endDirOnForward = end.chooseDir(forward) ?? forward;
+    this.context = {
+      start,
+      end,
+      startDirOnForward,
+      endDirOnForward,
+      startDir: start.dir(),
+      endDir: end.dir(),
+      forward,
+    };
+  }
+
+  resolve(input: EdgeVectors) {
+    this.initContext(input);
+    for (const rule of this.rules) {
+      if (rule.condition(this.context!)) return rule.instruction(this.context!);
+    }
+    // fallback option: last rule. (if no rules at all, fallback to forward)
+    return (
+      this.rules.at(-1)?.instruction(this.context!) ?? {
+        startDir: this.context!.forward,
+        endDir: this.context!.forward,
+      }
+    );
   }
 }
+
+type AnchorChooserContext = EdgeVectors & EdgeDirs & { startDirOnForward: Dir; endDirOnForward: Dir; forward: Dir };
+
+const defaultAnchorChooser = new AnchorsDirector([
+  // prefer z turns
+  {
+    condition: (c) => c.startDir.canZTurnTo(c.endDir),
+    instruction: (c) => ({ startDir: c.startDirOnForward, endDir: c.endDirOnForward }),
+  },
+  // r turn
+  {
+    condition: (c) => c.startDir.canRTurnTo(c.endDir),
+    instruction: (c) => ({ startDir: c.startDirOnForward, endDir: c.endDirOnForward }),
+  },
+  // fallback first allowed dir,or forward dir if no dir allowed
+  {
+    condition: (c) => true,
+    instruction: (c) => ({
+      startDir: c.start.trailingDir?.[0] ?? c.forward,
+      endDir: c.end.trailingDir?.[0] ?? c.forward,
+    }),
+  },
+]);
 
 /**
  * This class is used to parse the path roles string and determine the path behavior
@@ -38,31 +89,22 @@ class AnchorChooser implements RuleDirector<{ start: Vector; end: Vector }, { st
  *    [()=>true,"S 20sd 100%-40f E-20ed E"]
  *   ]);
  */
-class PathDirector {
-  pathRoles: PathRole[];
+class PathDirector implements RuleDirector<EdgeVectors, PathDirectorContext, Vector[]> {
+  rules: Rule<PathDirectorContext, Vector[]>[];
   context: PathDirectorContext | null = null;
 
   axes: Dir[];
-  anchorsDirsRules?: AnchorRole[];
+  anchorsDirector: AnchorsDirector;
 
   constructor(
     // roles: PathRoleInitiator[], anchorsDirsChooser?: AnchorsDirsChooser, options: { axes?: IDir[] } = { axes: [xDir, yDir] })
-    args: { roles: PathRoleInitiator[]; anchorsDirsRules?: AnchorRole[]; options?: { axes?: IDir[] } }
+    args: { rules: Rule<PathDirectorContext, Vector[]>[]; options?: { axes?: IDir[]; anchorsDirector?: AnchorsDirector } }
   ) {
-    const { anchorsDirsRules, options = {} } = args;
+    const { options = {}, rules } = args;
+    this.rules = rules;
+    this.anchorsDirector = options.anchorsDirector ?? defaultAnchorChooser;
     options.axes ??= [xDir, yDir];
-    // this.pathRoles = roles.map((role) => {
-    //   if (typeof role.instructions === "string") {
-    //     return {
-    //       condition: role.condition,
-    //       instructions: this.parseStringInstruction(role.instructions),
-    //     };
-    //   }
-    //   return role as PathRole;
-    // });
-
     this.axes = options.axes.map((axis) => new Dir(axis.x, axis.y));
-    this.anchorsDirsRules = anchorsDirsRules;
   }
 
   initContext(context: { start: Vector; end: Vector }) {
@@ -88,10 +130,12 @@ class PathDirector {
       minor,
       n: minor,
     };
-    const { startDir, endDir } = this.anchorsDirsRules?.(c) ?? {
-      startDir: start.trailingDir?.[0] ?? forward,
-      endDir: start.trailingDir?.[0] ?? forward,
-    };
+    const { startDir, endDir } = this.anchorsDirector.resolve({ start, end });
+
+    // const { startDir, endDir } = this.anchorsDirsRules?.(c) ?? {
+    //   startDir: start.trailingDir?.[0] ?? forward,
+    //   endDir: start.trailingDir?.[0] ?? forward,
+    // };
     this.context = {
       ...c,
       startDir,
@@ -115,14 +159,11 @@ const xDir = new Dir(1, 0);
 const yDir = new Dir(0, 1);
 
 const defaultPathDirector = new PathDirector({
-  roles: [],
-  anchorsDirsRules: (c) => {
-    // context.
-    const startDir = c.Start.chooseDir(c.forward) ?? c.forward;
-    let endDir = c.End.chooseDir(c.forward) ?? c.forward;
-    return { startDir, endDir };
+  rules: [],
+  options: {
+    axes: [xDir, yDir],
+    anchorsDirector: defaultAnchorChooser,
   },
-  options: { axes: [xDir, yDir] },
 });
 
 // vectors
@@ -184,7 +225,7 @@ export type PathDirectorContext = {
 };
 
 type PathRole = {
-  instructions: PathRoleFuncInstructions;
+  instruction: (vectors: PathDirectorContext) => boolean;
   condition?: PathRoleCondition;
 };
 
@@ -202,9 +243,8 @@ type PathRoleStringInstruction = `${Exclude<RelativeSize, number>}${PathCommand}
 type EdgeVectors = { start: Vector; end: Vector };
 type EdgeDirs = { startDir: Dir; endDir: Dir };
 type AnchorRole = {
-  instructions: AnchorsDirsInstructions;
-  condition?: PathRoleCondition;
+  instructions: (input: EdgeVectors) => EdgeDirs;
+  condition: (input: EdgeVectors) => boolean;
 };
-type AnchorsDirsInstructions = (context: Pick<PathDirectorContext, PathCommandVectors | PathCommandDirections>) => EdgeDirs;
 
 export default PathDirector;
