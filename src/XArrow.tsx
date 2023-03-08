@@ -11,7 +11,7 @@ import { usePassRef } from "shared/hooks/usePassChildrenRef";
 import PointsProvider from "./providers/PointsProvider";
 import PathProvider from "./providers/PathProvider";
 import HeadProvider from "./providers/HeadProvider";
-import { createProvider } from  "./providers/createProvider";
+import { createProvider } from "./providers/createProvider";
 import XLine from "./XLine";
 
 export interface XArrowProps {
@@ -114,7 +114,7 @@ export const XArrow = React.forwardRef(function XArrow(props: XArrowProps, forwa
   const startRect = startPosition && new Rectangle(startPosition);
   const endRect = endPosition && new Rectangle(endPosition);
 
-  const { children=<DefaultChildren/> } = props
+  const { children = <DefaultChildren /> } = props;
   return (
     <div
       ref={rootDivRef}
@@ -154,20 +154,18 @@ const DefaultChildren = () => {
       <XLine />
     </>
   );
-}
+};
 
 const XArrowContext = React.createContext<{
   startRect: Rectangle | null;
   endRect: Rectangle | null;
-  // startPoint: IPoint;
-  // endPoint: IPoint;
+
   __mounted: boolean;
   render: () => void;
 }>({
   startRect: null,
   endRect: null,
-  // startPoint: { x: 0, y: 0 },
-  // endPoint: { x: 0, y: 0 },
+
   __mounted: false,
   render: () => {},
 });

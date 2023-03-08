@@ -4,7 +4,7 @@ import React, { useRef } from "react";
 import { aggregateValues } from "../utils";
 import { childrenRenderer } from "../internal/Children";
 import { useEnsureContext } from "../internal/hooks";
-import produce from "immer";
+import produce, { current } from "immer";
 import useRerender from "shared/hooks/useRerender";
 import { deepFreeze } from "shared/utils";
 import { useXArrow } from "../XArrow";

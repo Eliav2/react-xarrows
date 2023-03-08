@@ -137,7 +137,7 @@ class _Vector<T extends TrailingDir> {
   // the chosen trailingDir is the one that is the closest projection to the given direction
   chooseDir(dir: Dir) {
     if (!this.trailingDir) return;
-    const forward = this.trailingDir.filter((d) => d.projection(dir).dir().eq(dir));
+    const forward: Dir[] = this.trailingDir.filter((d) => d.projection(dir).dir().eq(dir));
     forward.sort((a, b) => {
       return b.projection(dir).absSize() - a.projection(dir).absSize();
     });
@@ -250,6 +250,26 @@ export class Dir extends Vector {
   // this method check of there is a pair of directions that are allowed in both vectors, and if so return it
   canRTurnTo(v: Dir): boolean {
     return this.eq(v.rotate(90)) || this.eq(v.rotate(-90));
+  }
+
+  // given a list of directions, returns the direction with the biggest projection on this direction
+  biggestProjection(dirs: Dir[]) {
+    // filter only forward directions (projections with positive size)
+    const forward = dirs.filter((d) => d.projection(this).dir().eq(this));
+    forward.sort((a, b) => {
+      return b.projection(this).absSize() - a.projection(this).absSize();
+    });
+    return forward[0];
+  }
+
+  // given a list of directions, returns the direction with the biggest projection on this direction
+  smallestProjection(dirs: Dir[]) {
+    // filter only forward directions (projections with positive size)
+    const forward = dirs.filter((d) => d.projection(this).dir().eq(this));
+    forward.sort((a, b) => {
+      return a.projection(this).absSize() - b.projection(this).absSize();
+    });
+    return forward[0];
   }
 
   // projectOnCloserAxis() {
