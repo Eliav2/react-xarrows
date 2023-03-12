@@ -222,7 +222,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
               {...(passProps as any)}
               {...arrowBodyProps}>
               <>
-                {drawAnimEnded ? (
+                {drawAnimEnded || !animateDrawing ? (
                   <>
                     {/* moving dashed line animation */}
                     {dashness.animation ? (
