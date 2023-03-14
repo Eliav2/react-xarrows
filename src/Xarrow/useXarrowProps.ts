@@ -10,7 +10,7 @@ import {
   xarrowPropsType,
 } from '../types';
 import { getElementByPropGiven, getElemPos, xStr2absRelative } from './utils';
-import _ from 'lodash';
+import isEqual from 'lodash/isEqual';
 import { arrowShapes, cAnchorEdge, cArrowShapes } from '../constants';
 import { anchorEdgeType, dimensionType } from '../privateTypes';
 
@@ -293,7 +293,7 @@ const initialValVars = {
 // const parseAllProps = () => parseGivenProps(defaultProps, initialParsedProps);
 
 function deepCompareEquals(a, b) {
-  return _.isEqual(a, b);
+  return isEqual(a, b);
 }
 
 function useDeepCompareMemoize(value) {
