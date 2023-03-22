@@ -7,25 +7,31 @@ export interface Rule<Context, Result> {
   condition: (context: Context) => boolean;
 }
 
-export interface RuleDirector<Input, Context, Result> {
+export class RuleDirector<Input, Context, Result> {
   rules: Rule<Context, Result>[];
   context: Context | null;
 
-  // constructor: new (rules: Rule<Context, Result>[]) => RuleDirector<any, any, any>;
-
-  initContext(input: Input): void;
-
-  resolve(input: Input): Result | null;
-}
-
-export class AnchorsDirector implements RuleDirector<EdgeVectors, AnchorChooserContext, EdgeDirs> {
-  rules: Rule<AnchorChooserContext, EdgeDirs>[];
-  context: AnchorChooserContext | null = null;
-
-  constructor(rules: Rule<AnchorChooserContext, EdgeDirs>[]) {
+  constructor(rules: Rule<Context, Result>[]) {
     this.rules = rules;
+    this.context = null;
   }
 
+  initContext(input: Input): void {
+    throw new Error("Method not implemented.");
+  }
+
+  resolve(input: Input): Result | null {
+    this.initContext(input);
+    for (const rule of this.rules) {
+      if (rule.condition(this.context!)) return rule.instruction(this.context!);
+    }
+    // fallback option: last rule. (if no rules at all, fallback to forward)
+    return this.rules.at(-1)?.instruction(this.context!) ?? null;
+  }
+}
+
+// export class AnchorsDirector implements RuleDirector<EdgeVectors, AnchorChooserContext, EdgeDirs> {
+export class AnchorsDirector extends RuleDirector<EdgeVectors, AnchorChooserContext, EdgeDirs> {
   initContext(input: EdgeVectors) {
     const { start, end } = input;
     const forward = end.sub(start).dir();
@@ -43,17 +49,8 @@ export class AnchorsDirector implements RuleDirector<EdgeVectors, AnchorChooserC
   }
 
   resolve(input: EdgeVectors) {
-    this.initContext(input);
-    for (const rule of this.rules) {
-      if (rule.condition(this.context!)) return rule.instruction(this.context!);
-    }
-    // fallback option: last rule. (if no rules at all, fallback to forward)
-    return (
-      this.rules.at(-1)?.instruction(this.context!) ?? {
-        startDir: this.context!.forward,
-        endDir: this.context!.forward,
-      }
-    );
+    // call the default implementation with defaults for startDir and endDir
+    return super.resolve(input) ?? { startDir: this.context!.forward, endDir: this.context!.forward };
   }
 }
 
@@ -89,10 +86,7 @@ const defaultAnchorChooser = new AnchorsDirector([
  *    [()=>true,"S 20sd 100%-40f E-20ed E"]
  *   ]);
  */
-class PathDirector implements RuleDirector<EdgeVectors, PathDirectorContext, Vector[]> {
-  rules: Rule<PathDirectorContext, Vector[]>[];
-  context: PathDirectorContext | null = null;
-
+class PathDirector extends RuleDirector<EdgeVectors, PathDirectorContext, Vector[]> {
   axes: Dir[];
   anchorsDirector: AnchorsDirector;
 
@@ -100,8 +94,8 @@ class PathDirector implements RuleDirector<EdgeVectors, PathDirectorContext, Vec
     // roles: PathRoleInitiator[], anchorsDirsChooser?: AnchorsDirsChooser, options: { axes?: IDir[] } = { axes: [xDir, yDir] })
     args: { rules: Rule<PathDirectorContext, Vector[]>[]; options?: { axes?: IDir[]; anchorsDirector?: AnchorsDirector } }
   ) {
-    const { options = {}, rules } = args;
-    this.rules = rules;
+    super(args.rules);
+    const { options = {} } = args;
     this.anchorsDirector = options.anchorsDirector ?? defaultAnchorChooser;
     options.axes ??= [xDir, yDir];
     this.axes = options.axes.map((axis) => new Dir(axis.x, axis.y));
@@ -113,7 +107,9 @@ class PathDirector implements RuleDirector<EdgeVectors, PathDirectorContext, Vec
     const sidewards = forward.rotate(90);
     const major = forward.biggestProjection(this.axes);
     const minor = forward.smallestProjection(this.axes);
-    const c = {
+    const { startDir, endDir } = this.anchorsDirector.resolve({ start, end });
+
+    this.context = {
       Start: start,
       S: start,
       End: end,
@@ -129,15 +125,7 @@ class PathDirector implements RuleDirector<EdgeVectors, PathDirectorContext, Vec
       j: major,
       minor,
       n: minor,
-    };
-    const { startDir, endDir } = this.anchorsDirector.resolve({ start, end });
 
-    // const { startDir, endDir } = this.anchorsDirsRules?.(c) ?? {
-    //   startDir: start.trailingDir?.[0] ?? forward,
-    //   endDir: start.trailingDir?.[0] ?? forward,
-    // };
-    this.context = {
-      ...c,
       startDir,
       sd: startDir,
       startDirPerpendicular: startDir.rotate(90),
@@ -159,7 +147,12 @@ const xDir = new Dir(1, 0);
 const yDir = new Dir(0, 1);
 
 const defaultPathDirector = new PathDirector({
-  rules: [],
+  rules: [
+    {
+      condition: () => true,
+      instruction: (context) => [context.S, context.E],
+    },
+  ],
   options: {
     axes: [xDir, yDir],
     anchorsDirector: defaultAnchorChooser,
