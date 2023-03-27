@@ -30,6 +30,7 @@ export const getPosition = (xProps: useXarrowPropsResType, mainRef: React.Mutabl
     _cpy1Offset,
     _cpx2Offset,
     _cpy2Offset,
+    roundedCorners,
   } = propsRefs;
   const { startPos, endPos } = valVars;
   const { svgRef, lineRef } = mainRef.current;
@@ -314,10 +315,20 @@ export const getPosition = (xProps: useXarrowPropsResType, mainRef: React.Mutabl
 
   let arrowPath;
   if (path === 'grid') {
-    // todo: support gridRadius
-    //  arrowPath = `M ${x1} ${y1} L  ${cpx1 - 10} ${cpy1} a10,10 0 0 1 10,10
-    // L ${cpx2} ${cpy2 - 10} a10,10 0 0 0 10,10 L  ${x2} ${y2}`;
-    arrowPath = `M ${x1} ${y1} L  ${cpx1} ${cpy1} L ${cpx2} ${cpy2} ${x2} ${y2}`;
+    if (roundedCorners && !(cpx1 === cpx2 && cpy1 === cpy2)) {
+      if (x2 === cpx2 && y2 === cpy2) {
+        // 2 lines, 1 corner
+        const roundedEdge = getRoundedEdge({ x: x1, y: y1 }, { x: cpx1, y: cpy1 }, { x: x2, y: y2 });
+        arrowPath = `M ${x1} ${y1} ${roundedEdge} L ${x2} ${y2}`;
+      } else {
+        // 3 lines, 2 corners
+        const roundedEdge1 = getRoundedEdge({ x: x1, y: y1 }, { x: cpx1, y: cpy1 }, { x: cpx2, y: cpy2 });
+        const roundedEdge2 = getRoundedEdge({ x: cpx1, y: cpy1 }, { x: cpx2, y: cpy2 }, { x: x2, y: y2 });
+        arrowPath = `M ${x1} ${y1} ${roundedEdge1} ${roundedEdge2} L ${x2} ${y2}`;
+      }
+    } else {
+      arrowPath = `M ${x1} ${y1} L  ${cpx1} ${cpy1} L ${cpx2} ${cpy2} ${x2} ${y2}`;
+    }
   } else if (path === 'smooth') arrowPath = `M ${x1} ${y1} C ${cpx1} ${cpy1}, ${cpx2} ${cpy2}, ${x2} ${y2}`;
   return {
     cx0,
@@ -358,4 +369,28 @@ export const getPosition = (xProps: useXarrowPropsResType, mainRef: React.Mutabl
     fTailSize,
     arrowPath,
   };
+};
+
+const getRoundedEdge = (
+  start: { x: number; y: number },
+  corner: { x: number; y: number },
+  end: { x: number; y: number }
+) => {
+  let cornerStartXOffset = 0;
+  let cornerStartYOffset = 0;
+  let cornerEndXOffset = 0;
+  let cornerEndYOffset = 0;
+  if (corner.x === start.x) {
+    // line up/down then left/right
+    cornerStartYOffset = corner.y > start.y ? -12 : 12;
+    cornerEndXOffset = end.x > start.x ? 12 : -12;
+  } else if (corner.y === start.y) {
+    // line left/right then up/down
+    cornerStartXOffset = corner.x > start.x ? -12 : 12;
+    cornerEndYOffset = end.y > start.y ? 12 : -12;
+  }
+  return (
+    `L ${corner.x + cornerStartXOffset} ${corner.y + cornerStartYOffset} ` +
+    `Q ${corner.x} ${corner.y} ${corner.x + cornerEndXOffset} ${corner.y + cornerEndYOffset}`
+  );
 };
