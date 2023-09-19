@@ -7,7 +7,7 @@
   "module": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "scripts": {
-    "build": "webpack --mode development --config-name lib",
+    "build-old": "webpack --mode development --config-name lib",
     "build:prod": "webpack --mode production --config-name lib",
     "build:dev": "webpack --mode development --config-name lib",
     "build:ts": "tsc",
