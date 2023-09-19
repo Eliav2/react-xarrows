@@ -20,8 +20,8 @@
     "react-spring": "^9.5.5",
     "react-xarrows": "workspace:latest",
     "react-zoom-pan-pinch": "^1.6.1",
-    "reactjs-popup": "^1.5.0",
-    "typescript": "^3.9.10"
+    "reactjs-popup": "^1.5.0"
+
   },
   "scripts": {
     "start": "react-scripts start",
