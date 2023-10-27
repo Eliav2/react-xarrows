@@ -26,13 +26,13 @@ const BestPath = React.forwardRef(function BestPath(props: BestPathProps, forwar
   points[points.length - 1] = endPoint;
   // console.log("endDir", endDir);
   return (
-    // <PositionProvider value={{ startPoint: points[0], endPoint: points.at(-1) }}>
-    <PointsProvider value={{ points }}>
-      <PathProvider value={{ pointsToPath: pointToPath }}>
-        <HeadProvider value={{ dir: endDir }}>{childrenRenderer(children, { points, endDir }, forwardedRef)}</HeadProvider>
-      </PathProvider>
-    </PointsProvider>
-    // </PositionProvider>
+    <PositionProvider value={{ startPoint: points[0], endPoint: points.at(-1) }}>
+      <PointsProvider value={{ points }}>
+        <PathProvider value={{ pointsToPath: pointToPath }}>
+          <HeadProvider value={{ dir: endDir }}>{childrenRenderer(children, { points, endDir }, forwardedRef)}</HeadProvider>
+        </PathProvider>
+      </PointsProvider>
+    </PositionProvider>
   );
 });
 

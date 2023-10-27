@@ -13,6 +13,7 @@ import useRerender from "shared/hooks/useRerender";
 import isEqual from "react-fast-compare";
 import { positionType } from "shared/hooks/usePosition";
 import useStableUIValue from "shared/hooks/useStableUIValue";
+import { defaultPathDirector } from "./path/pathDirector";
 
 export interface XPathProps extends React.SVGProps<SVGPathElement> {
   children?: React.ReactNode;
@@ -38,6 +39,11 @@ export const XPath = React.forwardRef((props: XPathProps, forwardRef: React.Forw
 
   const reRender = useRerender();
   const { points } = usePointsProvider();
+  const positionProvider = usePositionProvider();
+  const { startPoint, endPoint } = positionProvider;
+  if (!positionProvider || !startPoint || !endPoint) return null;
+  const pathDirectorPoints = defaultPathDirector.resolve({ start: startPoint, end: endPoint });
+  console.log(pathDirectorPoints);
   const { pointsToPath } = usePathProvider();
   // console.log(points?.at(-1)?.x);
   // const headProvider = useHeadProvider();
@@ -46,6 +52,8 @@ export const XPath = React.forwardRef((props: XPathProps, forwardRef: React.Forw
   // console.log(points);
 
   const d = pointsToPath?.(points);
+  // const d = pointsToPath?.(pathDirectorPoints);
+  console.log(d);
 
   // console.log("Xpath");
   const pathRef = usePassRef(forwardRef);

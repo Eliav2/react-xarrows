@@ -25,7 +25,7 @@ export class RuleDirector<Input, Context, Result> {
     for (const rule of this.rules) {
       if (rule.condition(this.context!)) return rule.instruction(this.context!);
     }
-    // fallback option: last rule. (if no rules at all, fallback to forward)
+    // fallback option: last rule. (if no rules at all, fallback to null)
     return this.rules.at(-1)?.instruction(this.context!) ?? null;
   }
 }
@@ -69,7 +69,7 @@ const defaultAnchorChooser = new AnchorsDirector([
   },
   // fallback first allowed dir,or forward dir if no dir allowed
   {
-    condition: (c) => true,
+    condition: () => true,
     instruction: (c) => ({
       startDir: c.start.trailingDir?.[0] ?? c.forward,
       endDir: c.end.trailingDir?.[0] ?? c.forward,
@@ -101,8 +101,8 @@ class PathDirector extends RuleDirector<EdgeVectors, PathDirectorContext, Vector
     this.axes = options.axes.map((axis) => new Dir(axis.x, axis.y));
   }
 
-  initContext(context: { start: Vector; end: Vector }) {
-    const { start, end } = context;
+  initContext(state: { start: Vector; end: Vector }) {
+    const { start, end } = state;
     const forward = end.sub(start).dir();
     const sidewards = forward.rotate(90);
     const major = forward.biggestProjection(this.axes);
@@ -137,6 +137,10 @@ class PathDirector extends RuleDirector<EdgeVectors, PathDirectorContext, Vector
     };
   }
 
+  resolve(input: EdgeVectors): Vector[] {
+    return super.resolve(input) ?? [this.context?.S!, this.context?.E!];
+  }
+
   // private parseStringInstruction(instruction: string): PathRoleFuncInstructions {
   //   // todo
   //   return undefined as any;
@@ -146,7 +150,7 @@ class PathDirector extends RuleDirector<EdgeVectors, PathDirectorContext, Vector
 const xDir = new Dir(1, 0);
 const yDir = new Dir(0, 1);
 
-const defaultPathDirector = new PathDirector({
+export const defaultPathDirector = new PathDirector({
   rules: [
     {
       condition: () => true,

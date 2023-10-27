@@ -1,0 +1,105 @@
+name: Publish if new version
+on:
+  push:
+    branches:
+      - dev-back-to-life
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v3
+      - run: npm i -g pnpm
+      - run: echo $GITHUB_REF_NAME
+#      - run: pnpm install
+#      - run: pnpm run build
+#      - run: |
+#          cd dist
+#          ls -la
+      
+      
+
+
+
+#name: Build and Publish to NPM
+#on:
+#  push:
+#    branches:
+#      - main
+#
+#jobs:
+#  build:
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - name: Checkout code
+#        uses: actions/checkout@v3
+#
+#      - name: Set up Node.js
+#        uses: actions/setup-node@v3
+#        with:
+#          node-version: 18
+#
+#      - name: Install dependencies
+#        run: |
+#          npm install -g pnpm
+#          pnpm ci
+#
+#      - name: Build
+#        run: npm run build
+#
+#      - name: Publish to NPM
+#        run: |
+#          npm config set '//registry.npmjs.org/:_authToken' ${{ secrets.NPM_AUTH_TOKEN }}
+#          npm publish
+
+
+#name: GitHub Actions Demo
+#run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
+#on: [push]
+#jobs:
+#  Explore-GitHub-Actions:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
+#      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
+#      - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
+#      - name: Check out repository code
+#        uses: actions/checkout@v3
+#      - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
+#      - run: echo "🖥️ The workflow is now ready to test your code on the runner."
+#      - name: List files in the repository
+#        run: |
+#          ls ${{ github.workspace }}
+#      - run: echo "🍏 This job's status is ${{ job.status }}."
+
+#name: CI/CD Pipeline
+#on:
+#  push:
+#    branches:
+#      - main
+#
+#jobs:
+#  build:
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - name: Checkout code
+#        uses: actions/checkout@v2
+#
+#      - name: Install dependencies
+#        run: pnpm ci
+#
+#      - name: Build project
+#        run: pnpm run build
+#
+#
+#  deploy:
+#    needs: build
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - name: Deploy to production
+#        run: |
+#          # Add deployment commands here
