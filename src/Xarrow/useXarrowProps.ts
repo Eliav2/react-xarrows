@@ -169,6 +169,7 @@ const parsePropsFuncs: Required<{ [key in keyof xarrowPropsType]: Function }> = 
   divContainerProps: noParseWithUpdatePos,
   divContainerStyle: noParseWithUpdatePos,
   SVGcanvasStyle: noParseWithUpdatePos,
+  SVGbodyExtension: noParseWithUpdatePos,
   _extendSVGcanvas: noParseWithUpdatePos,
   _debug: noParseWithUpdatePos,
   _cpx1Offset: noParseWithUpdatePos,
@@ -228,6 +229,7 @@ const defaultProps: Required<xarrowPropsType> = {
   divContainerProps: {},
   divContainerStyle: {},
   SVGcanvasStyle: {},
+  SVGbodyExtension: null,
   _extendSVGcanvas: 0,
   _debug: false,
   _cpx1Offset: 0,
@@ -274,6 +276,7 @@ type parsedXarrowProps = {
   divContainerProps: React.HTMLProps<HTMLDivElement>;
   SVGcanvasStyle: React.CSSProperties;
   divContainerStyle: React.CSSProperties;
+  SVGbodyExtension: React.ReactNode;
   _extendSVGcanvas: number;
   _debug: boolean;
   _cpx1Offset: number;

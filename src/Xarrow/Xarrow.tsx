@@ -48,6 +48,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     SVGcanvasStyle,
     _debug,
     shouldUpdatePosition,
+    SVGbodyExtension,
   } = propsRefs;
 
   animateDrawing = props.animateDrawing as number;
@@ -209,6 +210,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
             }}
             overflow="auto"
             {...SVGcanvasProps}>
+            {SVGbodyExtension}
             {/* body of the arrow */}
             <path
               ref={lineRef}

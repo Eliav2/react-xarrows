@@ -40,6 +40,7 @@ export type xarrowPropsType = {
   divContainerProps?: React.HTMLProps<HTMLDivElement>;
   SVGcanvasStyle?: React.CSSProperties;
   divContainerStyle?: React.CSSProperties;
+  SVGbodyExtension?: React.ReactNode;
   _extendSVGcanvas?: number;
   _debug?: boolean;
   _cpx1Offset?: number;
