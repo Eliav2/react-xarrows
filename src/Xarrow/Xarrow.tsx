@@ -165,7 +165,12 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
         // @ts-ignore
         lineDashAnimRef.current?.beginElement();
       };
-      const handleDrawAmimBegin = () => (headRef.current.style.opacity = '0');
+      const handleDrawAmimBegin = () => {
+        if (headRef.current) {
+          headRef.current.style.opacity = '0';
+        }
+      };
+
       if (lineDrawAnimRef.current && headRef.current) {
         lineDrawAnimRef.current.addEventListener('endEvent', handleDrawAmimEnd);
         lineDrawAnimRef.current.addEventListener('beginEvent', handleDrawAmimBegin);
