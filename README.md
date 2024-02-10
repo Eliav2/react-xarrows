@@ -1,5 +1,12 @@
 # react-xarrows
 
+## ⚠️Warning⚠️
+
+I'm no longer maintaining this project, as evident from the commit history. It Started 5 years ago due to a lack of good React libraries for SVG arrows/lines, but better alternatives exist today, like [react-flow](https://reactflow.dev/) (unrelated to me).
+react-xarrows v3 is 75% ready in my stash, but I won't work on it for now due to other projects. 
+
+Thanks for the journey, happy development!
+
 ## introduction
 
 Draw arrows between components in React!
