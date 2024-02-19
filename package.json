@@ -22,29 +22,29 @@
   },
   "bugs": "https://github.com/Eliav2/react-xarrows/issues",
   "dependencies": {
-    "@types/prop-types": "^15.7.3",
-    "immer": "^9.0.0",
-    "prop-types": "^15.7.2",
-    "react-fast-compare": "^3.2.0"
+    "@types/prop-types": "^15.7.11",
+    "immer": "^9.0.21",
+    "prop-types": "^15.8.1",
+    "react-fast-compare": "^3.2.2"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0 || ^18.0.0 || >=18.0.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.0.0",
-    "@rollup/plugin-typescript": "^8.3.3",
+    "@babel/core": "^7.23.9",
+    "@rollup/plugin-typescript": "^8.5.0",
     "@testing-library/react": "^13.4.0",
-    "@types/react": "^18.0.0",
-    "concurrently": "^7.2.1",
-    "happy-dom": "^8.2.6",
-    "rollup": "^3.7.5",
+    "@types/react": "^18.2.57",
+    "concurrently": "^7.6.0",
+    "happy-dom": "^8.9.0",
+    "rollup": "^3.29.4",
     "rollup-plugin-delete": "^2.0.0",
     "shared": "workspace:*",
-    "vite": "^3.2.3",
-    "vite-plugin-dts": "^1.7.1",
+    "vite": "^3.2.8",
+    "vite-plugin-dts": "^1.7.3",
     "vite-plugin-generate-file": "^0.0.3",
-    "vite-plugin-static-copy": "^0.13.0",
-    "vitest": "^0.28.3"
+    "vite-plugin-static-copy": "^0.13.1",
+    "vitest": "^0.28.5"
   },
   "funding": {
     "type": "individual",
