@@ -1,7 +1,4 @@
 import { useLayoutEffect, useRef } from "react";
-import { useEnsureContext } from "./hooks";
-import { useXWrapperContext } from "../XWrapper";
-import useRerender from "shared/hooks/useRerender";
 
 /**
  * this class holds the registered components and their registered functions, usually render functions.

@@ -43,7 +43,7 @@ export const XPath = React.forwardRef((props: XPathProps, forwardRef: React.Forw
   const { startPoint, endPoint } = positionProvider;
   if (!positionProvider || !startPoint || !endPoint) return null;
   const pathDirectorPoints = defaultPathDirector.resolve({ start: startPoint, end: endPoint });
-  console.log(pathDirectorPoints);
+  // console.log(pathDirectorPoints);
   const { pointsToPath } = usePathProvider();
   // console.log(points?.at(-1)?.x);
   // const headProvider = useHeadProvider();
@@ -53,7 +53,7 @@ export const XPath = React.forwardRef((props: XPathProps, forwardRef: React.Forw
 
   const d = pointsToPath?.(points);
   // const d = pointsToPath?.(pathDirectorPoints);
-  console.log(d);
+  // console.log(d);
 
   // console.log("Xpath");
   const pathRef = usePassRef(forwardRef);

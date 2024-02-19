@@ -9,9 +9,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@emotion/react": "^11.10.5",
-    "@emotion/styled": "^11.10.5",
-    "@mui/material": "^5.11.8",
+    "@emotion/react": "^11.11.3",
+    "@emotion/styled": "^11.11.0",
+    "@mui/material": "^5.15.10",
     "react": "^18.2.0",
     "react-collapsible": "^2.10.0",
     "react-dom": "^18.2.0",
@@ -21,10 +21,10 @@
     "react-xarrows": "workspace:../../dist"
   },
   "devDependencies": {
-    "@types/react": "^18.0.28",
-    "@types/react-dom": "^18.0.10",
-    "@vitejs/plugin-react": "^2.2.0",
+    "@types/react": "^18.2.56",
+    "@types/react-dom": "^18.2.19",
+    "@vitejs/plugin-react": "^4.2.1",
     "typescript": "^4.9.5",
-    "vite": "^3.2.5"
+    "vite": "^5.1.3"
   }
 }

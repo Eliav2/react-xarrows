@@ -3,6 +3,10 @@ import { useEnsureContext } from "./internal/hooks";
 import { RegisteredManager, useRegisteredManager } from "./internal/RegisteredManager";
 import useRerender from "shared/hooks/useRerender";
 
+interface XWrapperProps {
+  children: React.ReactNode;
+}
+
 export const XWrapper = React.forwardRef(({ children }: XWrapperProps, forwardedRef) => {
   // console.log("XWrapper");
   const xWrapperManager = useRef(new RegisteredManager());
@@ -40,10 +44,6 @@ export const useUpdateXWrapper = () => {
   });
   return val.update;
 };
-
-interface XWrapperProps {
-  children: React.ReactNode;
-}
 
 /**
  * receives a function(usually render a function) that would be executed whenever the XWrapper is updated.

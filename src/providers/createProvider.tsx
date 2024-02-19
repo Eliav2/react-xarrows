@@ -32,14 +32,14 @@ export const providerContextDefaultVal = {
 const _debug = (enable?: boolean) => (enable ? console.log : () => {});
 
 /**
- * this function creates a provider(a React Component which provides context) ,a hook to use the provider value,
- * and a hook to register a function to the provider(which can be used to alter the provider value)
+ * this function creates a provider (a React Component which provides context) ,a hook to use the provider value,
+ * and a hook to register a function to the provider (which can be used to alter the provider value)
  *
  * providers provide an aggregated merged(shallowly) value from all previous providers from the same type.
  * for example: if there are 2 HeadProvider components in the tree, the value of the deeper HeadProvider will be merged
  * with the value of the first HeadProvider.
  *
- * this function is just a utility function to reduce code duplication in creation of providers
+ * this function is just a utility function to reduce code duplication in the creation of providers
  */
 export const createProvider = <Val extends AnyObj = any, ValPrepared extends AnyObj = Val>(
   // the provider name, used for debugging and React DevTools

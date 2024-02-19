@@ -1,6 +1,6 @@
 import React from "react";
 import useRerender from "shared/hooks/useRerender";
-import { useUpdateXWrapper } from "react-xarrows/XWrapper";
+import { useUpdateXWrapper } from "react-xarrows";
 import { usePassRef } from "shared/hooks/usePassChildrenRef";
 import Draggable from "react-draggable";
 
