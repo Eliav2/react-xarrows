@@ -1,0 +1,45 @@
+# yaml-language-server: $schema=https://www.schemastore.org/github-release-config.json
+#
+# Groups the notes that `gh release create --generate-notes` produces in
+# .github/workflows/publish.yml. Without this, every release is one flat list,
+# and dependabot buries the changes anyone actually cares about.
+#
+# Only labels that exist on this repository are referenced. A category pointing
+# at a label nobody applies is dead config that fails silently.
+changelog:
+  exclude:
+    labels:
+      - duplicate
+      - invalid
+      - wontfix
+      - question
+
+  categories:
+    # First match wins, so the narrow categories have to precede the catch-all.
+    - title: ⚠️ Breaking Changes
+      labels:
+        - breaking-change
+
+    - title: ✨ Features
+      labels:
+        - enhancement
+
+    - title: 🐛 Bug Fixes
+      labels:
+        - bug
+        - possible bug
+
+    - title: 📚 Documentation
+      labels:
+        - documentation
+
+    # Dependabot applies `dependencies` alongside an ecosystem label such as
+    # `javascript` or `github_actions`. Matching on `dependencies` alone keeps a
+    # human pull request that happens to carry an ecosystem label out of here.
+    - title: ⬆️ Dependencies
+      labels:
+        - dependencies
+
+    - title: 🧹 Other Changes
+      labels:
+        - '*'
