@@ -1,0 +1,106 @@
+# yaml-language-server: $schema=https://storage.googleapis.com/coderabbit_public_assets/schema.v2.json
+language: en-US
+
+tone_instructions: >-
+  Be direct and concise. Skip praise and preamble. This is a five-year-old
+  library that is being revived, so distinguish clearly between pre-existing
+  issues and problems the pull request actually introduces, and do not flag
+  legacy patterns unless the change touches them.
+
+reviews:
+  profile: chill
+  high_level_summary: true
+  changed_files_summary: true
+  sequence_diagrams: false
+  poem: false
+  collapse_walkthrough: true
+  # Do not block merges on the bot's opinion.
+  request_changes_workflow: false
+
+  auto_review:
+    enabled: true
+    drafts: false
+    auto_incremental_review: true
+    base_branches:
+      - master
+
+  path_filters:
+    - '!pnpm-lock.yaml'
+    - '!**/dist/**'
+    - '!**/dist-storybook/**'
+    - '!lib/**'
+    - '!images/**'
+    - '!**/*.min.js'
+    - '!CHANGELOG.md'
+
+  path_instructions:
+    - path: src/**
+      instructions: >-
+        This is the published library. Treat every change here as
+        consumer-facing.
+
+        The package supports React >=16.8 and ships an ES5 build, so reject
+        syntax or APIs newer than that unless the change also updates the build
+        target. Runtime dependencies are deliberately minimal - flag any new
+        one.
+
+        The geometry in utils/GetPosition.tsx is numerically sensitive.
+        Coordinates can legitimately be zero or negative, and elements may be
+        unmeasured on the first render, so watch for division by zero, NaN
+        propagation into SVG attributes, and Math.atan on a zero denominator.
+
+        Arrow rendering mixes React-rendered SVG attributes with SMIL <animate>
+        elements. Imperative DOM mutation of a property that React also renders
+        is a bug, not a style issue, because React cannot reconcile it.
+
+        Browser-only DOM APIs must be guarded. The component is expected to
+        render under jsdom and SSR, where SVG geometry methods such as
+        getTotalLength and getBBox do not exist.
+
+    - path: examples/**
+      instructions: >-
+        This is the demo app, not published code. It runs React 19 with
+        StrictMode enabled and resolves the library from ../src via a Vite
+        alias, so it is the first place a breaking library change shows up.
+
+        Effects must be idempotent because StrictMode double-invokes them.
+        Prefer platform elements over new dependencies. Be relaxed about style
+        here; the examples exist to demonstrate the API.
+
+    - path: .github/workflows/**
+      instructions: >-
+        Check that action versions are pinned to a major, that permissions stay
+        least-privilege, and that no secret is echoed into logs. The publish
+        workflow uses npm Trusted Publishing and must never gain an NPM_TOKEN.
+
+    - path: __test__/**
+      instructions: >-
+        Tests run on Vitest against a bare jsdom with no SVG geometry
+        polyfills, which is deliberate - it keeps the SSR-sensitive code paths
+        honest. Flag any attempt to stub those methods back in.
+
+  tools:
+    eslint:
+      enabled: true
+    actionlint:
+      enabled: true
+    yamllint:
+      enabled: true
+    gitleaks:
+      enabled: true
+    shellcheck:
+      enabled: true
+    # The README is long-form prose that Prettier deliberately does not format;
+    # linting it produces noise on every pull request.
+    markdownlint:
+      enabled: false
+    # Would duplicate and contradict the ESLint and Prettier setup.
+    biome:
+      enabled: false
+
+chat:
+  auto_reply: true
+
+knowledge_base:
+  learnings:
+    scope: local
