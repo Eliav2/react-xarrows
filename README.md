@@ -14,7 +14,7 @@ Draw arrows between components in React!
 [![npm version](https://badge.fury.io/js/react-xarrows.svg)](https://github.com/Eliav2/react-xarrows)
 [![downloads](https://img.shields.io/npm/dw/react-xarrows)](https://www.npmjs.com/package/react-xarrows)
 [![issues](https://img.shields.io/github/issues/Eliav2/react-xarrows)](https://github.com/Eliav2/react-xarrows/issues)
-[![licence](https://img.shields.io/npm/l/react-xarrows)](https://github.com/Eliav2/react-xarrows/blob/master/LICENSE)
+[![licence](https://img.shields.io/npm/l/react-xarrows)](https://github.com/Eliav2/react-xarrows/blob/main/LICENSE)
 
 ### Main features
 
@@ -42,12 +42,12 @@ with npm `npm install react-xarrows`.
 
 #### Demos
 
-**[Live demo](https://eliav2.github.io/react-xarrows/)** - all the examples, running the current `master`.
+**[Live demo](https://eliav2.github.io/react-xarrows/)** - all the examples, running the current `main`.
 The source lives in [/examples](./examples), and the component gallery is at
 [/storybook](https://eliav2.github.io/react-xarrows/storybook/).
 
 Prefer to poke at the code? Open the examples in
-[StackBlitz](https://stackblitz.com/github/Eliav2/react-xarrows/tree/master/examples).
+[StackBlitz](https://stackblitz.com/github/Eliav2/react-xarrows/tree/main/examples).
 
 ![react-xarrow-picture-1 4 2](https://user-images.githubusercontent.com/47307889/87698325-facfc480-c79b-11ea-976a-dbad0ecd9b48.png)
 
@@ -693,9 +693,9 @@ Want a feature that is not supported? found a bug?\
 no need to clone the repo and set up the dev environment anymore!\
 here's a ready to use development environment with a click of a button(patience, it takes about a minute to setup):
 
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/Eliav2/react-xarrows/blob/master/src/index.tsx)
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/Eliav2/react-xarrows/blob/main/src/index.tsx)
 
-this will set up environment that will clone react-xarrow master,and will link the code from the src to the examples,
+this will set up environment that will clone react-xarrow main, and will link the code from the src to the examples,
 and will start examples,with typescript watch process that will recompile when any change is made.\
 this means that any code changes in src/* will immediately be reflected to the running example at port 3000!
 (add console.log("test") line and see!)\
