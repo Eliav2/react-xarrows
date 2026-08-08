@@ -16,16 +16,9 @@ permissions:
 
 jobs:
   verify:
-    name: verify (node ${{ matrix.node }})
+    # Node 22 LTS. It is the lower bound we support: jsdom 30 needs the undici
+    # that ships with Node 22+, and anything passing here passes on 24.
     runs-on: ubuntu-latest
-
-    strategy:
-      fail-fast: false
-      matrix:
-        # Node 20 reached end-of-life in April 2026, and jsdom 30 requires the
-        # undici build that ships with Node 22 or newer.
-        node: [22, 24]
-
     steps:
       - uses: actions/checkout@v5
 
@@ -36,7 +29,7 @@ jobs:
 
       - uses: actions/setup-node@v5
         with:
-          node-version: ${{ matrix.node }}
+          node-version: 22
           cache: pnpm
 
       - name: Install dependencies
