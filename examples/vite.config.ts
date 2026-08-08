@@ -12,6 +12,12 @@ export default defineConfig({
   base,
   plugins: [react()],
   resolve: {
+    // The alias below pulls library source out of the repo root, where pnpm has
+    // installed React 18 for the library's own build and tests. The demo runs
+    // React 19 from examples/. Without deduping, the two halves of the app get
+    // two React copies, the second one's hook dispatcher is null, and every
+    // route that renders an Xarrow throws "Cannot read properties of null".
+    dedupe: ['react', 'react-dom'],
     alias: {
       // Resolve the library straight from source so the demo always reflects
       // this checkout. package.json still declares a real dependency so that
