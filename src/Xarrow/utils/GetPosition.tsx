@@ -2,7 +2,6 @@ import { useXarrowPropsResType } from '../useXarrowProps';
 import React from 'react';
 import { calcAnchors } from '../anchors';
 import { getShortestLine, getSvgPos, getTotalLength } from './index';
-import _ from 'lodash';
 import { cPaths } from '../../constants';
 import { buzzierMinSols, bzFunction } from './buzzier';
 
@@ -48,8 +47,8 @@ export const getPosition = (xProps: useXarrowPropsResType, mainRef: React.Mutabl
 
   const startAnchorPosition = chosenStart.anchor.position;
   let endAnchorPosition = chosenEnd.anchor.position;
-  const startPoint = _.pick(chosenStart, ['x', 'y']),
-    endPoint = _.pick(chosenEnd, ['x', 'y']);
+  const startPoint = { x: chosenStart.x, y: chosenStart.y },
+    endPoint = { x: chosenEnd.x, y: chosenEnd.y };
 
   const mainDivPos = getSvgPos(svgRef);
   let cx0 = Math.min(startPoint.x, endPoint.x) - mainDivPos.x;

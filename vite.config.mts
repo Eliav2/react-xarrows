@@ -48,12 +48,11 @@ export default defineConfig({
         ({ es: 'index.mjs', cjs: 'index.cjs', umd: 'index.umd.js' })[format] ?? `index.${format}.js`,
     },
     rollupOptions: {
-      external: ['react', 'prop-types', 'lodash'],
+      // React is the only external left. The package has no runtime
+      // dependencies, so a script-tag consumer needs nothing but React.
+      external: ['react'],
       output: {
-        // lodash is read as `_`, which is the only global lodash actually
-        // defines. The webpack build asked for `root["lodash"]`, which lodash
-        // never sets, so the script-tag path was broken before this.
-        globals: { react: 'React', 'prop-types': 'PropTypes', lodash: '_' },
+        globals: { react: 'React' },
         // The entry mixes a default export with named ones. `named` keeps the
         // default reachable at `.default`, which is what the webpack UMD build
         // already did, so script-tag consumers see no change.
