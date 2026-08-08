@@ -47,6 +47,13 @@ jobs:
       - name: Test
         run: pnpm run test
 
+      # Runs through examples/vite.config.ts, so it exercises the same alias and
+      # dedupe as the dev server and the production build. Catches a duplicate
+      # React reaching the demo, which builds cleanly and then throws on every
+      # route that renders an arrow.
+      - name: Test demo
+        run: pnpm --filter react-xarrows-examples run test
+
       - name: Build
         run: pnpm run build
 
@@ -54,22 +61,6 @@ jobs:
       # that the library's own build and tests do not.
       - name: Build demo
         run: pnpm --filter react-xarrows-examples run build
-
-      # A demo that builds can still be broken on arrival. The library source is
-      # aliased out of the repo root, which installs its own React for tests, so
-      # a second copy can end up in the bundle. Nothing fails at build time; the
-      # site just throws "Cannot read properties of null (reading 'useRef')" on
-      # every route that renders an arrow.
-      - name: Verify the demo bundled exactly one React
-        run: |
-          demo_react=$(node -p "require('./examples/node_modules/react/package.json').version")
-          root_react=$(node -p "require('./node_modules/react/package.json').version")
-          echo "demo React $demo_react, repo root React $root_react"
-          if [ "$demo_react" != "$root_react" ] \
-            && grep -qF "$root_react" examples/dist/assets/*.js; then
-            echo "::error::demo bundle contains React $root_react from the repo root as well as $demo_react"
-            exit 1
-          fi
 
       # Catches the case where `files` or the build output drift apart and the
       # published tarball silently loses an entry point or its type definitions.

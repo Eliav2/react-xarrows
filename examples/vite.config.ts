@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite';
+import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -24,6 +24,13 @@ export default defineConfig({
       // external sandboxes importing examples/ on its own can install it.
       'react-xarrows': path.resolve(dirname, '../src/index.tsx'),
     },
+  },
+  // Tests deliberately share this config, so the alias and dedupe they assert
+  // on are the same ones the dev server and production build use.
+  test: {
+    environment: 'jsdom',
+    globals: false,
+    include: ['src/**/*.test.{ts,tsx}'],
   },
   server: {
     // CodeSandbox and StackBlitz proxy the dev server through their own hosts.
