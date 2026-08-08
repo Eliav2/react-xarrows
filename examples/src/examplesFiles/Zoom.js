@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import Xarrow from 'react-xarrows';
-import Draggable from 'react-draggable';
+import Draggable from '../components/Draggable';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 
 const boxStyle = {

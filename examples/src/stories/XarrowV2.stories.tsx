@@ -1,8 +1,8 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import Xarrow, { useXarrow, xarrowPropsType, Xwrapper } from 'react-xarrows';
-import Draggable from 'react-draggable';
-import { Meta, Story } from '@storybook/react';
-import { useSpring, animated } from 'react-spring';
+import Draggable from '../components/Draggable';
+import type { Meta, StoryFn } from '@storybook/react-vite';
+import { useSpring, animated } from '@react-spring/web';
 import { DraggableBox } from '../components/DraggableBox';
 
 const canvasStyle = {
@@ -37,7 +37,7 @@ const SimpleTemplate = () => {
   );
 };
 
-const SimpleTemplateStory: Story<xarrowPropsType> = (args) => <SimpleTemplate />;
+const SimpleTemplateStory: StoryFn<xarrowPropsType> = (args) => <SimpleTemplate />;
 export const V2 = SimpleTemplateStory.bind({});
 
 const ScrolledDiv = ({ children, style }) => {

@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import Xarrow, { useXarrow, Xwrapper } from 'react-xarrows';
-import Draggable from 'react-draggable';
+import Draggable from '../components/Draggable';
 import { boxStyle, canvasStyle } from '../ExamplePage';
 
 const DraggableBox = ({ box }) => {

@@ -1,0 +1,70 @@
+name: Deploy demo to GitHub Pages
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - src/**
+      - examples/**
+      - .github/workflows/deploy-demo.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Let a running deployment finish rather than cancelling it, but only queue one.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_PAGES: 'true'
+
+    steps:
+      - uses: actions/checkout@v7
+
+      # Version comes from the "packageManager" field in package.json.
+      - uses: pnpm/action-setup@v6
+        with:
+          run_install: false
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build demo
+        run: pnpm --filter react-xarrows-examples run build
+
+      - name: Build Storybook
+        run: pnpm --filter react-xarrows-examples run build-storybook
+
+      # Storybook is published as a subpath of the demo so both share one deployment.
+      - name: Nest Storybook under the demo
+        run: cp -r examples/dist-storybook examples/dist/storybook
+
+      - uses: actions/configure-pages@v6
+
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: examples/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5

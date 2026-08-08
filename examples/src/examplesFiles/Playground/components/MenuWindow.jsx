@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Draggable from 'react-draggable';
+import Draggable from '../../../components/Draggable';
 import './MenuWindow.css';
 
 export default ({ setLines, line: { props: lineProp } }) => {

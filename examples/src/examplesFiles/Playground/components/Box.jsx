@@ -1,6 +1,6 @@
 import React from 'react';
 import './Box.css';
-import Draggable from 'react-draggable';
+import Draggable from '../../../components/Draggable';
 import { useXarrow } from 'react-xarrows';
 
 const Box = (props) => {

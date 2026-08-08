@@ -1,9 +1,9 @@
 import React, { useRef } from 'react';
-import { Meta } from '@storybook/react';
+import type { Meta } from '@storybook/react-vite';
 
 import Xarrow, { Xwrapper } from 'react-xarrows';
 import { DraggableBox } from '../components/DraggableBox';
-import Draggable from 'react-draggable';
+import Draggable from '../components/Draggable';
 import { boxStyle } from '../ExamplePage';
 
 export default {

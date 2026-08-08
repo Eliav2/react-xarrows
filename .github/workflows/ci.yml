@@ -50,6 +50,11 @@ jobs:
       - name: Build
         run: pnpm run build
 
+      # The demo consumes the library straight from src, so it catches breakage
+      # that the library's own build and tests do not.
+      - name: Build demo
+        run: pnpm --filter react-xarrows-examples run build
+
       # Catches the case where `files` or the build output drift apart and the
       # published tarball silently loses the entry point or its type definitions.
       - name: Verify package contents
