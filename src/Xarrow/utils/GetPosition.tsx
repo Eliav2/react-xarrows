@@ -106,7 +106,12 @@ export const getPosition = (xProps: useXarrowPropsResType, mainRef: React.Mutabl
 
   if (cu === 0) {
     // in case of straight path
-    let headAngel = Math.atan(absDy / absDx);
+    // atan2 rather than atan(absDy / absDx): identical for every other input,
+    // but 0/0 makes the division NaN and poisons every coordinate downstream.
+    // Both deltas are zero whenever start and end sit at the same point, which
+    // includes the very common case of elements not yet measured on first
+    // render. atan2(0, 0) is 0, so a zero-length arrow renders flat instead.
+    let headAngel = Math.atan2(absDy, absDx);
 
     if (showHead) {
       x2 -= fHeadSize * (1 - headOffset) * xSign * Math.cos(headAngel);
@@ -119,7 +124,7 @@ export const getPosition = (xProps: useXarrowPropsResType, mainRef: React.Mutabl
       headOrient = (headAngel * 180) / Math.PI;
     }
 
-    let tailAngel = Math.atan(absDy / absDx);
+    let tailAngel = Math.atan2(absDy, absDx);
     if (showTail) {
       x1 += fTailSize * (1 - tailOffset) * xSign * Math.cos(tailAngel);
       y1 += fTailSize * (1 - tailOffset) * ySign * Math.sin(tailAngel);
