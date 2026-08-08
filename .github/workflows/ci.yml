@@ -5,6 +5,9 @@ on:
     branches: [main]
   pull_request:
   workflow_dispatch:
+  # Called by publish.yml so a release runs the exact same checks a PR does,
+  # rather than a subset that can drift away from this file.
+  workflow_call:
 
 # A newer push to the same branch makes the in-flight run irrelevant.
 concurrency:

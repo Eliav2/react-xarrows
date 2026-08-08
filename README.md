@@ -1,12 +1,5 @@
 # react-xarrows
 
-## ⚠️Warning⚠️
-
-I'm no longer maintaining this project, as evident from the commit history. It Started 5 years ago due to a lack of good React libraries for SVG arrows/lines, but better alternatives exist today, like [react-flow](https://reactflow.dev/) (unrelated to me).
-react-xarrows v3 is 75% ready in my stash, but I won't work on it for now due to other projects. 
-
-Thanks for the journey, happy development!
-
 ## introduction
 
 Draw arrows between components in React!
@@ -22,16 +15,21 @@ Draw arrows between components in React!
 - Super simple API yet fully customizable usage!
 - Smart and Intuitive look and behavior!
 - Smart React lifecycle, and cached parsed props for efficiency!
+- Zero runtime dependencies. React is the only peer dependency.
+- Ships ESM, CommonJS and UMD, with types resolving correctly under every one.
 
 liked my work? star [this repo](https://github.com/Eliav2/react-xarrows).
 
 reallyy liked my work? [buy me a coffee](https://www.paypal.com/donate?hosted_button_id=CRQ343F9VTRS8)!  
 
-## Help wanted
+## Project status
 
-This project needs another maintainer, especially for known bugs(and future ones) of react-xarrows v2. 
-I'm working on V3 from time to time, but don't have the time to respond and fix all active issues. 
-help would be welcomed(contact me on louski.a@gmail.com for more details)  
+Actively maintained again after a long gap. The v2 line is where the work is
+happening: open bugs are being fixed, the build and CI were rebuilt, and
+releases are published from CI with npm provenance.
+
+Contributions are welcome. Issues with a reproduction get looked at first, and
+[/examples](./examples) has a story per fixed bug that you can copy to build one.
 
 ## installation
 
