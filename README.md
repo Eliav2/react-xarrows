@@ -42,12 +42,14 @@ with npm `npm install react-xarrows`.
 
 #### Demos
 
-[see here!](https://codesandbox.io/embed/github/Eliav2/react-xarrows/tree/master/examples?fontsize=14&hidenavigation=1&theme=dark)
-codebox of few examples(in this repo at [/examples](./examples)).
+**[Live demo](https://eliav2.github.io/react-xarrows/)** - all the examples, running the current `master`.
+The source lives in [/examples](./examples), and the component gallery is at
+[/storybook](https://eliav2.github.io/react-xarrows/storybook/).
+
+Prefer to poke at the code? Open the examples in
+[StackBlitz](https://stackblitz.com/github/Eliav2/react-xarrows/tree/master/examples).
 
 ![react-xarrow-picture-1 4 2](https://user-images.githubusercontent.com/47307889/87698325-facfc480-c79b-11ea-976a-dbad0ecd9b48.png)
-
-see this interactive example: <https://lwwwp.csb.app/CustomizeArrow>
 
 [comment]: <> (![react-xarrows-v1 6]&#40;https://user-images.githubusercontent.com/47307889/113949468-070f1c80-9818-11eb-90e6-ddc6d814b912.gif&#41;)
 
