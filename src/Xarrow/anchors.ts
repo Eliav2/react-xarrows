@@ -23,13 +23,3 @@ export const calcAnchors = (anchors: anchorCustomPositionType[], anchorPos: dime
     };
   });
 };
-
-if (require.main === module) {
-  // const res = parseAnchor(['auto'], {
-  //   x: 0,
-  //   y: 0,
-  //   bottom: 10,
-  //   right: 20,
-  // });
-  // console.log(res);
-}
