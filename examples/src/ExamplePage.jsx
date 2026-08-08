@@ -2,7 +2,7 @@ import React from 'react';
 
 import examples from './examplesFiles';
 
-import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, Link } from 'react-router-dom';
 
 export const canvasStyle = {
   width: '100%',
@@ -80,24 +80,23 @@ const ExamplePage = () => {
           </div>
         </div>
 
-        <Switch>
-          <Route exact path="/">
-            <div style={{ textAlign: 'center' }}>
-              <h2>choose any example</h2>
-              <h5>
-                see each example file at <code>/src/examplesFiles</code>{' '}
-              </h5>
-            </div>
-          </Route>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <div style={{ textAlign: 'center' }}>
+                <h2>choose any example</h2>
+                <h5>
+                  see each example file at <code>/src/examplesFiles</code>{' '}
+                </h5>
+              </div>
+            }
+          />
           {Object.keys(examples).map((exampleName) => {
             const Component = examples[exampleName].component;
-            return (
-              <Route path={'/' + exampleName} key={exampleName}>
-                <Component />
-              </Route>
-            );
+            return <Route path={'/' + exampleName} key={exampleName} element={<Component />} />;
           })}
-        </Switch>
+        </Routes>
       </Router>
     </div>
   );

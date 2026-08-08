@@ -1,65 +1,35 @@
 {
-  "author": "Eliav Louski",
-  "main": "src/index.jsx",
-  "private": true,
-  "dependencies": {
-    "@material-ui/core": "^4.12.4",
-    "@material-ui/styles": "^4.11.5",
-    "@types/node": "^15.14.9",
-    "@types/react": "^17.0.52",
-    "@types/react-dom": "^17.0.18",
-    "jss": "^10.9.2",
-    "react": "^17.0.2",
-    "react-collapsible": "^2.10.0",
-    "react-dom": "^17.0.2",
-    "react-draggable": "^4.4.5",
-    "react-numeric-input": "^2.2.3",
-    "react-popout": "^1.0.3",
-    "react-router-dom": "^5.3.4",
-    "react-scripts": "^5.0.0",
-    "react-spring": "^9.5.5",
-    "react-xarrows": "workspace:latest",
-    "react-zoom-pan-pinch": "^1.6.1",
-    "reactjs-popup": "^1.5.0"
-
-  },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "jest",
-    "eject": "react-scripts eject",
-    "storybook": "start-storybook -p 6006 -s public",
-    "build-storybook": "build-storybook -s public",
-    "link-xarrows": "cd .. && yarn link && cd examples\\ && yarn link react-xarrows",
-    "fix-invalid-hooks": "npm link ../node_modules/react"
-  },
-  "keywords": [],
   "name": "react-xarrows-examples",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
   "description": "examples for react-xarrows",
-  "devDependencies": {
-    "@babel/core": "^7.20.5",
-    "@babel/plugin-transform-react-jsx": "^7.19.0",
-    "@babel/plugin-transform-typescript": "^7.20.2",
-    "@babel/preset-env": "^7.20.2",
-    "@storybook/addon-actions": "^6.5.14",
-    "@storybook/addon-essentials": "^6.5.14",
-    "@storybook/addon-links": "^6.5.14",
-    "@storybook/node-logger": "^6.5.14",
-    "@storybook/preset-create-react-app": "^3.2.0",
-    "@storybook/react": "^6.5.14",
-    "@welldone-software/why-did-you-render": "^6.2.3",
-    "webpack": "^5.72.0"
+  "author": "Eliav Louski",
+  "scripts": {
+    "dev": "vite",
+    "start": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build -o dist-storybook"
   },
-  "eslintConfig": {
-    "overrides": [
-      {
-        "files": [
-          "**/*.stories.*"
-        ],
-        "rules": {
-          "import/no-anonymous-default-export": "off"
-        }
-      }
-    ]
+  "dependencies": {
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-draggable": "^4.7.1",
+    "react-popout": "^4.0.1",
+    "react-router-dom": "^7.18.0",
+    "react-xarrows": "workspace:*",
+    "react-zoom-pan-pinch": "^4.0.4"
+  },
+  "devDependencies": {
+    "@react-spring/web": "^10.1.2",
+    "@storybook/react-vite": "^10.5.7",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "@vitejs/plugin-react": "^6.0.5",
+    "storybook": "^10.5.7",
+    "typescript": "^5.9.3",
+    "vite": "^8.2.1"
   }
 }

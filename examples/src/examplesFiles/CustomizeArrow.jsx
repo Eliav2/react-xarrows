@@ -1,8 +1,8 @@
 import React, { useState, useRef } from 'react';
 import Xarrow, { arrowShapes, useXarrow, Xwrapper } from 'react-xarrows';
 import Draggable from 'react-draggable';
-import NumericInput from 'react-numeric-input';
-import Collapsible from 'react-collapsible';
+import NumericInput from '../components/NumericInput';
+import Collapsible from '../components/Collapsible';
 
 const boxStyle = {
   position: 'absolute',

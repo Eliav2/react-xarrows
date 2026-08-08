@@ -27,7 +27,7 @@ export function SimpleExample() {
   );
 }
 
-import { Meta } from '@storybook/react';
+import type { Meta } from '@storybook/react-vite';
 export default {
   title: 'readme stories',
   component: Xarrow,
