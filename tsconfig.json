@@ -1,13 +1,8 @@
 {
-  "include": [
-    "./src/*"
-  ],
+  "include": ["./src/*"],
   "compilerOptions": {
     "strict": true,
-    "lib": [
-      "dom",
-      "esnext"
-    ],
+    "lib": ["dom", "esnext"],
     "jsx": "react",
     "noImplicitAny": false,
     "strictNullChecks": false,
@@ -26,8 +21,8 @@
     "noEmit": false,
     "declarationMap": true,
     //    "inlineSourceMap": true,
-    "sourceMap": true,
-//    "declarationDir": "./lib/types",
+    "sourceMap": true
+    //    "declarationDir": "./lib/types",
   },
   "compileOnSave": true
 }

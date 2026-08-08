@@ -1,0 +1,12 @@
+lib/
+dist/
+build/
+coverage/
+node_modules/
+examples/
+pnpm-lock.yaml
+yarn.lock
+
+# Markdown is left alone for now - reformatting the README would bury the
+# actual changes in whitespace churn.
+*.md
