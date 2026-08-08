@@ -5,6 +5,9 @@ on:
     branches: [main]
   pull_request:
   workflow_dispatch:
+  # Called by publish.yml so a release runs the exact same checks a PR does,
+  # rather than a subset that can drift away from this file.
+  workflow_call:
 
 # A newer push to the same branch makes the in-flight run irrelevant.
 concurrency:
@@ -19,6 +22,9 @@ jobs:
     # Node 22 LTS. It is the lower bound we support: jsdom 30 needs the undici
     # that ships with Node 22+, and anything passing here passes on 24.
     runs-on: ubuntu-latest
+    # The whole suite runs in about a minute. Anything near this limit is hung,
+    # and the default of six hours is a long time to hold up a release.
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v7
 
@@ -64,12 +70,16 @@ jobs:
 
       # Catches the case where `files` or the build output drift apart and the
       # published tarball silently loses an entry point or its type definitions.
+      # index.d.mts and index.d.cts are here because the exports map points the
+      # per-condition `types` at them, and they come from a copy step in
+      # vite.config.mts that would fail quietly. Paths are anchored so a
+      # sourcemap cannot stand in for the file it maps.
       - name: Verify package contents
         run: |
           pnpm pack --pack-destination /tmp
           tar tzf /tmp/react-xarrows-*.tgz | sort
-          for f in index.mjs index.cjs index.umd.js index.d.ts; do
-            tar tzf /tmp/react-xarrows-*.tgz | grep -q "package/lib/$f"
+          for f in index.mjs index.cjs index.umd.js index.d.ts index.d.mts index.d.cts; do
+            tar tzf /tmp/react-xarrows-*.tgz | grep -qx "package/lib/$f"
           done
 
       # Catches exports-map and declaration mismatches, such as an ESM entry

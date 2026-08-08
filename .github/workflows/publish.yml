@@ -19,7 +19,15 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # The full CI suite, not a copy of part of it. Publishing used to re-run
+  # lint/type-check/test/build inline, which silently skipped the checks that
+  # actually guard the tarball: format, the demo build and tests, attw, package
+  # contents, and the entry-point smoke tests.
+  verify:
+    uses: ./.github/workflows/ci.yml
+
   publish:
+    needs: verify
     runs-on: ubuntu-latest
 
     steps:
@@ -39,15 +47,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Lint
-        run: pnpm run lint
-
-      - name: Type-check
-        run: pnpm run type-check
-
-      - name: Test
-        run: pnpm run test
-
+      # The verify job runs in its own checkout, so lib/ has to be rebuilt here
+      # before npm publish can pack it. Everything else it checked already.
       - name: Build
         run: pnpm run build
 

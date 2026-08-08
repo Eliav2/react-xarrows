@@ -1,3 +1,48 @@
+## 2.1.0
+
+First release since February 2024. No API changes: every prop, component and
+hook behaves as it did in 2.0.2.
+
+### bug fixes
+
+- arrows no longer render at `NaN` coordinates when `start` and `end` sit at the
+  same point, which includes the very common case of elements that have not been
+  measured yet on first render. The whole arrow used to disappear.
+  [#139](https://github.com/Eliav2/react-xarrows/issues/139)
+  [#171](https://github.com/Eliav2/react-xarrows/issues/171)
+  [#192](https://github.com/Eliav2/react-xarrows/issues/192)
+- the draw animation now completes when the arrow has no arrowhead
+  (`showHead={false}`), and no longer emits an invalid `repeatCount="0"`.
+  Reported by [@dthomasen](https://github.com/dthomasen) in
+  [#181](https://github.com/Eliav2/react-xarrows/pull/181).
+  [#193](https://github.com/Eliav2/react-xarrows/issues/193)
+- dashed and dotted line animation works under `StrictMode`. Thanks to
+  [@Reflejo](https://github.com/Reflejo) for the fix.
+  [#174](https://github.com/Eliav2/react-xarrows/pull/174)
+
+### packaging
+
+- **zero runtime dependencies.** `lodash`, `prop-types` and `@types/react` were
+  all removed from `dependencies`. React is now the only peer dependency, so
+  installing react-xarrows adds nothing else to your tree.
+- **real ESM, CommonJS and UMD builds.** 2.0.2 shipped a single UMD file, which
+  no bundler can tree-shake, so every consumer paid for the whole library.
+  [#118](https://github.com/Eliav2/react-xarrows/issues/118)
+- types now resolve correctly under `moduleResolution: node16`/`bundler` for both
+  the `import` and `require` conditions.
+
+### behavior changes
+
+None of these change the API, but they can matter depending on your setup.
+
+- **build target moved from ES5 to ES2015.** If you transpile `node_modules` down
+  to ES5, react-xarrows now needs to be included in that pass. The project's
+  browserslist already excluded IE11, so ES5 output was only costing bytes.
+- **runtime prop validation is gone.** `prop-types` was a runtime dependency used
+  only for development warnings. JavaScript users on React 18 and below no longer
+  get those warnings. TypeScript users are unaffected, and React 19 ignores
+  `propTypes` entirely, so it was already dead weight there.
+
 ## 2.0.2
 
 - prop suggestions did not appear on IDE's because wrong package.json.types path.
