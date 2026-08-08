@@ -1,11 +1,11 @@
 name: Release and publish
 
-# Publishing is driven by the version field in package.json. Bump it on master
+# Publishing is driven by the version field in package.json. Bump it on main
 # and this workflow builds, publishes to npm and cuts the matching GitHub release.
 # If the version is unchanged the run is a no-op, so it is safe to re-run.
 on:
   push:
-    branches: [master]
+    branches: [main]
     paths:
       - package.json
   workflow_dispatch:
