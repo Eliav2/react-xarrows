@@ -6,9 +6,13 @@ export const XarrowContext = React.createContext(null as () => void);
 const updateRef = {};
 let updateRefCount = 0;
 
-const log = console.log;
+// React 18 dropped the implicit `children` prop from FC, so it is declared explicitly here.
+type ProviderProps = {
+  instanceCount: React.MutableRefObject<number>;
+  children?: React.ReactNode;
+};
 
-const XarrowProvider: FC<{ instanceCount: React.MutableRefObject<number> }> = ({ children, instanceCount }) => {
+const XarrowProvider: FC<ProviderProps> = ({ children, instanceCount }) => {
   const [, setRender] = useState({});
   const updateXarrow = () => setRender({});
   useEffect(() => {

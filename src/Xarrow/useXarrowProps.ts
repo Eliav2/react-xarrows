@@ -15,11 +15,11 @@ import { arrowShapes, cAnchorEdge, cArrowShapes } from '../constants';
 import { anchorEdgeType, dimensionType } from '../privateTypes';
 
 const parseLabels = (label: xarrowPropsType['labels']): labelsType => {
-  let parsedLabel = { start: null, middle: null, end: null };
+  const parsedLabel = { start: null, middle: null, end: null };
   if (label) {
     if (typeof label === 'string' || React.isValidElement(label)) parsedLabel.middle = label;
     else {
-      for (let key in label) {
+      for (const key in label) {
         parsedLabel[key] = label[key];
       }
     }
@@ -29,12 +29,12 @@ const parseLabels = (label: xarrowPropsType['labels']): labelsType => {
 
 // remove 'auto' as possible anchor from anchorCustomPositionType.position
 interface anchorCustomPositionType2 extends Omit<Required<anchorCustomPositionType>, 'position'> {
-  position: Exclude<typeof cAnchorEdge[number], 'auto'>;
+  position: Exclude<(typeof cAnchorEdge)[number], 'auto'>;
 }
 
 const parseAnchor = (anchor: anchorType) => {
   // convert to array
-  let anchorChoice = Array.isArray(anchor) ? anchor : [anchor];
+  const anchorChoice = Array.isArray(anchor) ? anchor : [anchor];
 
   //convert to array of objects
   let anchorChoice2 = anchorChoice.map((anchorChoice) => {
@@ -48,7 +48,7 @@ const parseAnchor = (anchor: anchorType) => {
   if (anchorChoice2.length == 0) anchorChoice2 = [{ position: 'auto' }];
 
   //replace any 'auto' with ['left','right','bottom','top']
-  let autosAncs = anchorChoice2.filter((an) => an.position === 'auto');
+  const autosAncs = anchorChoice2.filter((an) => an.position === 'auto');
   if (autosAncs.length > 0) {
     anchorChoice2 = anchorChoice2.filter((an) => an.position !== 'auto');
     anchorChoice2.push(
@@ -56,12 +56,12 @@ const parseAnchor = (anchor: anchorType) => {
         return (['left', 'right', 'top', 'bottom'] as anchorEdgeType[]).map((anchorName) => {
           return { ...anchorObj, position: anchorName };
         });
-      })
+      }),
     );
   }
 
   // default values
-  let anchorChoice3 = anchorChoice2.map((anchorChoice) => {
+  const anchorChoice3 = anchorChoice2.map((anchorChoice) => {
     if (typeof anchorChoice === 'object') {
       let anchorChoiceCustom = anchorChoice as anchorCustomPositionType;
       if (!anchorChoiceCustom.position) anchorChoiceCustom.position = 'auto';
@@ -79,8 +79,8 @@ const parseAnchor = (anchor: anchorType) => {
 const parseDashness = (dashness, props) => {
   let dashStroke = 0,
     dashNone = 0,
-    animDashSpeed,
-    animDirection = 1;
+    animDashSpeed;
+  const animDirection = 1;
   if (typeof dashness === 'object') {
     dashStroke = dashness.strokeLen || props.strokeWidth * 2;
     dashNone = dashness.strokeLen ? dashness.nonStrokeLen : props.strokeWidth;
@@ -103,7 +103,7 @@ const parseEdgeShape = (svgEdge): svgCustomEdgeType => {
     else {
       console.warn(
         `'${svgEdge}' is not supported arrow shape. the supported arrow shapes is one of ${cArrowShapes}.
-           reverting to default shape.`
+           reverting to default shape.`,
       );
       svgEdge = arrowShapes['arrow1'];
     }
@@ -136,7 +136,9 @@ const noParseWithUpdatePos = (userProp, _, updatePos) => withUpdate(userProp, up
 const parseNumWithUpdatePos = (userProp, _, updatePos) => withUpdate(Number(userProp), updatePos);
 const parseNum = (userProp) => Number(userProp);
 
-const parsePropsFuncs: Required<{ [key in keyof xarrowPropsType]: Function }> = {
+type ParsePropFunc = (userProp: any, prevProp?: any, updatePos?: any) => any;
+
+const parsePropsFuncs: Required<{ [key in keyof xarrowPropsType]: ParsePropFunc }> = {
   start: (userProp) => getElementByPropGiven(userProp),
   end: (userProp) => getElementByPropGiven(userProp),
   startAnchor: (userProp, _, updatePos) => withUpdate(parseAnchor(userProp), updatePos),
@@ -180,16 +182,16 @@ const parsePropsFuncs: Required<{ [key in keyof xarrowPropsType]: Function }> = 
 //build dependencies
 const propsDeps = {};
 //each prop depends on himself
-for (let propName in parsePropsFuncs) {
+for (const propName in parsePropsFuncs) {
   propsDeps[propName] = [propName];
 }
 // 'lineColor', 'headColor', 'tailColor' props also depends on 'color' prop
-for (let propName of ['lineColor', 'headColor', 'tailColor']) {
+for (const propName of ['lineColor', 'headColor', 'tailColor']) {
   propsDeps[propName].push('color');
 }
 
 const parseGivenProps = (props: xarrowPropsType, propsRef) => {
-  for (let [name, val] of Object.entries(props)) {
+  for (const [name, val] of Object.entries(props)) {
     propsRef[name] = parsePropsFuncs?.[name]?.(val, propsRef);
   }
   return propsRef;
@@ -317,7 +319,7 @@ function useDeepCompareEffect(callback, dependencies) {
  */
 const useXarrowProps = (
   userProps: xarrowPropsType,
-  refs: { headRef: React.MutableRefObject<any>; tailRef: React.MutableRefObject<any> }
+  refs: { headRef: React.MutableRefObject<any>; tailRef: React.MutableRefObject<any> },
 ) => {
   const [propsRefs, setPropsRefs] = useState(initialParsedProps);
   const shouldUpdatePosition = useRef(false);
@@ -334,14 +336,14 @@ const useXarrowProps = (
   // for example: if given 'start' prop would change call getElementByPropGiven(props.start) and save value into propsRefs.start.current
   // why to save refs to props parsed values? some of the props require relatively expensive computations(like 'start' and 'startAnchor').
   // this will always run in the same order and THAT'S WAY ITS LEGAL
-  for (let propName in defaultProps) {
+  for (const propName in defaultProps) {
     useLayoutEffect(
       () => {
         propsRefs[propName] = parsePropsFuncs?.[propName]?.(curProps[propName], propsRefs, shouldUpdatePosition);
         // console.log('prop update:', propName, 'with value', propsRefs[propName]);
         setPropsRefs({ ...propsRefs });
       },
-      propsDeps[propName].map((name) => userProps[name])
+      propsDeps[propName].map((name) => userProps[name]),
     );
   }
 
