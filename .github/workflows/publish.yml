@@ -1,0 +1,97 @@
+name: Release and publish
+
+# Publishing is driven by the version field in package.json. Bump it on master
+# and this workflow builds, publishes to npm and cuts the matching GitHub release.
+# If the version is unchanged the run is a no-op, so it is safe to re-run.
+on:
+  push:
+    branches: [master]
+    paths:
+      - package.json
+  workflow_dispatch:
+
+permissions:
+  contents: write # create the GitHub release and its tag
+  id-token: write # npm Trusted Publishing / provenance
+
+concurrency:
+  group: publish-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+          run_install: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          registry-url: https://registry.npmjs.org
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm run lint
+
+      - name: Type-check
+        run: pnpm run type-check
+
+      - name: Test
+        run: pnpm run test
+
+      - name: Build
+        run: pnpm run build
+
+      - name: Read package info
+        id: pkg
+        run: |
+          NAME=$(node -p "require('./package.json').name")
+          VERSION=$(node -p "require('./package.json').version")
+          echo "name=$NAME" >> $GITHUB_OUTPUT
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Resolved $NAME@$VERSION"
+
+      - name: Check if version is already published
+        id: check
+        run: |
+          NAME='${{ steps.pkg.outputs.name }}'
+          VERSION='${{ steps.pkg.outputs.version }}'
+          if npm view "$NAME@$VERSION" version >/dev/null 2>&1; then
+            echo "publish=false" >> $GITHUB_OUTPUT
+            echo "$NAME@$VERSION is already on npm - nothing to do."
+          else
+            echo "publish=true" >> $GITHUB_OUTPUT
+            echo "$NAME@$VERSION is new - will publish."
+          fi
+
+      # Trusted Publishing needs a recent npm; it also attaches provenance.
+      - name: Update npm
+        if: steps.check.outputs.publish == 'true'
+        run: npm i -g npm@latest
+
+      - name: Publish to npm
+        if: steps.check.outputs.publish == 'true'
+        env:
+          NPM_CONFIG_PROVENANCE: 'true'
+        run: npm publish --access public
+
+      - name: Create GitHub release
+        if: steps.check.outputs.publish == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="v${{ steps.pkg.outputs.version }}"
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "Release $TAG already exists."
+          else
+            gh release create "$TAG" --target "$GITHUB_SHA" --generate-notes
+          fi
