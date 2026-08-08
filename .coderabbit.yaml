@@ -1,11 +1,11 @@
-# yaml-language-server: $schema=https://storage.googleapis.com/coderabbit_public_assets/schema.v2.json
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
 language: en-US
 
+# Hard limit: 250 characters.
 tone_instructions: >-
   Be direct and concise. Skip praise and preamble. This is a five-year-old
-  library that is being revived, so distinguish clearly between pre-existing
-  issues and problems the pull request actually introduces, and do not flag
-  legacy patterns unless the change touches them.
+  library being revived: separate pre-existing issues from ones the PR actually
+  introduces, and do not flag legacy patterns unless the change touches them.
 
 reviews:
   profile: chill
