@@ -108,7 +108,10 @@ jobs:
           cd /tmp/consumer
           node -e "
             const vm = require('node:vm'), fs = require('node:fs');
-            const sandbox = { React: require('react'), _: require('lodash'), PropTypes: require('prop-types'), console };
+            // React is the only global the bundle reads. The package has no
+            // runtime dependencies, so anything else here would mask a
+            // regression that reintroduced one.
+            const sandbox = { React: require('react'), console };
             vm.createContext(sandbox);
             vm.runInContext(fs.readFileSync('node_modules/react-xarrows/lib/index.umd.js', 'utf8'), sandbox);
             const umd = sandbox.reactXarrow;

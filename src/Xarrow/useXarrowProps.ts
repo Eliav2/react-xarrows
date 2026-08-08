@@ -10,7 +10,6 @@ import {
   xarrowPropsType,
 } from '../types';
 import { getElementByPropGiven, getElemPos, xStr2absRelative } from './utils';
-import _ from 'lodash';
 import { arrowShapes, cAnchorEdge, cArrowShapes } from '../constants';
 import { anchorEdgeType, dimensionType } from '../privateTypes';
 
@@ -294,24 +293,29 @@ const initialValVars = {
 
 // const parseAllProps = () => parseGivenProps(defaultProps, initialParsedProps);
 
-function deepCompareEquals(a, b) {
-  return _.isEqual(a, b);
-}
+// The only values ever compared here are element positions, which getElemPos
+// always returns as four numbers, including on its null-element branch. A
+// general deep-equality helper (this used to be lodash isEqual) is more than
+// this needs, and would also have to be careful around the refs and React
+// elements that appear elsewhere in the props.
+const samePosition = (a: dimensionType | undefined, b: dimensionType | undefined) => {
+  if (a === b) return true;
+  if (!a || !b) return false;
+  return a.x === b.x && a.y === b.y && a.right === b.right && a.bottom === b.bottom;
+};
 
-function useDeepCompareMemoize(value) {
-  const ref = useRef();
-  // it can be done by using useMemo as well
-  // but useRef is rather cleaner and easier
+function usePositionMemoize(value: dimensionType) {
+  const ref = useRef<dimensionType>();
 
-  if (!deepCompareEquals(value, ref.current)) {
+  if (!samePosition(value, ref.current)) {
     ref.current = value;
   }
 
   return ref.current;
 }
 
-function useDeepCompareEffect(callback, dependencies) {
-  useLayoutEffect(callback, dependencies.map(useDeepCompareMemoize));
+function usePositionEffect(callback: () => void, dependencies: dimensionType[]) {
+  useLayoutEffect(callback, dependencies.map(usePositionMemoize));
 }
 
 /**
@@ -350,14 +354,14 @@ const useXarrowProps = (
   // rerender whenever position of start element or end element changes
   const [valVars, setValVars] = useState(initialValVars);
   const startPos = getElemPos(propsRefs.start);
-  useDeepCompareEffect(() => {
+  usePositionEffect(() => {
     valVars.startPos = startPos;
     shouldUpdatePosition.current = true;
     setValVars({ ...valVars });
     // console.log('start update pos', startPos);
   }, [startPos]);
   const endPos = getElemPos(propsRefs.end);
-  useDeepCompareEffect(() => {
+  usePositionEffect(() => {
     valVars.endPos = endPos;
     shouldUpdatePosition.current = true;
     setValVars({ ...valVars });
