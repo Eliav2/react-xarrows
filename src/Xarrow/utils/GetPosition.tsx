@@ -1,7 +1,7 @@
 import { useXarrowPropsResType } from '../useXarrowProps';
 import React from 'react';
 import { calcAnchors } from '../anchors';
-import { getShortestLine, getSvgPos } from './index';
+import { getShortestLine, getSvgPos, getTotalLength } from './index';
 import _ from 'lodash';
 import { cPaths } from '../../constants';
 import { buzzierMinSols, bzFunction } from './buzzier';
@@ -11,8 +11,8 @@ import { buzzierMinSols, bzFunction } from './buzzier';
  * calculate new path, adjusting canvas, and set state based on given properties.
  * */
 export const getPosition = (xProps: useXarrowPropsResType, mainRef: React.MutableRefObject<any>) => {
-  let [propsRefs, valVars] = xProps;
-  let {
+  const [propsRefs, valVars] = xProps;
+  const {
     startAnchor,
     endAnchor,
     strokeWidth,
@@ -20,7 +20,6 @@ export const getPosition = (xProps: useXarrowPropsResType, mainRef: React.Mutabl
     headSize,
     showTail,
     tailSize,
-    path,
     curveness,
     gridBreak,
     headShape,
@@ -31,6 +30,9 @@ export const getPosition = (xProps: useXarrowPropsResType, mainRef: React.Mutabl
     _cpx2Offset,
     _cpy2Offset,
   } = propsRefs;
+  // normalized below - an unknown path falls back to 'smooth', and 'straight' is
+  // expressed as 'smooth' with zero curveness
+  let path = propsRefs.path;
   const { startPos, endPos } = valVars;
   const { svgRef, lineRef } = mainRef.current;
 
@@ -38,29 +40,29 @@ export const getPosition = (xProps: useXarrowPropsResType, mainRef: React.Mutabl
   let tailOrient: number = 0;
 
   // convert startAnchor and endAnchor to list of objects represents allowed anchors.
-  let startPoints = calcAnchors(startAnchor, startPos);
-  let endPoints = calcAnchors(endAnchor, endPos);
+  const startPoints = calcAnchors(startAnchor, startPos);
+  const endPoints = calcAnchors(endAnchor, endPos);
 
   // choose the smallest path for 2 points from these possibilities.
-  let { chosenStart, chosenEnd } = getShortestLine(startPoints, endPoints);
+  const { chosenStart, chosenEnd } = getShortestLine(startPoints, endPoints);
 
-  let startAnchorPosition = chosenStart.anchor.position,
-    endAnchorPosition = chosenEnd.anchor.position;
-  let startPoint = _.pick(chosenStart, ['x', 'y']),
+  const startAnchorPosition = chosenStart.anchor.position;
+  let endAnchorPosition = chosenEnd.anchor.position;
+  const startPoint = _.pick(chosenStart, ['x', 'y']),
     endPoint = _.pick(chosenEnd, ['x', 'y']);
 
-  let mainDivPos = getSvgPos(svgRef);
+  const mainDivPos = getSvgPos(svgRef);
   let cx0 = Math.min(startPoint.x, endPoint.x) - mainDivPos.x;
   let cy0 = Math.min(startPoint.y, endPoint.y) - mainDivPos.y;
-  let dx = endPoint.x - startPoint.x;
-  let dy = endPoint.y - startPoint.y;
-  let absDx = Math.abs(endPoint.x - startPoint.x);
-  let absDy = Math.abs(endPoint.y - startPoint.y);
-  let xSign = dx > 0 ? 1 : -1;
-  let ySign = dy > 0 ? 1 : -1;
-  let [headOffset, tailOffset] = [headShape.offsetForward, tailShape.offsetForward];
-  let fHeadSize = headSize * strokeWidth; //factored head size
-  let fTailSize = tailSize * strokeWidth; //factored head size
+  const dx = endPoint.x - startPoint.x;
+  const dy = endPoint.y - startPoint.y;
+  const absDx = Math.abs(endPoint.x - startPoint.x);
+  const absDy = Math.abs(endPoint.y - startPoint.y);
+  const xSign = dx > 0 ? 1 : -1;
+  const ySign = dy > 0 ? 1 : -1;
+  const [headOffset, tailOffset] = [headShape.offsetForward, tailShape.offsetForward];
+  const fHeadSize = headSize * strokeWidth; //factored head size
+  const fTailSize = tailSize * strokeWidth; //factored head size
 
   // const { current: _headBox } = headBox;
   let xHeadOffset = 0;
@@ -68,8 +70,8 @@ export const getPosition = (xProps: useXarrowPropsResType, mainRef: React.Mutabl
   let xTailOffset = 0;
   let yTailOffset = 0;
 
-  let _headOffset = fHeadSize * headOffset;
-  let _tailOffset = fTailSize * tailOffset;
+  const _headOffset = fHeadSize * headOffset;
+  const _tailOffset = fTailSize * tailOffset;
 
   let cu = Number(curveness);
   // gridRadius = Number(gridRadius);
@@ -79,8 +81,8 @@ export const getPosition = (xProps: useXarrowPropsResType, mainRef: React.Mutabl
     path = 'smooth';
   }
 
-  let biggerSide = headSize > tailSize ? headSize : tailSize;
-  let _calc = strokeWidth + (strokeWidth * biggerSide) / 2;
+  const biggerSide = headSize > tailSize ? headSize : tailSize;
+  const _calc = strokeWidth + (strokeWidth * biggerSide) / 2;
   let excRight = _calc;
   let excLeft = _calc;
   let excUp = _calc;
@@ -190,8 +192,8 @@ export const getPosition = (xProps: useXarrowPropsResType, mainRef: React.Mutabl
     }
   }
 
-  let arrowHeadOffset = { x: xHeadOffset, y: yHeadOffset };
-  let arrowTailOffset = { x: xTailOffset, y: yTailOffset };
+  const arrowHeadOffset = { x: xHeadOffset, y: yHeadOffset };
+  const arrowTailOffset = { x: xTailOffset, y: yTailOffset };
 
   let cpx1 = x1,
     cpy1 = y1,
@@ -353,7 +355,7 @@ export const getPosition = (xProps: useXarrowPropsResType, mainRef: React.Mutabl
     mainDivPos,
     xSign,
     ySign,
-    lineLength: lineRef.current?.getTotalLength() ?? 0,
+    lineLength: getTotalLength(lineRef.current),
     fHeadSize,
     fTailSize,
     arrowPath,

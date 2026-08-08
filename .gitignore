@@ -5,3 +5,6 @@ local/
 lib/
 dist/
 .vscode
+coverage/
+.serena/
+*.tgz

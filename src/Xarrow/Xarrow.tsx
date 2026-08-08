@@ -4,6 +4,7 @@ import useXarrowProps from './useXarrowProps';
 import { XarrowContext } from '../Xwrapper';
 import XarrowPropTypes from './propTypes';
 import { getPosition } from './utils/GetPosition';
+import { getTotalLength } from './utils';
 
 const log = console.log;
 
@@ -24,7 +25,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
   const xProps = useXarrowProps(props, mainRef.current);
   const [propsRefs] = xProps;
 
-  let {
+  const {
     labels,
     lineColor,
     headColor,
@@ -36,7 +37,6 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     headShape,
     tailShape,
     showXarrow,
-    animateDrawing,
     zIndex,
     passProps,
     arrowBodyProps,
@@ -50,7 +50,8 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
     shouldUpdatePosition,
   } = propsRefs;
 
-  animateDrawing = props.animateDrawing as number;
+  // read straight off props rather than the parsed refs - this one is reassigned below
+  let animateDrawing = props.animateDrawing as number;
   const [drawAnimEnded, setDrawAnimEnded] = useState(!animateDrawing);
 
   const [, setRender] = useState({});
@@ -118,7 +119,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
   const xOffsetTail = st.x1 - st.arrowTailOffset.x;
   const yOffsetTail = st.y1 - st.arrowTailOffset.y;
 
-  let dashoffset = dashness.strokeLen + dashness.nonStrokeLen;
+  const dashoffset = dashness.strokeLen + dashness.nonStrokeLen;
   let animDirection = 1;
   if (dashness.animation < 0) {
     dashness.animation *= -1;
@@ -150,7 +151,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
 
   // handle draw animation
   useLayoutEffect(() => {
-    if (lineRef.current) setSt((prevSt) => ({ ...prevSt, lineLength: lineRef.current?.getTotalLength() ?? 0 }));
+    if (lineRef.current) setSt((prevSt) => ({ ...prevSt, lineLength: getTotalLength(lineRef.current) }));
   }, [lineRef.current]);
 
   // set all props on first render
