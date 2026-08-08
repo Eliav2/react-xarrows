@@ -1,0 +1,17 @@
+# Netlify builds deploy previews for pull requests. Without this file it
+# auto-detects, and auto-detection cannot work on this repo: the site lives in
+# examples/, but it resolves the library from ../src through a Vite alias, so it
+# has to be built from the repo root. The root `build` script builds the library
+# into lib/, which is not a website.
+
+[build]
+  command = "pnpm --filter react-xarrows-examples run build"
+  publish = "examples/dist"
+
+[build.environment]
+  # Matches the version CI runs. jsdom 30 and Vite 8 both want Node 22+.
+  NODE_VERSION = "22"
+
+# GITHUB_PAGES is deliberately not set here. examples/vite.config.ts reads it to
+# decide between the /react-xarrows/ base that GitHub Pages needs and the root
+# base that Netlify serves from. Setting it would break every asset URL.
