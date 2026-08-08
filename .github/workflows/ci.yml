@@ -20,7 +20,7 @@ jobs:
     # that ships with Node 22+, and anything passing here passes on 24.
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
       # Version comes from the "packageManager" field in package.json.
       - uses: pnpm/action-setup@v4
