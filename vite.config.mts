@@ -50,6 +50,9 @@ export default defineConfig({
     rollupOptions: {
       external: ['react', 'prop-types', 'lodash'],
       output: {
+        // lodash is read as `_`, which is the only global lodash actually
+        // defines. The webpack build asked for `root["lodash"]`, which lodash
+        // never sets, so the script-tag path was broken before this.
         globals: { react: 'React', 'prop-types': 'PropTypes', lodash: '_' },
         // The entry mixes a default export with named ones. `named` keeps the
         // default reachable at `.default`, which is what the webpack UMD build

@@ -68,7 +68,7 @@ jobs:
       # Catches exports-map and declaration mismatches, such as an ESM entry
       # whose types still resolve as CommonJS.
       - name: Verify type resolution
-        run: npx --yes @arethetypeswrong/cli@latest --pack . --format table
+        run: pnpm exec attw --pack . --format table
 
       # Listing a file is not the same as it working. The ESM and CJS entry
       # points are actually loaded here, because a bundler misconfiguration can
@@ -90,4 +90,22 @@ jobs:
             if (typeof m.default !== 'function') throw new Error('CJS default export is not a component');
             if (typeof m.Xwrapper !== 'function' || typeof m.useXarrow !== 'function') throw new Error('CJS named exports missing');
             console.log('CJS entry point OK');
+          "
+
+      # The UMD bundle is the one output nothing else exercises, and its only
+      # contract is the set of global names it reads. Getting one wrong produces
+      # a bundle that loads and then fails on first use, so it is loaded here
+      # against real globals.
+      - name: Verify UMD bundle
+        run: |
+          cd /tmp/consumer
+          node -e "
+            const vm = require('node:vm'), fs = require('node:fs');
+            const sandbox = { React: require('react'), _: require('lodash'), PropTypes: require('prop-types'), console };
+            vm.createContext(sandbox);
+            vm.runInContext(fs.readFileSync('node_modules/react-xarrows/lib/index.umd.js', 'utf8'), sandbox);
+            const umd = sandbox.reactXarrow;
+            if (!umd || typeof umd.default !== 'function') throw new Error('UMD global reactXarrow missing or malformed');
+            if (typeof umd.Xwrapper !== 'function' || typeof umd.useXarrow !== 'function') throw new Error('UMD named exports missing');
+            console.log('UMD bundle OK');
           "
