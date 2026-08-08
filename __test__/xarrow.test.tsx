@@ -110,11 +110,30 @@ describe('Xarrow', () => {
   // Known bug: with curveness 0 (or path="straight") the head angle is computed as
   // Math.atan(absDy / absDx), which is 0/0 when both elements resolve to the same
   // point — exactly what happens before layout has measured them. Tracked in
-  // issues #139, #171 and #192. Unskip this once the guard lands.
-  it.skip('does not emit NaN when curveness is 0', () => {
-    const { container } = render(<TwoBoxes curveness={0} />);
+  // Issues #139, #171 and #192. Both deltas are zero whenever start and end sit
+  // at the same point, which includes elements not yet measured on first render.
+  // atan(0 / 0) was NaN and poisoned every coordinate downstream. Swept across
+  // prop combinations because the straight-path branch is only one of the ways
+  // in, and jsdom reports zero-sized rects for everything.
+  describe('never emits NaN for unmeasured elements', () => {
+    for (const curveness of [0, 0.1, 0.8, 1, 2])
+      for (const path of ['smooth', 'grid', 'straight'] as const)
+        for (const heads of [
+          { showHead: true, showTail: true },
+          { showHead: false, showTail: false },
+          { showHead: true, showTail: false },
+        ])
+          it(`curveness=${curveness} path=${path} head=${heads.showHead} tail=${heads.showTail}`, () => {
+            const { container } = render(
+              <Xwrapper>
+                <div id="start-elem" />
+                <div id="end-elem" />
+                <Xarrow start="start-elem" end="end-elem" curveness={curveness} path={path} {...heads} />
+              </Xwrapper>,
+            );
 
-    expect(getPath(container)?.getAttribute('d')).not.toMatch(/NaN/);
+            expect(container.innerHTML).not.toMatch(/NaN/);
+          });
   });
 
   it('accepts refs as start and end', () => {
