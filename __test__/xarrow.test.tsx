@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import { useRef } from 'react';
 import { describe, expect, it } from 'vitest';
 import Xarrow from '../src/Xarrow/Xarrow';
@@ -55,6 +55,56 @@ describe('Xarrow', () => {
     const { container } = render(<TwoBoxes showHead={false} />);
 
     expect(getPath(container)).toBeInTheDocument();
+  });
+
+  // jsdom implements no SMIL, so nothing here fires on its own. The component
+  // listens with plain addEventListener, so dispatching the events by hand
+  // drives the same code paths a browser would.
+  describe('draw animation', () => {
+    const getDrawAnim = (container: HTMLElement) => container.querySelector('#svgEndAnimate');
+    const getHead = (container: HTMLElement) => container.querySelector<SVGGElement>('svg g:has(> animate)');
+
+    it('ends the draw phase when there is no arrowhead', () => {
+      // Issue #106. The endEvent listener is what ends the draw phase, and it
+      // used to be attached only when an arrowhead existed, so showHead={false}
+      // left the arrow stuck mid-draw forever.
+      const { container } = render(<TwoBoxes showHead={false} animateDrawing />);
+
+      const drawAnim = getDrawAnim(container);
+      expect(drawAnim).not.toBeNull();
+
+      act(() => {
+        drawAnim!.dispatchEvent(new Event('endEvent'));
+      });
+
+      // Once the phase ends the component swaps the draw animation out.
+      expect(getDrawAnim(container)).toBeNull();
+    });
+
+    it('never emits repeatCount="0"', () => {
+      // Issue #193. SMIL has no zero repeat count and the browser logs
+      // "Unexpected value 0 parsing repeatCount attribute" on every arrow.
+      const { container } = render(<TwoBoxes animateDrawing />);
+
+      container.querySelectorAll('animate').forEach((animate) => {
+        expect(animate.getAttribute('repeatCount')).not.toBe('0');
+      });
+    });
+
+    it('leaves the head opacity to React rather than writing an inline style', () => {
+      // An inline style outranks a presentation attribute permanently, and
+      // React only ever writes the attribute, so mutating the style here means
+      // React can never restore the head afterwards.
+      const { container } = render(<TwoBoxes animateDrawing />);
+
+      expect(getHead(container)?.getAttribute('opacity')).toBe('0');
+
+      act(() => {
+        getDrawAnim(container)!.dispatchEvent(new Event('beginEvent'));
+      });
+
+      expect(getHead(container)?.style.opacity).toBe('');
+    });
   });
 
   // Known bug: with curveness 0 (or path="straight") the head angle is computed as

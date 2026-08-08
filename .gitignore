@@ -11,3 +11,6 @@ coverage/
 examples/dist/
 examples/dist-storybook/
 examples/.storybook-static/
+
+# git worktrees created for parallel branches
+.worktrees/

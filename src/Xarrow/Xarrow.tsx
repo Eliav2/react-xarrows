@@ -166,16 +166,18 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
         // @ts-ignore
         lineDashAnimRef.current?.beginElement();
       };
-      const handleDrawAmimBegin = () => (headRef.current.style.opacity = '0');
-      if (lineDrawAnimRef.current && headRef.current) {
+      // Deliberately does not depend on the arrowhead. This listener is what
+      // ends the draw phase, and gating it on headRef left `drawAnimEnded`
+      // false forever whenever showHead was false, so the arrow stayed stuck
+      // mid-draw. The head is hidden through the rendered `opacity` attribute
+      // instead, which React can actually reconcile.
+      if (lineDrawAnimRef.current) {
         lineDrawAnimRef.current.addEventListener('endEvent', handleDrawAmimEnd);
-        lineDrawAnimRef.current.addEventListener('beginEvent', handleDrawAmimBegin);
       }
       return () => {
         window.removeEventListener('resize', forceRerender);
         if (lineDrawAnimRef.current) {
           lineDrawAnimRef.current.removeEventListener('endEvent', handleDrawAmimEnd);
-          if (headRef.current) lineDrawAnimRef.current.removeEventListener('beginEvent', handleDrawAmimBegin);
         }
       };
     };
@@ -276,6 +278,9 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
                 opacity={animateDrawing && !drawAnimEnded ? 0 : 1}
                 {...(passProps as any)}
                 {...arrowHeadProps}>
+                {/* No repeatCount: SMIL rejects 0 and logs "Unexpected value 0
+                    parsing repeatCount attribute", and the default of a single
+                    run is what this fade-in wants anyway. */}
                 <animate
                   ref={headOpacityAnimRef}
                   dur={'0.4'}
@@ -283,7 +288,6 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
                   from="0"
                   to="1"
                   begin={`indefinite`}
-                  repeatCount="0"
                   fill="freeze"
                 />
 
