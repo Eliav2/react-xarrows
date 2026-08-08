@@ -1,5 +1,5 @@
 import React from 'react';
-import Draggable from 'react-draggable';
+import Draggable from '../components/Draggable';
 import Xarrow, { useXarrow, Xwrapper } from 'react-xarrows';
 
 const boxStyle = {

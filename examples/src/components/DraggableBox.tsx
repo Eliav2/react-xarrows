@@ -1,4 +1,4 @@
-import Draggable from 'react-draggable';
+import Draggable from './Draggable';
 import React from 'react';
 import { useXarrow } from 'react-xarrows';
 

@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import Xarrow, { arrowShapes, useXarrow, Xwrapper } from 'react-xarrows';
-import Draggable from 'react-draggable';
+import Draggable from '../components/Draggable';
 import NumericInput from '../components/NumericInput';
 import Collapsible from '../components/Collapsible';
 

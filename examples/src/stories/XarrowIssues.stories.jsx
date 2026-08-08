@@ -1,7 +1,7 @@
 import React, { Component, useRef, useState } from 'react';
 
 import Xarrow from 'react-xarrows';
-import Draggable from 'react-draggable';
+import Draggable from '../components/Draggable';
 import PopoutWindow from 'react-popout';
 
 const rootStyle = {

@@ -2,7 +2,7 @@
 import React, { useRef, useState } from 'react';
 
 import Xarrow, { xarrowPropsType, useXarrow, Xwrapper } from 'react-xarrows';
-import Draggable from 'react-draggable';
+import Draggable from '../components/Draggable';
 import type { Meta, StoryFn } from '@storybook/react-vite';
 
 const flexBox = {

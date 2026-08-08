@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import Xarrow from 'react-xarrows';
-import Draggable from 'react-draggable';
+import Draggable from '../components/Draggable';
 // import Index from "./../../src/Index";
 
 const canvasStyle = {

@@ -3,7 +3,7 @@ import type { Meta } from '@storybook/react-vite';
 
 import Xarrow, { Xwrapper } from 'react-xarrows';
 import { DraggableBox } from '../components/DraggableBox';
-import Draggable from 'react-draggable';
+import Draggable from '../components/Draggable';
 import { boxStyle } from '../ExamplePage';
 
 export default {
