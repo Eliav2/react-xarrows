@@ -3,16 +3,29 @@
   "version": "2.0.2",
   "author": "Eliav Louski",
   "description": "Draw arrows (or lines) between components in React!",
-  "main": "./lib/index.js",
-  "module": "./lib/index.js",
+  "main": "./lib/index.cjs",
+  "module": "./lib/index.mjs",
   "types": "./lib/index.d.ts",
+  "unpkg": "./lib/index.umd.js",
+  "jsdelivr": "./lib/index.umd.js",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./lib/index.d.mts",
+        "default": "./lib/index.mjs"
+      },
+      "require": {
+        "types": "./lib/index.d.cts",
+        "default": "./lib/index.cjs"
+      },
+      "default": "./lib/index.mjs"
+    },
+    "./package.json": "./package.json"
+  },
   "scripts": {
     "clean": "rimraf lib",
-    "build:js": "webpack --mode production --config-name lib",
-    "build:types": "tsc --emitDeclarationOnly",
-    "build": "pnpm run clean && pnpm run build:js && pnpm run build:types",
-    "build:dev": "webpack --mode development --config-name lib",
-    "watch": "webpack --watch --progress --mode development --config-name lib",
+    "build": "pnpm run clean && vite build",
+    "build:watch": "vite build --watch",
     "type-check": "tsc --noEmit",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
@@ -46,12 +59,9 @@
     "react": ">=16.8.0"
   },
   "devDependencies": {
-    "@babel/cli": "^7.13.16",
-    "@babel/core": "^7.14.2",
-    "@babel/preset-env": "^7.14.7",
-    "@babel/preset-react": "^7.14.5",
-    "@babel/preset-typescript": "^7.14.5",
+    "@arethetypeswrong/cli": "^0.18.5",
     "@eslint/js": "^9.39.5",
+    "@microsoft/api-extractor": "^7.58.12",
     "@testing-library/jest-dom": "^7.0.0",
     "@testing-library/react": "^16.3.2",
     "@types/lodash": "^4.14.168",
@@ -59,23 +69,18 @@
     "@types/react": "^18.3.31",
     "@types/react-dom": "^18.3.7",
     "@vitest/coverage-v8": "^3.2.7",
-    "babel-loader": "^8.2.2",
     "eslint": "^9.39.5",
-    "file-loader": "^6.2.0",
     "globals": "^17.9.0",
     "jsdom": "^30.0.1",
     "prettier": "^3.9.6",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "rimraf": "^6.1.3",
-    "ts-loader": "^9.2.3",
-    "ts-node": "^9.1.1",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.66.0",
-    "vitest": "^3.2.7",
-    "webpack": "^5.44.0",
-    "webpack-cli": "^4.7.2",
-    "webpack-node-externals": "^3.0.0"
+    "vite": "^8.2.1",
+    "vite-plugin-dts": "^5.0.3",
+    "vitest": "^3.2.7"
   },
   "browserslist": [
     ">0.2%",
@@ -86,6 +91,7 @@
   "license": "MIT",
   "files": [
     "lib",
+    "src",
     "package.json",
     "README.md",
     "CHANGELOG.md"

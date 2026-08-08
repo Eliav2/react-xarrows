@@ -6,7 +6,7 @@
     "jsx": "react",
     "noImplicitAny": false,
     "strictNullChecks": false,
-    "target": "ES5",
+    "target": "ES2015",
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
