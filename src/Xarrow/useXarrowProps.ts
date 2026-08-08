@@ -293,31 +293,6 @@ const initialValVars = {
 
 // const parseAllProps = () => parseGivenProps(defaultProps, initialParsedProps);
 
-// The only values ever compared here are element positions, which getElemPos
-// always returns as four numbers, including on its null-element branch. A
-// general deep-equality helper (this used to be lodash isEqual) is more than
-// this needs, and would also have to be careful around the refs and React
-// elements that appear elsewhere in the props.
-const samePosition = (a: dimensionType | undefined, b: dimensionType | undefined) => {
-  if (a === b) return true;
-  if (!a || !b) return false;
-  return a.x === b.x && a.y === b.y && a.right === b.right && a.bottom === b.bottom;
-};
-
-function usePositionMemoize(value: dimensionType) {
-  const ref = useRef<dimensionType>();
-
-  if (!samePosition(value, ref.current)) {
-    ref.current = value;
-  }
-
-  return ref.current;
-}
-
-function usePositionEffect(callback: () => void, dependencies: dimensionType[]) {
-  useLayoutEffect(callback, dependencies.map(usePositionMemoize));
-}
-
 /**
  * smart hook that provides parsed props to Xarrow and will trigger rerender whenever given prop is changed.
  */
@@ -354,19 +329,21 @@ const useXarrowProps = (
   // rerender whenever position of start element or end element changes
   const [valVars, setValVars] = useState(initialValVars);
   const startPos = getElemPos(propsRefs.start);
-  usePositionEffect(() => {
+  // getElemPos returns a fresh object every render, so the four numbers are the
+  // dependencies, not the object. This used to run through a lodash isEqual
+  // memo helper that called useRef from inside dependencies.map(), which is a
+  // hook in a callback and wrote to the ref during render.
+  useLayoutEffect(() => {
     valVars.startPos = startPos;
     shouldUpdatePosition.current = true;
     setValVars({ ...valVars });
-    // console.log('start update pos', startPos);
-  }, [startPos]);
+  }, [startPos.x, startPos.y, startPos.right, startPos.bottom]);
   const endPos = getElemPos(propsRefs.end);
-  usePositionEffect(() => {
+  useLayoutEffect(() => {
     valVars.endPos = endPos;
     shouldUpdatePosition.current = true;
     setValVars({ ...valVars });
-    // console.log('end update pos', endPos);
-  }, [endPos]);
+  }, [endPos.x, endPos.y, endPos.right, endPos.bottom]);
 
   useLayoutEffect(() => {
     // console.log('svg shape changed!');
