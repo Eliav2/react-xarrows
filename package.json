@@ -117,8 +117,5 @@
     ]
   },
   "packageManager": "pnpm@10.25.0",
-  "engines": {
-    "node": ">=18"
-  },
   "sideEffects": false
 }

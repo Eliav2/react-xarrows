@@ -22,7 +22,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node: [20, 22, 24]
+        # Node 20 reached end-of-life in April 2026, and jsdom 30 requires the
+        # undici build that ships with Node 22 or newer.
+        node: [22, 24]
 
     steps:
       - uses: actions/checkout@v4
