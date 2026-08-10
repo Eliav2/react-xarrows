@@ -328,15 +328,23 @@ type parsedXarrowProps = {
   _cpy2Offset: number;
 };
 
-let initialParsedProps = {} as parsedXarrowProps;
-initialParsedProps = parseGivenProps(defaultProps, initialParsedProps);
+/**
+ * A fresh object for every hook instance.
+ *
+ * This used to be a single module-level object, parsed once and then handed to
+ * every `useState` call. The hook writes each prop it resolves straight into
+ * that object - including the resolved `start`/`end` elements - so the first
+ * arrow to mount left its own elements and its own prop values inside the
+ * defaults that every arrow mounted afterwards rendered its first frame with.
+ * An arrow with default props would paint one frame using the previous arrow's
+ * stroke, color and elements before its own effects corrected it.
+ */
+const createInitialParsedProps = (): parsedXarrowProps => parseGivenProps(defaultProps, {} as parsedXarrowProps);
 
 const initialValVars = {
   startPos: { x: 0, y: 0, right: 0, bottom: 0 } as dimensionType,
   endPos: { x: 0, y: 0, right: 0, bottom: 0 } as dimensionType,
 };
-
-// const parseAllProps = () => parseGivenProps(defaultProps, initialParsedProps);
 
 // The only values ever compared here are element positions, which getElemPos
 // always returns as four numbers, including on its null-element branch. A
@@ -356,10 +364,9 @@ const useXarrowProps = (
   userProps: xarrowPropsType,
   refs: { headRef: React.MutableRefObject<any>; tailRef: React.MutableRefObject<any> },
 ) => {
-  const [propsRefs, setPropsRefs] = useState(initialParsedProps);
+  // lazy initializer - one parsed-props object per arrow, never shared
+  const [propsRefs, setPropsRefs] = useState(createInitialParsedProps);
   const shouldUpdatePosition = useRef(false);
-  // const _propsRefs = useRef(initialParsedProps);
-  // const propsRefs = _propsRefs.current;
   propsRefs['shouldUpdatePosition'] = shouldUpdatePosition;
   const curProps = { ...defaultProps, ...userProps };
 
