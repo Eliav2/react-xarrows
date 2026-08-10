@@ -349,20 +349,6 @@ const samePosition = (a: dimensionType | undefined, b: dimensionType | undefined
   return a.x === b.x && a.y === b.y && a.right === b.right && a.bottom === b.bottom;
 };
 
-function usePositionMemoize(value: dimensionType) {
-  const ref = useRef<dimensionType>();
-
-  if (!samePosition(value, ref.current)) {
-    ref.current = value;
-  }
-
-  return ref.current;
-}
-
-function usePositionEffect(callback: () => void, dependencies: dimensionType[]) {
-  useLayoutEffect(callback, dependencies.map(usePositionMemoize));
-}
-
 /**
  * smart hook that provides parsed props to Xarrow and will trigger rerender whenever given prop is changed.
  */
@@ -401,22 +387,41 @@ const useXarrowProps = (
     );
   }
 
-  // rerender whenever position of start element or end element changes
+  // rerender whenever position of start element or end element changes.
+  //
+  // The measurement deliberately happens in a layout effect rather than in the
+  // render body. React commits DOM mutations after render and before layout
+  // effects, so anything measured during render describes the *previous*
+  // frame's layout: an element that moved in this very commit gets measured at
+  // its old position, and because the comparison is then stale-against-stale no
+  // correcting render is ever scheduled. Reading here instead sees the layout
+  // that was just committed, and the resulting extra render happens before
+  // paint, so the arrow never lags a frame behind the elements it connects.
+  //
+  // The element is re-resolved whenever the cached node is missing or has been
+  // detached, so an element that is remounted under the same id is picked up
+  // again instead of leaving the arrow measuring a detached node - which the
+  // DOM reports as all zeros, dragging the arrow to the viewport origin.
   const [valVars, setValVars] = useState(initialValVars);
-  const startPos = getElemPos(propsRefs.start);
-  usePositionEffect(() => {
+  useLayoutEffect(() => {
+    // no DOM to measure - nothing here can be meaningful, and getElementByPropGiven would throw
+    if (typeof document === 'undefined') return;
+
+    if (typeof curProps.start === 'string' && !propsRefs.start?.isConnected)
+      propsRefs.start = getElementByPropGiven(curProps.start);
+    if (typeof curProps.end === 'string' && !propsRefs.end?.isConnected)
+      propsRefs.end = getElementByPropGiven(curProps.end);
+
+    const startPos = getElemPos(propsRefs.start);
+    const endPos = getElemPos(propsRefs.end);
+    // guarded so this effect cannot schedule a render that would run it again forever
+    if (samePosition(startPos, valVars.startPos) && samePosition(endPos, valVars.endPos)) return;
+
     valVars.startPos = startPos;
-    shouldUpdatePosition.current = true;
-    setValVars({ ...valVars });
-    // console.log('start update pos', startPos);
-  }, [startPos]);
-  const endPos = getElemPos(propsRefs.end);
-  usePositionEffect(() => {
     valVars.endPos = endPos;
     shouldUpdatePosition.current = true;
     setValVars({ ...valVars });
-    // console.log('end update pos', endPos);
-  }, [endPos]);
+  });
 
   useLayoutEffect(() => {
     // console.log('svg shape changed!');
