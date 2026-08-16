@@ -85,10 +85,12 @@ const parseDashness = (dashness: xarrowPropsType['dashness'], props: { strokeWid
     animDashSpeed: number | null = null;
   const animDirection = 1;
   if (typeof dashness === 'object') {
-    dashStroke = dashness.strokeLen || props.strokeWidth * 2;
-    // nonStrokeLen used to pass through undefined here, rendering a
-    // stroke-dasharray of "<n> undefined".
-    dashNone = dashness.strokeLen ? (dashness.nonStrokeLen ?? props.strokeWidth) : props.strokeWidth;
+    // Each length falls back on its own. Previously nonStrokeLen was only read
+    // when strokeLen was given - and then passed straight through, rendering a
+    // stroke-dasharray of "<n> undefined" - so `{ nonStrokeLen: 10 }` alone was
+    // discarded. `??` rather than `||` so that an explicit 0 survives.
+    dashStroke = dashness.strokeLen ?? props.strokeWidth * 2;
+    dashNone = dashness.nonStrokeLen ?? props.strokeWidth;
     // `animation: true` means the documented default of 1s. It used to fall
     // through as a boolean and only worked because `1 / true` is 1.
     animDashSpeed = dashness.animation === true ? 1 : dashness.animation || null;

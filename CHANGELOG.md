@@ -12,8 +12,13 @@
   text "path" instead of an arrowhead, and parsing wrote its defaults into the
   object it was given - the caller's own for a custom shape, the shared
   built-in for a shape name.
-- `dashness={{ strokeLen: n }}` rendered `stroke-dasharray="n undefined"`;
-  `nonStrokeLen` now falls back to `strokeWidth`.
+- **`dashness` lengths are now read independently.** `strokeLen` and
+  `nonStrokeLen` used to be read as a pair, so `{ strokeLen: n }` rendered
+  `stroke-dasharray="n undefined"` and `{ nonStrokeLen: n }` on its own was
+  discarded for the default. An explicit `0` is also kept rather than replaced
+  by the default, so `{ nonStrokeLen: 0 }` now draws the solid line it asks for
+  — and `{ strokeLen: 0 }` draws zero length dashes, where it previously fell
+  back to the default dash pattern.
 
 ### features
 

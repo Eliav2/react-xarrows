@@ -62,12 +62,34 @@ describe('prop parsing', () => {
   });
 
   describe('dashness', () => {
-    it('fills in nonStrokeLen when only strokeLen is given', () => {
+    const dashArray = (props: Record<string, unknown>) => {
       placeBoxes();
-      // Used to render stroke-dasharray="10 undefined".
-      const { container } = render(<Boxes dashness={{ strokeLen: 10 }} strokeWidth={4} />);
+      const { container } = render(<Boxes strokeWidth={4} {...props} />);
+      return container.querySelector('svg path')?.getAttribute('stroke-dasharray');
+    };
 
-      expect(container.querySelector('svg path')?.getAttribute('stroke-dasharray')).toBe('10 4');
+    // strokeLen and nonStrokeLen each fall back on their own. They used to be
+    // read as a pair, so only one of the two could be supplied on its own, and
+    // `||` meant an explicit 0 was replaced by the default.
+    it('fills in nonStrokeLen when only strokeLen is given', () => {
+      // Used to render "10 undefined".
+      expect(dashArray({ dashness: { strokeLen: 10 } })).toBe('10 4');
+    });
+
+    it('keeps nonStrokeLen when only nonStrokeLen is given', () => {
+      // Used to discard it entirely and render the default "8 4".
+      expect(dashArray({ dashness: { nonStrokeLen: 10 } })).toBe('8 10');
+    });
+
+    it('keeps an explicit zero rather than treating it as absent', () => {
+      expect(dashArray({ dashness: { strokeLen: 0 } })).toBe('0 4');
+      expect(dashArray({ dashness: { nonStrokeLen: 0 } })).toBe('8 0');
+      expect(dashArray({ dashness: { strokeLen: 0, nonStrokeLen: 0 } })).toBe('0 0');
+    });
+
+    it('defaults both lengths from strokeWidth when neither is given', () => {
+      expect(dashArray({ dashness: {} })).toBe('8 4');
+      expect(dashArray({ dashness: true })).toBe('8 4');
     });
 
     it('treats animation: true as the documented one second default', () => {
