@@ -4,6 +4,11 @@ import { calcAnchors } from '../anchors';
 import { getShortestLine, getSvgPos, getTotalLength, polylinePath } from './index';
 import { cPaths } from '../../constants';
 import { buzzierMinSols, bzFunction } from './buzzier';
+import { anchorNamedType } from '../../types';
+
+// which axis the line leaves an anchor on: horizontal or vertical
+type curveAxis = 'h' | 'v';
+type curveKey = `${curveAxis}${curveAxis}`;
 
 /**
  * The Main logic of path calculation for the arrow.
@@ -204,7 +209,7 @@ export const getPosition = (xProps: useXarrowPropsResType, mainRef: React.Mutabl
     cpx2 = x2,
     cpy2 = y2;
 
-  let curvesPossibilities = {};
+  let curvesPossibilities = {} as Record<curveKey, () => void>;
   if (path === 'smooth')
     curvesPossibilities = {
       hh: () => {
@@ -264,16 +269,18 @@ export const getPosition = (xProps: useXarrowPropsResType, mainRef: React.Mutabl
       },
     };
   }
-  // smart select best curve for the current anchors
-  let selectedCurviness = '';
-  if (['left', 'right'].includes(startAnchorPosition)) selectedCurviness += 'h';
-  else if (['bottom', 'top'].includes(startAnchorPosition)) selectedCurviness += 'v';
-  else if (startAnchorPosition === 'middle') selectedCurviness += 'm';
-  if (['left', 'right'].includes(endAnchorPosition)) selectedCurviness += 'h';
-  else if (['bottom', 'top'].includes(endAnchorPosition)) selectedCurviness += 'v';
-  else if (endAnchorPosition === 'middle') selectedCurviness += 'm';
-  if (absDx > absDy) selectedCurviness = selectedCurviness.replace(/m/g, 'h');
-  else selectedCurviness = selectedCurviness.replace(/m/g, 'v');
+  // smart select best curve for the current anchors. Built per anchor rather
+  // than by concatenating and regex-replacing a bare string, so that the key
+  // is a union the lookup below can be checked against: an anchor position
+  // that matched none of the branches used to append nothing and index
+  // curvesPossibilities with a one-character key that does not exist.
+  const middleAxis: curveAxis = absDx > absDy ? 'h' : 'v';
+  const axisOf = (position: anchorNamedType): curveAxis => {
+    if (position === 'left' || position === 'right') return 'h';
+    if (position === 'top' || position === 'bottom') return 'v';
+    return middleAxis;
+  };
+  const selectedCurviness: curveKey = `${axisOf(startAnchorPosition)}${axisOf(endAnchorPosition)}`;
   curvesPossibilities[selectedCurviness]();
 
   cpx1 += _cpx1Offset;
@@ -318,7 +325,10 @@ export const getPosition = (xProps: useXarrowPropsResType, mainRef: React.Mutabl
   const labelMiddlePos = { x: bzx(0.5), y: bzy(0.5) };
   const labelEndPos = { x: bzx(0.99), y: bzy(0.99) };
 
-  let arrowPath;
+  // 'straight' and any unknown path are normalized to 'smooth' above, so one of
+  // the branches below always assigns. The initializer keeps the type a plain
+  // string rather than string | undefined.
+  let arrowPath = '';
   if (path === 'grid') {
     const radius = gridRadius === true ? strokeWidth * 2 : Math.max(0, Number(gridRadius) || 0);
     arrowPath = polylinePath(

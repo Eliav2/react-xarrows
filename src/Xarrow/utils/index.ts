@@ -1,17 +1,20 @@
-import { anchorCustomPositionType, refType } from '../../types';
+import { refType } from '../../types';
+import { parsedAnchorType } from '../../privateTypes';
 import React from 'react';
 
-export const getElementByPropGiven = (ref: refType): HTMLElement => {
+export type point = { x: number; y: number };
+
+export const getElementByPropGiven = (ref: refType): Element | null => {
   let myRef;
   if (typeof ref === 'string') {
     // myRef = document.getElementById(ref);
     myRef = document.getElementById(ref);
   } else myRef = ref?.current;
-  return myRef;
+  return myRef ?? null;
 };
 
 // receives string representing a d path and factoring only the numbers
-export const factorDpathStr = (d: string, factor) => {
+export const factorDpathStr = (d: string, factor: number) => {
   let l = d.split(/(\d+(?:\.\d+)?)/);
   l = l.map((s) => {
     if (Number(s)) return (Number(s) * factor).toString();
@@ -21,7 +24,7 @@ export const factorDpathStr = (d: string, factor) => {
 };
 
 // return relative,abs
-export const xStr2absRelative = (str): { abs: number; relative: number } => {
+export const xStr2absRelative = (str: string): { abs: number; relative: number } | undefined => {
   if (typeof str !== 'string') return { abs: 0, relative: 0.5 };
   const sp = str.split('%');
   let absLen = 0,
@@ -40,18 +43,20 @@ export const xStr2absRelative = (str): { abs: number; relative: number } => {
   }
 };
 
-const dist = (p1, p2) => {
+const dist = (p1: point, p2: point) => {
   //length of line
   return Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2);
 };
 
-type t1 = { x: number; y: number; anchor: anchorCustomPositionType };
+type t1 = { x: number; y: number; anchor: parsedAnchorType };
 
 export const getShortestLine = (sPoints: t1[], ePoints: t1[]) => {
   // closes tPair Of Points which feet to the specified anchors
   let minDist = Infinity,
     d = Infinity;
-  let closestPair: { chosenStart: t1; chosenEnd: t1 };
+  // Seeded with the first pair rather than left unassigned: callers destructure
+  // the result, and both lists always hold at least one anchor.
+  let closestPair = { chosenStart: sPoints[0], chosenEnd: ePoints[0] };
   sPoints.forEach((sp) => {
     ePoints.forEach((ep) => {
       d = dist(sp, ep);
@@ -64,7 +69,7 @@ export const getShortestLine = (sPoints: t1[], ePoints: t1[]) => {
   return closestPair;
 };
 
-export const getElemPos = (elem: HTMLElement) => {
+export const getElemPos = (elem: Element | null) => {
   if (!elem) return { x: 0, y: 0, right: 0, bottom: 0 };
   const pos = elem.getBoundingClientRect();
   return {
@@ -75,7 +80,7 @@ export const getElemPos = (elem: HTMLElement) => {
   };
 };
 
-export const getSvgPos = (svgRef: React.MutableRefObject<any>) => {
+export const getSvgPos = (svgRef: React.MutableRefObject<SVGSVGElement | null>) => {
   if (!svgRef.current) return { x: 0, y: 0 };
   const { left: xarrowElemX, top: xarrowElemY } = svgRef.current.getBoundingClientRect();
   const xarrowStyle = getComputedStyle(svgRef.current);
@@ -97,8 +102,6 @@ export const getTotalLength = (elem: SVGPathElement | null): number => {
   if (!elem || typeof elem.getTotalLength !== 'function') return 0;
   return elem.getTotalLength();
 };
-
-type point = { x: number; y: number };
 
 const SAME_POINT_EPSILON = 1e-6;
 

@@ -130,6 +130,18 @@ importers:
         specifier: ^4.1.10
         version: 4.1.10(@types/node@26.2.0)(@vitest/coverage-v8@3.2.7(vitest@3.2.7(@types/node@26.2.0)(jiti@1.21.7)(jsdom@30.0.1)(lightningcss@1.33.0)(terser@5.49.2)(yaml@2.9.0)))(jsdom@30.0.1)(vite@8.2.1(@types/node@26.2.0)(esbuild@0.28.1)(jiti@1.21.7)(terser@5.49.2)(yaml@2.9.0))
 
+  type-tests:
+    devDependencies:
+      '@types/react18':
+        specifier: npm:@types/react@^18.3.31
+        version: '@types/react@18.3.31'
+      '@types/react19':
+        specifier: npm:@types/react@^19.2.18
+        version: '@types/react@19.2.18'
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+
 packages:
 
   '@adobe/css-tools@4.5.0':
