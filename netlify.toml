@@ -4,8 +4,11 @@
 # has to be built from the repo root. The root `build` script builds the library
 # into lib/, which is not a website.
 
+# Storybook is nested under the demo so that one deploy serves both, matching
+# the layout deploy-demo.yml publishes to Pages. Without it a deploy preview has
+# no way to show a story, which is where new props are demonstrated.
 [build]
-  command = "pnpm --filter react-xarrows-examples run build"
+  command = "pnpm --filter react-xarrows-examples run build && pnpm --filter react-xarrows-examples run build-storybook && cp -r examples/dist-storybook examples/dist/storybook"
   publish = "examples/dist"
 
 [build.environment]

@@ -97,3 +97,61 @@ export const getTotalLength = (elem: SVGPathElement | null): number => {
   if (!elem || typeof elem.getTotalLength !== 'function') return 0;
   return elem.getTotalLength();
 };
+
+type point = { x: number; y: number };
+
+const SAME_POINT_EPSILON = 1e-6;
+
+/**
+ * Builds an SVG path through `points`, rounding every interior corner with a
+ * quadratic whose control point is the corner itself.
+ *
+ * Deliberately vector based rather than special cased per corner orientation.
+ * The grid control points are axis aligned only by arithmetic coincidence - the
+ * head offset applied to cpx1 and cpx2 cancels out the shift applied to x2 - so
+ * comparing coordinates for equality would rest on two independently computed
+ * floats matching exactly, and would break outright for anyone using the
+ * _cpx1Offset escape hatches.
+ */
+export const polylinePath = (points: point[], radius: number): string => {
+  // Collapse repeated points first. The hv and vh grid paths put the second
+  // control point on top of the end point, and gridBreak "0%" puts the first on
+  // top of the start; left in place they become zero length segments and the
+  // corner math divides by zero.
+  const p = points.filter(
+    (q, i) =>
+      i === 0 ||
+      Math.abs(q.x - points[i - 1].x) > SAME_POINT_EPSILON ||
+      Math.abs(q.y - points[i - 1].y) > SAME_POINT_EPSILON,
+  );
+  if (p.length === 0) return '';
+  const move = `M ${p[0].x} ${p[0].y}`;
+  if (!(radius > 0) || p.length < 3)
+    return (
+      move +
+      p
+        .slice(1)
+        .map((q) => ` L ${q.x} ${q.y}`)
+        .join('')
+    );
+
+  let d = move;
+  for (let i = 1; i < p.length - 1; i++) {
+    const [prev, corner, next] = [p[i - 1], p[i], p[i + 1]];
+    const dPrev = Math.sqrt((corner.x - prev.x) ** 2 + (corner.y - prev.y) ** 2);
+    const dNext = Math.sqrt((next.x - corner.x) ** 2 + (next.y - corner.y) ** 2);
+    // Half of the shorter neighbour, so that two corners sharing a segment can
+    // never overshoot into each other and fold the path back on itself.
+    const r = Math.min(radius, dPrev / 2, dNext / 2);
+    if (!(r > 0)) {
+      d += ` L ${corner.x} ${corner.y}`;
+      continue;
+    }
+    d += ` L ${corner.x + ((prev.x - corner.x) / dPrev) * r} ${corner.y + ((prev.y - corner.y) / dPrev) * r}`;
+    d += ` Q ${corner.x} ${corner.y} ${corner.x + ((next.x - corner.x) / dNext) * r} ${
+      corner.y + ((next.y - corner.y) / dNext) * r
+    }`;
+  }
+  const last = p[p.length - 1];
+  return `${d} L ${last.x} ${last.y}`;
+};

@@ -20,7 +20,8 @@ export type xarrowPropsType = {
   showXarrow?: boolean;
   curveness?: number;
   gridBreak?: string;
-  // gridRadius?: number;
+  /** rounds the corners of a `path="grid"` arrow. `true` uses `strokeWidth * 2`, a number is a radius in pixels. */
+  gridRadius?: boolean | number;
   dashness?:
     | boolean
     | {

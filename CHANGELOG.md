@@ -1,3 +1,16 @@
+## Unreleased
+
+### features
+
+- **`gridRadius`** rounds the corners of a `path='grid'` arrow. `gridRadius`
+  rounds with a radius of `strokeWidth * 2`, `gridRadius={12}` takes a radius in
+  pixels, and the default `false` keeps the square corners 2.1.0 draws. The
+  radius is capped at half the shorter adjacent segment, so short arrows degrade
+  instead of folding back on themselves. Based on the approach in
+  [#178](https://github.com/Eliav2/react-xarrows/pull/178) by
+  [@andreac92](https://github.com/andreac92).
+  [#43](https://github.com/Eliav2/react-xarrows/issues/43)
+
 ## 2.1.0
 
 First release since February 2024. No API changes: every prop, component and
