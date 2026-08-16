@@ -36,6 +36,11 @@ const titleStyle = {
   margin: '20px 0 0 20px',
 };
 
+// Every deploy publishes Storybook one level under the demo, so BASE_URL covers
+// both the /react-xarrows/ base on Pages and the root base on Netlify previews.
+// The dev server is the exception: `pnpm storybook` runs it as its own server.
+const storybookUrl = import.meta.env.DEV ? 'http://localhost:6006' : `${import.meta.env.BASE_URL}storybook/`;
+
 const ExamplePage = () => {
   return (
     <div>
@@ -55,6 +60,10 @@ const ExamplePage = () => {
         <br />
         <a href="https://eliav2.github.io/react-xarrows/" target="_blank" rel="noopener noreferrer">
           Home page
+        </a>
+        <br />
+        <a href={storybookUrl} target="_blank" rel="noopener noreferrer">
+          Storybook
         </a>
         <br />
         <br />
