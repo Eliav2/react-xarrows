@@ -12,11 +12,10 @@ const config: StorybookConfig = {
     disableTelemetry: true,
   },
   viteFinal: async (config) => {
-    // On Pages the demo owns /react-xarrows/ and Storybook is nested one level
-    // deeper, so it needs its own base or every asset URL resolves a level up.
-    if (process.env.GITHUB_PAGES === 'true') {
-      config.base = '/react-xarrows/storybook/';
-    }
+    // Storybook is always published one level under the demo, so it needs its
+    // own base or every asset URL resolves a level up. The demo owns
+    // /react-xarrows/ on Pages and the root on Netlify deploy previews.
+    config.base = `${process.env.GITHUB_PAGES === 'true' ? '/react-xarrows' : ''}/storybook/`;
     return config;
   },
 };

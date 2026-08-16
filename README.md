@@ -254,6 +254,7 @@ here's a summary of the all the available props:
 [path](#path)|path drawing style| 'smooth'|string
 [curveness](#curveness)|how much the line curveness when path='smooth'| 0.8|number
 [gridBreak](#gridBreak)|where the line breaks in path='grid'| "50%" | string
+[gridRadius](#gridRadius)|corner rounding when path='grid'| false | boolean/number
 [dashness](#dashness)|should the line be dashed| false|boolean/object
 [showHead](#shows)|show the arrow head?| true|boolean
 [showTail](#shows)|show the arrow tail?| false|boolean
@@ -459,6 +460,26 @@ examples:
 - `gridBreak='50'` the line would break 50 pixel from start element.
 - `gridBreak='20%50'` the line would break 50 pixel after 20% from start element.
 - `gridBreak='100%-50'` the line would break 50 pixel before end element.
+
+</details>
+
+<a name="gridRadius"></a>
+
+<details>
+
+<summary markdown='span'>gridRadius</summary>
+
+rounds the corners of the line when `path='grid'`. ignored for any other `path`.
+
+examples:
+
+- `gridRadius` (or `gridRadius={true}`) rounds the corners with a radius of `strokeWidth * 2`.
+- `gridRadius={12}` rounds the corners with a radius of 12 pixels.
+- `gridRadius={false}` (the default) keeps square corners.
+
+the radius is capped at half the length of the shorter of the two segments that
+meet at a corner, so short arrows round as much as they can rather than folding
+back on themselves.
 
 </details>
 

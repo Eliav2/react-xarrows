@@ -1,7 +1,7 @@
 import { useXarrowPropsResType } from '../useXarrowProps';
 import React from 'react';
 import { calcAnchors } from '../anchors';
-import { getShortestLine, getSvgPos, getTotalLength } from './index';
+import { getShortestLine, getSvgPos, getTotalLength, polylinePath } from './index';
 import { cPaths } from '../../constants';
 import { buzzierMinSols, bzFunction } from './buzzier';
 
@@ -21,6 +21,7 @@ export const getPosition = (xProps: useXarrowPropsResType, mainRef: React.Mutabl
     tailSize,
     curveness,
     gridBreak,
+    gridRadius,
     headShape,
     tailShape,
     _extendSVGcanvas,
@@ -73,7 +74,6 @@ export const getPosition = (xProps: useXarrowPropsResType, mainRef: React.Mutabl
   const _tailOffset = fTailSize * tailOffset;
 
   let cu = Number(curveness);
-  // gridRadius = Number(gridRadius);
   if (!cPaths.includes(path)) path = 'smooth';
   if (path === 'straight') {
     cu = 0;
@@ -320,10 +320,16 @@ export const getPosition = (xProps: useXarrowPropsResType, mainRef: React.Mutabl
 
   let arrowPath;
   if (path === 'grid') {
-    // todo: support gridRadius
-    //  arrowPath = `M ${x1} ${y1} L  ${cpx1 - 10} ${cpy1} a10,10 0 0 1 10,10
-    // L ${cpx2} ${cpy2 - 10} a10,10 0 0 0 10,10 L  ${x2} ${y2}`;
-    arrowPath = `M ${x1} ${y1} L  ${cpx1} ${cpy1} L ${cpx2} ${cpy2} ${x2} ${y2}`;
+    const radius = gridRadius === true ? strokeWidth * 2 : Math.max(0, Number(gridRadius) || 0);
+    arrowPath = polylinePath(
+      [
+        { x: x1, y: y1 },
+        { x: cpx1, y: cpy1 },
+        { x: cpx2, y: cpy2 },
+        { x: x2, y: y2 },
+      ],
+      radius,
+    );
   } else if (path === 'smooth') arrowPath = `M ${x1} ${y1} C ${cpx1} ${cpy1}, ${cpx2} ${cpy2}, ${x2} ${y2}`;
   return {
     cx0,
