@@ -6,30 +6,34 @@ import {
   pathType,
   svgCustomEdgeType,
   svgEdgeShapeType,
-  svgElemType,
+  svgElemPropsType,
   xarrowPropsType,
 } from '../types';
 import { getElementByPropGiven, getElemPos, xStr2absRelative } from './utils';
 import { arrowShapes, cAnchorEdge, cArrowShapes } from '../constants';
-import { anchorEdgeType, dimensionType } from '../privateTypes';
+import {
+  anchorEdgeType,
+  dimensionType,
+  parsedAnchorType,
+  parsedEdgeShapeType,
+  parsedLabelsType,
+} from '../privateTypes';
 
-const parseLabels = (label: xarrowPropsType['labels']): labelsType => {
-  const parsedLabel = { start: null, middle: null, end: null };
+const parseLabels = (label: xarrowPropsType['labels']): parsedLabelsType => {
+  const parsedLabel: parsedLabelsType = { start: null, middle: null, end: null };
   if (label) {
+    // isValidElement is not a narrowing guard for this union, so the else
+    // branch still looks like it could hold a JSX element without the cast.
     if (typeof label === 'string' || React.isValidElement(label)) parsedLabel.middle = label;
     else {
-      for (const key in label) {
-        parsedLabel[key] = label[key];
+      const labels = label as labelsType;
+      for (const key of Object.keys(labels) as (keyof labelsType)[]) {
+        parsedLabel[key] = labels[key] ?? null;
       }
     }
   }
   return parsedLabel;
 };
-
-// remove 'auto' as possible anchor from anchorCustomPositionType.position
-interface anchorCustomPositionType2 extends Omit<Required<anchorCustomPositionType>, 'position'> {
-  position: Exclude<(typeof cAnchorEdge)[number], 'auto'>;
-}
 
 const parseAnchor = (anchor: anchorType) => {
   // convert to array
@@ -72,18 +76,22 @@ const parseAnchor = (anchor: anchorType) => {
     } else return anchorChoice;
   }) as Required<anchorCustomPositionType>[];
 
-  return anchorChoice3 as anchorCustomPositionType2[];
+  return anchorChoice3 as parsedAnchorType[];
 };
 
-const parseDashness = (dashness, props) => {
+const parseDashness = (dashness: xarrowPropsType['dashness'], props: { strokeWidth: number }) => {
   let dashStroke = 0,
     dashNone = 0,
-    animDashSpeed;
+    animDashSpeed: number | null = null;
   const animDirection = 1;
   if (typeof dashness === 'object') {
     dashStroke = dashness.strokeLen || props.strokeWidth * 2;
-    dashNone = dashness.strokeLen ? dashness.nonStrokeLen : props.strokeWidth;
-    animDashSpeed = dashness.animation ? dashness.animation : null;
+    // nonStrokeLen used to pass through undefined here, rendering a
+    // stroke-dasharray of "<n> undefined".
+    dashNone = dashness.strokeLen ? (dashness.nonStrokeLen ?? props.strokeWidth) : props.strokeWidth;
+    // `animation: true` means the documented default of 1s. It used to fall
+    // through as a boolean and only worked because `1 / true` is 1.
+    animDashSpeed = dashness.animation === true ? 1 : dashness.animation || null;
   } else if (typeof dashness === 'boolean' && dashness) {
     dashStroke = props.strokeWidth * 2;
     dashNone = props.strokeWidth;
@@ -96,22 +104,29 @@ const parseDashness = (dashness, props) => {
   };
 };
 
-const parseEdgeShape = (svgEdge): svgCustomEdgeType => {
+const parseEdgeShape = (svgEdge: svgEdgeShapeType | svgCustomEdgeType): parsedEdgeShapeType => {
+  let shape: Partial<svgCustomEdgeType> | undefined;
   if (typeof svgEdge == 'string') {
-    if (svgEdge in arrowShapes) svgEdge = arrowShapes[svgEdge as svgEdgeShapeType];
+    if (svgEdge in arrowShapes) shape = arrowShapes[svgEdge as svgEdgeShapeType];
     else {
       console.warn(
         `'${svgEdge}' is not supported arrow shape. the supported arrow shapes is one of ${cArrowShapes}.
            reverting to default shape.`,
       );
-      svgEdge = arrowShapes['arrow1'];
+      shape = arrowShapes['arrow1'];
     }
-  }
-  svgEdge = svgEdge as svgCustomEdgeType;
-  if (svgEdge?.offsetForward === undefined) svgEdge.offsetForward = 0.25;
-  if (svgEdge?.svgElem === undefined) svgEdge.svgElem = 'path';
-  // if (svgEdge?.svgProps === undefined) svgEdge.svgProps = arrowShapes.arrow1.svgProps;
-  return svgEdge;
+  } else shape = svgEdge;
+
+  // Returns a new object rather than filling in the one it was handed. For a
+  // shape name that object is the shared arrowShapes constant, and for a custom
+  // shape it is the caller's own, so the old in-place defaulting wrote into
+  // whichever of the two it happened to get.
+  return {
+    // Was defaulted to the bare string 'path', which React renders as the
+    // literal text "path" rather than an element.
+    svgElem: shape?.svgElem ?? arrowShapes.arrow1.svgElem,
+    offsetForward: shape?.offsetForward ?? 0.25,
+  };
 };
 
 const parseGridBreak = (gridBreak: string): { relative: number; abs: number } => {
@@ -125,17 +140,24 @@ const parseGridBreak = (gridBreak: string): { relative: number; abs: number } =>
  * @param propVal
  * @param updateRef
  */
-const withUpdate = (propVal, updateRef) => {
+const withUpdate = <T>(propVal: T, updateRef?: updatePosRef): T => {
   if (updateRef) updateRef.current = true;
   return propVal;
 };
 
-const noParse = (userProp) => userProp;
-const noParseWithUpdatePos = (userProp, _, updatePos) => withUpdate(userProp, updatePos);
-const parseNumWithUpdatePos = (userProp, _, updatePos) => withUpdate(Number(userProp), updatePos);
-const parseNum = (userProp) => Number(userProp);
+const noParse = <T>(userProp: T): T => userProp;
+const noParseWithUpdatePos = <T>(userProp: T, _: unknown, updatePos?: updatePosRef): T =>
+  withUpdate(userProp, updatePos);
+const parseNumWithUpdatePos = (userProp: unknown, _: unknown, updatePos?: updatePosRef): number =>
+  withUpdate(Number(userProp), updatePos);
+const parseNum = (userProp: unknown): number => Number(userProp);
 
-type ParsePropFunc = (userProp: any, prevProp?: any, updatePos?: any) => any;
+type updatePosRef = React.MutableRefObject<boolean>;
+
+// Still `any` in and out. Making this generic over the prop name is what ties
+// xarrowPropsType[K] to parsedXarrowProps[K], and it is a large enough change
+// to want its own pass.
+type ParsePropFunc = (userProp: any, prevProp?: any, updatePos?: updatePosRef) => any;
 
 const parsePropsFuncs: Required<{ [key in keyof xarrowPropsType]: ParsePropFunc }> = {
   start: (userProp) => getElementByPropGiven(userProp),
@@ -180,25 +202,38 @@ const parsePropsFuncs: Required<{ [key in keyof xarrowPropsType]: ParsePropFunc 
   _cpy2Offset: noParseWithUpdatePos,
 };
 
+type propName = keyof xarrowPropsType;
+
 //build dependencies
-const propsDeps = {};
+const propsDeps = {} as Record<propName, propName[]>;
 //each prop depends on himself
-for (const propName in parsePropsFuncs) {
+for (const propName of Object.keys(parsePropsFuncs) as propName[]) {
   propsDeps[propName] = [propName];
 }
 // 'lineColor', 'headColor', 'tailColor' props also depends on 'color' prop
-for (const propName of ['lineColor', 'headColor', 'tailColor']) {
+for (const propName of ['lineColor', 'headColor', 'tailColor'] as const) {
   propsDeps[propName].push('color');
 }
 
-const parseGivenProps = (props: xarrowPropsType, propsRef) => {
-  for (const [name, val] of Object.entries(props)) {
-    propsRef[name] = parsePropsFuncs?.[name]?.(val, propsRef);
+// Only ever called with the defaults table, which carries nulls where a prop
+// has no default.
+const parseGivenProps = (props: defaultPropsType, propsRef: parsedXarrowProps) => {
+  for (const name of Object.keys(props) as propName[]) {
+    // Correlating the parser's return type with propsRef[name] needs the
+    // generic ParsePropFunc above; until then this write is unchecked.
+    (propsRef as Record<string, unknown>)[name] = parsePropsFuncs?.[name]?.(props[name], propsRef);
   }
   return propsRef;
 };
 
-const defaultProps: Required<xarrowPropsType> = {
+/**
+ * Every prop's default. null means "no default": start and end are required of
+ * the user, and labels are absent until given. Declaring this as
+ * Required<xarrowPropsType> claimed those three were always present.
+ */
+type defaultPropsType = { [K in keyof Required<xarrowPropsType>]: Required<xarrowPropsType>[K] | null };
+
+const defaultProps: defaultPropsType = {
   start: null,
   end: null,
   startAnchor: 'auto',
@@ -241,11 +276,11 @@ const defaultProps: Required<xarrowPropsType> = {
 
 type parsedXarrowProps = {
   shouldUpdatePosition: React.MutableRefObject<boolean>;
-  start: HTMLElement;
-  end: HTMLElement;
-  startAnchor: anchorCustomPositionType[];
-  endAnchor: anchorCustomPositionType[];
-  labels: Required<labelsType>;
+  start: Element | null;
+  end: Element | null;
+  startAnchor: parsedAnchorType[];
+  endAnchor: parsedAnchorType[];
+  labels: parsedLabelsType;
   color: string;
   lineColor: string;
   headColor: string;
@@ -265,15 +300,15 @@ type parsedXarrowProps = {
     nonStrokeLen: number;
     animation: number;
   };
-  headShape: svgCustomEdgeType;
-  tailShape: svgCustomEdgeType;
+  headShape: parsedEdgeShapeType;
+  tailShape: parsedEdgeShapeType;
   animateDrawing: number;
   zIndex: number;
-  passProps: JSX.IntrinsicElements[svgElemType];
+  passProps: svgElemPropsType;
   SVGcanvasProps: React.SVGAttributes<SVGSVGElement>;
   arrowBodyProps: React.SVGProps<SVGPathElement>;
-  arrowHeadProps: JSX.IntrinsicElements[svgElemType];
-  arrowTailProps: JSX.IntrinsicElements[svgElemType];
+  arrowHeadProps: svgElemPropsType;
+  arrowTailProps: svgElemPropsType;
   divContainerProps: React.HTMLProps<HTMLDivElement>;
   SVGcanvasStyle: React.CSSProperties;
   divContainerStyle: React.CSSProperties;
@@ -342,10 +377,15 @@ const useXarrowProps = (
   // for example: if given 'start' prop would change call getElementByPropGiven(props.start) and save value into propsRefs.start.current
   // why to save refs to props parsed values? some of the props require relatively expensive computations(like 'start' and 'startAnchor').
   // this will always run in the same order and THAT'S WAY ITS LEGAL
-  for (const propName in defaultProps) {
+  for (const propName of Object.keys(defaultProps) as propName[]) {
     useLayoutEffect(
       () => {
-        propsRefs[propName] = parsePropsFuncs?.[propName]?.(curProps[propName], propsRefs, shouldUpdatePosition);
+        // Same unchecked write as parseGivenProps - see the note there.
+        (propsRefs as Record<string, unknown>)[propName] = parsePropsFuncs?.[propName]?.(
+          curProps[propName],
+          propsRefs,
+          shouldUpdatePosition,
+        );
         // console.log('prop update:', propName, 'with value', propsRefs[propName]);
         setPropsRefs({ ...propsRefs });
       },

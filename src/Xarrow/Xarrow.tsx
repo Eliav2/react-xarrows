@@ -56,7 +56,9 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
   const [, setRender] = useState({});
   const forceRerender = () => setRender({});
 
-  const [st, setSt] = useState({
+  // Typed from what getPosition returns rather than inferred from the literal
+  // below, which would make the two empty arrays never[].
+  const [st, setSt] = useState<ReturnType<typeof getPosition>>({
     //initial state
     cx0: 0, //x start position of the canvas
     cy0: 0, //y start position of the canvas
@@ -206,7 +208,7 @@ const Xarrow: React.FC<xarrowPropsType> = (props: xarrowPropsType) => {
               left: st.cx0,
               top: st.cy0,
               pointerEvents: 'none',
-              border: _debug ? '1px dashed yellow' : null,
+              border: _debug ? '1px dashed yellow' : undefined,
               ...SVGcanvasStyle,
             }}
             overflow="auto"

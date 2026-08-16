@@ -1,12 +1,14 @@
 import React, { FC, useEffect, useRef, useState } from 'react';
 
-export const XelemContext = React.createContext(null as () => void);
-export const XarrowContext = React.createContext(null as () => void);
+type updateXarrowFunc = () => void;
 
-const updateRef = {};
+// The default really is null - a component outside any Xwrapper reads it - so
+// the type says so rather than casting the null away.
+export const XelemContext = React.createContext<updateXarrowFunc | null>(null);
+export const XarrowContext = React.createContext<updateXarrowFunc | null>(null);
+
+const updateRef: Record<number, updateXarrowFunc> = {};
 let updateRefCount = 0;
-
-const log = console.log;
 
 // React 18 dropped the implicit `children` prop from FC, so it is declared explicitly here.
 type ProviderProps = {
@@ -25,11 +27,11 @@ const XarrowProvider: FC<ProviderProps> = ({ children, instanceCount }) => {
   return <XarrowContext.Provider value={updateXarrow}>{children}</XarrowContext.Provider>;
 };
 
-const XelemProvider = ({ children, instanceCount }) => {
+const XelemProvider: FC<ProviderProps> = ({ children, instanceCount }) => {
   return <XelemContext.Provider value={updateRef[instanceCount.current]}>{children}</XelemContext.Provider>;
 };
 
-const Xwrapper = ({ children }) => {
+const Xwrapper: FC<{ children?: React.ReactNode }> = ({ children }) => {
   const instanceCount = useRef(updateRefCount);
   const [, setRender] = useState({});
   useEffect(() => {

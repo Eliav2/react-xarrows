@@ -1,11 +1,9 @@
 {
-  "include": ["./src/*"],
+  "include": ["./src/**/*"],
   "compilerOptions": {
     "strict": true,
     "lib": ["dom", "esnext"],
     "jsx": "react",
-    "noImplicitAny": false,
-    "strictNullChecks": false,
     "target": "ES2015",
     "allowJs": true,
     "skipLibCheck": true,
@@ -17,6 +15,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "declaration": true,
+    "rootDir": "./src",
     "outDir": "lib",
     "noEmit": false,
     "declarationMap": true,
