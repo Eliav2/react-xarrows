@@ -63,6 +63,16 @@ jobs:
       - name: Build
         run: pnpm run build
 
+      # Compiles a consumer against the built lib/index.d.ts under every
+      # supported @types/react major, with skipLibCheck off. Has to run after
+      # the build, since the declarations are what it type checks. type-check
+      # above cannot catch this: it checks src/ against the one React the root
+      # has installed, and the demo resolves the library through a source alias,
+      # so neither ever reads the published declarations. React 19 removing the
+      # global JSX namespace broke them with both of those still green.
+      - name: Type-test published declarations
+        run: pnpm run test:types
+
       # The demo consumes the library straight from src, so it catches breakage
       # that the library's own build and tests do not.
       - name: Build demo

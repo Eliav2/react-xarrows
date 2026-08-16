@@ -1,0 +1,14 @@
+{
+  "name": "react-xarrows-type-tests",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Compiles a consumer against the built declarations under every supported @types/react major",
+  "scripts": {
+    "test": "tsc -p tsconfig.react18.json && tsc -p tsconfig.react19.json"
+  },
+  "devDependencies": {
+    "@types/react18": "npm:@types/react@^18.3.31",
+    "@types/react19": "npm:@types/react@^19.2.18",
+    "typescript": "^5.9.3"
+  }
+}

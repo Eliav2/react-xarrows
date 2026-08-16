@@ -1,6 +1,7 @@
 packages:
   - '.'
   - 'examples'
+  - 'type-tests'
 
 onlyBuiltDependencies:
   - esbuild
