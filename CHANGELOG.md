@@ -1,4 +1,8 @@
-## Unreleased
+## 2.2.0
+
+One new prop, and the published types now compile under React 19. No
+breaking changes: every prop, component and hook behaves as it did in 2.1.0,
+apart from two inputs that were rendering invalid output.
 
 ### bug fixes
 
