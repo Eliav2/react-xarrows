@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "noEmit": true,
+    "strict": true,
+    "jsx": "react-jsx",
+    "lib": ["dom", "esnext"],
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "esModuleInterop": true,
+    // The whole point: errors inside react-xarrows' own declarations must fail
+    // this, and skipLibCheck would hide exactly the breakage being tested for.
+    "skipLibCheck": false,
+    // Ambient @types packages would otherwise leak a second React into scope.
+    "types": []
+  },
+  "include": ["src"]
+}

@@ -27,6 +27,7 @@
     "build": "pnpm run clean && vite build",
     "build:watch": "vite build --watch",
     "type-check": "tsc --noEmit",
+    "test:types": "pnpm --filter react-xarrows-type-tests run test",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",

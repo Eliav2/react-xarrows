@@ -1,5 +1,4 @@
-import { anchorCustomPositionType } from '../types';
-import { dimensionType } from '../privateTypes';
+import { dimensionType, parsedAnchorType } from '../privateTypes';
 
 const getAnchorsDefaultOffsets = (width: number, height: number) => {
   return {
@@ -11,7 +10,7 @@ const getAnchorsDefaultOffsets = (width: number, height: number) => {
   };
 };
 
-export const calcAnchors = (anchors: anchorCustomPositionType[], anchorPos: dimensionType) => {
+export const calcAnchors = (anchors: parsedAnchorType[], anchorPos: dimensionType) => {
   // now prepare this list of anchors to object expected by the `getShortestLine` function
   return anchors.map((anchor) => {
     const defsOffsets = getAnchorsDefaultOffsets(anchorPos.right - anchorPos.x, anchorPos.bottom - anchorPos.y);

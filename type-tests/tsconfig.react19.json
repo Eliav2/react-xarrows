@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "paths": {
+      "react-xarrows": ["../lib/index.d.ts"],
+      "react": ["./node_modules/@types/react19"],
+      "react/jsx-runtime": ["./node_modules/@types/react19/jsx-runtime"]
+    }
+  }
+}

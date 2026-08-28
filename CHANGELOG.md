@@ -1,5 +1,24 @@
 ## Unreleased
 
+### bug fixes
+
+- **the published type declarations now compile under React 19.** React 19
+  removed the global `JSX` namespace and stopped exporting `ReactSVG`, both of
+  which `index.d.ts` referenced, so anyone on `@types/react` 19 without
+  `skipLibCheck` could not build against this package. Every runtime code path
+  already worked on 19. CI now compiles a consumer against the built
+  declarations under both supported `@types/react` majors.
+- a custom `headShape` or `tailShape` with no `svgElem` rendered the literal
+  text "path" instead of an arrowhead, and parsing wrote its defaults into the
+  object it was given - the caller's own for a custom shape, the shared
+  built-in for a shape name.
+- `dashness={{ strokeLen: n }}` rendered `stroke-dasharray="n undefined"`,
+  because `nonStrokeLen` is optional and was passed straight through. It now
+  falls back to `strokeWidth`. Nothing else about how the two lengths are read
+  changed: `{ nonStrokeLen: n }` on its own is still ignored, and a length of
+  `0` is still treated as absent, so no arrow that renders correctly today
+  renders differently.
+
 ### features
 
 - **`gridRadius`** rounds the corners of a `path='grid'` arrow. `gridRadius`
