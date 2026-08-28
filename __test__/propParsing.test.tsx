@@ -53,6 +53,15 @@ describe('prop parsing', () => {
       expect(custom).toEqual({ offsetForward: 0.3 });
     });
 
+    it('leaves an explicitly null field alone, as before', () => {
+      placeBoxes();
+      // Only an absent svgElem falls back. A null one is passed through the way
+      // the previous release did, rather than being reinterpreted.
+      const { container } = render(<Boxes headShape={{ svgElem: null } as never} />);
+
+      expect(container.querySelectorAll('svg g path').length).toBe(0);
+    });
+
     it('keeps a custom offsetForward of 0 rather than defaulting it', () => {
       placeBoxes();
       const { container } = render(<Boxes headShape={{ svgElem: <circle r={0.5} />, offsetForward: 0 }} />);
@@ -68,23 +77,29 @@ describe('prop parsing', () => {
       return container.querySelector('svg path')?.getAttribute('stroke-dasharray');
     };
 
-    // strokeLen and nonStrokeLen each fall back on their own. They used to be
-    // read as a pair, so only one of the two could be supplied on its own, and
-    // `||` meant an explicit 0 was replaced by the default.
+    // Only one dashness behaviour changed: nonStrokeLen used to be passed
+    // through undefined when strokeLen was given. Everything else about how the
+    // two lengths are read is deliberately left as it was, so that no input
+    // that already rendered something valid renders something else now.
     it('fills in nonStrokeLen when only strokeLen is given', () => {
       // Used to render "10 undefined".
       expect(dashArray({ dashness: { strokeLen: 10 } })).toBe('10 4');
     });
 
-    it('keeps nonStrokeLen when only nonStrokeLen is given', () => {
-      // Used to discard it entirely and render the default "8 4".
-      expect(dashArray({ dashness: { nonStrokeLen: 10 } })).toBe('8 10');
+    it('keeps both lengths when both are given', () => {
+      expect(dashArray({ dashness: { strokeLen: 10, nonStrokeLen: 5 } })).toBe('10 5');
+      expect(dashArray({ dashness: { strokeLen: 10, nonStrokeLen: 0 } })).toBe('10 0');
     });
 
-    it('keeps an explicit zero rather than treating it as absent', () => {
-      expect(dashArray({ dashness: { strokeLen: 0 } })).toBe('0 4');
-      expect(dashArray({ dashness: { nonStrokeLen: 0 } })).toBe('8 0');
-      expect(dashArray({ dashness: { strokeLen: 0, nonStrokeLen: 0 } })).toBe('0 0');
+    it('still ignores nonStrokeLen given on its own, as before', () => {
+      // Arguably it should be honoured, but changing that would repaint arrows
+      // that render fine today, so it is left alone.
+      expect(dashArray({ dashness: { nonStrokeLen: 10 } })).toBe('8 4');
+    });
+
+    it('still treats a zero length as absent, as before', () => {
+      expect(dashArray({ dashness: { strokeLen: 0 } })).toBe('8 4');
+      expect(dashArray({ dashness: { nonStrokeLen: 0 } })).toBe('8 4');
     });
 
     it('defaults both lengths from strokeWidth when neither is given', () => {

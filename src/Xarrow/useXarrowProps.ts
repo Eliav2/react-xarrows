@@ -27,8 +27,11 @@ const parseLabels = (label: xarrowPropsType['labels']): parsedLabelsType => {
     if (typeof label === 'string' || React.isValidElement(label)) parsedLabel.middle = label;
     else {
       const labels = label as labelsType;
-      for (const key of Object.keys(labels) as (keyof labelsType)[]) {
-        parsedLabel[key] = labels[key] ?? null;
+      // Left as for..in rather than Object.keys: for..in also walks the
+      // prototype chain, and swapping it would quietly stop honouring a labels
+      // object that inherits its keys.
+      for (const key in labels) {
+        parsedLabel[key as keyof labelsType] = labels[key as keyof labelsType] ?? null;
       }
     }
   }
@@ -85,12 +88,12 @@ const parseDashness = (dashness: xarrowPropsType['dashness'], props: { strokeWid
     animDashSpeed: number | null = null;
   const animDirection = 1;
   if (typeof dashness === 'object') {
-    // Each length falls back on its own. Previously nonStrokeLen was only read
-    // when strokeLen was given - and then passed straight through, rendering a
-    // stroke-dasharray of "<n> undefined" - so `{ nonStrokeLen: 10 }` alone was
-    // discarded. `??` rather than `||` so that an explicit 0 survives.
-    dashStroke = dashness.strokeLen ?? props.strokeWidth * 2;
-    dashNone = dashness.nonStrokeLen ?? props.strokeWidth;
+    dashStroke = dashness.strokeLen || props.strokeWidth * 2;
+    // nonStrokeLen is optional, and used to be passed straight through when
+    // strokeLen was given, rendering a stroke-dasharray of "<n> undefined".
+    // Only that fallback is new: `??` keeps an explicit 0, and the outer
+    // condition is left as it was so that no other input changes meaning.
+    dashNone = dashness.strokeLen ? (dashness.nonStrokeLen ?? props.strokeWidth) : props.strokeWidth;
     // `animation: true` means the documented default of 1s. It used to fall
     // through as a boolean and only worked because `1 / true` is 1.
     animDashSpeed = dashness.animation === true ? 1 : dashness.animation || null;
@@ -123,11 +126,14 @@ const parseEdgeShape = (svgEdge: svgEdgeShapeType | svgCustomEdgeType): parsedEd
   // shape name that object is the shared arrowShapes constant, and for a custom
   // shape it is the caller's own, so the old in-place defaulting wrote into
   // whichever of the two it happened to get.
+  //
+  // Both fields keep the `=== undefined` test the in-place version used, rather
+  // than `??`, so that an explicitly passed null still means what it used to.
+  // Only the svgElem fallback value changes: it was the bare string 'path',
+  // which React renders as the literal text "path" rather than an element.
   return {
-    // Was defaulted to the bare string 'path', which React renders as the
-    // literal text "path" rather than an element.
-    svgElem: shape?.svgElem ?? arrowShapes.arrow1.svgElem,
-    offsetForward: shape?.offsetForward ?? 0.25,
+    svgElem: shape?.svgElem === undefined ? arrowShapes.arrow1.svgElem : shape.svgElem,
+    offsetForward: shape?.offsetForward === undefined ? 0.25 : shape.offsetForward,
   };
 };
 
