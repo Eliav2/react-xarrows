@@ -1,3 +1,18 @@
+## 2.2.1
+
+Position fixes. No API changes.
+
+### bug fixes
+
+- an arrow lagged one render behind an element that moved, e.g. a full grid
+  cell behind a dragged element (#89), or out of date after a sibling was
+  inserted (#134). Positions are now measured after commit, before paint.
+- an arrow whose `start` or `end` element remounted, or whose id or ref moved
+  to another element, kept the old node and collapsed onto the viewport origin
+  (#146, #182). Endpoints are now resolved again on every commit.
+- a newly mounted arrow painted its first frame with the previous arrow's
+  props (stroke width, colors, endpoints).
+
 ## 2.2.0
 
 One new prop, and the published types now compile under React 19. No
