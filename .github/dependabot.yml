@@ -18,6 +18,15 @@ updates:
         update-types: [version-update:semver-major]
       - dependency-name: '@types/react-dom'
         update-types: [version-update:semver-major]
+      # The root React is the oldest one the library is tested against, not the
+      # newest; React 19 is covered by the demo and the React 19 type tests.
+      # Without these, dependabot groups react with @types/react and the
+      # major types bump above slips through anyway (as it did in #221). This also
+      # holds back the demo's React majors; a new React major is a decision too.
+      - dependency-name: 'react'
+        update-types: [version-update:semver-major]
+      - dependency-name: 'react-dom'
+        update-types: [version-update:semver-major]
 
   - package-ecosystem: github-actions
     directory: /
