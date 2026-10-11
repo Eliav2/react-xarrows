@@ -100,12 +100,17 @@ jobs:
       # Listing a file is not the same as it working. The ESM and CJS entry
       # points are actually loaded here, because a bundler misconfiguration can
       # emit a file that only throws once imported.
+      #
+      # The tarball is installed as-is, the way the registry would deliver it.
+      # Extracting it and installing the folder would make npm link the folder
+      # and install its devDependencies too, so the package could resolve
+      # modules a real consumer never has.
       - name: Verify entry points load
         run: |
           mkdir -p /tmp/consumer && cd /tmp/consumer
-          tar xzf /tmp/react-xarrows-*.tgz
           npm init -y >/dev/null
-          npm install ./package react@18 react-dom@18 >/dev/null
+          npm install /tmp/react-xarrows-*.tgz react@18 react-dom@18 >/dev/null
+          test ! -L node_modules/react-xarrows
           node --input-type=module -e "
             import Xarrow, { Xwrapper, useXarrow } from 'react-xarrows';
             if (typeof Xarrow !== 'function') throw new Error('ESM default export is not a component');
