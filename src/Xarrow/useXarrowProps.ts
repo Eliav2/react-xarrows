@@ -406,7 +406,7 @@ const useXarrowProps = (
   // paint, so the arrow never lags a frame behind the elements it connects.
   //
   // The element is re-resolved whenever the cached node is missing or has been
-  // detached, so an element that is remounted under the same id is picked up
+  // detached, so an element remounted under the same id or ref is picked up
   // again instead of leaving the arrow measuring a detached node - which the
   // DOM reports as all zeros, dragging the arrow to the viewport origin.
   const [valVars, setValVars] = useState(initialValVars);
@@ -414,10 +414,10 @@ const useXarrowProps = (
     // no DOM to measure - nothing here can be meaningful, and getElementByPropGiven would throw
     if (typeof document === 'undefined') return;
 
-    if (typeof curProps.start === 'string' && !propsRefs.start?.isConnected)
-      propsRefs.start = getElementByPropGiven(curProps.start);
-    if (typeof curProps.end === 'string' && !propsRefs.end?.isConnected)
-      propsRefs.end = getElementByPropGiven(curProps.end);
+    // a ref needs this as much as an id does: the ref object stays the same across
+    // a remount, so the prop never changes, only its current does
+    if (!propsRefs.start?.isConnected) propsRefs.start = getElementByPropGiven(curProps.start);
+    if (!propsRefs.end?.isConnected) propsRefs.end = getElementByPropGiven(curProps.end);
 
     const startPos = getElemPos(propsRefs.start);
     const endPos = getElemPos(propsRefs.end);

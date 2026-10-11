@@ -1,5 +1,5 @@
 import { act, render } from '@testing-library/react';
-import { useLayoutEffect } from 'react';
+import { createRef, useLayoutEffect } from 'react';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import Xarrow from '../src/Xarrow/Xarrow';
 import Xwrapper from '../src/Xwrapper';
@@ -154,6 +154,30 @@ describe('element measurement', () => {
     // the arrow caches the element it resolved, so holding a detached one does
     // no visible damage until the next render of any kind - at which point the
     // detached node measures as zeros and the arrow collapses onto the origin.
+    rerenderFromOutside();
+    expect(geometry(container)).toEqual(before);
+  });
+
+  it('#182 re-resolves an element given as a ref after a keyed remount', () => {
+    // the same remount as above, but the ref object itself never changes - only
+    // its current does - so nothing about the props tells the arrow to look again.
+    const startRef = createRef<HTMLDivElement>();
+    const endRef = createRef<HTMLDivElement>();
+    const Scene = ({ instance = 0 }) => (
+      <Xwrapper>
+        <div ref={startRef} data-box data-x="0" />
+        <div key={instance} ref={endRef} data-box data-x="300" />
+        <Xarrow start={startRef} end={endRef} />
+      </Xwrapper>
+    );
+
+    const { container, rerender } = render(<Scene />);
+    const before = geometry(container);
+    const firstNode = endRef.current;
+
+    rerender(<Scene instance={1} />);
+    expect(endRef.current).not.toBe(firstNode);
+
     rerenderFromOutside();
     expect(geometry(container)).toEqual(before);
   });
