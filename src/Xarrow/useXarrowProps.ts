@@ -328,15 +328,23 @@ type parsedXarrowProps = {
   _cpy2Offset: number;
 };
 
-let initialParsedProps = {} as parsedXarrowProps;
-initialParsedProps = parseGivenProps(defaultProps, initialParsedProps);
+/**
+ * A fresh object for every hook instance.
+ *
+ * This used to be a single module-level object, parsed once and then handed to
+ * every `useState` call. The hook writes each prop it resolves straight into
+ * that object - including the resolved `start`/`end` elements - so the first
+ * arrow to mount left its own elements and its own prop values inside the
+ * defaults that every arrow mounted afterwards rendered its first frame with.
+ * An arrow with default props would paint one frame using the previous arrow's
+ * stroke, color and elements before its own effects corrected it.
+ */
+const createInitialParsedProps = (): parsedXarrowProps => parseGivenProps(defaultProps, {} as parsedXarrowProps);
 
 const initialValVars = {
   startPos: { x: 0, y: 0, right: 0, bottom: 0 } as dimensionType,
   endPos: { x: 0, y: 0, right: 0, bottom: 0 } as dimensionType,
 };
-
-// const parseAllProps = () => parseGivenProps(defaultProps, initialParsedProps);
 
 // The only values ever compared here are element positions, which getElemPos
 // always returns as four numbers, including on its null-element branch. A
@@ -349,20 +357,6 @@ const samePosition = (a: dimensionType | undefined, b: dimensionType | undefined
   return a.x === b.x && a.y === b.y && a.right === b.right && a.bottom === b.bottom;
 };
 
-function usePositionMemoize(value: dimensionType) {
-  const ref = useRef<dimensionType>();
-
-  if (!samePosition(value, ref.current)) {
-    ref.current = value;
-  }
-
-  return ref.current;
-}
-
-function usePositionEffect(callback: () => void, dependencies: dimensionType[]) {
-  useLayoutEffect(callback, dependencies.map(usePositionMemoize));
-}
-
 /**
  * smart hook that provides parsed props to Xarrow and will trigger rerender whenever given prop is changed.
  */
@@ -370,10 +364,9 @@ const useXarrowProps = (
   userProps: xarrowPropsType,
   refs: { headRef: React.MutableRefObject<any>; tailRef: React.MutableRefObject<any> },
 ) => {
-  const [propsRefs, setPropsRefs] = useState(initialParsedProps);
+  // lazy initializer - one parsed-props object per arrow, never shared
+  const [propsRefs, setPropsRefs] = useState(createInitialParsedProps);
   const shouldUpdatePosition = useRef(false);
-  // const _propsRefs = useRef(initialParsedProps);
-  // const propsRefs = _propsRefs.current;
   propsRefs['shouldUpdatePosition'] = shouldUpdatePosition;
   const curProps = { ...defaultProps, ...userProps };
 
@@ -401,22 +394,43 @@ const useXarrowProps = (
     );
   }
 
-  // rerender whenever position of start element or end element changes
+  // rerender whenever position of start element or end element changes.
+  //
+  // The measurement deliberately happens in a layout effect rather than in the
+  // render body. React commits DOM mutations after render and before layout
+  // effects, so anything measured during render describes the *previous*
+  // frame's layout: an element that moved in this very commit gets measured at
+  // its old position, and because the comparison is then stale-against-stale no
+  // correcting render is ever scheduled. Reading here instead sees the layout
+  // that was just committed, and the resulting extra render happens before
+  // paint, so the arrow never lags a frame behind the elements it connects.
+  //
+  // The elements are re-resolved here too, so an element remounted under the
+  // same id or ref is picked up again instead of leaving the arrow measuring a
+  // detached node - which the DOM reports as all zeros, dragging the arrow to
+  // the viewport origin.
   const [valVars, setValVars] = useState(initialValVars);
-  const startPos = getElemPos(propsRefs.start);
-  usePositionEffect(() => {
+  useLayoutEffect(() => {
+    // no DOM to measure - nothing here can be meaningful, and getElementByPropGiven would throw
+    if (typeof document === 'undefined') return;
+
+    // resolved on every commit rather than only when the cached node looks stale:
+    // an id or ref can move to another element while the old one stays mounted,
+    // and a connected old node gives no sign it is no longer the endpoint. Each
+    // lookup is one getElementById or one ref.current read.
+    propsRefs.start = getElementByPropGiven(curProps.start);
+    propsRefs.end = getElementByPropGiven(curProps.end);
+
+    const startPos = getElemPos(propsRefs.start);
+    const endPos = getElemPos(propsRefs.end);
+    // guarded so this effect cannot schedule a render that would run it again forever
+    if (samePosition(startPos, valVars.startPos) && samePosition(endPos, valVars.endPos)) return;
+
     valVars.startPos = startPos;
-    shouldUpdatePosition.current = true;
-    setValVars({ ...valVars });
-    // console.log('start update pos', startPos);
-  }, [startPos]);
-  const endPos = getElemPos(propsRefs.end);
-  usePositionEffect(() => {
     valVars.endPos = endPos;
     shouldUpdatePosition.current = true;
     setValVars({ ...valVars });
-    // console.log('end update pos', endPos);
-  }, [endPos]);
+  });
 
   useLayoutEffect(() => {
     // console.log('svg shape changed!');
