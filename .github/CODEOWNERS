@@ -1,0 +1,5 @@
+# Every change to main needs Eliav's approval. Branch protection on main requires
+# a code owner review, so an approval from any other account with write access
+# (including the eliavb43 agent account, or one given on a dependabot PR) does
+# not count.
+* @Eliav2
