@@ -405,19 +405,21 @@ const useXarrowProps = (
   // that was just committed, and the resulting extra render happens before
   // paint, so the arrow never lags a frame behind the elements it connects.
   //
-  // The element is re-resolved whenever the cached node is missing or has been
-  // detached, so an element remounted under the same id or ref is picked up
-  // again instead of leaving the arrow measuring a detached node - which the
-  // DOM reports as all zeros, dragging the arrow to the viewport origin.
+  // The elements are re-resolved here too, so an element remounted under the
+  // same id or ref is picked up again instead of leaving the arrow measuring a
+  // detached node - which the DOM reports as all zeros, dragging the arrow to
+  // the viewport origin.
   const [valVars, setValVars] = useState(initialValVars);
   useLayoutEffect(() => {
     // no DOM to measure - nothing here can be meaningful, and getElementByPropGiven would throw
     if (typeof document === 'undefined') return;
 
-    // a ref needs this as much as an id does: the ref object stays the same across
-    // a remount, so the prop never changes, only its current does
-    if (!propsRefs.start?.isConnected) propsRefs.start = getElementByPropGiven(curProps.start);
-    if (!propsRefs.end?.isConnected) propsRefs.end = getElementByPropGiven(curProps.end);
+    // resolved on every commit rather than only when the cached node looks stale:
+    // an id or ref can move to another element while the old one stays mounted,
+    // and a connected old node gives no sign it is no longer the endpoint. Each
+    // lookup is one getElementById or one ref.current read.
+    propsRefs.start = getElementByPropGiven(curProps.start);
+    propsRefs.end = getElementByPropGiven(curProps.end);
 
     const startPos = getElemPos(propsRefs.start);
     const endPos = getElemPos(propsRefs.end);

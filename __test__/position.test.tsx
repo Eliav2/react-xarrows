@@ -182,6 +182,52 @@ describe('element measurement', () => {
     expect(geometry(container)).toEqual(before);
   });
 
+  it('follows a ref moved to another element that is still mounted', () => {
+    // the old node stays connected, so it looks perfectly healthy - only
+    // comparing it against the ref's current node shows it is no longer the end
+    const startRef = createRef<HTMLDivElement>();
+    const endRef = createRef<HTMLDivElement>();
+    const Scene = ({ endOn = 'near' }: { endOn?: 'near' | 'far' }) => (
+      <Xwrapper>
+        <div ref={startRef} data-box data-x="0" />
+        <div ref={endOn === 'near' ? endRef : undefined} data-box data-x="100" />
+        <div ref={endOn === 'far' ? endRef : undefined} data-box data-x="300" />
+        <Xarrow start={startRef} end={endRef} />
+      </Xwrapper>
+    );
+
+    const reference = render(<Scene endOn="far" />);
+    const expected = geometry(reference.container);
+    reference.unmount();
+
+    const { container, rerender } = render(<Scene />);
+    expect(geometry(container)).not.toEqual(expected); // the move really does change the end
+
+    rerender(<Scene endOn="far" />);
+    expect(geometry(container)).toEqual(expected);
+  });
+
+  it('follows an id moved to another element that is still mounted', () => {
+    const Scene = ({ endOn = 'near' }: { endOn?: 'near' | 'far' }) => (
+      <Xwrapper>
+        <div id="box-a" data-box data-x="0" />
+        <div id={endOn === 'near' ? 'box-b' : undefined} data-box data-x="100" />
+        <div id={endOn === 'far' ? 'box-b' : undefined} data-box data-x="300" />
+        <Xarrow start="box-a" end="box-b" />
+      </Xwrapper>
+    );
+
+    const reference = render(<Scene endOn="far" />);
+    const expected = geometry(reference.container);
+    reference.unmount();
+
+    const { container, rerender } = render(<Scene />);
+    expect(geometry(container)).not.toEqual(expected);
+
+    rerender(<Scene endOn="far" />);
+    expect(geometry(container)).toEqual(expected);
+  });
+
   it('#89 picks up a position committed by a layout effect in the same commit', () => {
     // stands in for a drag implementation: it positions the element
     // imperatively in a layout effect, and it sits before the arrow in the
